@@ -1,5 +1,7 @@
 package com.angel.autonow.src.config;
 
+import com.angel.autonow.src.user.CustomUserDetailsService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -14,7 +16,10 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+	private final CustomUserDetailsService userDetailsService;
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -26,6 +31,7 @@ public class SecurityConfig {
 						.requestMatchers("/api/test/**").permitAll()
 						.anyRequest().authenticated()
 				)
+				.userDetailsService(userDetailsService)
 				.oauth2ResourceServer(oauth -> oauth.jwt((Customizer.withDefaults())))
 				.sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
 				.build();
