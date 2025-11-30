@@ -3,39 +3,31 @@ package com.angel.autonow.src.jwt;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
-import javax.crypto.spec.SecretKeySpec;
 import java.util.Date;
 
+@Service
 @RequiredArgsConstructor
 public class JwtService {
 
-	private final JwtProperties properties;
+	@Value("${jwt.secret}")
+	private String secret;
 
-	@Bean
-	public JwtDecoder jwtDecoder() {
-		byte[] bytes = properties.getSecret().getBytes();
-		String algorithm = properties.getAlgorithm();
+	@Value("${jwt.expiration}")
+	private long expiration;
 
-		SecretKeySpec secretKeySpec = new SecretKeySpec(bytes, algorithm);
-
-		return NimbusJwtDecoder.withSecretKey(secretKeySpec).build();
-	}
-
-	@Bean
 	public String generateToken(String email) {
-		Algorithm algorithm = Algorithm.HMAC256(properties.getSecret());
+		Algorithm signHMAC256 = Algorithm.HMAC256(secret);
 
 		Date issuedAt = new Date();
-		Date expiresAt = new Date(System.currentTimeMillis() + properties.getExpiration());
+		Date expiresAt = new Date(System.currentTimeMillis() + expiration);
 
 		return JWT.create()
 				.withSubject(email)
 				.withIssuedAt(issuedAt)
 				.withExpiresAt(expiresAt)
-				.sign(algorithm);
+				.sign(signHMAC256);
 	}
 }

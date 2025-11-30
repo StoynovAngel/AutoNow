@@ -1,9 +1,6 @@
 services:
   backend:
     build: .
-    environment:
-      - JWT_SECRET=${JWT_SECRET}
-      - ALGORITHM=${ALGORITHM}
     env_file:
       - .env
     ports:
