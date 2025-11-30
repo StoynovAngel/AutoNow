@@ -2,6 +2,7 @@ package com.angel.autonow.src.auth;
 
 import com.angel.autonow.src.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -9,13 +10,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.Set;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthService {
 
 	private static final String USER_READ_AUTHORITY = "user.read";
-	private static final String EMAIL_REGEX = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,63}$";
-	private static final String PASSWORD_REGEX = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$";
 
 	private final AuthRepository authRepository;
 	private final JwtService jwtService;
@@ -27,16 +27,10 @@ public class AuthService {
 		String email = request.email();
 		String password = request.password();
 
-		if (!email.matches(EMAIL_REGEX)) {
-			throw new AuthUserException("Email standards not met.");
-		}
-
-		if (!password.matches(PASSWORD_REGEX)) {
-			throw new AuthUserException("Password standards not met.");
-		}
-
 		if (authRepository.findByEmail(email).isPresent()){
-			throw new AuthUserException("Account with this email already exists.");
+			String message = "Account with this email already exists.";
+			log.debug(message);
+			throw new AuthUserException(message);
 		}
 
 		AuthUser newUser = AuthUser.builder()
@@ -44,6 +38,8 @@ public class AuthService {
 				.password(passwordEncoder.encode(password))
 				.authorities(defaultAuthorities)
 				.build();
+
+		log.info("User created");
 
 		authRepository.save(newUser);
 

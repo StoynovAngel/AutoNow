@@ -1,3 +1,3 @@
 package com.angel.autonow.src.auth;
 
-public record AuthRequestDTO(String email, String password) {}
+public record AuthRequestDTO(String email, String username, String password) {}
