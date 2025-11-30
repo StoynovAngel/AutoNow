@@ -3,6 +3,7 @@ package com.angel.autonow.src.exception;
 import com.angel.autonow.src.user.UserException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -12,8 +13,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class GlobalControllerExceptionHandler {
 
 	@ResponseStatus(HttpStatus.UNAUTHORIZED)
-	@ExceptionHandler(UserException.class)
-	public ExceptionResponse handleUsernameNotFound(UserException e) {
+	@ExceptionHandler(UsernameNotFoundException.class)
+	public ExceptionResponse handleUsernameNotFoundException(UsernameNotFoundException e) {
 		log.warn(e.getMessage(), HttpStatus.UNAUTHORIZED, e);
 		return new ExceptionResponse(e.getMessage(), HttpStatus.UNAUTHORIZED);
 	}
