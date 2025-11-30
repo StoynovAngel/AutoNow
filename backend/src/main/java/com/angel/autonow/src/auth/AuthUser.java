@@ -1,5 +1,6 @@
 package com.angel.autonow.src.auth;
 
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -7,10 +8,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Set;
 
-@Data
+@Builder
 public class AuthUser implements UserDetails {
 
-	private final Long id;
 	private final String email;
 	private final String password;
 	private final Set<GrantedAuthority> authorities;
