@@ -25,6 +25,10 @@ public class UserService {
 		String email = request.getEmail();
 		String password = request.getPassword();
 
+		if (userRepository.findByEmail(email).isPresent()) {
+			throw new UserException("Account with this email already exists.");
+		}
+
 		UserEntity newUser = UserEntity.builder()
 				.email(email)
 				.password(passwordEncoder.encode(password))
