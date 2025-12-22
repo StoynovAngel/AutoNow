@@ -53,7 +53,7 @@ jobs:
 
       - name: Fetch OpenAPI spec
         run: |
-          curl http://localhost:8080/v3/api-docs.yaml -o docs/openapi.yaml
+          curl http://localhost:8081/v3/api-docs.yaml -o docs/openapi.yaml
 
       - name: Stop backend
         run: |
