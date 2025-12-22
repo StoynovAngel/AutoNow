@@ -1,4 +1,4 @@
-package com.angel.autonow.src.user;
+package com.angel.autonow.user;
 
 import java.io.Serial;
 

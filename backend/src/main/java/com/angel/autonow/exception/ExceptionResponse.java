@@ -1,4 +1,4 @@
-package com.angel.autonow.src.exception;
+package com.angel.autonow.exception;
 
 import org.springframework.http.HttpStatus;
 

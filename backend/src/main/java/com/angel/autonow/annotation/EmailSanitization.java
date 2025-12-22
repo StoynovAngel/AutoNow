@@ -1,4 +1,4 @@
-package com.angel.autonow.src.annotation;
+package com.angel.autonow.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

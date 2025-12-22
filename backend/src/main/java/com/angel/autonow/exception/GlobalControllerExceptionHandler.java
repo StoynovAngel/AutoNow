@@ -1,6 +1,6 @@
-package com.angel.autonow.src.exception;
+package com.angel.autonow.exception;
 
-import com.angel.autonow.src.user.UserException;
+import com.angel.autonow.user.UserException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

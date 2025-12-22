@@ -1,4 +1,4 @@
-package com.angel.autonow.src.config;
+package com.angel.autonow.jwt;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

@@ -1,6 +1,6 @@
-package com.angel.autonow.src.user;
+package com.angel.autonow.user;
 
-import com.angel.autonow.src.jwt.JwtService;
+import com.angel.autonow.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;

@@ -1,6 +1,6 @@
-package com.angel.autonow.src.config;
+package com.angel.autonow.security;
 
-import com.angel.autonow.src.user.CustomUserDetailsService;
+import com.angel.autonow.user.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

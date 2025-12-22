@@ -1,4 +1,4 @@
-package com.angel.autonow.src.user;
+package com.angel.autonow.user;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

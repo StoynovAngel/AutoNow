@@ -1,4 +1,4 @@
-package com.angel.autonow.src.user;
+package com.angel.autonow.user;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
