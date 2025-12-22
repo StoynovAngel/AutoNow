@@ -18,10 +18,11 @@
         SwaggerUIBundle({
             url: "openapi.yaml",
             dom_id: "#swagger-ui",
-            presets: [
-                SwaggerUIBundle.presets.apis
-            ],
-            layout: "BaseLayout"
+            presets: [SwaggerUIBundle.presets.apis],
+            layout: "BaseLayout",
+            tryItOutEnabled: false,
+            supportedSubmitMethods: [],
+            defaultModelsExpandDepth: -1
         });
     };
 </script>
