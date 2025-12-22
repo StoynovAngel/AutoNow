@@ -27,13 +27,18 @@ public class SecurityConfig {
 				.csrf(AbstractHttpConfigurer::disable)
 				.cors(Customizer.withDefaults())
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/api/auth/**").permitAll()
-						.requestMatchers("/api/test/**").permitAll()
-						.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+						.requestMatchers(
+								"/api/auth/**",
+								"/api/test/**",
+								"v3/api-docs/**",
+								"/swagger-ui/**",
+								"/swagger-ui.html"
+						).permitAll()
 						.anyRequest().authenticated()
 				)
-				.userDetailsService(userDetailsService)
-				.oauth2ResourceServer(oauth -> oauth.jwt((Customizer.withDefaults())))
+				.oauth2ResourceServer(oauth -> oauth
+						.jwt(Customizer.withDefaults())
+				)
 				.sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
 				.build();
 	}
