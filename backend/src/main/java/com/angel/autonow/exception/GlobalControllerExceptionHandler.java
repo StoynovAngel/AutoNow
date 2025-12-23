@@ -26,6 +26,13 @@ public class GlobalControllerExceptionHandler {
 		return new ExceptionResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
 	}
 
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(IllegalArgumentException.class)
+	public ExceptionResponse handleIllegalArgumentException(IllegalArgumentException e) {
+		log.warn(e.getMessage(), HttpStatus.BAD_REQUEST, e);
+		return new ExceptionResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
+	}
+
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	@ExceptionHandler(Exception.class)
 	public ExceptionResponse handleException(Exception e) {
