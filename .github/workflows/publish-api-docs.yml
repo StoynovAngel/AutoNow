@@ -62,6 +62,11 @@ jobs:
         run: |
           kill $(cat backend/app.pid)
 
+      - name: Order OpenAPI spec
+        run: |
+          pip install openapi-spec-ordered
+          openapi-spec-ordered docs/openapi.yaml docs/openapi.yaml
+
       - name: Commit and push docs
         run: |
           git config user.name "github-actions"
