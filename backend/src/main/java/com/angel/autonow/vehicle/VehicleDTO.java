@@ -4,7 +4,7 @@ public record VehicleDTO (
 	String brand,
 	String model,
 	String imageURL,
-	Boolean airConditioning,
+	boolean airConditioning,
 	int numberOfSeats,
 	double trunkCapacity,
 	VehicleType vehicleType

@@ -28,7 +28,7 @@ public class VehicleEntity {
 	private String imageURL;
 
 	@Column(name = "air_conditioning")
-	private boolean airConditioning = true;
+	private boolean airConditioning;
 
 	@Column(name = "number_of_seats")
 	private int numberOfSeats = 5;
