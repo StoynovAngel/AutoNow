@@ -1,9 +1,9 @@
 services:
   backend:
-    build: .
+    build: backend
     container_name: autonow-backend
     env_file:
-      - .env
+      - backend/.env
     ports:
       - "8081:8081"
     depends_on:
