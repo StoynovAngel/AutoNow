@@ -6,6 +6,42 @@ servers:
   - url: 'http://localhost:8081'
     description: Generated server url
 paths:
+  /api/vehicle/create:
+    post:
+      tags:
+        - vehicle-controller
+      operationId: createVehicle
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VehicleDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/VehicleDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
   /api/test:
     get:
       tags:
@@ -115,3 +151,26 @@ components:
             - 509 BANDWIDTH_LIMIT_EXCEEDED
             - 510 NOT_EXTENDED
             - 511 NETWORK_AUTHENTICATION_REQUIRED
+    VehicleDTO:
+      type: object
+      properties:
+        brand:
+          type: string
+        model:
+          type: string
+        imageURL:
+          type: string
+        airConditioning:
+          type: boolean
+        numberOfSeats:
+          type: integer
+          format: int32
+        trunkCapacity:
+          type: number
+          format: double
+        vehicleType:
+          type: string
+          enum:
+            - TAXI
+            - SEMI
+            - AMBULANCE
