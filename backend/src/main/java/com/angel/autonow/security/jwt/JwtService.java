@@ -1,4 +1,4 @@
-package com.angel.autonow.jwt;
+package com.angel.autonow.security.jwt;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
