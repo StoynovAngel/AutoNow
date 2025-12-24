@@ -156,8 +156,10 @@ components:
       properties:
         brand:
           type: string
+          minLength: 1
         model:
           type: string
+          minLength: 1
         imageURL:
           type: string
         airConditioning:
@@ -174,3 +176,6 @@ components:
             - TAXI
             - SEMI
             - AMBULANCE
+      required:
+        - brand
+        - model
