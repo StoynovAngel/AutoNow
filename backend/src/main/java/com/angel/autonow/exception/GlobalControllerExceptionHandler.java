@@ -16,27 +16,27 @@ public class GlobalControllerExceptionHandler {
 	@ExceptionHandler(UsernameNotFoundException.class)
 	public ExceptionResponse handleUsernameNotFoundException(UsernameNotFoundException e) {
 		log.warn(e.getMessage(), HttpStatus.UNAUTHORIZED, e);
-		return new ExceptionResponse(e.getMessage(), HttpStatus.UNAUTHORIZED);
+		return new ExceptionResponse(e.getMessage(), HttpStatus.UNAUTHORIZED.value());
 	}
 
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(UserException.class)
 	public ExceptionResponse handleUserException(UserException e) {
 		log.warn(e.getMessage(), HttpStatus.BAD_REQUEST, e);
-		return new ExceptionResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
+		return new ExceptionResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value());
 	}
 
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(IllegalArgumentException.class)
 	public ExceptionResponse handleIllegalArgumentException(IllegalArgumentException e) {
 		log.warn(e.getMessage(), HttpStatus.BAD_REQUEST, e);
-		return new ExceptionResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
+		return new ExceptionResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value());
 	}
 
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	@ExceptionHandler(Exception.class)
 	public ExceptionResponse handleException(Exception e) {
 		log.warn(e.getMessage(), HttpStatus.BAD_REQUEST, e);
-		return new ExceptionResponse("Unexpected exception occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+		return new ExceptionResponse("Unexpected exception occurred", HttpStatus.INTERNAL_SERVER_ERROR.value());
 	}
 }

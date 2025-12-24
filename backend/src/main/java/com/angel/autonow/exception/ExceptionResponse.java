@@ -1,5 +1,5 @@
 package com.angel.autonow.exception;
 
-import org.springframework.http.HttpStatus;
+public record ExceptionResponse(String message, int statusCode) {
 
-public record ExceptionResponse(String message, HttpStatus status) { }
+}
