@@ -3,6 +3,8 @@ package com.angel.autonow.vehicle;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class VehicleService {
@@ -10,7 +12,7 @@ public class VehicleService {
 	private final VehicleRepository vehicleRepository;
 	private final VehicleMapper vehicleMapper;
 
-	public VehicleDTO createVehicle(VehicleDTO vehicleDTO) {
+	public Optional<VehicleDTO> createVehicle(VehicleDTO vehicleDTO) {
 		if (vehicleDTO == null) {
 			throw new IllegalArgumentException("Vehicle cannot be null");
 		}
@@ -18,6 +20,6 @@ public class VehicleService {
 		VehicleEntity vehicle = vehicleMapper.toEntity(vehicleDTO);
 		vehicleRepository.save(vehicle);
 
-		return vehicleMapper.toDTO(vehicle);
+		return Optional.of(vehicleMapper.toDTO(vehicle));
 	}
 }
