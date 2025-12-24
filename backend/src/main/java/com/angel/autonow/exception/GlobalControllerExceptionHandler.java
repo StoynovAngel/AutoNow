@@ -3,6 +3,7 @@ package com.angel.autonow.exception;
 import com.angel.autonow.user.UserException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -14,29 +15,36 @@ public class GlobalControllerExceptionHandler {
 
 	@ResponseStatus(HttpStatus.UNAUTHORIZED)
 	@ExceptionHandler(UsernameNotFoundException.class)
-	public ExceptionResponse handleUsernameNotFoundException(UsernameNotFoundException e) {
+	public ProblemDetail handleUsernameNotFoundException(UsernameNotFoundException e) {
 		log.warn(e.getMessage(), HttpStatus.UNAUTHORIZED, e);
-		return new ExceptionResponse(e.getMessage(), HttpStatus.UNAUTHORIZED.value());
+		return handle(e, HttpStatus.UNAUTHORIZED);
 	}
 
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(UserException.class)
-	public ExceptionResponse handleUserException(UserException e) {
+	public ProblemDetail handleUserException(UserException e) {
 		log.warn(e.getMessage(), HttpStatus.BAD_REQUEST, e);
-		return new ExceptionResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+		return handle(e, HttpStatus.BAD_REQUEST);
 	}
 
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(IllegalArgumentException.class)
-	public ExceptionResponse handleIllegalArgumentException(IllegalArgumentException e) {
+	public ProblemDetail handleIllegalArgumentException(IllegalArgumentException e) {
 		log.warn(e.getMessage(), HttpStatus.BAD_REQUEST, e);
-		return new ExceptionResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+		return handle(e, HttpStatus.BAD_REQUEST);
 	}
 
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	@ExceptionHandler(Exception.class)
-	public ExceptionResponse handleException(Exception e) {
-		log.warn(e.getMessage(), HttpStatus.BAD_REQUEST, e);
-		return new ExceptionResponse("Unexpected exception occurred", HttpStatus.INTERNAL_SERVER_ERROR.value());
+	public ProblemDetail handleException(Exception e) {
+		log.warn(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, e);
+		return handle(e, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	private ProblemDetail handle(Exception e, HttpStatus status) {
+		ProblemDetail problemDetail = ProblemDetail.forStatus(status);
+		problemDetail.setDetail(e.getMessage());
+
+		return problemDetail;
 	}
 }
