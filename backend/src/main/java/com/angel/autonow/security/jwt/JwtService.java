@@ -6,11 +6,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
 public class JwtService {
+
+	private static final String AUTHORITIES = "authorities";
 
 	@Value("${jwt.secret}")
 	private String secret;
@@ -18,16 +21,21 @@ public class JwtService {
 	@Value("${jwt.expiration}")
 	private long expiration;
 
-	public String generateToken(String email) {
+	public String generateToken(String email, Collection<String> authorities) {
 		Algorithm signHMAC256 = Algorithm.HMAC256(secret);
 
 		Date issuedAt = new Date();
 		Date expiresAt = new Date(System.currentTimeMillis() + expiration);
 
-		return JWT.create()
+		var builder = JWT.create()
 				.withSubject(email)
 				.withIssuedAt(issuedAt)
-				.withExpiresAt(expiresAt)
-				.sign(signHMAC256);
+				.withExpiresAt(expiresAt);
+
+		if (authorities != null && !authorities.isEmpty()) {
+			builder.withArrayClaim(AUTHORITIES, authorities.toArray(String[]::new));
+		}
+
+		return builder.sign(signHMAC256);
 	}
 }
