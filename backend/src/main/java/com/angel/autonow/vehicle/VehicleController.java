@@ -1,5 +1,6 @@
 package com.angel.autonow.vehicle;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,7 @@ public class VehicleController {
 	private final VehicleService vehicleService;
 
 	@PostMapping("/create")
-	public ResponseEntity<VehicleDTO> createVehicle(@RequestBody VehicleDTO vehicleDTO) {
+	public ResponseEntity<VehicleDTO> createVehicle(@RequestBody @Valid VehicleDTO vehicleDTO) {
 		return vehicleService.createVehicle(vehicleDTO)
 				.map(vehicle -> ResponseEntity.status(HttpStatus.CREATED).body(vehicle))
 				.orElse(ResponseEntity.badRequest().build());
