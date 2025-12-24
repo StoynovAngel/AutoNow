@@ -31,10 +31,10 @@ public class VehicleEntity {
 	private boolean airConditioning;
 
 	@Column(name = "number_of_seats")
-	private int numberOfSeats = 5;
+	private Integer numberOfSeats;
 
 	@Column(name = "trunk_capacity")
-	private double trunkCapacity;
+	private Double trunkCapacity;
 
 	@Column(name = "vehicle_type")
 	private VehicleType vehicleType;
