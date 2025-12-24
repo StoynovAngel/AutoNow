@@ -35,10 +35,21 @@ public class UserService {
 				.authorities(defaultAuthorities)
 				.build();
 
-		log.info("User created");
-
 		userRepository.save(newUser);
 
-		return jwtService.generateToken(email);
+		return jwtService.generateToken(email, newUser.getAuthorities());
+	}
+
+	public String login(UserRequestDTO request) {
+		String email = request.getEmail();
+		String password = request.getPassword();
+
+		UserEntity user = userRepository.findByEmail(email).orElseThrow(() -> new UserException("Invalid credentials"));
+
+		if (!passwordEncoder.matches(password, user.getPassword())) {
+			throw new UserException("Invalid credentials");
+		}
+
+		return jwtService.generateToken(email, user.getAuthorities());
 	}
 }
