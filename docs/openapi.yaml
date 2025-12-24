@@ -42,6 +42,78 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/ExceptionResponse'
+  /api/auth/register:
+    post:
+      tags:
+        - user-controller
+      operationId: register
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequestDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/JwtResponse'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+  /api/auth/login:
+    post:
+      tags:
+        - user-controller
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequestDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/JwtResponse'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
   /api/test:
     get:
       tags:
@@ -179,3 +251,17 @@ components:
       required:
         - brand
         - model
+    UserRequestDTO:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          pattern: '^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$'
+    JwtResponse:
+      type: object
+      properties:
+        token:
+          type: string
