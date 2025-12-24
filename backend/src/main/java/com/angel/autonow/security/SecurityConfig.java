@@ -10,6 +10,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
@@ -18,6 +20,9 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+
+	private static final String AUTHORITIES_CLAIM_NAME = "authorities";
+	private static final String AUTHORITY_PREFIX = "";
 
 	private final CustomUserDetailsService userDetailsService;
 
@@ -39,10 +44,22 @@ public class SecurityConfig {
 						.anyRequest().authenticated()
 				)
 				.oauth2ResourceServer(oauth -> oauth
-						.jwt(Customizer.withDefaults())
+						.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
 				)
 				.sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
 				.build();
+	}
+
+	@Bean
+	public JwtAuthenticationConverter jwtAuthenticationConverter() {
+		JwtGrantedAuthoritiesConverter delegate = new JwtGrantedAuthoritiesConverter();
+		delegate.setAuthoritiesClaimName(AUTHORITIES_CLAIM_NAME);
+		delegate.setAuthorityPrefix(AUTHORITY_PREFIX);
+
+		JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+		converter.setJwtGrantedAuthoritiesConverter(delegate);
+
+		return converter;
 	}
 
 	@Bean
