@@ -1,0 +1,62 @@
+name: 'Ollama Code Review'
+description: 'Automated code review using Ollama LLM'
+inputs:
+  llm-model:
+    description: 'Ollama model to use for review'
+    required: false
+    default: 'codegemma'
+  github-token:
+    description: 'GitHub token for API access'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install Ollama
+      shell: bash
+      run: |
+        curl -fsSL https://ollama.com/install.sh | sh
+
+    - name: Start Ollama service
+      shell: bash
+      run: |
+        ollama serve &
+        sleep 5
+
+    - name: Pull model
+      shell: bash
+      run: |
+        ollama pull ${{ inputs.llm-model }}
+
+    - name: Get PR diff
+      shell: bash
+      run: |
+        gh pr diff ${{ github.event.pull_request.number }} > pr_diff.txt
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+
+    - name: Review code with Ollama
+      shell: bash
+      run: |
+        PROMPT="You are a code reviewer. Review the following code changes and provide constructive feedback. Focus on:
+        - Code quality and best practices
+        - Potential bugs or issues
+        - Performance concerns
+        - Security vulnerabilities
+
+        Here are the changes:
+        $(cat pr_diff.txt)
+
+        Provide your review in a concise, helpful manner."
+
+        REVIEW=$(ollama run ${{ inputs.llm-model }} "$PROMPT")
+        echo "$REVIEW" > review.txt
+
+    - name: Post review comment
+      shell: bash
+      run: |
+        gh pr comment ${{ github.event.pull_request.number }} --body "## 🤖 Ollama Code Review
+
+        $(cat review.txt)"
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
