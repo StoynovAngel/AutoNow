@@ -5,13 +5,17 @@ on:
     branches:
       - main
 
+permissions:
+  pull-requests: write
+  contents: read
+
 jobs:
   ollama_review:
     runs-on: ubuntu-latest
     name: Ollama Code Review Job
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Ollama Code Review
         uses: ./.github/actions/ollama-code-review

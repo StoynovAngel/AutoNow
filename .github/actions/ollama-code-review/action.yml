@@ -31,26 +31,41 @@ runs:
     - name: Get PR diff
       shell: bash
       run: |
-        gh pr diff ${{ github.event.pull_request.number }} > pr_diff.txt
+        gh pr diff ${{ github.event.pull_request.number }} > pr_diff.txt || echo "Failed to get diff"
+        if [ ! -s pr_diff.txt ]; then
+          echo "No changes found in PR"
+          echo "No code changes to review." > pr_diff.txt
+        fi
+        echo "Diff size: $(wc -l < pr_diff.txt) lines"
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
 
     - name: Review code with Ollama
       shell: bash
       run: |
-        PROMPT="You are a code reviewer. Review the following code changes and provide constructive feedback. Focus on:
-        - Code quality and best practices
-        - Potential bugs or issues
-        - Performance concerns
-        - Security vulnerabilities
+        echo "Starting code review..."
 
-        Here are the changes:
-        $(cat pr_diff.txt)
+        DIFF_CONTENT=$(cat pr_diff.txt)
 
-        Provide your review in a concise, helpful manner."
+        if [ -z "$DIFF_CONTENT" ]; then
+          echo "No code changes to review" > review.txt
+          exit 0
+        fi
 
-        REVIEW=$(ollama run ${{ inputs.llm-model }} "$PROMPT")
-        echo "$REVIEW" > review.txt
+        PROMPT="You are an expert code reviewer. Review the following git diff and provide constructive feedback.
+        Focus on: code quality, potential bugs, performance, and security.
+        Be concise and specific. If the code looks good, say so briefly.
+
+        Git diff:
+        $DIFF_CONTENT"
+
+        echo "$PROMPT" | ollama run ${{ inputs.llm-model }} > review.txt 2>&1
+
+        if [ ! -s review.txt ]; then
+          echo "Review completed but no output generated." > review.txt
+        fi
+
+        echo "Review generated: $(wc -l < review.txt) lines"
 
     - name: Post review comment
       shell: bash
