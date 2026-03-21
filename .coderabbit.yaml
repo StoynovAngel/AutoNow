@@ -1,8 +1,13 @@
+language: "en"
+early_access: false
 reviews:
-  auto_review: false
-
-summaries:
-  enabled: true
-
-pr_description:
-  enabled: true
+  high_level_summary: true
+  poem: false
+  review_status: true
+  collapse_walkthrough: true
+  path_filters:
+    - "!**/.xml"
+    - "!**/.json"
+  auto_review:
+    enabled: false
+    drafts: false
