@@ -46,6 +46,7 @@ public class VehicleEntity {
 	private Double trunkCapacity;
 
 	@NotNull(message = "Vehicle type is required")
+	@Enumerated(EnumType.STRING)
 	@Column(name = "vehicle_type")
 	private VehicleType vehicleType;
 }
