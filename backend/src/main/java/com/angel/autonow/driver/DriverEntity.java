@@ -2,26 +2,16 @@ package com.angel.autonow.driver;
 
 import com.angel.autonow.expertise.ExpertiseType;
 import com.angel.autonow.vehicle.VehicleEntity;
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
+import org.hibernate.validator.constraints.URL;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.Set;
 
 @Data
@@ -29,67 +19,47 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "drivers")
+@Table(name = "driver")
 public class DriverEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@NotBlank(message = "First name is required")
 	@Column(name = "first_name", nullable = false)
 	private String firstName;
 
+	@NotBlank(message = "Last name is required")
 	@Column(name = "last_name", nullable = false)
 	private String lastName;
 
-	@Column(name = "phone_number", unique = true, nullable = false)
+	@NotBlank(message = "Phone number is required")
+	@Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "Phone number must be valid")
+	@Column(name = "phone_number", nullable = false)
 	private String phoneNumber;
 
+	@NotBlank(message = "License number is required")
 	@Column(name = "license_number", unique = true, nullable = false)
 	private String licenseNumber;
 
-	@ElementCollection
-	@CollectionTable(name = "driver_expertise", joinColumns = @JoinColumn(name = "driver_id"))
+	@NotNull(message = "Expertise type is required")
 	@Enumerated(EnumType.STRING)
-	@Column(name = "expertise_type")
-	private Set<ExpertiseType> expertise;
+	@Column(name = "expertise_type", nullable = false)
+	private ExpertiseType expertiseType;
 
-	@Column(name = "rating")
-	private Double rating;
+	@Column(name = "available")
+	private boolean available;
 
-	@Column(name = "total_rides")
-	private int totalRides;
+	@URL(message = "Image URL must be valid")
+	@Column(name = "image_url")
+	private String imageUrl;
 
-	@Column(name = "is_available")
-	private boolean isAvailable;
-
-	@Column(name = "current_latitude")
-	private Double currentLatitude;
-
-	@Column(name = "current_longitude")
-	private Double currentLongitude;
-
-	@ManyToOne
-	@JoinColumn(name = "vehicle_id")
-	private VehicleEntity vehicle;
-
-	@Column(name = "created_at", nullable = false, updatable = false)
-	private LocalDateTime createdAt;
-
-	@Column(name = "updated_at")
-	private LocalDateTime updatedAt;
-
-	@PrePersist
-	protected void onCreate() {
-		createdAt = LocalDateTime.now();
-		updatedAt = LocalDateTime.now();
-		if (rating == null) {
-			rating = 5.0;
-		}
-	}
-
-	@PreUpdate
-	protected void onUpdate() {
-		updatedAt = LocalDateTime.now();
-	}
+	@OneToMany
+	@JoinTable(
+		name = "driver_vehicles",
+		joinColumns = @JoinColumn(name = "driver_id"),
+		inverseJoinColumns = @JoinColumn(name = "vehicle_id")
+	)
+	private Set<VehicleEntity> vehicles;
 }
