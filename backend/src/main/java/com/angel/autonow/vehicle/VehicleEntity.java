@@ -1,10 +1,14 @@
 package com.angel.autonow.vehicle;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.URL;
 
 @Data
 @Entity
@@ -18,24 +22,30 @@ public class VehicleEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@NotBlank(message = "Brand is required")
 	@Column(name = "brand", nullable = false)
 	private String brand;
 
+	@NotBlank(message = "Model is required")
 	@Column(name = "model", nullable = false)
 	private String model;
 
+	@URL(message = "Image URL must be valid")
 	@Column(name = "image_url")
 	private String imageURL;
 
 	@Column(name = "air_conditioning")
 	private boolean airConditioning;
 
+	@Positive(message = "Number of seats must be positive")
 	@Column(name = "number_of_seats")
 	private Integer numberOfSeats;
 
+	@Positive(message = "Trunk capacity must be positive")
 	@Column(name = "trunk_capacity")
 	private Double trunkCapacity;
 
+	@NotNull(message = "Vehicle type is required")
 	@Column(name = "vehicle_type")
 	private VehicleType vehicleType;
 }
