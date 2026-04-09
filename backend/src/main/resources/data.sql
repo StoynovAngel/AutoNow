@@ -80,25 +80,31 @@ FROM users u WHERE u.email = 'jane.smith@example.com';
 -- Payments
 INSERT INTO payments (order_id, amount, payment_method, status, transaction_id, currency, created_at, updated_at)
 SELECT o.id, 16.00, 'CREDIT_CARD', 'COMPLETED', 'TXN-001-2024', 'EUR', NOW() - INTERVAL '7 days', NOW() - INTERVAL '7 days'
-FROM orders o WHERE o.pickup_address = '123 Main St, Sofia';
+FROM orders o JOIN users u ON o.user_id = u.id
+WHERE o.pickup_address = '123 Main St, Sofia' AND u.email = 'john.doe@example.com';
 
 INSERT INTO payments (order_id, amount, payment_method, status, transaction_id, currency, created_at, updated_at)
 SELECT o.id, 38.50, 'DEBIT_CARD', 'COMPLETED', 'TXN-002-2024', 'EUR', NOW() - INTERVAL '3 days', NOW() - INTERVAL '3 days'
-FROM orders o WHERE o.pickup_address = '789 Pine Rd, Sofia';
+FROM orders o JOIN users u ON o.user_id = u.id
+WHERE o.pickup_address = '789 Pine Rd, Sofia' AND u.email = 'john.doe@example.com';
 
 INSERT INTO payments (order_id, amount, payment_method, status, transaction_id, currency, created_at, updated_at)
 SELECT o.id, 22.00, 'CASH', 'COMPLETED', NULL, 'EUR', NOW() - INTERVAL '1 day', NOW() - INTERVAL '1 day'
-FROM orders o WHERE o.pickup_address = '555 Cedar Ln, Sofia';
+FROM orders o JOIN users u ON o.user_id = u.id
+WHERE o.pickup_address = '555 Cedar Ln, Sofia' AND u.email = 'jane.smith@example.com';
 
 -- Ratings
 INSERT INTO ratings (order_id, rating, comment, created_at)
 SELECT o.id, 5, 'Excellent service! Driver was very professional and the car was clean.', NOW() - INTERVAL '7 days'
-FROM orders o WHERE o.pickup_address = '123 Main St, Sofia';
+FROM orders o JOIN users u ON o.user_id = u.id
+WHERE o.pickup_address = '123 Main St, Sofia' AND u.email = 'john.doe@example.com';
 
 INSERT INTO ratings (order_id, rating, comment, created_at)
 SELECT o.id, 4, 'Great experience, arrived on time.', NOW() - INTERVAL '3 days'
-FROM orders o WHERE o.pickup_address = '789 Pine Rd, Sofia';
+FROM orders o JOIN users u ON o.user_id = u.id
+WHERE o.pickup_address = '789 Pine Rd, Sofia' AND u.email = 'john.doe@example.com';
 
 INSERT INTO ratings (order_id, rating, comment, created_at)
 SELECT o.id, 5, 'Very comfortable ride, would recommend!', NOW() - INTERVAL '1 day'
-FROM orders o WHERE o.pickup_address = '555 Cedar Ln, Sofia';
+FROM orders o JOIN users u ON o.user_id = u.id
+WHERE o.pickup_address = '555 Cedar Ln, Sofia' AND u.email = 'jane.smith@example.com';
