@@ -4,5 +4,11 @@ public enum Role {
 	ADMIN,
 	DRIVER,
 	CUSTOMER,
-	GUEST
+	GUEST;
+
+	private static final String ROLE_PREFIX = "ROLE_";
+
+	public String getAuthority() {
+		return ROLE_PREFIX + name();
+	}
 }

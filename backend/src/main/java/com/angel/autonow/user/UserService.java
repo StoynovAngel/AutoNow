@@ -1,6 +1,7 @@
 package com.angel.autonow.user;
 
 import com.angel.autonow.security.jwt.JwtService;
+import com.angel.autonow.user.role.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,13 +14,11 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class UserService {
 
-	private static final String USER_READ_AUTHORITY = "user.read";
-
 	private final UserRepository userRepository;
 	private final JwtService jwtService;
 	private final PasswordEncoder passwordEncoder;
 
-	private final Set<String> defaultAuthorities = Set.of(USER_READ_AUTHORITY);
+	private final Set<String> defaultAuthorities = Set.of(Role.CUSTOMER.getAuthority());
 
 	public String register(UserRequestDTO request) {
 		String email = request.getEmail();

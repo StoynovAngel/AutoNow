@@ -5,20 +5,41 @@ import com.angel.autonow.order.OrderStatus;
 import com.angel.autonow.rating.RatingEntity;
 import com.angel.autonow.rating.RatingRequestDTO;
 import com.angel.autonow.user.UserEntity;
+import com.angel.autonow.user.role.Role;
 import com.angel.autonow.vehicle.VehicleType;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
 import java.util.Set;
+
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 
 public final class TestData {
 
 	private TestData() {
 	}
 
+	public static RequestPostProcessor customerJwt() {
+		return jwt().authorities(new SimpleGrantedAuthority(Role.CUSTOMER.getAuthority()));
+	}
+
+	public static RequestPostProcessor adminJwt() {
+		return jwt().authorities(new SimpleGrantedAuthority(Role.ADMIN.getAuthority()));
+	}
+
+	public static RequestPostProcessor driverJwt() {
+		return jwt().authorities(new SimpleGrantedAuthority(Role.DRIVER.getAuthority()));
+	}
+
+	public static RequestPostProcessor guestJwt() {
+		return jwt().authorities(new SimpleGrantedAuthority(Role.GUEST.getAuthority()));
+	}
+
 	public static UserEntity createUserEntity() {
 		return UserEntity.builder()
 				.email("test@example.com")
 				.password("encodedPassword")
-				.authorities(Set.of("ROLE_USER"))
+				.authorities(Set.of(Role.CUSTOMER.getAuthority()))
 				.build();
 	}
 

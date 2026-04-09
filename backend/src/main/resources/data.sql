@@ -8,11 +8,11 @@ INSERT INTO users (email, password) VALUES
 INSERT INTO user_authorities (user_id, authorities)
 SELECT id, 'ROLE_ADMIN' FROM users WHERE email = 'admin@autonow.com';
 INSERT INTO user_authorities (user_id, authorities)
-SELECT id, 'ROLE_USER' FROM users WHERE email = 'admin@autonow.com';
+SELECT id, 'ROLE_CUSTOMER' FROM users WHERE email = 'admin@autonow.com';
 INSERT INTO user_authorities (user_id, authorities)
-SELECT id, 'ROLE_USER' FROM users WHERE email = 'john.doe@example.com';
+SELECT id, 'ROLE_CUSTOMER' FROM users WHERE email = 'john.doe@example.com';
 INSERT INTO user_authorities (user_id, authorities)
-SELECT id, 'ROLE_USER' FROM users WHERE email = 'jane.smith@example.com';
+SELECT id, 'ROLE_CUSTOMER' FROM users WHERE email = 'jane.smith@example.com';
 
 -- Vehicles
 INSERT INTO vehicle (brand, model, image_url, air_conditioning, number_of_seats, trunk_capacity, vehicle_type) VALUES
