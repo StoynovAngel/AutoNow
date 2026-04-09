@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jdk
+FROM eclipse-temurin:25.0.2_10-jdk
 
 WORKDIR /app
 COPY target/autonow-*.jar app.jar
