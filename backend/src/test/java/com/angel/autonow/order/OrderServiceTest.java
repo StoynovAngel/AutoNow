@@ -112,6 +112,42 @@ class OrderServiceTest {
 	}
 
 	@Test
+	void createOrder_driverNotFound_returnsEmpty() {
+		OrderRequestDTO request = new OrderRequestDTO(1L, NON_EXISTENT_ID, null, VehicleType.TAXI,
+				TestData.DEFAULT_PICKUP_ADDRESS, TestData.DEFAULT_PICKUP_LAT, TestData.DEFAULT_PICKUP_LNG,
+				TestData.DEFAULT_DROPOFF_ADDRESS, TestData.DEFAULT_DROPOFF_LAT, TestData.DEFAULT_DROPOFF_LNG,
+				15.50, 5.2, 15, null);
+		UserEntity user = UserEntity.builder().id(1L).build();
+
+		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+		when(orderMapper.toEntity(request)).thenReturn(OrderEntity.builder().vehicleType(VehicleType.TAXI).build());
+		when(driverRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
+
+		var result = orderService.createOrder(request);
+
+		assertTrue(result.isEmpty());
+		verify(orderRepository, never()).save(any());
+	}
+
+	@Test
+	void createOrder_vehicleNotFound_returnsEmpty() {
+		OrderRequestDTO request = new OrderRequestDTO(1L, null, NON_EXISTENT_ID, VehicleType.TAXI,
+				TestData.DEFAULT_PICKUP_ADDRESS, TestData.DEFAULT_PICKUP_LAT, TestData.DEFAULT_PICKUP_LNG,
+				TestData.DEFAULT_DROPOFF_ADDRESS, TestData.DEFAULT_DROPOFF_LAT, TestData.DEFAULT_DROPOFF_LNG,
+				15.50, 5.2, 15, null);
+		UserEntity user = UserEntity.builder().id(1L).build();
+
+		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+		when(orderMapper.toEntity(request)).thenReturn(OrderEntity.builder().vehicleType(VehicleType.TAXI).build());
+		when(vehicleRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
+
+		var result = orderService.createOrder(request);
+
+		assertTrue(result.isEmpty());
+		verify(orderRepository, never()).save(any());
+	}
+
+	@Test
 	void getOrderById_returnOrderResponse() {
 		UserEntity user = UserEntity.builder().id(1L).build();
 		OrderEntity entity = OrderEntity.builder().id(1L).user(user).status(OrderStatus.COMPLETED).createdAt(NOW).build();

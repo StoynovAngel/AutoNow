@@ -31,20 +31,32 @@ public class OrderService {
 		order.setUser(user.get());
 
 		if (request.driverId() != null) {
-			driverRepository.findById(request.driverId()).ifPresent(order::setDriver);
+			var driver = driverRepository.findById(request.driverId());
+
+			if (driver.isEmpty()) {
+				return Optional.empty();
+			}
+
+			order.setDriver(driver.get());
 		}
 
 		if (request.vehicleId() != null) {
-			vehicleRepository.findById(request.vehicleId()).ifPresent(order::setVehicle);
+			var vehicle = vehicleRepository.findById(request.vehicleId());
+
+			if (vehicle.isEmpty()) {
+				return Optional.empty();
+			}
+
+			order.setVehicle(vehicle.get());
 		}
 
 		OrderEntity saved = orderRepository.save(order);
+
 		return Optional.of(orderMapper.toDTO(saved));
 	}
 
 	public Optional<OrderResponseDTO> getOrderById(Long id) {
-		return orderRepository.findById(id)
-				.map(orderMapper::toDTO);
+		return orderRepository.findById(id).map(orderMapper::toDTO);
 	}
 
 	public List<OrderResponseDTO> getOrdersByUserId(Long userId) {
