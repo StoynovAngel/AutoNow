@@ -18,6 +18,9 @@ import com.angel.autonow.rating.RatingRequestDTO;
 import com.angel.autonow.rating.RatingResponseDTO;
 import com.angel.autonow.user.UserEntity;
 import com.angel.autonow.user.role.Role;
+import com.angel.autonow.vehicle.VehicleEntity;
+import com.angel.autonow.vehicle.VehicleRequestDTO;
+import com.angel.autonow.vehicle.VehicleResponseDTO;
 import com.angel.autonow.vehicle.VehicleType;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
@@ -116,6 +119,33 @@ public final class TestData {
 				.distanceKm(5.2)
 				.estimatedDurationMinutes(15)
 				.createdAt(createdAt)
+				.build();
+	}
+
+	public static VehicleRequestDTO createVehicleRequest() {
+		return new VehicleRequestDTO("Toyota", "Camry", null, true, 5, 450.0, VehicleType.TAXI);
+	}
+
+	public static VehicleEntity createVehicleEntity() {
+		return VehicleEntity.builder()
+				.brand("Toyota")
+				.model("Camry")
+				.airConditioning(true)
+				.numberOfSeats(5)
+				.trunkCapacity(450.0)
+				.vehicleType(VehicleType.TAXI)
+				.build();
+	}
+
+	public static VehicleResponseDTO createVehicleResponse(Long id) {
+		return VehicleResponseDTO.builder()
+				.id(id)
+				.brand("Toyota")
+				.model("Camry")
+				.airConditioning(true)
+				.numberOfSeats(5)
+				.trunkCapacity(450.0)
+				.vehicleType(VehicleType.TAXI)
 				.build();
 	}
 
