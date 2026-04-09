@@ -72,10 +72,22 @@ jobs:
             --type yaml
 
       - name: Commit and push docs
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           git diff --quiet && echo "No changes" && exit 0
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
+
+          BRANCH_NAME="docs/update-openapi-$(date +%s)"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH_NAME"
           git add docs/openapi.yaml
           git commit -m "Update API docs"
-          git push
+          git push origin "$BRANCH_NAME"
+
+          gh pr create \
+            --title "Update OpenAPI documentation" \
+            --body "Automated update of OpenAPI specification from main branch build." \
+            --base main \
+            --head "$BRANCH_NAME"
