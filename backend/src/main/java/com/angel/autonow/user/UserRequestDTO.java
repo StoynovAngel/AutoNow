@@ -2,18 +2,15 @@ package com.angel.autonow.user;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
-@Getter
-@RequiredArgsConstructor
-public class UserRequestDTO {
+public record UserRequestDTO(
 
-	private static final String PASSWORD_REGEX = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$";
+		@Email(message = "Email must be valid")
+		String email,
 
-	@Email
-	private final String email;
+		@Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$",
+				message = "Password must have at least 8 characters, one digit, one lowercase and one uppercase letter")
+		String password
+) {
 
-	@Pattern(regexp = PASSWORD_REGEX)
-	private final String password;
 }

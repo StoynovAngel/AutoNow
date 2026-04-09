@@ -5,11 +5,15 @@ import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -68,11 +72,38 @@ public class GlobalControllerExceptionHandler {
 		return handle(e, HttpStatus.BAD_REQUEST);
 	}
 
+	@ResponseStatus(HttpStatus.FORBIDDEN)
+	@ExceptionHandler(AuthorizationDeniedException.class)
+	public ProblemDetail handleAuthorizationDeniedException(AuthorizationDeniedException e) {
+		log.warn(e.getMessage(), HttpStatus.FORBIDDEN, e);
+		return handle(e, HttpStatus.FORBIDDEN);
+	}
+
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(IllegalArgumentException.class)
 	public ProblemDetail handleIllegalArgumentException(IllegalArgumentException e) {
 		log.warn(e.getMessage(), HttpStatus.BAD_REQUEST, e);
 		return handle(e, HttpStatus.BAD_REQUEST);
+	}
+
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(HttpMessageNotReadableException.class)
+	public ProblemDetail handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+		log.warn(e.getMessage(), HttpStatus.BAD_REQUEST, e);
+		return handle(e, HttpStatus.BAD_REQUEST);
+	}
+
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
+	public ProblemDetail handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
+		log.warn(e.getMessage(), HttpStatus.BAD_REQUEST, e);
+		return handle(e, HttpStatus.BAD_REQUEST);
+	}
+
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	@ExceptionHandler(NoResourceFoundException.class)
+	public ProblemDetail handleNoResourceFoundException(NoResourceFoundException e) {
+		return handle(e, HttpStatus.NOT_FOUND);
 	}
 
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
