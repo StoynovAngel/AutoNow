@@ -3,7 +3,7 @@ package com.angel.autonow.data;
 import com.angel.autonow.order.OrderEntity;
 import com.angel.autonow.order.OrderStatus;
 import com.angel.autonow.rating.RatingEntity;
-import com.angel.autonow.rating.RatingRequest;
+import com.angel.autonow.rating.RatingRequestDTO;
 import com.angel.autonow.user.UserEntity;
 import com.angel.autonow.vehicle.VehicleType;
 
@@ -44,11 +44,11 @@ public final class TestData {
 				.build();
 	}
 
-	public static RatingRequest createRatingRequest(Long orderId) {
-		return new RatingRequest(orderId, 5, "Excellent service!");
+	public static RatingRequestDTO createRatingRequest(Long orderId) {
+		return new RatingRequestDTO(orderId, 5, "Excellent service!");
 	}
 
-	public static RatingRequest createRatingRequest(Long orderId, int rating, String comment) {
-		return new RatingRequest(orderId, rating, comment);
+	public static RatingRequestDTO createRatingRequest(Long orderId, int rating, String comment) {
+		return new RatingRequestDTO(orderId, rating, comment);
 	}
 }
