@@ -5,6 +5,7 @@ import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -66,6 +67,13 @@ public class GlobalControllerExceptionHandler {
 	public ProblemDetail handleUserException(UserException e) {
 		log.warn(e.getMessage(), HttpStatus.BAD_REQUEST, e);
 		return handle(e, HttpStatus.BAD_REQUEST);
+	}
+
+	@ResponseStatus(HttpStatus.FORBIDDEN)
+	@ExceptionHandler(AuthorizationDeniedException.class)
+	public ProblemDetail handleAuthorizationDeniedException(AuthorizationDeniedException e) {
+		log.warn(e.getMessage(), HttpStatus.FORBIDDEN, e);
+		return handle(e, HttpStatus.FORBIDDEN);
 	}
 
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
