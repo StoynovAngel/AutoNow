@@ -5,7 +5,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -26,14 +31,14 @@ public class RatingController {
 
 	@GetMapping("/{id}")
 	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'DRIVER')")
-	public ResponseEntity<RatingResponseDTO> getRatingById(@PathVariable Long id) {
-		return ResponseEntity.ok(ratingService.getRatingById(id).orElse(null));
+	public RatingResponseDTO getRatingById(@PathVariable Long id) {
+		return ratingService.getRatingById(id).orElse(null);
 	}
 
 	@GetMapping("/order/{orderId}")
 	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'DRIVER')")
-	public ResponseEntity<RatingResponseDTO> getRatingByOrderId(@PathVariable Long orderId) {
-		return ResponseEntity.ok(ratingService.getRatingByOrderId(orderId).orElse(null));
+	public RatingResponseDTO getRatingByOrderId(@PathVariable Long orderId) {
+		return ratingService.getRatingByOrderId(orderId).orElse(null);
 	}
 
 	@GetMapping
