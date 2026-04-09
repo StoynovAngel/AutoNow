@@ -21,8 +21,8 @@ public class UserService {
 	private final Set<String> defaultAuthorities = Set.of(Role.CUSTOMER.getAuthority());
 
 	public String register(UserRequestDTO request) {
-		String email = request.getEmail();
-		String password = request.getPassword();
+		String email = request.email();
+		String password = request.password();
 
 		if (userRepository.findByEmail(email).isPresent()) {
 			throw new UserException("Account with this email already exists.");
@@ -40,8 +40,8 @@ public class UserService {
 	}
 
 	public String login(UserRequestDTO request) {
-		String email = request.getEmail();
-		String password = request.getPassword();
+		String email = request.email();
+		String password = request.password();
 
 		UserEntity user = userRepository.findByEmail(email).orElseThrow(() -> new UserException("Invalid credentials"));
 
