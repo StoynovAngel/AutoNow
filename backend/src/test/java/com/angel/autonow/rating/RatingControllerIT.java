@@ -16,6 +16,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.angel.autonow.data.TestData.NON_EXISTENT_ID;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -54,7 +55,7 @@ class RatingControllerIT {
 
 	@Test
 	void createRating() throws Exception {
-		RatingRequestDTO request = TestData.createRatingRequest(order.getId());
+		var request = TestData.createRatingRequest(order.getId());
 
 		mockMvc.perform(post("/api/ratings")
 						.with(TestData.customerJwt())
@@ -71,7 +72,7 @@ class RatingControllerIT {
 
 	@Test
 	void createRating_asAdmin() throws Exception {
-		RatingRequestDTO request = TestData.createRatingRequest(order.getId());
+		var request = TestData.createRatingRequest(order.getId());
 
 		mockMvc.perform(post("/api/ratings")
 						.with(TestData.adminJwt())
@@ -82,7 +83,7 @@ class RatingControllerIT {
 
 	@Test
 	void createRating_asDriver_returnsForbidden() throws Exception {
-		RatingRequestDTO request = TestData.createRatingRequest(order.getId());
+		var request = TestData.createRatingRequest(order.getId());
 
 		mockMvc.perform(post("/api/ratings")
 						.with(TestData.driverJwt())
@@ -93,7 +94,7 @@ class RatingControllerIT {
 
 	@Test
 	void createRating_asGuest_returnsForbidden() throws Exception {
-		RatingRequestDTO request = TestData.createRatingRequest(order.getId());
+		var request = TestData.createRatingRequest(order.getId());
 
 		mockMvc.perform(post("/api/ratings")
 						.with(TestData.guestJwt())
@@ -104,7 +105,7 @@ class RatingControllerIT {
 
 	@Test
 	void createRating_invalidInput_returnsBadRequest() throws Exception {
-		RatingRequestDTO invalidRequest = new RatingRequestDTO(null, null, null);
+		var invalidRequest = new RatingRequestDTO(null, null, null);
 
 		mockMvc.perform(post("/api/ratings")
 						.with(TestData.customerJwt())
@@ -115,7 +116,7 @@ class RatingControllerIT {
 
 	@Test
 	void createRating_ratingOutOfRange_returnsBadRequest() throws Exception {
-		RatingRequestDTO invalidRequest = TestData.createRatingRequest(order.getId(), 6, null);
+		var invalidRequest = TestData.createRatingRequest(order.getId(), 6, null);
 
 		mockMvc.perform(post("/api/ratings")
 						.with(TestData.customerJwt())
@@ -126,7 +127,7 @@ class RatingControllerIT {
 
 	@Test
 	void createRating_orderNotFound_returnsBadRequest() throws Exception {
-		RatingRequestDTO request = TestData.createRatingRequest(999L);
+		var request = TestData.createRatingRequest(NON_EXISTENT_ID);
 
 		mockMvc.perform(post("/api/ratings")
 						.with(TestData.customerJwt())
@@ -137,7 +138,7 @@ class RatingControllerIT {
 
 	@Test
 	void createRating_withoutAuth_returnsUnauthorized() throws Exception {
-		RatingRequestDTO request = TestData.createRatingRequest(order.getId());
+		var request = TestData.createRatingRequest(order.getId());
 
 		mockMvc.perform(post("/api/ratings")
 						.contentType(MediaType.APPLICATION_JSON)
@@ -147,7 +148,7 @@ class RatingControllerIT {
 
 	@Test
 	void getRatingById() throws Exception {
-		RatingEntity rating = TestData.createRatingEntity(order, 4, "Good ride");
+		var rating = TestData.createRatingEntity(order, 4, "Good ride");
 		ratingRepository.save(rating);
 
 		mockMvc.perform(get("/api/ratings/{id}", rating.getId())
@@ -159,7 +160,7 @@ class RatingControllerIT {
 
 	@Test
 	void getRatingById_asGuest_returnsForbidden() throws Exception {
-		RatingEntity rating = TestData.createRatingEntity(order, 4, "Good ride");
+		var rating = TestData.createRatingEntity(order, 4, "Good ride");
 		ratingRepository.save(rating);
 
 		mockMvc.perform(get("/api/ratings/{id}", rating.getId())
@@ -169,7 +170,7 @@ class RatingControllerIT {
 
 	@Test
 	void getRatingById_notFound_returnsOkEmpty() throws Exception {
-		mockMvc.perform(get("/api/ratings/{id}", 999L)
+		mockMvc.perform(get("/api/ratings/{id}", NON_EXISTENT_ID)
 						.with(TestData.customerJwt()))
 				.andExpect(status().isOk())
 				.andExpect(content().string(""));
@@ -177,7 +178,7 @@ class RatingControllerIT {
 
 	@Test
 	void getRatingByOrderId() throws Exception {
-		RatingEntity rating = TestData.createRatingEntity(order, 3, "OK");
+		var rating = TestData.createRatingEntity(order, 3, "OK");
 		ratingRepository.save(rating);
 
 		mockMvc.perform(get("/api/ratings/order/{orderId}", order.getId())
@@ -189,7 +190,7 @@ class RatingControllerIT {
 
 	@Test
 	void getRatingByOrderId_notFound_returnsOkEmpty() throws Exception {
-		mockMvc.perform(get("/api/ratings/order/{orderId}", 999L)
+		mockMvc.perform(get("/api/ratings/order/{orderId}", NON_EXISTENT_ID)
 						.with(TestData.customerJwt()))
 				.andExpect(status().isOk())
 				.andExpect(content().string(""));
@@ -197,7 +198,7 @@ class RatingControllerIT {
 
 	@Test
 	void getAllRatings() throws Exception {
-		RatingEntity rating = TestData.createRatingEntity(order, 5, null);
+		var rating = TestData.createRatingEntity(order, 5, null);
 		ratingRepository.save(rating);
 
 		mockMvc.perform(get("/api/ratings")

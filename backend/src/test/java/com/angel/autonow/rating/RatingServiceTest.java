@@ -1,5 +1,6 @@
 package com.angel.autonow.rating;
 
+import com.angel.autonow.data.TestData;
 import com.angel.autonow.order.OrderEntity;
 import com.angel.autonow.order.OrderRepository;
 import org.junit.jupiter.api.Test;
@@ -12,12 +13,15 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static com.angel.autonow.data.TestData.NON_EXISTENT_ID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class RatingServiceTest {
+
+	private static final LocalDateTime NOW = LocalDateTime.now();
 
 	@Mock
 	private RatingRepository ratingRepository;
@@ -33,44 +37,32 @@ class RatingServiceTest {
 
 	@Test
 	void createRating_returnRatingResponse() {
-		RatingRequestDTO request = new RatingRequestDTO(1L, 5, "Great!");
+		RatingRequestDTO request = TestData.createRatingRequest(1L);
 		OrderEntity order = OrderEntity.builder().id(1L).build();
-
-		RatingEntity entity = RatingEntity.builder()
-				.rating(5)
-				.comment("Great!")
-				.build();
-
-		RatingEntity saved = RatingEntity.builder()
-				.id(1L)
-				.order(order)
-				.rating(5)
-				.comment("Great!")
-				.createdAt(LocalDateTime.now())
-				.build();
-
-		RatingResponseDTO response = new RatingResponseDTO(1L, 1L, 5, "Great!", saved.getCreatedAt());
+		RatingEntity entity = RatingEntity.builder().rating(5).comment("Excellent service!").build();
+		RatingEntity saved = RatingEntity.builder().id(1L).order(order).rating(5).comment("Excellent service!").createdAt(NOW).build();
+		RatingResponseDTO response = TestData.createRatingResponse(1L, 1L, 5, "Excellent service!", NOW);
 
 		when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
 		when(ratingMapper.toEntity(request)).thenReturn(entity);
 		when(ratingRepository.save(entity)).thenReturn(saved);
 		when(ratingMapper.toDTO(saved)).thenReturn(response);
 
-		Optional<RatingResponseDTO> result = ratingService.createRating(request);
+		var result = ratingService.createRating(request);
 
 		assertTrue(result.isPresent());
 		assertEquals(1L, result.get().id());
 		assertEquals(5, result.get().rating());
-		assertEquals("Great!", result.get().comment());
+		assertEquals("Excellent service!", result.get().comment());
 	}
 
 	@Test
 	void createRating_orderNotFound_returnsEmpty() {
-		RatingRequestDTO request = new RatingRequestDTO(99L, 5, "Great!");
+		RatingRequestDTO request = TestData.createRatingRequest(NON_EXISTENT_ID);
 
-		when(orderRepository.findById(99L)).thenReturn(Optional.empty());
+		when(orderRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
 
-		Optional<RatingResponseDTO> result = ratingService.createRating(request);
+		var result = ratingService.createRating(request);
 
 		assertTrue(result.isEmpty());
 		verify(ratingRepository, never()).save(any());
@@ -79,13 +71,13 @@ class RatingServiceTest {
 	@Test
 	void getRatingById_returnRatingResponse() {
 		OrderEntity order = OrderEntity.builder().id(1L).build();
-		RatingEntity entity = RatingEntity.builder().id(1L).order(order).rating(4).comment("Good").createdAt(LocalDateTime.now()).build();
-		RatingResponseDTO response = new RatingResponseDTO(1L, 1L, 4, "Good", entity.getCreatedAt());
+		RatingEntity entity = RatingEntity.builder().id(1L).order(order).rating(4).comment("Good").createdAt(NOW).build();
+		RatingResponseDTO response = TestData.createRatingResponse(1L, 1L, 4, "Good", NOW);
 
 		when(ratingRepository.findById(1L)).thenReturn(Optional.of(entity));
 		when(ratingMapper.toDTO(entity)).thenReturn(response);
 
-		Optional<RatingResponseDTO> result = ratingService.getRatingById(1L);
+		var result = ratingService.getRatingById(1L);
 
 		assertTrue(result.isPresent());
 		assertEquals(4, result.get().rating());
@@ -93,9 +85,9 @@ class RatingServiceTest {
 
 	@Test
 	void getRatingById_notFound_returnsEmpty() {
-		when(ratingRepository.findById(99L)).thenReturn(Optional.empty());
+		when(ratingRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
 
-		Optional<RatingResponseDTO> result = ratingService.getRatingById(99L);
+		var result = ratingService.getRatingById(NON_EXISTENT_ID);
 
 		assertTrue(result.isEmpty());
 	}
@@ -103,13 +95,13 @@ class RatingServiceTest {
 	@Test
 	void getRatingByOrderId_returnRatingResponse() {
 		OrderEntity order = OrderEntity.builder().id(1L).build();
-		RatingEntity entity = RatingEntity.builder().id(1L).order(order).rating(3).comment("OK").createdAt(LocalDateTime.now()).build();
-		RatingResponseDTO response = new RatingResponseDTO(1L, 1L, 3, "OK", entity.getCreatedAt());
+		RatingEntity entity = RatingEntity.builder().id(1L).order(order).rating(3).comment("OK").createdAt(NOW).build();
+		RatingResponseDTO response = TestData.createRatingResponse(1L, 1L, 3, "OK", NOW);
 
 		when(ratingRepository.findByOrderId(1L)).thenReturn(Optional.of(entity));
 		when(ratingMapper.toDTO(entity)).thenReturn(response);
 
-		Optional<RatingResponseDTO> result = ratingService.getRatingByOrderId(1L);
+		var result = ratingService.getRatingByOrderId(1L);
 
 		assertTrue(result.isPresent());
 		assertEquals(3, result.get().rating());
@@ -117,29 +109,27 @@ class RatingServiceTest {
 
 	@Test
 	void getRatingByOrderId_notFound_returnsEmpty() {
-		when(ratingRepository.findByOrderId(99L)).thenReturn(Optional.empty());
+		when(ratingRepository.findByOrderId(NON_EXISTENT_ID)).thenReturn(Optional.empty());
 
-		Optional<RatingResponseDTO> result = ratingService.getRatingByOrderId(99L);
+		var result = ratingService.getRatingByOrderId(NON_EXISTENT_ID);
 
 		assertTrue(result.isEmpty());
 	}
 
 	@Test
 	void getAllRatings_returnList() {
-		OrderEntity order1 = OrderEntity.builder().id(1L).build();
-		OrderEntity order2 = OrderEntity.builder().id(2L).build();
+		OrderEntity firstOrder = OrderEntity.builder().id(1L).build();
+		OrderEntity secondOrder = OrderEntity.builder().id(2L).build();
+		RatingEntity firstRating = RatingEntity.builder().id(1L).order(firstOrder).rating(5).createdAt(NOW).build();
+		RatingEntity secondRating = RatingEntity.builder().id(2L).order(secondOrder).rating(3).createdAt(NOW).build();
+		RatingResponseDTO firstResponse = TestData.createRatingResponse(1L, 1L, 5, null, NOW);
+		RatingResponseDTO secondResponse = TestData.createRatingResponse(2L, 2L, 3, null, NOW);
 
-		RatingEntity e1 = RatingEntity.builder().id(1L).order(order1).rating(5).createdAt(LocalDateTime.now()).build();
-		RatingEntity e2 = RatingEntity.builder().id(2L).order(order2).rating(3).createdAt(LocalDateTime.now()).build();
+		when(ratingRepository.findAll()).thenReturn(List.of(firstRating, secondRating));
+		when(ratingMapper.toDTO(firstRating)).thenReturn(firstResponse);
+		when(ratingMapper.toDTO(secondRating)).thenReturn(secondResponse);
 
-		RatingResponseDTO r1 = new RatingResponseDTO(1L, 1L, 5, null, e1.getCreatedAt());
-		RatingResponseDTO r2 = new RatingResponseDTO(2L, 2L, 3, null, e2.getCreatedAt());
-
-		when(ratingRepository.findAll()).thenReturn(List.of(e1, e2));
-		when(ratingMapper.toDTO(e1)).thenReturn(r1);
-		when(ratingMapper.toDTO(e2)).thenReturn(r2);
-
-		List<RatingResponseDTO> result = ratingService.getAllRatings();
+		var result = ratingService.getAllRatings();
 
 		assertEquals(2, result.size());
 	}
@@ -147,7 +137,9 @@ class RatingServiceTest {
 	@Test
 	void getAllRatings_emptyList() {
 		when(ratingRepository.findAll()).thenReturn(List.of());
-		List<RatingResponseDTO> result = ratingService.getAllRatings();
+
+		var result = ratingService.getAllRatings();
+
 		assertTrue(result.isEmpty());
 	}
 }
