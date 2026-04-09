@@ -72,6 +72,21 @@ class PaymentServiceTest {
 	}
 
 	@Test
+	void createPayment_duplicateForOrder_returnsEmpty() {
+		OrderEntity order = OrderEntity.builder().id(1L).build();
+		PaymentEntity existing = PaymentEntity.builder().id(1L).order(order).build();
+		PaymentRequestDTO request = TestData.createPaymentRequest(1L);
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+		when(paymentRepository.findByOrderId(1L)).thenReturn(Optional.of(existing));
+
+		var result = paymentService.createPayment(request);
+
+		assertTrue(result.isEmpty());
+		verify(paymentRepository, never()).save(any());
+	}
+
+	@Test
 	void getPaymentById_returnPaymentResponse() {
 		OrderEntity order = OrderEntity.builder().id(1L).build();
 		PaymentEntity entity = PaymentEntity.builder().id(1L).order(order).amount(16.00).createdAt(NOW).build();

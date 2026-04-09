@@ -4,6 +4,7 @@ import com.angel.autonow.order.OrderEntity;
 import com.angel.autonow.order.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +17,7 @@ public class RatingService {
 	private final RatingMapper ratingMapper;
 	private final OrderRepository orderRepository;
 
+	@Transactional
 	public Optional<RatingResponseDTO> createRating(RatingRequestDTO request) {
 		Optional<OrderEntity> order = orderRepository.findById(request.orderId());
 

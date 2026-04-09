@@ -6,6 +6,7 @@ import com.angel.autonow.user.UserRepository;
 import com.angel.autonow.vehicle.VehicleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +21,7 @@ public class OrderService {
 	private final DriverRepository driverRepository;
 	private final VehicleRepository vehicleRepository;
 
+	@Transactional
 	public Optional<OrderResponseDTO> createOrder(OrderRequestDTO request) {
 		Optional<UserEntity> user = userRepository.findById(request.userId());
 

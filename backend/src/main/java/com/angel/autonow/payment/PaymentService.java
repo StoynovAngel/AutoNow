@@ -4,6 +4,7 @@ import com.angel.autonow.order.OrderEntity;
 import com.angel.autonow.order.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,10 +17,15 @@ public class PaymentService {
 	private final PaymentMapper paymentMapper;
 	private final OrderRepository orderRepository;
 
+	@Transactional
 	public Optional<PaymentResponseDTO> createPayment(PaymentRequestDTO request) {
 		Optional<OrderEntity> order = orderRepository.findById(request.orderId());
 
 		if (order.isEmpty()) {
+			return Optional.empty();
+		}
+
+		if (paymentRepository.findByOrderId(request.orderId()).isPresent()) {
 			return Optional.empty();
 		}
 
