@@ -1,6 +1,7 @@
 package com.angel.autonow.company;
 
 import com.angel.autonow.data.TestData;
+import com.angel.autonow.security.jwt.JwtService;
 import com.angel.autonow.user.UserEntity;
 import com.angel.autonow.user.UserRepository;
 import com.angel.autonow.user.role.Role;
@@ -18,6 +19,7 @@ import java.util.Set;
 import static com.angel.autonow.data.TestData.NON_EXISTENT_ID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,6 +33,9 @@ class CompanyServiceTest {
 
 	@Mock
 	private UserRepository userRepository;
+
+	@Mock
+	private JwtService jwtService;
 
 	@InjectMocks
 	private CompanyService companyService;
@@ -54,7 +59,7 @@ class CompanyServiceTest {
 	}
 
 	@Test
-	void joinCompany_returnTrue() {
+	void joinCompany_returnToken() {
 		CompanyEntity company = CompanyEntity.builder().id(1L).build();
 		UserEntity user = UserEntity.builder()
 				.id(1L)
@@ -64,34 +69,36 @@ class CompanyServiceTest {
 
 		when(companyRepository.findById(1L)).thenReturn(Optional.of(company));
 		when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(user));
+		when(jwtService.generateToken(eq("test@example.com"), any())).thenReturn("new-jwt-token");
 
 		var result = companyService.joinCompany(1L, "test@example.com");
 
-		assertTrue(result);
+		assertTrue(result.isPresent());
+		assertEquals("new-jwt-token", result.get());
 		assertEquals(company, user.getCompany());
 		assertTrue(user.getAuthorities().contains(Role.COMPANY_ADMIN.getAuthority()));
 		verify(userRepository).save(user);
 	}
 
 	@Test
-	void joinCompany_companyNotFound_returnFalse() {
+	void joinCompany_companyNotFound_returnsEmpty() {
 		when(companyRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
 		when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(UserEntity.builder().build()));
 
 		var result = companyService.joinCompany(NON_EXISTENT_ID, "test@example.com");
 
-		assertFalse(result);
+		assertTrue(result.isEmpty());
 		verify(userRepository, never()).save(any());
 	}
 
 	@Test
-	void joinCompany_userNotFound_returnFalse() {
+	void joinCompany_userNotFound_returnsEmpty() {
 		when(companyRepository.findById(1L)).thenReturn(Optional.of(CompanyEntity.builder().build()));
 		when(userRepository.findByEmail("invalid@example.com")).thenReturn(Optional.empty());
 
 		var result = companyService.joinCompany(1L, "invalid@example.com");
 
-		assertFalse(result);
+		assertTrue(result.isEmpty());
 		verify(userRepository, never()).save(any());
 	}
 

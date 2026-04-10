@@ -1,5 +1,6 @@
 package com.angel.autonow.company;
 
+import com.angel.autonow.security.jwt.JwtService;
 import com.angel.autonow.user.UserEntity;
 import com.angel.autonow.user.UserRepository;
 import com.angel.autonow.user.role.Role;
@@ -17,6 +18,7 @@ public class CompanyService {
 	private final CompanyRepository companyRepository;
 	private final CompanyMapper companyMapper;
 	private final UserRepository userRepository;
+	private final JwtService jwtService;
 
 	@Transactional
 	public Optional<CompanyResponseDTO> createCompany(CompanyRequestDTO request) {
@@ -26,12 +28,12 @@ public class CompanyService {
 	}
 
 	@Transactional
-	public boolean joinCompany(Long companyId, String userEmail) {
+	public Optional<String> joinCompany(Long companyId, String userEmail) {
 		Optional<CompanyEntity> companyOpt = companyRepository.findById(companyId);
 		Optional<UserEntity> userOpt = userRepository.findByEmail(userEmail);
 
 		if (companyOpt.isEmpty() || userOpt.isEmpty()) {
-			return false;
+			return Optional.empty();
 		}
 
 		UserEntity user = userOpt.get();
@@ -39,7 +41,8 @@ public class CompanyService {
 		user.getAuthorities().add(Role.COMPANY_ADMIN.getAuthority());
 		userRepository.save(user);
 
-		return true;
+		String token = jwtService.generateToken(user.getEmail(), user.getAuthorities());
+		return Optional.of(token);
 	}
 
 	public Optional<CompanyResponseDTO> getCompanyById(Long id) {

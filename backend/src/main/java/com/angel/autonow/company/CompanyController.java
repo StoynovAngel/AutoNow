@@ -1,5 +1,6 @@
 package com.angel.autonow.company;
 
+import com.angel.autonow.security.jwt.JwtResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -34,10 +35,10 @@ public class CompanyController {
 
 	@PostMapping("/{id}/join")
 	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'COMPANY_ADMIN')")
-	public ResponseEntity<Void> joinCompany(@PathVariable Long id, Authentication authentication) {
+	public ResponseEntity<JwtResponse> joinCompany(@PathVariable Long id, Authentication authentication) {
 		return companyService.joinCompany(id, authentication.getName())
-				? ResponseEntity.ok().build()
-				: ResponseEntity.badRequest().build();
+				.map(token -> ResponseEntity.ok(new JwtResponse(token)))
+				.orElse(ResponseEntity.badRequest().build());
 	}
 
 	@GetMapping("/{id}")
