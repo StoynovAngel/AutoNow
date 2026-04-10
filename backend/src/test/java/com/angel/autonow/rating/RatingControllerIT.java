@@ -107,7 +107,7 @@ class RatingControllerIT {
 
 	@Test
 	void createRating_invalidInput_returnsBadRequest() throws Exception {
-		var invalidRequest = new RatingRequestDTO(null, null, null);
+		var invalidRequest = RatingRequestDTO.builder().build();
 
 		mockMvc.perform(post("/api/ratings")
 						.with(TestData.customerJwt())
@@ -272,7 +272,7 @@ class RatingControllerIT {
 		var rating = TestData.createRatingEntity(order, 3, "OK");
 		ratingRepository.save(rating);
 
-		var invalidRequest = new RatingRequestDTO(null, null, null);
+		var invalidRequest = RatingRequestDTO.builder().build();
 
 		mockMvc.perform(put("/api/ratings/{id}", rating.getId())
 						.with(TestData.customerJwt())

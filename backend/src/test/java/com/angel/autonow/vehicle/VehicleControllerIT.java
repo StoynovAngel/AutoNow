@@ -62,7 +62,7 @@ class VehicleControllerIT {
 
 	@Test
 	void createVehicle_invalidInput_returnsBadRequest() throws Exception {
-		var invalidRequest = new VehicleRequestDTO(null, null, null, false, null, null, null);
+		var invalidRequest = VehicleRequestDTO.builder().build();
 
 		mockMvc.perform(post("/api/vehicles")
 						.with(TestData.adminJwt())
@@ -132,7 +132,14 @@ class VehicleControllerIT {
 		var vehicle = TestData.createVehicleEntity();
 		vehicleRepository.save(vehicle);
 
-		var updateRequest = new VehicleRequestDTO("Honda", "Civic", null, false, 4, 380.0, VehicleType.TAXI);
+		var updateRequest = VehicleRequestDTO.builder()
+				.brand("Honda")
+				.model("Civic")
+				.airConditioning(false)
+				.numberOfSeats(4)
+				.trunkCapacity(380.0)
+				.vehicleType(VehicleType.TAXI)
+				.build();
 
 		mockMvc.perform(put("/api/vehicles/{id}", vehicle.getId())
 						.with(TestData.adminJwt())
@@ -160,7 +167,7 @@ class VehicleControllerIT {
 		var vehicle = TestData.createVehicleEntity();
 		vehicleRepository.save(vehicle);
 
-		var invalidRequest = new VehicleRequestDTO(null, null, null, false, null, null, null);
+		var invalidRequest = VehicleRequestDTO.builder().build();
 
 		mockMvc.perform(put("/api/vehicles/{id}", vehicle.getId())
 						.with(TestData.adminJwt())

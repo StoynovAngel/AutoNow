@@ -86,7 +86,7 @@ class PaymentControllerIT {
 
 	@Test
 	void createPayment_invalidInput_returnsBadRequest() throws Exception {
-		var invalidRequest = new PaymentRequestDTO(null, null, null, null, null);
+		var invalidRequest = PaymentRequestDTO.builder().build();
 
 		mockMvc.perform(post("/api/payments")
 						.with(TestData.customerJwt())
@@ -177,7 +177,13 @@ class PaymentControllerIT {
 		PaymentEntity payment = TestData.createPaymentEntity(order, 16.00, PaymentMethod.CREDIT_CARD, PaymentStatus.PENDING);
 		paymentRepository.save(payment);
 
-		var updateRequest = new PaymentRequestDTO(order.getId(), 25.00, PaymentMethod.DEBIT_CARD, "TXN-UPD-001", "EUR");
+		var updateRequest = PaymentRequestDTO.builder()
+				.orderId(order.getId())
+				.amount(25.00)
+				.paymentMethod(PaymentMethod.DEBIT_CARD)
+				.transactionId("TXN-UPD-001")
+				.currency("EUR")
+				.build();
 
 		mockMvc.perform(put("/api/payments/{id}", payment.getId())
 						.with(TestData.customerJwt())
@@ -204,7 +210,7 @@ class PaymentControllerIT {
 		PaymentEntity payment = TestData.createPaymentEntity(order, 16.00, PaymentMethod.CREDIT_CARD, PaymentStatus.PENDING);
 		paymentRepository.save(payment);
 
-		var invalidRequest = new PaymentRequestDTO(null, null, null, null, null);
+		var invalidRequest = PaymentRequestDTO.builder().build();
 
 		mockMvc.perform(put("/api/payments/{id}", payment.getId())
 						.with(TestData.customerJwt())

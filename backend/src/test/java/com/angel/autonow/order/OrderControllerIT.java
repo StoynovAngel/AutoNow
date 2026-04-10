@@ -78,7 +78,7 @@ class OrderControllerIT {
 
 	@Test
 	void createOrder_invalidInput_returnsBadRequest() throws Exception {
-		var invalidRequest = new OrderRequestDTO(null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+		var invalidRequest = OrderRequestDTO.builder().build();
 
 		mockMvc.perform(post("/api/orders")
 						.with(TestData.customerJwt())
@@ -178,9 +178,20 @@ class OrderControllerIT {
 		var order = TestData.createOrderEntity(user);
 		orderRepository.save(order);
 
-		var updateRequest = new OrderRequestDTO(user.getId(), null, null, VehicleType.SEMI,
-				"789 Elm St", 42.70, 23.33, "101 Pine Rd", 42.72, 23.34,
-				25.00, 10.5, 20, "Fragile cargo");
+		var updateRequest = OrderRequestDTO.builder()
+				.userId(user.getId())
+				.vehicleType(VehicleType.SEMI)
+				.pickupAddress("789 Elm St")
+				.pickupLatitude(42.70)
+				.pickupLongitude(23.33)
+				.dropoffAddress("101 Pine Rd")
+				.dropoffLatitude(42.72)
+				.dropoffLongitude(23.34)
+				.estimatedPrice(25.00)
+				.distanceKm(10.5)
+				.estimatedDurationMinutes(20)
+				.specialRequirements("Fragile cargo")
+				.build();
 
 		mockMvc.perform(put("/api/orders/{id}", order.getId())
 						.with(TestData.customerJwt())
@@ -208,7 +219,7 @@ class OrderControllerIT {
 		var order = TestData.createOrderEntity(user);
 		orderRepository.save(order);
 
-		var invalidRequest = new OrderRequestDTO(null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+		var invalidRequest = OrderRequestDTO.builder().build();
 
 		mockMvc.perform(put("/api/orders/{id}", order.getId())
 						.with(TestData.customerJwt())

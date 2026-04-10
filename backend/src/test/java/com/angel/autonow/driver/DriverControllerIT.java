@@ -64,7 +64,7 @@ class DriverControllerIT {
 
 	@Test
 	void createDriver_invalidInput_returnsBadRequest() throws Exception {
-		var invalidRequest = new DriverRequestDTO(null, null, null, null, null, false, null);
+		var invalidRequest = DriverRequestDTO.builder().build();
 
 		mockMvc.perform(post("/api/drivers")
 						.with(TestData.adminJwt())
@@ -152,7 +152,14 @@ class DriverControllerIT {
 		var driver = TestData.createDriverEntity();
 		driverRepository.save(driver);
 
-		var updateRequest = new DriverRequestDTO("Jane", "Smith", "+9876543210", "DL-UPD-001", ExpertiseType.C, false, null);
+		var updateRequest = DriverRequestDTO.builder()
+				.firstName("Jane")
+				.lastName("Smith")
+				.phoneNumber("+9876543210")
+				.licenseNumber("DL-UPD-001")
+				.expertiseType(ExpertiseType.C)
+				.available(false)
+				.build();
 
 		mockMvc.perform(put("/api/drivers/{id}", driver.getId())
 						.with(TestData.adminJwt())
@@ -181,15 +188,7 @@ class DriverControllerIT {
 		var driver = TestData.createDriverEntity();
 		driverRepository.save(driver);
 
-		var invalidRequest = new DriverRequestDTO(
-				null,
-				null,
-				null,
-				null,
-				null,
-				false,
-				null
-		);
+		var invalidRequest = DriverRequestDTO.builder().build();
 
 		mockMvc.perform(put("/api/drivers/{id}", driver.getId())
 						.with(TestData.adminJwt())
