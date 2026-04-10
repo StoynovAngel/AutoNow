@@ -22,5 +22,8 @@ public record CompanyRequestDTO(
 		@Email(message = "Email must be valid")
 		String email,
 
-		String logoUrl
+		String logoUrl,
+
+		@jakarta.validation.constraints.Size(max = 1000, message = "Description must not exceed 1000 characters")
+		String description
 ) { }

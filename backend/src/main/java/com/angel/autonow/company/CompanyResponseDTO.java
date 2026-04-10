@@ -12,6 +12,7 @@ public record CompanyResponseDTO(
 		String phone,
 		String email,
 		String logoUrl,
+		String description,
 		LocalDateTime createdAt,
 		LocalDateTime updatedAt
 ) {

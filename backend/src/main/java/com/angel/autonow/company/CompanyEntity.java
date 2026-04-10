@@ -53,6 +53,14 @@ public class CompanyEntity {
 	@Column(name = "logo_url")
 	private String logoUrl;
 
+	@Column(name = "description", length = 1000)
+	private String description;
+
+	@NotNull(message = "Company type is required")
+	@Enumerated(EnumType.STRING)
+	@Column(name = "company_type", nullable = false)
+	private CompanyType companyType;
+
 	@Column(name = "created_at", nullable = false, updatable = false)
 	private LocalDateTime createdAt;
 
