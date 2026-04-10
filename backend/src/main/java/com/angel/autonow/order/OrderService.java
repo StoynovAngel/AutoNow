@@ -1,8 +1,10 @@
 package com.angel.autonow.order;
 
+import com.angel.autonow.driver.DriverEntity;
 import com.angel.autonow.driver.DriverRepository;
 import com.angel.autonow.user.UserEntity;
 import com.angel.autonow.user.UserRepository;
+import com.angel.autonow.vehicle.VehicleEntity;
 import com.angel.autonow.vehicle.VehicleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -81,35 +83,38 @@ public class OrderService {
 			return Optional.empty();
 		}
 
-		OrderEntity order = existing.get();
-		orderMapper.updateEntity(request, order);
-
 		Optional<UserEntity> user = userRepository.findById(request.userId());
 		if (user.isEmpty()) {
 			return Optional.empty();
 		}
 
+		DriverEntity driver = null;
+		if (request.driverId() != null) {
+			var driverOpt = driverRepository.findById(request.driverId());
+
+			if (driverOpt.isEmpty()) {
+				return Optional.empty();
+			}
+
+			driver = driverOpt.get();
+		}
+
+		VehicleEntity vehicle = null;
+		if (request.vehicleId() != null) {
+			var vehicleOpt = vehicleRepository.findById(request.vehicleId());
+
+			if (vehicleOpt.isEmpty()) {
+				return Optional.empty();
+			}
+
+			vehicle = vehicleOpt.get();
+		}
+
+		OrderEntity order = existing.get();
+		orderMapper.updateEntity(request, order);
 		order.setUser(user.get());
-
-		if (request.driverId() == null) {
-			order.setDriver(null);
-		} else {
-			var driver = driverRepository.findById(request.driverId());
-			if (driver.isEmpty()) {
-				return Optional.empty();
-			}
-			order.setDriver(driver.get());
-		}
-
-		if (request.vehicleId() == null) {
-			order.setVehicle(null);
-		} else {
-			var vehicle = vehicleRepository.findById(request.vehicleId());
-			if (vehicle.isEmpty()) {
-				return Optional.empty();
-			}
-			order.setVehicle(vehicle.get());
-		}
+		order.setDriver(driver);
+		order.setVehicle(vehicle);
 
 		return Optional.of(orderMapper.toDTO(orderRepository.save(order)));
 	}
