@@ -14,6 +14,18 @@ SELECT id, 'ROLE_CUSTOMER' FROM users WHERE email = 'john.doe@example.com';
 INSERT INTO user_authorities (user_id, authorities)
 SELECT id, 'ROLE_CUSTOMER' FROM users WHERE email = 'jane.smith@example.com';
 
+-- Companies
+INSERT INTO company (name, address, phone, email, description, company_type, created_at, updated_at) VALUES
+    ('AutoNow Fleet Services', '100 Business Park Blvd, Sofia', '+3590888123456', 'fleet@autonow.com', 'Premium taxi and logistics services in Sofia', 'TAXI', NOW(), NOW()),
+    ('MedTransport BG', '25 Hospital St, Sofia', '+3590888654321', 'info@medtransport.bg', 'Specialized ambulance and medical transport', 'AMBULANCE', NOW(), NOW());
+
+-- Link admin user to company and add COMPANY_ADMIN authority
+UPDATE users SET company_id = (SELECT id FROM company WHERE email = 'fleet@autonow.com')
+WHERE email = 'admin@autonow.com';
+
+INSERT INTO user_authorities (user_id, authorities)
+SELECT id, 'ROLE_COMPANY_ADMIN' FROM users WHERE email = 'admin@autonow.com';
+
 -- Vehicles
 INSERT INTO vehicle (brand, model, image_url, air_conditioning, number_of_seats, trunk_capacity, vehicle_type) VALUES
     ('Toyota', 'Camry', 'https://example.com/images/camry.jpg', true, 5, 450.0, 'TAXI'),
@@ -23,6 +35,13 @@ INSERT INTO vehicle (brand, model, image_url, air_conditioning, number_of_seats,
     ('Skoda', 'Octavia', 'https://example.com/images/octavia.jpg', true, 5, 530.0, 'TAXI'),
     ('Volkswagen', 'Passat', 'https://example.com/images/passat.jpg', true, 5, 480.0, 'TAXI');
 
+-- Assign vehicles to companies
+UPDATE vehicle SET company_id = (SELECT id FROM company WHERE email = 'fleet@autonow.com')
+WHERE brand IN ('Toyota', 'Honda', 'Skoda', 'Volkswagen');
+
+UPDATE vehicle SET company_id = (SELECT id FROM company WHERE email = 'info@medtransport.bg')
+WHERE brand = 'Mercedes';
+
 -- Drivers
 INSERT INTO driver (first_name, last_name, phone_number, license_number, expertise_type, available, image_url) VALUES
     ('Michael', 'Johnson', '+1234567890', 'DL-001-2024', 'B', true, 'https://example.com/images/driver1.jpg'),
@@ -30,6 +49,13 @@ INSERT INTO driver (first_name, last_name, phone_number, license_number, experti
     ('David', 'Brown', '+1234567892', 'DL-003-2024', 'C', true, 'https://example.com/images/driver3.jpg'),
     ('Emily', 'Davis', '+1234567893', 'DL-004-2024', 'CE', false, 'https://example.com/images/driver4.jpg'),
     ('Robert', 'Miller', '+1234567894', 'DL-005-2024', 'B', true, 'https://example.com/images/driver5.jpg');
+
+-- Assign drivers to companies
+UPDATE driver SET company_id = (SELECT id FROM company WHERE email = 'fleet@autonow.com')
+WHERE license_number IN ('DL-001-2024', 'DL-002-2024', 'DL-005-2024');
+
+UPDATE driver SET company_id = (SELECT id FROM company WHERE email = 'info@medtransport.bg')
+WHERE license_number = 'DL-004-2024';
 
 -- Assign vehicles to drivers
 INSERT INTO driver_vehicles (driver_id, vehicle_id)
