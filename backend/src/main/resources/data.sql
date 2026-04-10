@@ -37,10 +37,13 @@ INSERT INTO vehicle (brand, model, image_url, air_conditioning, number_of_seats,
 
 -- Assign vehicles to companies
 UPDATE vehicle SET company_id = (SELECT id FROM company WHERE email = 'fleet@autonow.com')
-WHERE brand IN ('Toyota', 'Honda', 'Skoda', 'Volkswagen');
+WHERE (brand = 'Toyota' AND model = 'Camry')
+   OR (brand = 'Honda' AND model = 'CR-V')
+   OR (brand = 'Skoda' AND model = 'Octavia')
+   OR (brand = 'Volkswagen' AND model = 'Passat');
 
 UPDATE vehicle SET company_id = (SELECT id FROM company WHERE email = 'info@medtransport.bg')
-WHERE brand = 'Mercedes';
+WHERE brand = 'Mercedes' AND model = 'Sprinter';
 
 -- Drivers
 INSERT INTO driver (first_name, last_name, phone_number, license_number, expertise_type, available, image_url) VALUES
