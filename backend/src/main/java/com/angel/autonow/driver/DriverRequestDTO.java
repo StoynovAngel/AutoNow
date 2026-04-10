@@ -27,7 +27,9 @@ public record DriverRequestDTO(
 
 		boolean available,
 
-		String imageUrl
+		String imageUrl,
+
+		Long companyId
 ) {
 
 }

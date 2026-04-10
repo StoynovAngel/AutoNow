@@ -25,7 +25,9 @@ public record VehicleRequestDTO(
 		Double trunkCapacity,
 
 		@NotNull(message = "Vehicle type is required")
-		VehicleType vehicleType
+		VehicleType vehicleType,
+
+		Long companyId
 ) {
 
 }

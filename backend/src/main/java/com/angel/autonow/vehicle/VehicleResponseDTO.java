@@ -11,7 +11,8 @@ public record VehicleResponseDTO(
 		boolean airConditioning,
 		Integer numberOfSeats,
 		Double trunkCapacity,
-		VehicleType vehicleType
+		VehicleType vehicleType,
+		Long companyId
 ) {
 
 }
