@@ -3,6 +3,7 @@ package com.angel.autonow.driver;
 import com.angel.autonow.vehicle.VehicleEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 
 import java.util.Collections;
@@ -18,6 +19,10 @@ public interface DriverMapper {
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "vehicles", ignore = true)
 	DriverEntity toEntity(DriverRequestDTO request);
+
+	@Mapping(target = "id", ignore = true)
+	@Mapping(target = "vehicles", ignore = true)
+	void updateEntity(DriverRequestDTO request, @MappingTarget DriverEntity entity);
 
 	@Named("vehiclesToIds")
 	default Set<Long> vehiclesToIds(Set<VehicleEntity> vehicles) {

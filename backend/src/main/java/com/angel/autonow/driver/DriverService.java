@@ -2,6 +2,7 @@ package com.angel.autonow.driver;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,5 +32,23 @@ public class DriverService {
 		return driverRepository.findAll().stream()
 				.map(driverMapper::toDTO)
 				.toList();
+	}
+
+	@Transactional
+	public Optional<DriverResponseDTO> updateDriver(Long id, DriverRequestDTO request) {
+		return driverRepository.findById(id).map(driver -> {
+			driverMapper.updateEntity(request, driver);
+			return driverMapper.toDTO(driverRepository.save(driver));
+		});
+	}
+
+	public boolean deleteDriver(Long id) {
+		if (!driverRepository.existsById(id)) {
+			return false;
+		}
+
+		driverRepository.deleteById(id);
+
+		return true;
 	}
 }
