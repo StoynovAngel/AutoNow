@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -25,10 +24,11 @@ public class VehicleController {
 	private final VehicleService vehicleService;
 
 	@PostMapping
-	@ResponseStatus(HttpStatus.CREATED)
-	@PreAuthorize("hasRole('ADMIN')")
-	public VehicleResponseDTO createVehicle(@Valid @RequestBody VehicleRequestDTO request) {
-		return vehicleService.createVehicle(request);
+	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN')")
+	public ResponseEntity<VehicleResponseDTO> createVehicle(@Valid @RequestBody VehicleRequestDTO request) {
+		return vehicleService.createVehicle(request)
+				.map(vehicle -> ResponseEntity.status(HttpStatus.CREATED).body(vehicle))
+				.orElse(ResponseEntity.badRequest().build());
 	}
 
 	@GetMapping("/{id}")
@@ -43,8 +43,14 @@ public class VehicleController {
 		return vehicleService.getAllVehicles();
 	}
 
+	@GetMapping("/company/{companyId}")
+	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN')")
+	public List<VehicleResponseDTO> getVehiclesByCompanyId(@PathVariable Long companyId) {
+		return vehicleService.getVehiclesByCompanyId(companyId);
+	}
+
 	@PutMapping("/{id}")
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN')")
 	public ResponseEntity<VehicleResponseDTO> updateVehicle(@PathVariable Long id, @Valid @RequestBody VehicleRequestDTO request) {
 		return vehicleService.updateVehicle(id, request)
 				.map(ResponseEntity::ok)
@@ -52,7 +58,7 @@ public class VehicleController {
 	}
 
 	@DeleteMapping("/{id}")
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN')")
 	public ResponseEntity<Void> deleteVehicle(@PathVariable Long id) {
 		return vehicleService.deleteVehicle(id)
 				? ResponseEntity.noContent().build()

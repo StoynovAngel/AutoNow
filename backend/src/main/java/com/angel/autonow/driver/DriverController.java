@@ -24,7 +24,7 @@ public class DriverController {
 	private final DriverService driverService;
 
 	@PostMapping
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN')")
 	public ResponseEntity<DriverResponseDTO> createDriver(@Valid @RequestBody DriverRequestDTO request) {
 		return driverService.createDriver(request)
 				.map(driver -> ResponseEntity.status(HttpStatus.CREATED).body(driver))
@@ -49,8 +49,14 @@ public class DriverController {
 		return driverService.getAllDrivers();
 	}
 
+	@GetMapping("/company/{companyId}")
+	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN')")
+	public List<DriverResponseDTO> getDriversByCompanyId(@PathVariable Long companyId) {
+		return driverService.getDriversByCompanyId(companyId);
+	}
+
 	@PutMapping("/{id}")
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN')")
 	public ResponseEntity<DriverResponseDTO> updateDriver(@PathVariable Long id, @Valid @RequestBody DriverRequestDTO request) {
 		return driverService.updateDriver(id, request)
 				.map(ResponseEntity::ok)
@@ -58,7 +64,7 @@ public class DriverController {
 	}
 
 	@DeleteMapping("/{id}")
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN')")
 	public ResponseEntity<Void> deleteDriver(@PathVariable Long id) {
 		return driverService.deleteDriver(id)
 				? ResponseEntity.noContent().build()
