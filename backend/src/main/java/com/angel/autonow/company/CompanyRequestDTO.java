@@ -2,7 +2,9 @@ package com.angel.autonow.company;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
 
 @Builder
@@ -24,6 +26,9 @@ public record CompanyRequestDTO(
 
 		String logoUrl,
 
-		@jakarta.validation.constraints.Size(max = 1000, message = "Description must not exceed 1000 characters")
-		String description
+		@Size(max = 1000, message = "Description must not exceed 1000 characters")
+		String description,
+
+		@NotNull(message = "Company type is required")
+		CompanyType companyType
 ) { }
