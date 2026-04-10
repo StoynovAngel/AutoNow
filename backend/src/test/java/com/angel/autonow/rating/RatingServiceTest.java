@@ -142,4 +142,72 @@ class RatingServiceTest {
 
 		assertTrue(result.isEmpty());
 	}
+
+	@Test
+	void updateRating_returnUpdatedResponse() {
+		RatingRequestDTO request = TestData.createRatingRequest(1L, 4, "Updated comment");
+		OrderEntity order = OrderEntity.builder().id(1L).build();
+		RatingEntity existing = RatingEntity.builder().id(1L).order(order).rating(3).comment("OK").createdAt(NOW).build();
+		RatingEntity saved = RatingEntity.builder().id(1L).order(order).rating(4).comment("Updated comment").createdAt(NOW).build();
+		RatingResponseDTO response = TestData.createRatingResponse(1L, 1L, 4, "Updated comment", NOW);
+
+		when(ratingRepository.findById(1L)).thenReturn(Optional.of(existing));
+		when(ratingRepository.save(existing)).thenReturn(saved);
+		when(ratingMapper.toDTO(saved)).thenReturn(response);
+
+		var result = ratingService.updateRating(1L, request);
+
+		assertTrue(result.isPresent());
+		assertEquals(4, result.get().rating());
+		assertEquals("Updated comment", result.get().comment());
+		verify(ratingMapper).updateEntity(request, existing);
+		verify(ratingRepository).save(existing);
+	}
+
+	@Test
+	void updateRating_notFound_returnsEmpty() {
+		RatingRequestDTO request = TestData.createRatingRequest(1L);
+
+		when(ratingRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
+
+		var result = ratingService.updateRating(NON_EXISTENT_ID, request);
+
+		assertTrue(result.isEmpty());
+		verify(ratingRepository, never()).save(any());
+	}
+
+	@Test
+	void updateRating_orderNotFound_returnsEmpty() {
+		RatingRequestDTO request = TestData.createRatingRequest(2L);
+		OrderEntity order = OrderEntity.builder().id(1L).build();
+		RatingEntity existing = RatingEntity.builder().id(1L).order(order).rating(3).createdAt(NOW).build();
+
+		when(ratingRepository.findById(1L)).thenReturn(Optional.of(existing));
+		when(orderRepository.findById(2L)).thenReturn(Optional.empty());
+
+		var result = ratingService.updateRating(1L, request);
+
+		assertTrue(result.isEmpty());
+		verify(ratingRepository, never()).save(any());
+	}
+
+	@Test
+	void deleteRating_returnTrue() {
+		when(ratingRepository.existsById(1L)).thenReturn(true);
+
+		var result = ratingService.deleteRating(1L);
+
+		assertTrue(result);
+		verify(ratingRepository).deleteById(1L);
+	}
+
+	@Test
+	void deleteRating_notFound_returnFalse() {
+		when(ratingRepository.existsById(NON_EXISTENT_ID)).thenReturn(false);
+
+		var result = ratingService.deleteRating(NON_EXISTENT_ID);
+
+		assertFalse(result);
+		verify(ratingRepository, never()).deleteById(any());
+	}
 }

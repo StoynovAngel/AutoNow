@@ -94,4 +94,55 @@ class VehicleServiceTest {
 
 		assertTrue(result.isEmpty());
 	}
+
+	@Test
+	void updateVehicle_returnUpdatedResponse() {
+		VehicleRequestDTO request = TestData.createVehicleRequest();
+		VehicleEntity existing = VehicleEntity.builder().id(1L).brand("Toyota").build();
+		VehicleEntity saved = VehicleEntity.builder().id(1L).brand("Toyota").build();
+		VehicleResponseDTO response = TestData.createVehicleResponse(1L);
+
+		when(vehicleRepository.findById(1L)).thenReturn(Optional.of(existing));
+		when(vehicleRepository.save(existing)).thenReturn(saved);
+		when(vehicleMapper.toDTO(saved)).thenReturn(response);
+
+		var result = vehicleService.updateVehicle(1L, request);
+
+		assertTrue(result.isPresent());
+		assertEquals(1L, result.get().id());
+		verify(vehicleMapper).updateEntity(request, existing);
+		verify(vehicleRepository).save(existing);
+	}
+
+	@Test
+	void updateVehicle_notFound_returnsEmpty() {
+		VehicleRequestDTO request = TestData.createVehicleRequest();
+
+		when(vehicleRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
+
+		var result = vehicleService.updateVehicle(NON_EXISTENT_ID, request);
+
+		assertTrue(result.isEmpty());
+		verify(vehicleRepository, never()).save(any());
+	}
+
+	@Test
+	void deleteVehicle_returnTrue() {
+		when(vehicleRepository.existsById(1L)).thenReturn(true);
+
+		var result = vehicleService.deleteVehicle(1L);
+
+		assertTrue(result);
+		verify(vehicleRepository).deleteById(1L);
+	}
+
+	@Test
+	void deleteVehicle_notFound_returnFalse() {
+		when(vehicleRepository.existsById(NON_EXISTENT_ID)).thenReturn(false);
+
+		var result = vehicleService.deleteVehicle(NON_EXISTENT_ID);
+
+		assertFalse(result);
+		verify(vehicleRepository, never()).deleteById(any());
+	}
 }

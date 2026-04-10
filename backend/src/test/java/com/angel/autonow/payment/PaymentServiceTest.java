@@ -61,7 +61,12 @@ class PaymentServiceTest {
 
 	@Test
 	void createPayment_orderNotFound_returnsEmpty() {
-		PaymentRequestDTO request = new PaymentRequestDTO(NON_EXISTENT_ID, 16.00, PaymentMethod.CASH, null, "EUR");
+		PaymentRequestDTO request = PaymentRequestDTO.builder()
+				.orderId(NON_EXISTENT_ID)
+				.amount(16.00)
+				.paymentMethod(PaymentMethod.CASH)
+				.currency("EUR")
+				.build();
 
 		when(orderRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
 
@@ -159,5 +164,69 @@ class PaymentServiceTest {
 		var result = paymentService.getAllPayments();
 
 		assertTrue(result.isEmpty());
+	}
+
+	@Test
+	void updatePayment_returnUpdatedResponse() {
+		PaymentRequestDTO request = TestData.createPaymentRequest(1L);
+		OrderEntity order = OrderEntity.builder().id(1L).build();
+		PaymentEntity existing = PaymentEntity.builder().id(1L).order(order).amount(16.00).createdAt(NOW).build();
+		PaymentEntity saved = PaymentEntity.builder().id(1L).order(order).amount(16.00).createdAt(NOW).build();
+		PaymentResponseDTO response = TestData.createPaymentResponse(1L, 1L, 16.00, PaymentMethod.CREDIT_CARD, PaymentStatus.PENDING, NOW);
+
+		when(paymentRepository.findById(1L)).thenReturn(Optional.of(existing));
+		when(paymentRepository.save(existing)).thenReturn(saved);
+		when(paymentMapper.toDTO(saved)).thenReturn(response);
+
+		var result = paymentService.updatePayment(1L, request);
+
+		assertTrue(result.isPresent());
+		assertEquals(1L, result.get().id());
+		verify(paymentMapper).updateEntity(request, existing);
+		verify(paymentRepository).save(existing);
+	}
+
+	@Test
+	void updatePayment_notFound_returnsEmpty() {
+		PaymentRequestDTO request = TestData.createPaymentRequest(1L);
+
+		when(paymentRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
+
+		var result = paymentService.updatePayment(NON_EXISTENT_ID, request);
+
+		assertTrue(result.isEmpty());
+	}
+
+	@Test
+	void updatePayment_orderNotFound_returnsEmpty() {
+		PaymentRequestDTO request = TestData.createPaymentRequest(2L);
+		OrderEntity order = OrderEntity.builder().id(1L).build();
+		PaymentEntity existing = PaymentEntity.builder().id(1L).order(order).amount(16.00).createdAt(NOW).build();
+
+		when(paymentRepository.findById(1L)).thenReturn(Optional.of(existing));
+		when(orderRepository.findById(2L)).thenReturn(Optional.empty());
+
+		var result = paymentService.updatePayment(1L, request);
+
+		assertTrue(result.isEmpty());
+	}
+
+	@Test
+	void deletePayment_returnTrue() {
+		when(paymentRepository.existsById(1L)).thenReturn(true);
+
+		var result = paymentService.deletePayment(1L);
+
+		assertTrue(result);
+		verify(paymentRepository).deleteById(1L);
+	}
+
+	@Test
+	void deletePayment_notFound_returnFalse() {
+		when(paymentRepository.existsById(NON_EXISTENT_ID)).thenReturn(false);
+
+		var result = paymentService.deletePayment(NON_EXISTENT_ID);
+
+		assertFalse(result);
 	}
 }
