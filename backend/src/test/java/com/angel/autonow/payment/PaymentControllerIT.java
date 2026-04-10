@@ -19,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import static com.angel.autonow.data.TestData.NON_EXISTENT_ID;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @Transactional
@@ -167,6 +169,98 @@ class PaymentControllerIT {
 	@Test
 	void getAllPayments_withoutAuth_returnsUnauthorized() throws Exception {
 		mockMvc.perform(get("/api/payments"))
+				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	void updatePayment_asCustomer() throws Exception {
+		PaymentEntity payment = TestData.createPaymentEntity(order, 16.00, PaymentMethod.CREDIT_CARD, PaymentStatus.PENDING);
+		paymentRepository.save(payment);
+
+		var updateRequest = new PaymentRequestDTO(order.getId(), 25.00, PaymentMethod.DEBIT_CARD, "TXN-UPD-001", "EUR");
+
+		mockMvc.perform(put("/api/payments/{id}", payment.getId())
+						.with(TestData.customerJwt())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(updateRequest)))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.amount").value(25.00))
+				.andExpect(jsonPath("$.paymentMethod").value("DEBIT_CARD"));
+	}
+
+	@Test
+	void updatePayment_notFound_returnsBadRequest() throws Exception {
+		var updateRequest = TestData.createPaymentRequest(order.getId());
+
+		mockMvc.perform(put("/api/payments/{id}", NON_EXISTENT_ID)
+						.with(TestData.customerJwt())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(updateRequest)))
+				.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void updatePayment_invalidInput_returnsBadRequest() throws Exception {
+		PaymentEntity payment = TestData.createPaymentEntity(order, 16.00, PaymentMethod.CREDIT_CARD, PaymentStatus.PENDING);
+		paymentRepository.save(payment);
+
+		var invalidRequest = new PaymentRequestDTO(null, null, null, null, null);
+
+		mockMvc.perform(put("/api/payments/{id}", payment.getId())
+						.with(TestData.customerJwt())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(invalidRequest)))
+				.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void updatePayment_asDriver_returnsForbidden() throws Exception {
+		var updateRequest = TestData.createPaymentRequest(order.getId());
+
+		mockMvc.perform(put("/api/payments/{id}", 1L)
+						.with(TestData.driverJwt())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(updateRequest)))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	void updatePayment_withoutAuth_returnsUnauthorized() throws Exception {
+		var updateRequest = TestData.createPaymentRequest(order.getId());
+
+		mockMvc.perform(put("/api/payments/{id}", 1L)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(updateRequest)))
+				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	void deletePayment_asAdmin() throws Exception {
+		PaymentEntity payment = TestData.createPaymentEntity(order, 16.00, PaymentMethod.CASH, PaymentStatus.PENDING);
+		paymentRepository.save(payment);
+
+		mockMvc.perform(delete("/api/payments/{id}", payment.getId())
+						.with(TestData.adminJwt()))
+				.andExpect(status().isNoContent());
+	}
+
+	@Test
+	void deletePayment_notFound_returnsBadRequest() throws Exception {
+		mockMvc.perform(delete("/api/payments/{id}", NON_EXISTENT_ID)
+						.with(TestData.adminJwt()))
+				.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void deletePayment_asCustomer_returnsForbidden() throws Exception {
+		mockMvc.perform(delete("/api/payments/{id}", 1L)
+						.with(TestData.customerJwt()))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	void deletePayment_withoutAuth_returnsUnauthorized() throws Exception {
+		mockMvc.perform(delete("/api/payments/{id}", 1L))
 				.andExpect(status().isUnauthorized());
 	}
 }
