@@ -1,9 +1,11 @@
 package com.angel.autonow.company;
 
+import com.angel.autonow.driver.DriverRepository;
 import com.angel.autonow.security.jwt.JwtService;
 import com.angel.autonow.user.UserEntity;
 import com.angel.autonow.user.UserRepository;
 import com.angel.autonow.user.role.Role;
+import com.angel.autonow.vehicle.VehicleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +21,8 @@ public class CompanyService {
 	private final CompanyMapper companyMapper;
 	private final UserRepository userRepository;
 	private final JwtService jwtService;
+	private final DriverRepository driverRepository;
+	private final VehicleRepository vehicleRepository;
 
 	@Transactional
 	public Optional<CompanyResponseDTO> createCompany(CompanyRequestDTO request) {
@@ -79,6 +83,14 @@ public class CompanyService {
 
 	public boolean deleteCompany(Long id) {
 		if (!companyRepository.existsById(id)) {
+			return false;
+		}
+
+		boolean hasDependents = userRepository.existsByCompanyId(id)
+				|| driverRepository.existsByCompanyId(id)
+				|| vehicleRepository.existsByCompanyId(id);
+
+		if (hasDependents) {
 			return false;
 		}
 

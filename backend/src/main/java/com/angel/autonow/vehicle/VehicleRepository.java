@@ -9,4 +9,6 @@ import java.util.List;
 public interface VehicleRepository extends JpaRepository<VehicleEntity, Long> {
 
 	List<VehicleEntity> findByCompanyId(Long companyId);
+
+	boolean existsByCompanyId(Long companyId);
 }

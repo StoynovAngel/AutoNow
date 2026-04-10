@@ -1,10 +1,12 @@
 package com.angel.autonow.company;
 
 import com.angel.autonow.data.TestData;
+import com.angel.autonow.driver.DriverRepository;
 import com.angel.autonow.security.jwt.JwtService;
 import com.angel.autonow.user.UserEntity;
 import com.angel.autonow.user.UserRepository;
 import com.angel.autonow.user.role.Role;
+import com.angel.autonow.vehicle.VehicleRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -36,6 +38,12 @@ class CompanyServiceTest {
 
 	@Mock
 	private JwtService jwtService;
+
+	@Mock
+	private DriverRepository driverRepository;
+
+	@Mock
+	private VehicleRepository vehicleRepository;
 
 	@InjectMocks
 	private CompanyService companyService;
@@ -249,6 +257,9 @@ class CompanyServiceTest {
 	@Test
 	void deleteCompany_returnTrue() {
 		when(companyRepository.existsById(1L)).thenReturn(true);
+		when(userRepository.existsByCompanyId(1L)).thenReturn(false);
+		when(driverRepository.existsByCompanyId(1L)).thenReturn(false);
+		when(vehicleRepository.existsByCompanyId(1L)).thenReturn(false);
 
 		var result = companyService.deleteCompany(1L);
 
@@ -261,6 +272,17 @@ class CompanyServiceTest {
 		when(companyRepository.existsById(NON_EXISTENT_ID)).thenReturn(false);
 
 		var result = companyService.deleteCompany(NON_EXISTENT_ID);
+
+		assertFalse(result);
+		verify(companyRepository, never()).deleteById(any());
+	}
+
+	@Test
+	void deleteCompany_hasDependents_returnFalse() {
+		when(companyRepository.existsById(1L)).thenReturn(true);
+		when(userRepository.existsByCompanyId(1L)).thenReturn(true);
+
+		var result = companyService.deleteCompany(1L);
 
 		assertFalse(result);
 		verify(companyRepository, never()).deleteById(any());
