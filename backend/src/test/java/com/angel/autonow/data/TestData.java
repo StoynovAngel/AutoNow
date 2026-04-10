@@ -1,5 +1,9 @@
 package com.angel.autonow.data;
 
+import com.angel.autonow.company.CompanyEntity;
+import com.angel.autonow.company.CompanyRequestDTO;
+import com.angel.autonow.company.CompanyResponseDTO;
+import com.angel.autonow.company.CompanyType;
 import com.angel.autonow.driver.DriverEntity;
 import com.angel.autonow.driver.DriverRequestDTO;
 import com.angel.autonow.driver.DriverResponseDTO;
@@ -62,6 +66,10 @@ public final class TestData {
 		return jwt().authorities(new SimpleGrantedAuthority(Role.GUEST.getAuthority()));
 	}
 
+	public static RequestPostProcessor companyAdminJwt() {
+		return jwt().authorities(new SimpleGrantedAuthority(Role.COMPANY_ADMIN.getAuthority()));
+	}
+
 	public static UserEntity createUserEntity() {
 		return UserEntity.builder()
 				.email("test@example.com")
@@ -85,22 +93,19 @@ public final class TestData {
 	}
 
 	public static OrderRequestDTO createOrderRequest(Long userId) {
-		return new OrderRequestDTO(
-				userId,
-				null,
-				null,
-				VehicleType.TAXI,
-				DEFAULT_PICKUP_ADDRESS,
-				DEFAULT_PICKUP_LAT,
-				DEFAULT_PICKUP_LNG,
-				DEFAULT_DROPOFF_ADDRESS,
-				DEFAULT_DROPOFF_LAT,
-				DEFAULT_DROPOFF_LNG,
-				15.50,
-				5.2,
-				15,
-				null
-		);
+		return OrderRequestDTO.builder()
+				.userId(userId)
+				.vehicleType(VehicleType.TAXI)
+				.pickupAddress(DEFAULT_PICKUP_ADDRESS)
+				.pickupLatitude(DEFAULT_PICKUP_LAT)
+				.pickupLongitude(DEFAULT_PICKUP_LNG)
+				.dropoffAddress(DEFAULT_DROPOFF_ADDRESS)
+				.dropoffLatitude(DEFAULT_DROPOFF_LAT)
+				.dropoffLongitude(DEFAULT_DROPOFF_LNG)
+				.estimatedPrice(15.50)
+				.distanceKm(5.2)
+				.estimatedDurationMinutes(15)
+				.build();
 	}
 
 	public static OrderResponseDTO createOrderResponse(Long id, Long userId, OrderStatus status, LocalDateTime createdAt) {
@@ -123,7 +128,14 @@ public final class TestData {
 	}
 
 	public static VehicleRequestDTO createVehicleRequest() {
-		return new VehicleRequestDTO("Toyota", "Camry", null, true, 5, 450.0, VehicleType.TAXI);
+		return VehicleRequestDTO.builder()
+				.brand("Toyota")
+				.model("Camry")
+				.airConditioning(true)
+				.numberOfSeats(5)
+				.trunkCapacity(450.0)
+				.vehicleType(VehicleType.TAXI)
+				.build();
 	}
 
 	public static VehicleEntity createVehicleEntity() {
@@ -150,7 +162,14 @@ public final class TestData {
 	}
 
 	public static DriverRequestDTO createDriverRequest() {
-		return new DriverRequestDTO("Michael", "Johnson", "+1234567890", "DL-TEST-001", ExpertiseType.B, true, null);
+		return DriverRequestDTO.builder()
+				.firstName("Michael")
+				.lastName("Johnson")
+				.phoneNumber("+1234567890")
+				.licenseNumber("DL-TEST-001")
+				.expertiseType(ExpertiseType.B)
+				.available(true)
+				.build();
 	}
 
 	public static DriverEntity createDriverEntity() {
@@ -178,7 +197,13 @@ public final class TestData {
 	}
 
 	public static PaymentRequestDTO createPaymentRequest(Long orderId) {
-		return new PaymentRequestDTO(orderId, DEFAULT_AMOUNT, PaymentMethod.CREDIT_CARD, "TXN-TEST-001", DEFAULT_CURRENCY);
+		return PaymentRequestDTO.builder()
+				.orderId(orderId)
+				.amount(DEFAULT_AMOUNT)
+				.paymentMethod(PaymentMethod.CREDIT_CARD)
+				.transactionId("TXN-TEST-001")
+				.currency(DEFAULT_CURRENCY)
+				.build();
 	}
 
 	public static PaymentEntity createPaymentEntity(OrderEntity order, double amount, PaymentMethod method, PaymentStatus status) {
@@ -212,11 +237,19 @@ public final class TestData {
 	}
 
 	public static RatingRequestDTO createRatingRequest(Long orderId) {
-		return new RatingRequestDTO(orderId, 5, "Excellent service!");
+		return RatingRequestDTO.builder()
+				.orderId(orderId)
+				.rating(5)
+				.comment("Excellent service!")
+				.build();
 	}
 
 	public static RatingRequestDTO createRatingRequest(Long orderId, int rating, String comment) {
-		return new RatingRequestDTO(orderId, rating, comment);
+		return RatingRequestDTO.builder()
+				.orderId(orderId)
+				.rating(rating)
+				.comment(comment)
+				.build();
 	}
 
 	public static RatingResponseDTO createRatingResponse(Long id, Long orderId, int rating, String comment, LocalDateTime createdAt) {
@@ -226,6 +259,37 @@ public final class TestData {
 				.rating(rating)
 				.comment(comment)
 				.createdAt(createdAt)
+				.build();
+	}
+
+	public static CompanyEntity createCompanyEntity() {
+		return CompanyEntity.builder()
+				.name("Test Fleet Co")
+				.address("123 Test St")
+				.phone("+1234567890")
+				.email("test@fleet.com")
+				.companyType(CompanyType.TAXI)
+				.build();
+	}
+
+	public static CompanyRequestDTO createCompanyRequest() {
+		return CompanyRequestDTO.builder()
+				.name("Test Fleet Co")
+				.address("123 Test St")
+				.phone("+1234567890")
+				.email("test@fleet.com")
+				.companyType(CompanyType.TAXI)
+				.build();
+	}
+
+	public static CompanyResponseDTO createCompanyResponse(Long id) {
+		return CompanyResponseDTO.builder()
+				.id(id)
+				.name("Test Fleet Co")
+				.address("123 Test St")
+				.phone("+1234567890")
+				.email("test@fleet.com")
+				.companyType(CompanyType.TAXI)
 				.build();
 	}
 }

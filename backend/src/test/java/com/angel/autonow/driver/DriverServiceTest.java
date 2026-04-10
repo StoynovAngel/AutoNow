@@ -1,5 +1,6 @@
 package com.angel.autonow.driver;
 
+import com.angel.autonow.company.CompanyRepository;
 import com.angel.autonow.data.TestData;
 import com.angel.autonow.expertise.ExpertiseType;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,9 @@ class DriverServiceTest {
 
 	@Mock
 	private DriverMapper driverMapper;
+
+	@Mock
+	private CompanyRepository companyRepository;
 
 	@InjectMocks
 	private DriverService driverService;
