@@ -72,4 +72,55 @@ public class OrderService {
 				.map(orderMapper::toDTO)
 				.toList();
 	}
+
+	@Transactional
+	public Optional<OrderResponseDTO> updateOrder(Long id, OrderRequestDTO request) {
+		Optional<OrderEntity> existing = orderRepository.findById(id);
+
+		if (existing.isEmpty()) {
+			return Optional.empty();
+		}
+
+		OrderEntity order = existing.get();
+		orderMapper.updateEntity(request, order);
+
+		Optional<UserEntity> user = userRepository.findById(request.userId());
+		if (user.isEmpty()) {
+			return Optional.empty();
+		}
+
+		order.setUser(user.get());
+
+		if (request.driverId() == null) {
+			order.setDriver(null);
+		} else {
+			var driver = driverRepository.findById(request.driverId());
+			if (driver.isEmpty()) {
+				return Optional.empty();
+			}
+			order.setDriver(driver.get());
+		}
+
+		if (request.vehicleId() == null) {
+			order.setVehicle(null);
+		} else {
+			var vehicle = vehicleRepository.findById(request.vehicleId());
+			if (vehicle.isEmpty()) {
+				return Optional.empty();
+			}
+			order.setVehicle(vehicle.get());
+		}
+
+		return Optional.of(orderMapper.toDTO(orderRepository.save(order)));
+	}
+
+	public boolean deleteOrder(Long id) {
+		if (!orderRepository.existsById(id)) {
+			return false;
+		}
+
+		orderRepository.deleteById(id);
+
+		return true;
+	}
 }
