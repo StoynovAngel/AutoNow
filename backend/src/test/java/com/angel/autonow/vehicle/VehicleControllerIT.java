@@ -14,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import static com.angel.autonow.data.TestData.NON_EXISTENT_ID;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @Transactional
@@ -60,7 +62,7 @@ class VehicleControllerIT {
 
 	@Test
 	void createVehicle_invalidInput_returnsBadRequest() throws Exception {
-		var invalidRequest = new VehicleRequestDTO(null, null, null, false, null, null, null);
+		var invalidRequest = VehicleRequestDTO.builder().build();
 
 		mockMvc.perform(post("/api/vehicles")
 						.with(TestData.adminJwt())
@@ -123,5 +125,97 @@ class VehicleControllerIT {
 	void getAllVehicles_withoutAuth_returnsUnauthorized() throws Exception {
 		mockMvc.perform(get("/api/vehicles"))
 				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	void updateVehicle_asAdmin() throws Exception {
+		var vehicle = TestData.createVehicleEntity();
+		vehicleRepository.save(vehicle);
+
+		var updateRequest = VehicleRequestDTO.builder()
+				.brand("Honda")
+				.model("Civic")
+				.airConditioning(false)
+				.numberOfSeats(4)
+				.trunkCapacity(380.0)
+				.vehicleType(VehicleType.TAXI)
+				.build();
+
+		mockMvc.perform(put("/api/vehicles/{id}", vehicle.getId())
+						.with(TestData.adminJwt())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(updateRequest)))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.brand").value("Honda"))
+				.andExpect(jsonPath("$.model").value("Civic"))
+				.andExpect(jsonPath("$.numberOfSeats").value(4));
+	}
+
+	@Test
+	void updateVehicle_notFound_returnsBadRequest() throws Exception {
+		var updateRequest = TestData.createVehicleRequest();
+
+		mockMvc.perform(put("/api/vehicles/{id}", NON_EXISTENT_ID)
+						.with(TestData.adminJwt())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(updateRequest)))
+				.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void updateVehicle_invalidInput_returnsBadRequest() throws Exception {
+		var vehicle = TestData.createVehicleEntity();
+		vehicleRepository.save(vehicle);
+
+		var invalidRequest = VehicleRequestDTO.builder().build();
+
+		mockMvc.perform(put("/api/vehicles/{id}", vehicle.getId())
+						.with(TestData.adminJwt())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(invalidRequest)))
+				.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void updateVehicle_asCustomer_returnsForbidden() throws Exception {
+		var updateRequest = TestData.createVehicleRequest();
+
+		mockMvc.perform(put("/api/vehicles/{id}", 1L)
+						.with(TestData.customerJwt())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(updateRequest)))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	void updateVehicle_withoutAuth_returnsUnauthorized() throws Exception {
+		var updateRequest = TestData.createVehicleRequest();
+
+		mockMvc.perform(put("/api/vehicles/{id}", 1L)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(updateRequest)))
+				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	void deleteVehicle_asAdmin() throws Exception {
+		var vehicle = TestData.createVehicleEntity();
+		vehicleRepository.save(vehicle);
+		mockMvc.perform(delete("/api/vehicles/{id}", vehicle.getId()).with(TestData.adminJwt())).andExpect(status().isNoContent());
+	}
+
+	@Test
+	void deleteVehicle_notFound_returnsBadRequest() throws Exception {
+		mockMvc.perform(delete("/api/vehicles/{id}", NON_EXISTENT_ID).with(TestData.adminJwt())).andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void deleteVehicle_asCustomer_returnsForbidden() throws Exception {
+		mockMvc.perform(delete("/api/vehicles/{id}", 1L).with(TestData.customerJwt())).andExpect(status().isForbidden());
+	}
+
+	@Test
+	void deleteVehicle_withoutAuth_returnsUnauthorized() throws Exception {
+		mockMvc.perform(delete("/api/vehicles/{id}", 1L)).andExpect(status().isUnauthorized());
 	}
 }

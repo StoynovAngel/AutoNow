@@ -4,7 +4,9 @@ import com.angel.autonow.vehicle.VehicleType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import lombok.Builder;
 
+@Builder
 public record OrderRequestDTO(
 
 		@NotNull(message = "User ID is required")

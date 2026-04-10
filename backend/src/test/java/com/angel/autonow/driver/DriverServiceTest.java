@@ -124,4 +124,54 @@ class DriverServiceTest {
 		var result = driverService.getAllDrivers();
 		assertTrue(result.isEmpty());
 	}
+
+	@Test
+	void updateDriver_returnUpdatedResponse() {
+		DriverRequestDTO request = TestData.createDriverRequest();
+		DriverEntity existing = DriverEntity.builder().id(1L).firstName("Michael").build();
+		DriverEntity saved = DriverEntity.builder().id(1L).firstName("Michael").build();
+		DriverResponseDTO response = TestData.createDriverResponse(1L);
+
+		when(driverRepository.findById(1L)).thenReturn(Optional.of(existing));
+		when(driverRepository.save(existing)).thenReturn(saved);
+		when(driverMapper.toDTO(saved)).thenReturn(response);
+
+		var result = driverService.updateDriver(1L, request);
+
+		assertTrue(result.isPresent());
+		assertEquals(1L, result.get().id());
+		verify(driverMapper).updateEntity(request, existing);
+		verify(driverRepository).save(existing);
+	}
+
+	@Test
+	void updateDriver_notFound_returnsEmpty() {
+		DriverRequestDTO request = TestData.createDriverRequest();
+
+		when(driverRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
+
+		var result = driverService.updateDriver(NON_EXISTENT_ID, request);
+
+		assertTrue(result.isEmpty());
+	}
+
+	@Test
+	void deleteDriver_returnTrue() {
+		when(driverRepository.existsById(1L)).thenReturn(true);
+
+		var result = driverService.deleteDriver(1L);
+
+		assertTrue(result);
+		verify(driverRepository).deleteById(1L);
+	}
+
+	@Test
+	void deleteDriver_notFound_returnFalse() {
+		when(driverRepository.existsById(NON_EXISTENT_ID)).thenReturn(false);
+
+		var result = driverService.deleteDriver(NON_EXISTENT_ID);
+
+		assertFalse(result);
+		verify(driverRepository, never()).deleteById(any());
+	}
 }

@@ -2,6 +2,7 @@ package com.angel.autonow.rating;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface RatingMapper {
@@ -13,4 +14,9 @@ public interface RatingMapper {
 	@Mapping(target = "order", ignore = true)
 	@Mapping(target = "createdAt", ignore = true)
 	RatingEntity toEntity(RatingRequestDTO request);
+
+	@Mapping(target = "id", ignore = true)
+	@Mapping(target = "order", ignore = true)
+	@Mapping(target = "createdAt", ignore = true)
+	void updateEntity(RatingRequestDTO request, @MappingTarget RatingEntity entity);
 }

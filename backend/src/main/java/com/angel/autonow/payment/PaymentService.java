@@ -51,4 +51,45 @@ public class PaymentService {
 				.map(paymentMapper::toDTO)
 				.toList();
 	}
+
+	@Transactional
+	public Optional<PaymentResponseDTO> updatePayment(Long id, PaymentRequestDTO request) {
+		Optional<PaymentEntity> existing = paymentRepository.findById(id);
+
+		if (existing.isEmpty()) {
+			return Optional.empty();
+		}
+
+		PaymentEntity payment = existing.get();
+
+		if (!payment.getOrder().getId().equals(request.orderId())) {
+			boolean orderAlreadyPaid = paymentRepository.findByOrderId(request.orderId())
+					.filter(p -> !p.getId().equals(payment.getId()))
+					.isPresent();
+
+			if (orderAlreadyPaid) {
+				return Optional.empty();
+			}
+
+			Optional<OrderEntity> order = orderRepository.findById(request.orderId());
+			if (order.isEmpty()) {
+				return Optional.empty();
+			}
+			payment.setOrder(order.get());
+		}
+
+		paymentMapper.updateEntity(request, payment);
+
+		return Optional.of(paymentMapper.toDTO(paymentRepository.save(payment)));
+	}
+
+	public boolean deletePayment(Long id) {
+		if (!paymentRepository.existsById(id)) {
+			return false;
+		}
+
+		paymentRepository.deleteById(id);
+
+		return true;
+	}
 }

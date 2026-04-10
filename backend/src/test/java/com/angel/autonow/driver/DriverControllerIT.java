@@ -1,6 +1,7 @@
 package com.angel.autonow.driver;
 
 import com.angel.autonow.data.TestData;
+import com.angel.autonow.expertise.ExpertiseType;
 import tools.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import static com.angel.autonow.data.TestData.NON_EXISTENT_ID;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @Transactional
@@ -61,7 +64,7 @@ class DriverControllerIT {
 
 	@Test
 	void createDriver_invalidInput_returnsBadRequest() throws Exception {
-		var invalidRequest = new DriverRequestDTO(null, null, null, null, null, false, null);
+		var invalidRequest = DriverRequestDTO.builder().build();
 
 		mockMvc.perform(post("/api/drivers")
 						.with(TestData.adminJwt())
@@ -142,5 +145,99 @@ class DriverControllerIT {
 	void getAllDrivers_withoutAuth_returnsUnauthorized() throws Exception {
 		mockMvc.perform(get("/api/drivers"))
 				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	void updateDriver_asAdmin() throws Exception {
+		var driver = TestData.createDriverEntity();
+		driverRepository.save(driver);
+
+		var updateRequest = DriverRequestDTO.builder()
+				.firstName("Jane")
+				.lastName("Smith")
+				.phoneNumber("+9876543210")
+				.licenseNumber("DL-UPD-001")
+				.expertiseType(ExpertiseType.C)
+				.available(false)
+				.build();
+
+		mockMvc.perform(put("/api/drivers/{id}", driver.getId())
+						.with(TestData.adminJwt())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(updateRequest)))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.firstName").value("Jane"))
+				.andExpect(jsonPath("$.lastName").value("Smith"))
+				.andExpect(jsonPath("$.licenseNumber").value("DL-UPD-001"))
+				.andExpect(jsonPath("$.expertiseType").value("C"));
+	}
+
+	@Test
+	void updateDriver_notFound_returnsBadRequest() throws Exception {
+		var updateRequest = TestData.createDriverRequest();
+
+		mockMvc.perform(put("/api/drivers/{id}", NON_EXISTENT_ID)
+						.with(TestData.adminJwt())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(updateRequest)))
+				.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void updateDriver_invalidInput_returnsBadRequest() throws Exception {
+		var driver = TestData.createDriverEntity();
+		driverRepository.save(driver);
+
+		var invalidRequest = DriverRequestDTO.builder().build();
+
+		mockMvc.perform(put("/api/drivers/{id}", driver.getId())
+						.with(TestData.adminJwt())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(invalidRequest)))
+				.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void updateDriver_asCustomer_returnsForbidden() throws Exception {
+		var updateRequest = TestData.createDriverRequest();
+
+		mockMvc.perform(put("/api/drivers/{id}", 1L)
+						.with(TestData.customerJwt())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(updateRequest)))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	void updateDriver_withoutAuth_returnsUnauthorized() throws Exception {
+		var updateRequest = TestData.createDriverRequest();
+
+		mockMvc.perform(put("/api/drivers/{id}", 1L)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(updateRequest)))
+				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	void deleteDriver_asAdmin() throws Exception {
+		var driver = TestData.createDriverEntity();
+		driverRepository.save(driver);
+
+		mockMvc.perform(delete("/api/drivers/{id}", driver.getId()).with(TestData.adminJwt())).andExpect(status().isNoContent());
+	}
+
+	@Test
+	void deleteDriver_notFound_returnsBadRequest() throws Exception {
+		mockMvc.perform(delete("/api/drivers/{id}", NON_EXISTENT_ID).with(TestData.adminJwt())).andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void deleteDriver_asCustomer_returnsForbidden() throws Exception {
+		mockMvc.perform(delete("/api/drivers/{id}", 1L).with(TestData.customerJwt())).andExpect(status().isForbidden());
+	}
+
+	@Test
+	void deleteDriver_withoutAuth_returnsUnauthorized() throws Exception {
+		mockMvc.perform(delete("/api/drivers/{id}", 1L)).andExpect(status().isUnauthorized());
 	}
 }

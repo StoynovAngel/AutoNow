@@ -45,4 +45,38 @@ public class RatingService {
 				.map(ratingMapper::toDTO)
 				.toList();
 	}
+
+	@Transactional
+	public Optional<RatingResponseDTO> updateRating(Long id, RatingRequestDTO request) {
+		Optional<RatingEntity> existing = ratingRepository.findById(id);
+
+		if (existing.isEmpty()) {
+			return Optional.empty();
+		}
+
+		RatingEntity rating = existing.get();
+
+		if (!rating.getOrder().getId().equals(request.orderId())) {
+			Optional<OrderEntity> order = orderRepository.findById(request.orderId());
+
+			if (order.isEmpty()) {
+				return Optional.empty();
+			}
+
+			rating.setOrder(order.get());
+		}
+
+		ratingMapper.updateEntity(request, rating);
+		return Optional.of(ratingMapper.toDTO(ratingRepository.save(rating)));
+	}
+
+	public boolean deleteRating(Long id) {
+		if (!ratingRepository.existsById(id)) {
+			return false;
+		}
+
+		ratingRepository.deleteById(id);
+
+		return true;
+	}
 }

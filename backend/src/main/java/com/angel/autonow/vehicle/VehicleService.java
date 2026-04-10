@@ -2,6 +2,7 @@ package com.angel.autonow.vehicle;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,5 +29,24 @@ public class VehicleService {
 		return vehicleRepository.findAll().stream()
 				.map(vehicleMapper::toDTO)
 				.toList();
+	}
+
+	@Transactional
+	public Optional<VehicleResponseDTO> updateVehicle(Long id, VehicleRequestDTO request) {
+		return vehicleRepository.findById(id)
+				.map(vehicle -> {
+					vehicleMapper.updateEntity(request, vehicle);
+					return vehicleMapper.toDTO(vehicleRepository.save(vehicle));
+				});
+	}
+
+	public boolean deleteVehicle(Long id) {
+		if (!vehicleRepository.existsById(id)) {
+			return false;
+		}
+
+		vehicleRepository.deleteById(id);
+
+		return true;
 	}
 }

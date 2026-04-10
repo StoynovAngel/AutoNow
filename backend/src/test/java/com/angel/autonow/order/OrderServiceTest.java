@@ -81,10 +81,12 @@ class OrderServiceTest {
 
 	@Test
 	void createOrder_withDriverAndVehicle() {
-		OrderRequestDTO request = new OrderRequestDTO(1L, 2L, 3L, VehicleType.TAXI,
-				TestData.DEFAULT_PICKUP_ADDRESS, TestData.DEFAULT_PICKUP_LAT, TestData.DEFAULT_PICKUP_LNG,
-				TestData.DEFAULT_DROPOFF_ADDRESS, TestData.DEFAULT_DROPOFF_LAT, TestData.DEFAULT_DROPOFF_LNG,
-				15.50, 5.2, 15, null);
+		OrderRequestDTO request = OrderRequestDTO.builder()
+				.userId(1L).driverId(2L).vehicleId(3L).vehicleType(VehicleType.TAXI)
+				.pickupAddress(TestData.DEFAULT_PICKUP_ADDRESS).pickupLatitude(TestData.DEFAULT_PICKUP_LAT).pickupLongitude(TestData.DEFAULT_PICKUP_LNG)
+				.dropoffAddress(TestData.DEFAULT_DROPOFF_ADDRESS).dropoffLatitude(TestData.DEFAULT_DROPOFF_LAT).dropoffLongitude(TestData.DEFAULT_DROPOFF_LNG)
+				.estimatedPrice(15.50).distanceKm(5.2).estimatedDurationMinutes(15)
+				.build();
 		UserEntity user = UserEntity.builder().id(1L).build();
 		DriverEntity driver = DriverEntity.builder().id(2L).build();
 		VehicleEntity vehicle = VehicleEntity.builder().id(3L).build();
@@ -113,10 +115,12 @@ class OrderServiceTest {
 
 	@Test
 	void createOrder_driverNotFound_returnsEmpty() {
-		OrderRequestDTO request = new OrderRequestDTO(1L, NON_EXISTENT_ID, null, VehicleType.TAXI,
-				TestData.DEFAULT_PICKUP_ADDRESS, TestData.DEFAULT_PICKUP_LAT, TestData.DEFAULT_PICKUP_LNG,
-				TestData.DEFAULT_DROPOFF_ADDRESS, TestData.DEFAULT_DROPOFF_LAT, TestData.DEFAULT_DROPOFF_LNG,
-				15.50, 5.2, 15, null);
+		OrderRequestDTO request = OrderRequestDTO.builder()
+				.userId(1L).driverId(NON_EXISTENT_ID).vehicleType(VehicleType.TAXI)
+				.pickupAddress(TestData.DEFAULT_PICKUP_ADDRESS).pickupLatitude(TestData.DEFAULT_PICKUP_LAT).pickupLongitude(TestData.DEFAULT_PICKUP_LNG)
+				.dropoffAddress(TestData.DEFAULT_DROPOFF_ADDRESS).dropoffLatitude(TestData.DEFAULT_DROPOFF_LAT).dropoffLongitude(TestData.DEFAULT_DROPOFF_LNG)
+				.estimatedPrice(15.50).distanceKm(5.2).estimatedDurationMinutes(15)
+				.build();
 		UserEntity user = UserEntity.builder().id(1L).build();
 
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
@@ -131,10 +135,12 @@ class OrderServiceTest {
 
 	@Test
 	void createOrder_vehicleNotFound_returnsEmpty() {
-		OrderRequestDTO request = new OrderRequestDTO(1L, null, NON_EXISTENT_ID, VehicleType.TAXI,
-				TestData.DEFAULT_PICKUP_ADDRESS, TestData.DEFAULT_PICKUP_LAT, TestData.DEFAULT_PICKUP_LNG,
-				TestData.DEFAULT_DROPOFF_ADDRESS, TestData.DEFAULT_DROPOFF_LAT, TestData.DEFAULT_DROPOFF_LNG,
-				15.50, 5.2, 15, null);
+		OrderRequestDTO request = OrderRequestDTO.builder()
+				.userId(1L).vehicleId(NON_EXISTENT_ID).vehicleType(VehicleType.TAXI)
+				.pickupAddress(TestData.DEFAULT_PICKUP_ADDRESS).pickupLatitude(TestData.DEFAULT_PICKUP_LAT).pickupLongitude(TestData.DEFAULT_PICKUP_LNG)
+				.dropoffAddress(TestData.DEFAULT_DROPOFF_ADDRESS).dropoffLatitude(TestData.DEFAULT_DROPOFF_LAT).dropoffLongitude(TestData.DEFAULT_DROPOFF_LNG)
+				.estimatedPrice(15.50).distanceKm(5.2).estimatedDurationMinutes(15)
+				.build();
 		UserEntity user = UserEntity.builder().id(1L).build();
 
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
@@ -209,5 +215,111 @@ class OrderServiceTest {
 		var result = orderService.getAllOrders();
 
 		assertTrue(result.isEmpty());
+	}
+
+	@Test
+	void updateOrder_returnUpdatedResponse() {
+		OrderRequestDTO request = TestData.createOrderRequest(1L);
+		UserEntity user = UserEntity.builder().id(1L).build();
+		OrderEntity existing = OrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).createdAt(NOW).build();
+		OrderEntity saved = OrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).createdAt(NOW).build();
+		OrderResponseDTO response = TestData.createOrderResponse(1L, 1L, OrderStatus.CREATED, NOW);
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(existing));
+		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+		when(orderRepository.save(existing)).thenReturn(saved);
+		when(orderMapper.toDTO(saved)).thenReturn(response);
+
+		var result = orderService.updateOrder(1L, request);
+
+		assertTrue(result.isPresent());
+		assertEquals(1L, result.get().id());
+		verify(orderMapper).updateEntity(request, existing);
+		verify(orderRepository).save(existing);
+	}
+
+	@Test
+	void updateOrder_notFound_returnsEmpty() {
+		OrderRequestDTO request = TestData.createOrderRequest(1L);
+
+		when(orderRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
+
+		var result = orderService.updateOrder(NON_EXISTENT_ID, request);
+
+		assertTrue(result.isEmpty());
+		verify(orderRepository, never()).save(any());
+	}
+
+	@Test
+	void updateOrder_userNotFound_returnsEmpty() {
+		OrderRequestDTO request = TestData.createOrderRequest(NON_EXISTENT_ID);
+		UserEntity user = UserEntity.builder().id(1L).build();
+		OrderEntity existing = OrderEntity.builder().id(1L).user(user).build();
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(existing));
+		when(userRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
+
+		var result = orderService.updateOrder(1L, request);
+
+		assertTrue(result.isEmpty());
+	}
+
+	@Test
+	void updateOrder_driverNotFound_returnsEmpty() {
+		OrderRequestDTO request = OrderRequestDTO.builder()
+				.userId(1L).driverId(NON_EXISTENT_ID).vehicleType(VehicleType.TAXI)
+				.pickupAddress(TestData.DEFAULT_PICKUP_ADDRESS).pickupLatitude(TestData.DEFAULT_PICKUP_LAT).pickupLongitude(TestData.DEFAULT_PICKUP_LNG)
+				.dropoffAddress(TestData.DEFAULT_DROPOFF_ADDRESS).dropoffLatitude(TestData.DEFAULT_DROPOFF_LAT).dropoffLongitude(TestData.DEFAULT_DROPOFF_LNG)
+				.estimatedPrice(15.50).distanceKm(5.2).estimatedDurationMinutes(15)
+				.build();
+		UserEntity user = UserEntity.builder().id(1L).build();
+		OrderEntity existing = OrderEntity.builder().id(1L).user(user).build();
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(existing));
+		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+		when(driverRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
+
+		var result = orderService.updateOrder(1L, request);
+
+		assertTrue(result.isEmpty());
+	}
+
+	@Test
+	void updateOrder_vehicleNotFound_returnsEmpty() {
+		OrderRequestDTO request = OrderRequestDTO.builder()
+				.userId(1L).vehicleId(NON_EXISTENT_ID).vehicleType(VehicleType.TAXI)
+				.pickupAddress(TestData.DEFAULT_PICKUP_ADDRESS).pickupLatitude(TestData.DEFAULT_PICKUP_LAT).pickupLongitude(TestData.DEFAULT_PICKUP_LNG)
+				.dropoffAddress(TestData.DEFAULT_DROPOFF_ADDRESS).dropoffLatitude(TestData.DEFAULT_DROPOFF_LAT).dropoffLongitude(TestData.DEFAULT_DROPOFF_LNG)
+				.estimatedPrice(15.50).distanceKm(5.2).estimatedDurationMinutes(15)
+				.build();
+		UserEntity user = UserEntity.builder().id(1L).build();
+		OrderEntity existing = OrderEntity.builder().id(1L).user(user).build();
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(existing));
+		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+		when(vehicleRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
+
+		var result = orderService.updateOrder(1L, request);
+
+		assertTrue(result.isEmpty());
+	}
+
+	@Test
+	void deleteOrder_returnTrue() {
+		when(orderRepository.existsById(1L)).thenReturn(true);
+
+		var result = orderService.deleteOrder(1L);
+
+		assertTrue(result);
+		verify(orderRepository).deleteById(1L);
+	}
+
+	@Test
+	void deleteOrder_notFound_returnFalse() {
+		when(orderRepository.existsById(NON_EXISTENT_ID)).thenReturn(false);
+
+		var result = orderService.deleteOrder(NON_EXISTENT_ID);
+
+		assertFalse(result);
 	}
 }
