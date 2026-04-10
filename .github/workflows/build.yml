@@ -31,4 +31,4 @@ jobs:
         working-directory: backend
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=StoynovAngel_AutoNow
+        run: mvn -B verify -Dtest='**/*Test,**/*IT' org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=StoynovAngel_AutoNow -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
