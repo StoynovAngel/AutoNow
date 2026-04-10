@@ -1,5 +1,6 @@
 package com.angel.autonow.vehicle;
 
+import com.angel.autonow.company.CompanyRepository;
 import com.angel.autonow.data.TestData;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,6 +24,9 @@ class VehicleServiceTest {
 	@Mock
 	private VehicleMapper vehicleMapper;
 
+	@Mock
+	private CompanyRepository companyRepository;
+
 	@InjectMocks
 	private VehicleService vehicleService;
 
@@ -39,8 +43,9 @@ class VehicleServiceTest {
 
 		var result = vehicleService.createVehicle(request);
 
-		assertEquals(1L, result.id());
-		assertEquals("Toyota", result.brand());
+		assertTrue(result.isPresent());
+		assertEquals(1L, result.get().id());
+		assertEquals("Toyota", result.get().brand());
 		verify(vehicleRepository).save(entity);
 	}
 

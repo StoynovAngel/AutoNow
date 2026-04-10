@@ -1,5 +1,6 @@
 package com.angel.autonow.user;
 
+import com.angel.autonow.company.CompanyEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -38,4 +39,8 @@ public class UserEntity {
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "user_authorities", joinColumns = @JoinColumn(name = "user_id"))
 	private Set<String> authorities;
+
+	@ManyToOne
+	@JoinColumn(name = "company_id")
+	private CompanyEntity company;
 }

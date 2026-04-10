@@ -1,5 +1,6 @@
 package com.angel.autonow.vehicle;
 
+import com.angel.autonow.company.CompanyEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -49,4 +50,8 @@ public class VehicleEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "vehicle_type")
 	private VehicleType vehicleType;
+
+	@ManyToOne
+	@JoinColumn(name = "company_id")
+	private CompanyEntity company;
 }

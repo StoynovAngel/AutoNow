@@ -15,6 +15,7 @@ public record DriverResponseDTO(
 		ExpertiseType expertiseType,
 		boolean available,
 		String imageUrl,
+		Long companyId,
 		Set<Long> vehicleIds
 ) {
 

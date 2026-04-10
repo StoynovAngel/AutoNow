@@ -4,7 +4,8 @@ public enum Role {
 	ADMIN,
 	DRIVER,
 	CUSTOMER,
-	GUEST;
+	GUEST,
+	COMPANY_ADMIN;
 
 	private static final String ROLE_PREFIX = "ROLE_";
 

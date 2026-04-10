@@ -14,14 +14,17 @@ import java.util.stream.Collectors;
 public interface DriverMapper {
 
 	@Mapping(source = "vehicles", target = "vehicleIds", qualifiedByName = "vehiclesToIds")
+	@Mapping(source = "company.id", target = "companyId")
 	DriverResponseDTO toDTO(DriverEntity driver);
 
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "vehicles", ignore = true)
+	@Mapping(target = "company", ignore = true)
 	DriverEntity toEntity(DriverRequestDTO request);
 
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "vehicles", ignore = true)
+	@Mapping(target = "company", ignore = true)
 	void updateEntity(DriverRequestDTO request, @MappingTarget DriverEntity entity);
 
 	@Named("vehiclesToIds")

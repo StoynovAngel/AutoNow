@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,9 +25,9 @@ public class DriverController {
 	private final DriverService driverService;
 
 	@PostMapping
-	@PreAuthorize("hasRole('ADMIN')")
-	public ResponseEntity<DriverResponseDTO> createDriver(@Valid @RequestBody DriverRequestDTO request) {
-		return driverService.createDriver(request)
+	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN')")
+	public ResponseEntity<DriverResponseDTO> createDriver(@Valid @RequestBody DriverRequestDTO request, Authentication authentication) {
+		return driverService.createDriver(request, authentication.getName())
 				.map(driver -> ResponseEntity.status(HttpStatus.CREATED).body(driver))
 				.orElse(ResponseEntity.badRequest().build());
 	}
@@ -49,18 +50,24 @@ public class DriverController {
 		return driverService.getAllDrivers();
 	}
 
+	@GetMapping("/company/{companyId}")
+	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN')")
+	public List<DriverResponseDTO> getDriversByCompanyId(@PathVariable Long companyId) {
+		return driverService.getDriversByCompanyId(companyId);
+	}
+
 	@PutMapping("/{id}")
-	@PreAuthorize("hasRole('ADMIN')")
-	public ResponseEntity<DriverResponseDTO> updateDriver(@PathVariable Long id, @Valid @RequestBody DriverRequestDTO request) {
-		return driverService.updateDriver(id, request)
+	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN')")
+	public ResponseEntity<DriverResponseDTO> updateDriver(@PathVariable Long id, @Valid @RequestBody DriverRequestDTO request, Authentication authentication) {
+		return driverService.updateDriver(id, request, authentication.getName())
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.badRequest().build());
 	}
 
 	@DeleteMapping("/{id}")
-	@PreAuthorize("hasRole('ADMIN')")
-	public ResponseEntity<Void> deleteDriver(@PathVariable Long id) {
-		return driverService.deleteDriver(id)
+	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN')")
+	public ResponseEntity<Void> deleteDriver(@PathVariable Long id, Authentication authentication) {
+		return driverService.deleteDriver(id, authentication.getName())
 				? ResponseEntity.noContent().build()
 				: ResponseEntity.badRequest().build();
 	}

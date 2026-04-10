@@ -1,5 +1,7 @@
 package com.angel.autonow.vehicle;
 
+import com.angel.autonow.company.CompanyEntity;
+import com.angel.autonow.company.CompanyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,11 +15,21 @@ public class VehicleService {
 
 	private final VehicleRepository vehicleRepository;
 	private final VehicleMapper vehicleMapper;
+	private final CompanyRepository companyRepository;
 
-	public VehicleResponseDTO createVehicle(VehicleRequestDTO request) {
+	public Optional<VehicleResponseDTO> createVehicle(VehicleRequestDTO request) {
 		VehicleEntity vehicle = vehicleMapper.toEntity(request);
+
+		if (request.companyId() != null) {
+			var company = companyRepository.findById(request.companyId());
+			if (company.isEmpty()) {
+				return Optional.empty();
+			}
+			vehicle.setCompany(company.get());
+		}
+
 		VehicleEntity saved = vehicleRepository.save(vehicle);
-		return vehicleMapper.toDTO(saved);
+		return Optional.of(vehicleMapper.toDTO(saved));
 	}
 
 	public Optional<VehicleResponseDTO> getVehicleById(Long id) {
@@ -33,11 +45,32 @@ public class VehicleService {
 
 	@Transactional
 	public Optional<VehicleResponseDTO> updateVehicle(Long id, VehicleRequestDTO request) {
-		return vehicleRepository.findById(id)
-				.map(vehicle -> {
-					vehicleMapper.updateEntity(request, vehicle);
-					return vehicleMapper.toDTO(vehicleRepository.save(vehicle));
-				});
+		Optional<VehicleEntity> existing = vehicleRepository.findById(id);
+
+		if (existing.isEmpty()) {
+			return Optional.empty();
+		}
+
+		CompanyEntity company = null;
+		if (request.companyId() != null) {
+			var companyOpt = companyRepository.findById(request.companyId());
+			if (companyOpt.isEmpty()) {
+				return Optional.empty();
+			}
+			company = companyOpt.get();
+		}
+
+		VehicleEntity vehicle = existing.get();
+		vehicleMapper.updateEntity(request, vehicle);
+		vehicle.setCompany(company);
+
+		return Optional.of(vehicleMapper.toDTO(vehicleRepository.save(vehicle)));
+	}
+
+	public List<VehicleResponseDTO> getVehiclesByCompanyId(Long companyId) {
+		return vehicleRepository.findByCompanyId(companyId).stream()
+				.map(vehicleMapper::toDTO)
+				.toList();
 	}
 
 	public boolean deleteVehicle(Long id) {
