@@ -1,5 +1,6 @@
 package com.angel.autonow.driver;
 
+import com.angel.autonow.company.CompanyEntity;
 import com.angel.autonow.expertise.ExpertiseType;
 import com.angel.autonow.vehicle.VehicleEntity;
 import jakarta.persistence.*;
@@ -54,6 +55,10 @@ public class DriverEntity {
 	@URL(message = "Image URL must be valid")
 	@Column(name = "image_url")
 	private String imageUrl;
+
+	@ManyToOne
+	@JoinColumn(name = "company_id")
+	private CompanyEntity company;
 
 	@OneToMany
 	@JoinTable(
