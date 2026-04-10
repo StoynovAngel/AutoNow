@@ -194,29 +194,21 @@ class VehicleControllerIT {
 	void deleteVehicle_asAdmin() throws Exception {
 		var vehicle = TestData.createVehicleEntity();
 		vehicleRepository.save(vehicle);
-
-		mockMvc.perform(delete("/api/vehicles/{id}", vehicle.getId())
-						.with(TestData.adminJwt()))
-				.andExpect(status().isNoContent());
+		mockMvc.perform(delete("/api/vehicles/{id}", vehicle.getId()).with(TestData.adminJwt())).andExpect(status().isNoContent());
 	}
 
 	@Test
 	void deleteVehicle_notFound_returnsBadRequest() throws Exception {
-		mockMvc.perform(delete("/api/vehicles/{id}", NON_EXISTENT_ID)
-						.with(TestData.adminJwt()))
-				.andExpect(status().isBadRequest());
+		mockMvc.perform(delete("/api/vehicles/{id}", NON_EXISTENT_ID).with(TestData.adminJwt())).andExpect(status().isBadRequest());
 	}
 
 	@Test
 	void deleteVehicle_asCustomer_returnsForbidden() throws Exception {
-		mockMvc.perform(delete("/api/vehicles/{id}", 1L)
-						.with(TestData.customerJwt()))
-				.andExpect(status().isForbidden());
+		mockMvc.perform(delete("/api/vehicles/{id}", 1L).with(TestData.customerJwt())).andExpect(status().isForbidden());
 	}
 
 	@Test
 	void deleteVehicle_withoutAuth_returnsUnauthorized() throws Exception {
-		mockMvc.perform(delete("/api/vehicles/{id}", 1L))
-				.andExpect(status().isUnauthorized());
+		mockMvc.perform(delete("/api/vehicles/{id}", 1L)).andExpect(status().isUnauthorized());
 	}
 }
