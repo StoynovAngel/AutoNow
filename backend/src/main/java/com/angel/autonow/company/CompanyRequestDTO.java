@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
+import org.hibernate.validator.constraints.URL;
 
 @Builder
 public record CompanyRequestDTO(
@@ -24,6 +25,7 @@ public record CompanyRequestDTO(
 		@Email(message = "Email must be valid")
 		String email,
 
+		@URL(message = "Logo URL must be valid")
 		String logoUrl,
 
 		@Size(max = 1000, message = "Description must not exceed 1000 characters")

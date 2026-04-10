@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
+import org.hibernate.validator.constraints.URL;
 
 @Builder
 public record DriverRequestDTO(
@@ -27,6 +28,7 @@ public record DriverRequestDTO(
 
 		boolean available,
 
+		@URL(message = "Image URL must be valid")
 		String imageUrl,
 
 		Long companyId
