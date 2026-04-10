@@ -2,7 +2,10 @@ package com.angel.autonow.driver;
 
 import com.angel.autonow.data.TestData;
 import com.angel.autonow.expertise.ExpertiseType;
-import tools.jackson.databind.ObjectMapper;
+import com.angel.autonow.user.UserEntity;
+import com.angel.autonow.user.UserRepository;
+import com.angel.autonow.user.role.Role;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,13 +14,19 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+import tools.jackson.databind.ObjectMapper;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import static com.angel.autonow.data.TestData.NON_EXISTENT_ID;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Transactional
 @SpringBootTest
@@ -25,21 +34,33 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestPropertySource(locations = "classpath:application-test.properties")
 class DriverControllerIT {
 
+	private static final String ADMIN_EMAIL = "admin@test.com";
+
 	@Autowired
 	private MockMvc mockMvc;
-
 	@Autowired
 	private ObjectMapper objectMapper;
-
 	@Autowired
 	private DriverRepository driverRepository;
+	@Autowired
+	private UserRepository userRepository;
+
+	@BeforeEach
+	void setUp() {
+		var admin = UserEntity.builder()
+				.email(ADMIN_EMAIL)
+				.password("encodedPassword")
+				.authorities(new HashSet<>(Set.of(Role.ADMIN.getAuthority())))
+				.build();
+		userRepository.save(admin);
+	}
 
 	@Test
 	void createDriver_asAdmin() throws Exception {
 		var request = TestData.createDriverRequest();
 
 		mockMvc.perform(post("/api/drivers")
-						.with(TestData.adminJwt())
+						.with(TestData.adminJwt(ADMIN_EMAIL))
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(request)))
 				.andExpect(status().isCreated())
@@ -67,7 +88,7 @@ class DriverControllerIT {
 		var invalidRequest = DriverRequestDTO.builder().build();
 
 		mockMvc.perform(post("/api/drivers")
-						.with(TestData.adminJwt())
+						.with(TestData.adminJwt(ADMIN_EMAIL))
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(invalidRequest)))
 				.andExpect(status().isBadRequest());
@@ -108,7 +129,7 @@ class DriverControllerIT {
 		driverRepository.save(driver);
 
 		mockMvc.perform(get("/api/drivers/license/{licenseNumber}", "DL-TEST-001")
-						.with(TestData.adminJwt()))
+						.with(TestData.adminJwt(ADMIN_EMAIL)))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.licenseNumber").value("DL-TEST-001"));
 	}
@@ -162,7 +183,7 @@ class DriverControllerIT {
 				.build();
 
 		mockMvc.perform(put("/api/drivers/{id}", driver.getId())
-						.with(TestData.adminJwt())
+						.with(TestData.adminJwt(ADMIN_EMAIL))
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(updateRequest)))
 				.andExpect(status().isOk())
@@ -177,7 +198,7 @@ class DriverControllerIT {
 		var updateRequest = TestData.createDriverRequest();
 
 		mockMvc.perform(put("/api/drivers/{id}", NON_EXISTENT_ID)
-						.with(TestData.adminJwt())
+						.with(TestData.adminJwt(ADMIN_EMAIL))
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(updateRequest)))
 				.andExpect(status().isBadRequest());
@@ -191,7 +212,7 @@ class DriverControllerIT {
 		var invalidRequest = DriverRequestDTO.builder().build();
 
 		mockMvc.perform(put("/api/drivers/{id}", driver.getId())
-						.with(TestData.adminJwt())
+						.with(TestData.adminJwt(ADMIN_EMAIL))
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(invalidRequest)))
 				.andExpect(status().isBadRequest());
@@ -223,12 +244,12 @@ class DriverControllerIT {
 		var driver = TestData.createDriverEntity();
 		driverRepository.save(driver);
 
-		mockMvc.perform(delete("/api/drivers/{id}", driver.getId()).with(TestData.adminJwt())).andExpect(status().isNoContent());
+		mockMvc.perform(delete("/api/drivers/{id}", driver.getId()).with(TestData.adminJwt(ADMIN_EMAIL))).andExpect(status().isNoContent());
 	}
 
 	@Test
 	void deleteDriver_notFound_returnsBadRequest() throws Exception {
-		mockMvc.perform(delete("/api/drivers/{id}", NON_EXISTENT_ID).with(TestData.adminJwt())).andExpect(status().isBadRequest());
+		mockMvc.perform(delete("/api/drivers/{id}", NON_EXISTENT_ID).with(TestData.adminJwt(ADMIN_EMAIL))).andExpect(status().isBadRequest());
 	}
 
 	@Test

@@ -3,14 +3,19 @@ package com.angel.autonow.driver;
 import com.angel.autonow.company.CompanyRepository;
 import com.angel.autonow.data.TestData;
 import com.angel.autonow.expertise.ExpertiseType;
+import com.angel.autonow.user.UserEntity;
+import com.angel.autonow.user.UserRepository;
+import com.angel.autonow.user.role.Role;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static com.angel.autonow.data.TestData.NON_EXISTENT_ID;
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,8 +33,21 @@ class DriverServiceTest {
 	@Mock
 	private CompanyRepository companyRepository;
 
+	@Mock
+	private UserRepository userRepository;
+
 	@InjectMocks
 	private DriverService driverService;
+
+	private static final String ADMIN_EMAIL = "admin@test.com";
+
+	private UserEntity adminUser() {
+		return UserEntity.builder()
+				.id(1L)
+				.email(ADMIN_EMAIL)
+				.authorities(new HashSet<>(Set.of(Role.ADMIN.getAuthority())))
+				.build();
+	}
 
 	@Test
 	void createDriver_returnDriverResponse() {
@@ -51,8 +69,9 @@ class DriverServiceTest {
 		when(driverMapper.toEntity(request)).thenReturn(entity);
 		when(driverRepository.save(entity)).thenReturn(saved);
 		when(driverMapper.toDTO(saved)).thenReturn(response);
+		when(userRepository.findByEmail(ADMIN_EMAIL)).thenReturn(Optional.of(adminUser()));
 
-		var result = driverService.createDriver(request);
+		var result = driverService.createDriver(request, ADMIN_EMAIL);
 
 		assertTrue(result.isPresent());
 		assertEquals(1L, result.get().id());
@@ -136,11 +155,12 @@ class DriverServiceTest {
 		DriverEntity saved = DriverEntity.builder().id(1L).firstName("Michael").build();
 		DriverResponseDTO response = TestData.createDriverResponse(1L);
 
+		when(userRepository.findByEmail(ADMIN_EMAIL)).thenReturn(Optional.of(adminUser()));
 		when(driverRepository.findById(1L)).thenReturn(Optional.of(existing));
 		when(driverRepository.save(existing)).thenReturn(saved);
 		when(driverMapper.toDTO(saved)).thenReturn(response);
 
-		var result = driverService.updateDriver(1L, request);
+		var result = driverService.updateDriver(1L, request, ADMIN_EMAIL);
 
 		assertTrue(result.isPresent());
 		assertEquals(1L, result.get().id());
@@ -152,18 +172,22 @@ class DriverServiceTest {
 	void updateDriver_notFound_returnsEmpty() {
 		DriverRequestDTO request = TestData.createDriverRequest();
 
+		when(userRepository.findByEmail(ADMIN_EMAIL)).thenReturn(Optional.of(adminUser()));
 		when(driverRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
 
-		var result = driverService.updateDriver(NON_EXISTENT_ID, request);
+		var result = driverService.updateDriver(NON_EXISTENT_ID, request, ADMIN_EMAIL);
 
 		assertTrue(result.isEmpty());
 	}
 
 	@Test
 	void deleteDriver_returnTrue() {
-		when(driverRepository.existsById(1L)).thenReturn(true);
+		DriverEntity driver = DriverEntity.builder().id(1L).build();
 
-		var result = driverService.deleteDriver(1L);
+		when(userRepository.findByEmail(ADMIN_EMAIL)).thenReturn(Optional.of(adminUser()));
+		when(driverRepository.findById(1L)).thenReturn(Optional.of(driver));
+
+		var result = driverService.deleteDriver(1L, ADMIN_EMAIL);
 
 		assertTrue(result);
 		verify(driverRepository).deleteById(1L);
@@ -171,9 +195,10 @@ class DriverServiceTest {
 
 	@Test
 	void deleteDriver_notFound_returnFalse() {
-		when(driverRepository.existsById(NON_EXISTENT_ID)).thenReturn(false);
+		when(userRepository.findByEmail(ADMIN_EMAIL)).thenReturn(Optional.of(adminUser()));
+		when(driverRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
 
-		var result = driverService.deleteDriver(NON_EXISTENT_ID);
+		var result = driverService.deleteDriver(NON_EXISTENT_ID, ADMIN_EMAIL);
 
 		assertFalse(result);
 		verify(driverRepository, never()).deleteById(any());
