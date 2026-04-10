@@ -63,6 +63,14 @@ public class PaymentService {
 		PaymentEntity payment = existing.get();
 
 		if (!payment.getOrder().getId().equals(request.orderId())) {
+			boolean orderAlreadyPaid = paymentRepository.findByOrderId(request.orderId())
+					.filter(p -> !p.getId().equals(payment.getId()))
+					.isPresent();
+
+			if (orderAlreadyPaid) {
+				return Optional.empty();
+			}
+
 			Optional<OrderEntity> order = orderRepository.findById(request.orderId());
 			if (order.isEmpty()) {
 				return Optional.empty();
