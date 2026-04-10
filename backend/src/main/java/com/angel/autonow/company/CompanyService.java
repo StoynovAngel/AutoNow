@@ -53,7 +53,21 @@ public class CompanyService {
 	}
 
 	@Transactional
-	public Optional<CompanyResponseDTO> updateCompany(Long id, CompanyRequestDTO request) {
+	public Optional<CompanyResponseDTO> updateCompany(Long id, CompanyRequestDTO request, String userEmail) {
+		Optional<UserEntity> userOpt = userRepository.findByEmail(userEmail);
+
+		if (userOpt.isEmpty()) {
+			return Optional.empty();
+		}
+
+		UserEntity user = userOpt.get();
+		boolean isAdmin = user.getAuthorities().contains(Role.ADMIN.getAuthority());
+		boolean isOwner = user.getCompany() != null && user.getCompany().getId().equals(id);
+
+		if (!isAdmin && !isOwner) {
+			return Optional.empty();
+		}
+
 		return companyRepository.findById(id).map(company -> {
 			companyMapper.updateEntity(request, company);
 			return companyMapper.toDTO(companyRepository.save(company));

@@ -1,6 +1,10 @@
 package com.angel.autonow.company;
 
 import com.angel.autonow.data.TestData;
+import com.angel.autonow.user.UserEntity;
+import com.angel.autonow.user.UserRepository;
+import com.angel.autonow.user.role.Role;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import tools.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +15,11 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import static com.angel.autonow.data.TestData.NON_EXISTENT_ID;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -32,6 +40,9 @@ class CompanyControllerIT {
 
 	@Autowired
 	private CompanyRepository companyRepository;
+
+	@Autowired
+	private UserRepository userRepository;
 
 	@Test
 	void createCompany_asAdmin() throws Exception {
@@ -177,6 +188,13 @@ class CompanyControllerIT {
 		var company = TestData.createCompanyEntity();
 		companyRepository.save(company);
 
+		var admin = UserEntity.builder()
+				.email("admin@test.com")
+				.password("encodedPassword")
+				.authorities(new HashSet<>(Set.of(Role.ADMIN.getAuthority())))
+				.build();
+		userRepository.save(admin);
+
 		var updateRequest = CompanyRequestDTO.builder()
 				.name("Updated Fleet")
 				.address("456 New St")
@@ -186,7 +204,8 @@ class CompanyControllerIT {
 				.build();
 
 		mockMvc.perform(put("/api/companies/{id}", company.getId())
-						.with(TestData.adminJwt())
+						.with(jwt().jwt(j -> j.subject("admin@test.com"))
+								.authorities(new SimpleGrantedAuthority(Role.ADMIN.getAuthority())))
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(updateRequest)))
 				.andExpect(status().isOk())
@@ -195,25 +214,74 @@ class CompanyControllerIT {
 	}
 
 	@Test
-	void updateCompany_asCompanyAdmin() throws Exception {
+	void updateCompany_asCompanyAdmin_owner() throws Exception {
 		var company = TestData.createCompanyEntity();
 		companyRepository.save(company);
+
+		var owner = UserEntity.builder()
+				.email("owner@test.com")
+				.password("encodedPassword")
+				.authorities(new HashSet<>(Set.of(Role.COMPANY_ADMIN.getAuthority())))
+				.company(company)
+				.build();
+		userRepository.save(owner);
 
 		var updateRequest = TestData.createCompanyRequest();
 
 		mockMvc.perform(put("/api/companies/{id}", company.getId())
-						.with(TestData.companyAdminJwt())
+						.with(jwt().jwt(j -> j.subject("owner@test.com"))
+								.authorities(new SimpleGrantedAuthority(Role.COMPANY_ADMIN.getAuthority())))
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(updateRequest)))
 				.andExpect(status().isOk());
 	}
 
 	@Test
+	void updateCompany_asCompanyAdmin_notOwner_returnsBadRequest() throws Exception {
+		var company = TestData.createCompanyEntity();
+		companyRepository.save(company);
+
+		var otherCompany = CompanyEntity.builder()
+				.name("Other Co")
+				.address("Other St")
+				.phone("+1111111111")
+				.email("other@co.com")
+				.companyType(CompanyType.LOGISTICS)
+				.build();
+		companyRepository.save(otherCompany);
+
+		var nonOwner = UserEntity.builder()
+				.email("nonowner@test.com")
+				.password("encodedPassword")
+				.authorities(new HashSet<>(Set.of(Role.COMPANY_ADMIN.getAuthority())))
+				.company(otherCompany)
+				.build();
+		userRepository.save(nonOwner);
+
+		var updateRequest = TestData.createCompanyRequest();
+
+		mockMvc.perform(put("/api/companies/{id}", company.getId())
+						.with(jwt().jwt(j -> j.subject("nonowner@test.com"))
+								.authorities(new SimpleGrantedAuthority(Role.COMPANY_ADMIN.getAuthority())))
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(updateRequest)))
+				.andExpect(status().isBadRequest());
+	}
+
+	@Test
 	void updateCompany_notFound_returnsBadRequest() throws Exception {
+		var admin = UserEntity.builder()
+				.email("admin@test.com")
+				.password("encodedPassword")
+				.authorities(new HashSet<>(Set.of(Role.ADMIN.getAuthority())))
+				.build();
+		userRepository.save(admin);
+
 		var updateRequest = TestData.createCompanyRequest();
 
 		mockMvc.perform(put("/api/companies/{id}", NON_EXISTENT_ID)
-						.with(TestData.adminJwt())
+						.with(jwt().jwt(j -> j.subject("admin@test.com"))
+								.authorities(new SimpleGrantedAuthority(Role.ADMIN.getAuthority())))
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(updateRequest)))
 				.andExpect(status().isBadRequest());

@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static com.angel.autonow.data.TestData.NON_EXISTENT_ID;
 import static org.junit.jupiter.api.Assertions.*;
@@ -144,17 +145,23 @@ class CompanyServiceTest {
 	}
 
 	@Test
-	void updateCompany_returnUpdatedResponse() {
+	void updateCompany_asAdmin_returnUpdatedResponse() {
 		CompanyRequestDTO request = TestData.createCompanyRequest();
 		CompanyEntity existing = CompanyEntity.builder().id(1L).name("Old Name").build();
 		CompanyEntity saved = CompanyEntity.builder().id(1L).name("Test Fleet Co").build();
 		CompanyResponseDTO response = TestData.createCompanyResponse(1L);
+		UserEntity admin = UserEntity.builder()
+				.id(1L)
+				.email("admin@test.com")
+				.authorities(new HashSet<>(Set.of(Role.ADMIN.getAuthority())))
+				.build();
 
+		when(userRepository.findByEmail("admin@test.com")).thenReturn(Optional.of(admin));
 		when(companyRepository.findById(1L)).thenReturn(Optional.of(existing));
 		when(companyRepository.save(existing)).thenReturn(saved);
 		when(companyMapper.toDTO(saved)).thenReturn(response);
 
-		var result = companyService.updateCompany(1L, request);
+		var result = companyService.updateCompany(1L, request, "admin@test.com");
 
 		assertTrue(result.isPresent());
 		assertEquals(1L, result.get().id());
@@ -162,14 +169,74 @@ class CompanyServiceTest {
 	}
 
 	@Test
-	void updateCompany_notFound_returnsEmpty() {
+	void updateCompany_asOwner_returnUpdatedResponse() {
 		CompanyRequestDTO request = TestData.createCompanyRequest();
+		CompanyEntity existing = CompanyEntity.builder().id(1L).name("Old Name").build();
+		CompanyEntity saved = CompanyEntity.builder().id(1L).name("Test Fleet Co").build();
+		CompanyResponseDTO response = TestData.createCompanyResponse(1L);
+		UserEntity owner = UserEntity.builder()
+				.id(2L)
+				.email("owner@test.com")
+				.authorities(new HashSet<>(Set.of(Role.COMPANY_ADMIN.getAuthority())))
+				.company(existing)
+				.build();
 
-		when(companyRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
+		when(userRepository.findByEmail("owner@test.com")).thenReturn(Optional.of(owner));
+		when(companyRepository.findById(1L)).thenReturn(Optional.of(existing));
+		when(companyRepository.save(existing)).thenReturn(saved);
+		when(companyMapper.toDTO(saved)).thenReturn(response);
 
-		var result = companyService.updateCompany(NON_EXISTENT_ID, request);
+		var result = companyService.updateCompany(1L, request, "owner@test.com");
+
+		assertTrue(result.isPresent());
+	}
+
+	@Test
+	void updateCompany_notOwner_returnsEmpty() {
+		CompanyRequestDTO request = TestData.createCompanyRequest();
+		CompanyEntity otherCompany = CompanyEntity.builder().id(2L).build();
+		UserEntity user = UserEntity.builder()
+				.id(3L)
+				.email("other@test.com")
+				.authorities(new HashSet<>(Set.of(Role.COMPANY_ADMIN.getAuthority())))
+				.company(otherCompany)
+				.build();
+
+		when(userRepository.findByEmail("other@test.com")).thenReturn(Optional.of(user));
+
+		var result = companyService.updateCompany(1L, request, "other@test.com");
 
 		assertTrue(result.isEmpty());
+		verify(companyRepository, never()).save(any());
+	}
+
+	@Test
+	void updateCompany_notFound_returnsEmpty() {
+		CompanyRequestDTO request = TestData.createCompanyRequest();
+		UserEntity admin = UserEntity.builder()
+				.id(1L)
+				.email("admin@test.com")
+				.authorities(new HashSet<>(Set.of(Role.ADMIN.getAuthority())))
+				.build();
+
+		when(userRepository.findByEmail("admin@test.com")).thenReturn(Optional.of(admin));
+		when(companyRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
+
+		var result = companyService.updateCompany(NON_EXISTENT_ID, request, "admin@test.com");
+
+		assertTrue(result.isEmpty());
+	}
+
+	@Test
+	void updateCompany_userNotFound_returnsEmpty() {
+		CompanyRequestDTO request = TestData.createCompanyRequest();
+
+		when(userRepository.findByEmail("unknown@test.com")).thenReturn(Optional.empty());
+
+		var result = companyService.updateCompany(1L, request, "unknown@test.com");
+
+		assertTrue(result.isEmpty());
+		verify(companyRepository, never()).save(any());
 	}
 
 	@Test
