@@ -1,6 +1,5 @@
 package com.angel.autonow.driver;
 
-import com.angel.autonow.company.CompanyRepository;
 import com.angel.autonow.data.TestData;
 import com.angel.autonow.expertise.ExpertiseType;
 import com.angel.autonow.user.UserEntity;
@@ -19,11 +18,18 @@ import java.util.Set;
 
 import static com.angel.autonow.data.TestData.NON_EXISTENT_ID;
 import static java.util.Collections.emptySet;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class DriverServiceTest {
+
+	private static final String ADMIN_EMAIL = "admin@test.com";
 
 	@Mock
 	private DriverRepository driverRepository;
@@ -36,8 +42,6 @@ class DriverServiceTest {
 
 	@InjectMocks
 	private DriverService driverService;
-
-	private static final String ADMIN_EMAIL = "admin@test.com";
 
 	private UserEntity adminUser() {
 		return UserEntity.builder()
