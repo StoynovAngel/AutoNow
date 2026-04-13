@@ -72,6 +72,7 @@ class JwtServiceTest {
 	@Test
 	void generateToken_invalidSecret_failsVerification() {
 		String token = jwtService.generateToken("user@test.com", List.of("ROLE_CUSTOMER"));
-		assertThrows(Exception.class, () -> JWT.require(Algorithm.HMAC256("wrong-secret")).build().verify(token));
+		var verifier = JWT.require(Algorithm.HMAC256("wrong-secret")).build();
+		assertThrows(Exception.class, () -> verifier.verify(token));
 	}
 }
