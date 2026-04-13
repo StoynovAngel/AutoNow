@@ -18,6 +18,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static com.angel.autonow.data.TestData.NON_EXISTENT_ID;
+import static java.util.Collections.emptySet;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -29,9 +30,6 @@ class DriverServiceTest {
 
 	@Mock
 	private DriverMapper driverMapper;
-
-	@Mock
-	private CompanyRepository companyRepository;
 
 	@Mock
 	private UserRepository userRepository;
@@ -129,7 +127,7 @@ class DriverServiceTest {
 				.id(2L).firstName("Jane").lastName("Smith")
 				.phoneNumber("+1234567891").licenseNumber("DL-002")
 				.expertiseType(ExpertiseType.C).available(true)
-				.vehicleIds(java.util.Collections.emptySet())
+				.vehicleIds(emptySet())
 				.build();
 
 		when(driverRepository.findAll()).thenReturn(List.of(firstDriver, secondDriver));
@@ -191,6 +189,42 @@ class DriverServiceTest {
 
 		assertTrue(result);
 		verify(driverRepository).deleteById(1L);
+	}
+
+	@Test
+	void getDriversByCompanyId_returnList() {
+		DriverEntity driver1 = DriverEntity.builder().id(1L).firstName("Michael").build();
+		DriverEntity driver2 = DriverEntity.builder().id(2L).firstName("Sarah").build();
+
+		DriverResponseDTO response1 = TestData.createDriverResponse(1L);
+
+		DriverResponseDTO response2 = DriverResponseDTO.builder()
+				.id(2L)
+				.firstName("Sarah")
+				.lastName("Williams")
+				.phoneNumber("+1234567891")
+				.licenseNumber("DL-002")
+				.expertiseType(ExpertiseType.B)
+				.available(true)
+				.vehicleIds(emptySet())
+				.build();
+
+		when(driverRepository.findByCompanyId(10L)).thenReturn(List.of(driver1, driver2));
+		when(driverMapper.toDTO(driver1)).thenReturn(response1);
+		when(driverMapper.toDTO(driver2)).thenReturn(response2);
+
+		var result = driverService.getDriversByCompanyId(10L);
+
+		assertEquals(2, result.size());
+		assertEquals("Michael", result.get(0).firstName());
+		assertEquals("Sarah", result.get(1).firstName());
+	}
+
+	@Test
+	void getDriversByCompanyId_noDrivers_returnsEmptyList() {
+		when(driverRepository.findByCompanyId(NON_EXISTENT_ID)).thenReturn(List.of());
+		var result = driverService.getDriversByCompanyId(NON_EXISTENT_ID);
+		assertTrue(result.isEmpty());
 	}
 
 	@Test

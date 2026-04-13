@@ -1,5 +1,8 @@
 package com.angel.autonow.driver;
 
+import com.angel.autonow.company.CompanyEntity;
+import com.angel.autonow.company.CompanyRepository;
+import com.angel.autonow.company.CompanyType;
 import com.angel.autonow.data.TestData;
 import com.angel.autonow.expertise.ExpertiseType;
 import com.angel.autonow.user.UserEntity;
@@ -38,12 +41,18 @@ class DriverControllerIT {
 
 	@Autowired
 	private MockMvc mockMvc;
+
 	@Autowired
 	private ObjectMapper objectMapper;
+
 	@Autowired
 	private DriverRepository driverRepository;
+
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private CompanyRepository companyRepository;
 
 	@BeforeEach
 	void setUp() {
@@ -237,6 +246,43 @@ class DriverControllerIT {
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(updateRequest)))
 				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	void getDriversByCompanyId_asAdmin() throws Exception {
+		var company = companyRepository.save(CompanyEntity.builder()
+				.name("Fleet Co").address("123 St").phone("+1234567890")
+				.email("fleet@co.com").companyType(CompanyType.TAXI).build());
+
+		var driver = TestData.createDriverEntity();
+		driver.setCompany(company);
+		driverRepository.save(driver);
+
+		mockMvc.perform(get("/api/drivers/company/{companyId}", company.getId())
+						.with(TestData.adminJwt(ADMIN_EMAIL)))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.length()").value(1))
+				.andExpect(jsonPath("$[0].firstName").value("Michael"));
+	}
+
+	@Test
+	void getDriversByCompanyId_noDrivers_returnsEmptyList() throws Exception {
+		mockMvc.perform(get("/api/drivers/company/{companyId}", NON_EXISTENT_ID)
+						.with(TestData.adminJwt(ADMIN_EMAIL)))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$").isArray())
+				.andExpect(jsonPath("$").isEmpty());
+	}
+
+	@Test
+	void getDriversByCompanyId_asCustomer_returnsForbidden() throws Exception {
+		mockMvc.perform(get("/api/drivers/company/{companyId}", 1L).with(TestData.customerJwt())).andExpect(status().isForbidden());
+	}
+
+	@Test
+	void getDriversByCompanyId_withoutAuth_returnsUnauthorized() throws Exception {
+		mockMvc.perform(get("/api/drivers/company/{companyId}", 1L)).andExpect(status().isUnauthorized());
 	}
 
 	@Test

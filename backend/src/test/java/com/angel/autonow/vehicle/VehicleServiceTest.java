@@ -132,6 +132,34 @@ class VehicleServiceTest {
 	}
 
 	@Test
+	void getVehiclesByCompanyId_returnList() {
+		VehicleEntity vehicle1 = VehicleEntity.builder().id(1L).brand("Toyota").build();
+		VehicleEntity vehicle2 = VehicleEntity.builder().id(2L).brand("Honda").build();
+		VehicleResponseDTO response1 = TestData.createVehicleResponse(1L);
+		VehicleResponseDTO response2 = VehicleResponseDTO.builder()
+				.id(2L).brand("Honda").model("CR-V")
+				.vehicleType(VehicleType.TAXI)
+				.build();
+
+		when(vehicleRepository.findByCompanyId(10L)).thenReturn(List.of(vehicle1, vehicle2));
+		when(vehicleMapper.toDTO(vehicle1)).thenReturn(response1);
+		when(vehicleMapper.toDTO(vehicle2)).thenReturn(response2);
+
+		var result = vehicleService.getVehiclesByCompanyId(10L);
+
+		assertEquals(2, result.size());
+		assertEquals("Toyota", result.get(0).brand());
+		assertEquals("Honda", result.get(1).brand());
+	}
+
+	@Test
+	void getVehiclesByCompanyId_noVehicles_returnsEmptyList() {
+		when(vehicleRepository.findByCompanyId(NON_EXISTENT_ID)).thenReturn(List.of());
+		var result = vehicleService.getVehiclesByCompanyId(NON_EXISTENT_ID);
+		assertTrue(result.isEmpty());
+	}
+
+	@Test
 	void deleteVehicle_returnTrue() {
 		when(vehicleRepository.existsById(1L)).thenReturn(true);
 
