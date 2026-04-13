@@ -1,6 +1,5 @@
 package com.angel.autonow.driver;
 
-import com.angel.autonow.company.CompanyRepository;
 import com.angel.autonow.data.TestData;
 import com.angel.autonow.expertise.ExpertiseType;
 import com.angel.autonow.user.UserEntity;
@@ -18,11 +17,19 @@ import java.util.Optional;
 import java.util.Set;
 
 import static com.angel.autonow.data.TestData.NON_EXISTENT_ID;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static java.util.Collections.emptySet;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class DriverServiceTest {
+
+	private static final String ADMIN_EMAIL = "admin@test.com";
 
 	@Mock
 	private DriverRepository driverRepository;
@@ -31,15 +38,10 @@ class DriverServiceTest {
 	private DriverMapper driverMapper;
 
 	@Mock
-	private CompanyRepository companyRepository;
-
-	@Mock
 	private UserRepository userRepository;
 
 	@InjectMocks
 	private DriverService driverService;
-
-	private static final String ADMIN_EMAIL = "admin@test.com";
 
 	private UserEntity adminUser() {
 		return UserEntity.builder()
@@ -129,7 +131,7 @@ class DriverServiceTest {
 				.id(2L).firstName("Jane").lastName("Smith")
 				.phoneNumber("+1234567891").licenseNumber("DL-002")
 				.expertiseType(ExpertiseType.C).available(true)
-				.vehicleIds(java.util.Collections.emptySet())
+				.vehicleIds(emptySet())
 				.build();
 
 		when(driverRepository.findAll()).thenReturn(List.of(firstDriver, secondDriver));
@@ -191,6 +193,42 @@ class DriverServiceTest {
 
 		assertTrue(result);
 		verify(driverRepository).deleteById(1L);
+	}
+
+	@Test
+	void getDriversByCompanyId_returnList() {
+		DriverEntity driver1 = DriverEntity.builder().id(1L).firstName("Michael").build();
+		DriverEntity driver2 = DriverEntity.builder().id(2L).firstName("Sarah").build();
+
+		DriverResponseDTO response1 = TestData.createDriverResponse(1L);
+
+		DriverResponseDTO response2 = DriverResponseDTO.builder()
+				.id(2L)
+				.firstName("Sarah")
+				.lastName("Williams")
+				.phoneNumber("+1234567891")
+				.licenseNumber("DL-002")
+				.expertiseType(ExpertiseType.B)
+				.available(true)
+				.vehicleIds(emptySet())
+				.build();
+
+		when(driverRepository.findByCompanyId(10L)).thenReturn(List.of(driver1, driver2));
+		when(driverMapper.toDTO(driver1)).thenReturn(response1);
+		when(driverMapper.toDTO(driver2)).thenReturn(response2);
+
+		var result = driverService.getDriversByCompanyId(10L);
+
+		assertEquals(2, result.size());
+		assertEquals("Michael", result.get(0).firstName());
+		assertEquals("Sarah", result.get(1).firstName());
+	}
+
+	@Test
+	void getDriversByCompanyId_noDrivers_returnsEmptyList() {
+		when(driverRepository.findByCompanyId(NON_EXISTENT_ID)).thenReturn(List.of());
+		var result = driverService.getDriversByCompanyId(NON_EXISTENT_ID);
+		assertTrue(result.isEmpty());
 	}
 
 	@Test

@@ -1,5 +1,8 @@
 package com.angel.autonow.vehicle;
 
+import com.angel.autonow.company.CompanyEntity;
+import com.angel.autonow.company.CompanyRepository;
+import com.angel.autonow.company.CompanyType;
 import com.angel.autonow.data.TestData;
 import tools.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -32,6 +35,9 @@ class VehicleControllerIT {
 
 	@Autowired
 	private VehicleRepository vehicleRepository;
+
+	@Autowired
+	private CompanyRepository companyRepository;
 
 	@Test
 	void createVehicle_asAdmin() throws Exception {
@@ -194,6 +200,46 @@ class VehicleControllerIT {
 		mockMvc.perform(put("/api/vehicles/{id}", 1L)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(updateRequest)))
+				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	void getVehiclesByCompanyId_asAdmin() throws Exception {
+		var company = companyRepository.save(CompanyEntity.builder()
+				.name("Fleet Co").address("123 St").phone("+1234567890")
+				.email("fleet@co.com").companyType(CompanyType.TAXI).build());
+
+		var vehicle = TestData.createVehicleEntity();
+		vehicle.setCompany(company);
+		vehicleRepository.save(vehicle);
+
+		mockMvc.perform(get("/api/vehicles/company/{companyId}", company.getId())
+						.with(TestData.adminJwt()))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.length()").value(1))
+				.andExpect(jsonPath("$[0].brand").value("Toyota"));
+	}
+
+	@Test
+	void getVehiclesByCompanyId_noVehicles_returnsEmptyList() throws Exception {
+		mockMvc.perform(get("/api/vehicles/company/{companyId}", NON_EXISTENT_ID)
+						.with(TestData.adminJwt()))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$").isArray())
+				.andExpect(jsonPath("$").isEmpty());
+	}
+
+	@Test
+	void getVehiclesByCompanyId_asCustomer_returnsForbidden() throws Exception {
+		mockMvc.perform(get("/api/vehicles/company/{companyId}", 1L)
+						.with(TestData.customerJwt()))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	void getVehiclesByCompanyId_withoutAuth_returnsUnauthorized() throws Exception {
+		mockMvc.perform(get("/api/vehicles/company/{companyId}", 1L))
 				.andExpect(status().isUnauthorized());
 	}
 
