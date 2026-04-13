@@ -29,7 +29,7 @@ public class SecurityConfig {
 	private final CustomUserDetailsService userDetailsService;
 
 	@Bean
-	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+	public SecurityFilterChain filterChain(HttpSecurity http) {
 		return http
 				.csrf(AbstractHttpConfigurer::disable)
 				.cors(Customizer.withDefaults())
