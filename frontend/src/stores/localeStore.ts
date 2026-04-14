@@ -31,9 +31,12 @@ export const useLocaleStore = create<LocaleState>((set) => ({
 }));
 
 export async function hydrateLocale(): Promise<void> {
-  const stored = await SecureStore.getItemAsync(LOCALE_KEY);
-  if (stored === "en" || stored === "bg") {
-    useLocaleStore.setState({ locale: stored });
+  try {
+    const stored = await SecureStore.getItemAsync(LOCALE_KEY);
+    if (stored === "en" || stored === "bg") {
+      useLocaleStore.setState({ locale: stored });
+    }
+  } finally {
+    useLocaleStore.getState().setHydrated();
   }
-  useLocaleStore.getState().setHydrated();
 }
