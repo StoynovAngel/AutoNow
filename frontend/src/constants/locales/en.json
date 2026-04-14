@@ -14,9 +14,9 @@
   },
   "home": {
     "tab": "Home",
-    "title": "Welcome to AutoNow",
-    "placeholder": "Your rides will appear here",
-    "logout": "Log Out"
+    "searchPlaceholder": "Search companies...",
+    "noServices": "No companies available at the moment",
+    "noResults": "No companies match your search"
   },
   "errors": {
     "emailRequired": "Email is required",
