@@ -1,12 +1,20 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, TextStyle } from "react-native";
 import { ThemeColors } from "@/constants/theme";
 
 export const createHeaderScreenOptions = (colors: ThemeColors) =>
   ({
     headerTitle: "",
     headerShadowVisible: false,
-    headerStyle: { backgroundColor: colors.background },
+    headerStyle: { backgroundColor: "#00E8C5" },
   }) as const;
+
+export const createHeaderTitleStyle = (colors: ThemeColors): TextStyle =>
+  ({
+    color: colors.text,
+    fontSize: 24,
+    fontWeight: "600",
+    fontFamily: "Courier New",
+  });
 
 export const createTabBarStyles = (colors: ThemeColors) =>
   StyleSheet.create({
