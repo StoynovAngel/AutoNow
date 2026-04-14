@@ -33,7 +33,16 @@ export default function RegisterScreen({ navigation }: Props) {
     setEmailError(null);
     setPasswordError(null);
 
-    if (!email.trim() || !password) return;
+    let hasError = false;
+    if (!email.trim()) {
+      setEmailError(t("errors.emailRequired"));
+      hasError = true;
+    }
+    if (!password) {
+      setPasswordError(t("errors.passwordRequired"));
+      hasError = true;
+    }
+    if (hasError) return;
 
     register.mutate(
       { email: email.trim(), password },

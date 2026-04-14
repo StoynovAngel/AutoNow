@@ -18,6 +18,8 @@
     "logout": "Log Out"
   },
   "errors": {
+    "emailRequired": "Email is required",
+    "passwordRequired": "Password is required",
     "network": "Network error. Please check your connection.",
     "generic": "An error occurred"
   },
