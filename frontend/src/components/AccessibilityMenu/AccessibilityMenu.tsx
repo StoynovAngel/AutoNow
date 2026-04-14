@@ -22,6 +22,8 @@ export default function AccessibilityMenu() {
   const triggerRef = useRef<View>(null);
   const { locale, setLocale } = useLocaleStore();
   const { mode, colors, toggleMode } = useThemeStore();
+  const showBlobs = useThemeStore((s) => s.showBlobs);
+  const toggleBlobs = useThemeStore((s) => s.toggleBlobs);
   const { t } = useTranslation();
   const styles = useMemo(() => createStyles(colors), [colors]);
 
@@ -59,8 +61,6 @@ export default function AccessibilityMenu() {
         <TouchableWithoutFeedback onPress={() => setOpen(false)}>
           <View style={styles.overlay}>
             <View style={[styles.menu, { top: menuTop }]}>
-              {/* Dark Mode Section */}
-              <Text style={styles.sectionLabel}>{t("common.darkMode")}</Text>
               <View style={styles.row}>
                 <Text style={styles.rowLabel}>{t("common.darkMode")}</Text>
                 <TouchableOpacity
@@ -78,9 +78,25 @@ export default function AccessibilityMenu() {
                 </TouchableOpacity>
               </View>
 
+              <View style={styles.row}>
+                <Text style={styles.rowLabel}>{t("common.blobs")}</Text>
+                <TouchableOpacity
+                  style={[styles.toggle, showBlobs ? styles.toggleOn : styles.toggleOff]}
+                  onPress={toggleBlobs}
+                >
+                  <Text
+                    style={[
+                      styles.toggleText,
+                      showBlobs ? styles.toggleTextOn : styles.toggleTextOff,
+                    ]}
+                  >
+                    {showBlobs ? t("common.on") : t("common.off")}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
               <View style={styles.divider} />
 
-              {/* Language Section */}
               <Text style={styles.sectionLabel}>{t("common.language")}</Text>
               {LANGUAGES.map(({ code, labelKey }) => {
                 const active = locale === code;
