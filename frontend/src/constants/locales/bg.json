@@ -1,0 +1,36 @@
+{
+  "auth": {
+    "title": "AutoNow",
+    "loginSubtitle": "Влезте в акаунта си",
+    "registerSubtitle": "Създайте акаунт",
+    "emailPlaceholder": "Имейл",
+    "passwordPlaceholder": "Парола",
+    "loginButton": "Вход",
+    "registerButton": "Регистрация",
+    "noAccount": "Нямате акаунт?",
+    "hasAccount": "Вече имате акаунт?",
+    "loginLink": "Вход",
+    "registerLink": "Регистрация"
+  },
+  "home": {
+    "tab": "Начало",
+    "title": "Добре дошли в AutoNow",
+    "placeholder": "Вашите пътувания ще се появят тук",
+    "logout": "Изход"
+  },
+  "errors": {
+    "emailRequired": "Имейлът е задължителен",
+    "passwordRequired": "Паролата е задължителна",
+    "network": "Мрежова грешка. Проверете връзката си.",
+    "generic": "Възникна грешка"
+  },
+  "common": {
+    "accessibility": "Достъпност",
+    "darkMode": "Тъмен режим",
+    "language": "Език",
+    "english": "English",
+    "bulgarian": "Български",
+    "on": "Вкл",
+    "off": "Изкл"
+  }
+}

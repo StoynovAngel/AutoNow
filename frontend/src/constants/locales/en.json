@@ -1,0 +1,36 @@
+{
+  "auth": {
+    "title": "AutoNow",
+    "loginSubtitle": "Sign in to your account",
+    "registerSubtitle": "Create your account",
+    "emailPlaceholder": "Email",
+    "passwordPlaceholder": "Password",
+    "loginButton": "Log In",
+    "registerButton": "Register",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "loginLink": "Log In",
+    "registerLink": "Register"
+  },
+  "home": {
+    "tab": "Home",
+    "title": "Welcome to AutoNow",
+    "placeholder": "Your rides will appear here",
+    "logout": "Log Out"
+  },
+  "errors": {
+    "emailRequired": "Email is required",
+    "passwordRequired": "Password is required",
+    "network": "Network error. Please check your connection.",
+    "generic": "An error occurred"
+  },
+  "common": {
+    "accessibility": "Accessibility",
+    "darkMode": "Dark Mode",
+    "language": "Language",
+    "english": "English",
+    "bulgarian": "Bulgarian",
+    "on": "On",
+    "off": "Off"
+  }
+}

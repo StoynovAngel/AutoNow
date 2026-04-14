@@ -25,6 +25,7 @@ public class UserService {
 		String password = request.password();
 
 		if (userRepository.findByEmail(email).isPresent()) {
+			log.warn("Registration failed: email already exists");
 			throw new UserException("Account with this email already exists.");
 		}
 
@@ -35,6 +36,7 @@ public class UserService {
 				.build();
 
 		userRepository.save(newUser);
+		log.info("User registered successfully [{}]", email);
 
 		return jwtService.generateToken(email, newUser.getAuthorities());
 	}
@@ -43,12 +45,17 @@ public class UserService {
 		String email = request.email();
 		String password = request.password();
 
-		UserEntity user = userRepository.findByEmail(email).orElseThrow(() -> new UserException("Invalid credentials"));
+		UserEntity user = userRepository.findByEmail(email).orElseThrow(() -> {
+			log.warn("Login failed: user not found [{}]", email);
+			return new UserException("Invalid credentials");
+		});
 
 		if (!passwordEncoder.matches(password, user.getPassword())) {
+			log.warn("Login failed: invalid password [{}]", email);
 			throw new UserException("Invalid credentials");
 		}
 
+		log.info("User logged in successfully [{}]", email);
 		return jwtService.generateToken(email, user.getAuthorities());
 	}
 }
