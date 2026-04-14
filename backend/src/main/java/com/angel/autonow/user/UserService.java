@@ -25,7 +25,7 @@ public class UserService {
 		String password = request.password();
 
 		if (userRepository.findByEmail(email).isPresent()) {
-			log.warn("Registration failed: email already exists [{}]", email);
+			log.warn("Registration failed: email already exists");
 			throw new UserException("Account with this email already exists.");
 		}
 
