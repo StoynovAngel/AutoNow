@@ -47,7 +47,7 @@ export default function AccessibilityMenu() {
         accessibilityLabel={t("common.accessibility")}
         accessibilityRole="button"
       >
-        <Text style={styles.triggerText}>Accessibility</Text>
+        <Text style={styles.triggerText}>{t("common.accessibility")}</Text>
       </TouchableOpacity>
 
       <Modal
