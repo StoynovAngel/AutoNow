@@ -13,6 +13,7 @@
     "registerLink": "Регистрация"
   },
   "home": {
+    "tab": "Начало",
     "title": "Добре дошли в AutoNow",
     "placeholder": "Вашите пътувания ще се появят тук",
     "logout": "Изход"

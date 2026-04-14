@@ -13,6 +13,7 @@
     "registerLink": "Register"
   },
   "home": {
+    "tab": "Home",
     "title": "Welcome to AutoNow",
     "placeholder": "Your rides will appear here",
     "logout": "Log Out"
