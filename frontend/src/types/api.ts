@@ -18,3 +18,18 @@ export interface ProblemDetail {
     [key: string]: unknown;
   };
 }
+
+export type CompanyType = "TAXI" | "LOGISTICS" | "AMBULANCE" | "MOVING" | "RENTAL";
+
+export interface Company {
+  id: number;
+  name: string;
+  address: string;
+  phone: string;
+  email: string;
+  logoUrl: string | null;
+  description: string | null;
+  companyType: CompanyType;
+  createdAt: string;
+  updatedAt: string;
+}
