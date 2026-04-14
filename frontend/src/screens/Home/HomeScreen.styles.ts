@@ -18,6 +18,7 @@ export const createStyles = (colors: ThemeColors) =>
       borderRadius: borderRadius.md,
       paddingHorizontal: spacing.md,
       paddingVertical: 12,
+      marginTop: spacing.md,
       fontSize: fontSize.lg,
       backgroundColor: colors.inputBackground,
       color: colors.text,
@@ -31,8 +32,15 @@ export const createStyles = (colors: ThemeColors) =>
       borderRadius: borderRadius.lg,
       borderWidth: 1,
       borderColor: colors.borderLight,
-      padding: spacing.md,
+      overflow: "hidden",
       marginTop: spacing.sm,
+    },
+    cardImage: {
+      width: "100%",
+      height: 160,
+    },
+    cardContent: {
+      padding: spacing.md,
     },
     cardHeader: {
       flexDirection: "row",
