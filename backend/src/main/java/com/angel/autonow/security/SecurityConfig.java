@@ -2,6 +2,7 @@ package com.angel.autonow.security;
 
 import com.angel.autonow.user.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -30,6 +31,9 @@ public class SecurityConfig {
 	private static final String AUTHORITY_PREFIX = "";
 
 	private final CustomUserDetailsService userDetailsService;
+
+	@Value("${cors.allowed.origins}")
+	private String allowedOrigins;
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) {
@@ -75,10 +79,12 @@ public class SecurityConfig {
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration config = new CorsConfiguration();
-		config.addAllowedOrigin("http://localhost:8080");
-		config.addAllowedOrigin("http://localhost:8081");
-		config.addAllowedOrigin("http://10.0.2.2:8080");
-		config.addAllowedOrigin("http://10.0.2.2:8081");
+
+		String[] origins = allowedOrigins.split(",");
+		for (String origin : origins) {
+			config.addAllowedOrigin(origin.trim());
+		}
+
 		config.addAllowedMethod("*");
 		config.addAllowedHeader("*");
 		config.setAllowCredentials(true);
