@@ -1,4 +1,4 @@
-export type ThemeColors = typeof lightColors;
+export type ThemeColors = { [K in keyof typeof lightColors]: string };
 
 export const lightColors = {
   background: "#FAFAF8",

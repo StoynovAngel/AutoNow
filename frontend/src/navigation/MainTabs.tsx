@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import type { MainTabParamList } from "@/types/navigation";
 import { useThemeStore } from "@/stores/themeStore";
+import AccessibilityMenu from "@/components/AccessibilityMenu/AccessibilityMenu";
 import { createHeaderScreenOptions, createTabBarStyles, createTabBarColors } from "./navigation.styles";
 import HomeScreen from "@/screens/Home/HomeScreen";
 
@@ -17,6 +18,7 @@ export default function MainTabs() {
     <Tab.Navigator
       screenOptions={{
         ...headerOptions,
+        headerRight: () => <AccessibilityMenu />,
         tabBarStyle: tabBarStyles.tabBar,
         tabBarActiveTintColor: tabBarColors.activeTintColor,
         tabBarInactiveTintColor: tabBarColors.inactiveTintColor,
