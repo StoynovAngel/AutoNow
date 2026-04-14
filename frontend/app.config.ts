@@ -5,6 +5,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   name: config.name ?? "AutoNow",
   slug: config.slug ?? "autonow",
   extra: {
-    apiUrl: process.env.API_URL ?? "http://10.0.2.2:8081",
+    apiUrl: process.env.API_URL ?? "http://10.0.2.2:8080",
   },
 });

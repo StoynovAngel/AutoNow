@@ -1,20 +1,37 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { useEffect } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { NavigationContainer } from "@react-navigation/native";
+import { StatusBar } from "expo-status-bar";
+import { useAuthState } from "@/hooks/useAuthState";
+import { hydrateLocale } from "@/stores/localeStore";
+import { hydrateTheme } from "@/stores/themeStore";
+import { useThemeStore } from "@/stores/themeStore";
+import RootNavigator from "@/navigation/RootNavigator";
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { retry: 1 } },
+});
+
+function AppContent() {
+  useAuthState();
+
+  useEffect(() => {
+    hydrateLocale();
+    hydrateTheme();
+  }, []);
+
+  return <RootNavigator />;
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default function App() {
+  const mode = useThemeStore((s) => s.mode);
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <NavigationContainer>
+        <AppContent />
+        <StatusBar style={mode === "dark" ? "light" : "dark"} />
+      </NavigationContainer>
+    </QueryClientProvider>
+  );
+}
