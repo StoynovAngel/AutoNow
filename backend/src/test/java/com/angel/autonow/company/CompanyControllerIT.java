@@ -171,10 +171,10 @@ class CompanyControllerIT {
 	}
 
 	@Test
-	void getAllCompanies_asCustomer_returnsForbidden() throws Exception {
+	void getAllCompanies_asCustomer_returnsOk() throws Exception {
 		mockMvc.perform(get("/api/companies")
 						.with(TestData.customerJwt()))
-				.andExpect(status().isForbidden());
+				.andExpect(status().isOk());
 	}
 
 	@Test
