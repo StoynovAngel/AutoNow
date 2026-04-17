@@ -31,6 +31,11 @@ export const lightColors = {
   white: "#FFFFFF",
   black: "#1A1A1A",
   transparent: "transparent",
+
+  glass: "rgba(255, 255, 255, 0.6)",
+  glassBorder: "rgba(255, 255, 255, 0.8)",
+  glassSelected: "rgba(45, 106, 79, 0.25)",
+  glassSelectedBorder: "rgba(45, 106, 79, 0.4)",
 } as const;
 
 export const darkColors: ThemeColors = {
@@ -64,6 +69,11 @@ export const darkColors: ThemeColors = {
   white: "#FFFFFF",
   black: "#121212",
   transparent: "transparent",
+
+  glass: "rgba(30, 30, 30, 0.6)",
+  glassBorder: "rgba(255, 255, 255, 0.15)",
+  glassSelected: "rgba(82, 183, 136, 0.25)",
+  glassSelectedBorder: "rgba(82, 183, 136, 0.4)",
 } as const;
 
 export const spacing = {
