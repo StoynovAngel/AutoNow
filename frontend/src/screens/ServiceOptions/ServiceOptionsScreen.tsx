@@ -7,6 +7,7 @@ import {useThemeStore} from "@/stores/themeStore";
 import {useTranslation} from "@/hooks/useTranslation";
 import ScreenContainer from "@/components/ScreenContainer/ScreenContainer";
 import GlassCard from "@/components/GlassCard/GlassCard";
+import BackButton from "@/components/BackButton/BackButton";
 import {createStyles} from "./ServiceOptionsScreen.styles";
 import type {HomeStackParamList} from "@/types/navigation";
 
@@ -27,6 +28,10 @@ export default function ServiceOptionsScreen() {
 
     return (
         <ScreenContainer>
+            <BackButton
+                label={t(`home.serviceTypes.${serviceType}`)}
+                onPress={() => navigation.goBack()}
+            />
             <View style={styles.wrapper}>
                 <Text style={styles.title}>{t("home.selectOption")}</Text>
                 <View style={styles.container}>

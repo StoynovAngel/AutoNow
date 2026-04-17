@@ -1,6 +1,7 @@
 import {useMemo, useState, useCallback} from "react";
 import {Text, FlatList, ActivityIndicator} from "react-native";
-import {useRoute} from "@react-navigation/native";
+import {useNavigation, useRoute} from "@react-navigation/native";
+import type {NativeStackNavigationProp} from "@react-navigation/native-stack";
 import type {RouteProp} from "@react-navigation/native";
 import {useThemeStore} from "@/stores/themeStore";
 import {useTranslation} from "@/hooks/useTranslation";
@@ -8,16 +9,19 @@ import {useCompanies} from "@/hooks/useCompanies";
 import ScreenContainer from "@/components/ScreenContainer/ScreenContainer";
 import SearchInput from "@/components/SearchInput/SearchInput";
 import CompanyCard from "@/components/CompanyCard/CompanyCard";
+import BackButton from "@/components/BackButton/BackButton";
 import {createStyles} from "./BrowseCompaniesScreen.styles";
 import type {HomeStackParamList} from "@/types/navigation";
 import type {Company} from "@/types/api";
 
+type NavigationProp = NativeStackNavigationProp<HomeStackParamList, "BrowseCompanies">;
 type ScreenRouteProp = RouteProp<HomeStackParamList, "BrowseCompanies">;
 
 export default function BrowseCompaniesScreen() {
     const colors = useThemeStore((s) => s.colors);
     const {t} = useTranslation();
     const styles = useMemo(() => createStyles(colors), [colors]);
+    const navigation = useNavigation<NavigationProp>();
     const route = useRoute<ScreenRouteProp>();
     const {serviceType} = route.params;
 
@@ -64,6 +68,10 @@ export default function BrowseCompaniesScreen() {
 
     return (
         <ScreenContainer>
+            <BackButton
+                label={t(`home.serviceTypes.${serviceType}`)}
+                onPress={() => navigation.goBack()}
+            />
             <SearchInput
                 value={search}
                 onChangeText={setSearch}
