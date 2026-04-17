@@ -5,14 +5,15 @@ export const createStyles = (colors: ThemeColors) =>
     StyleSheet.create({
         trigger: {
             paddingHorizontal: spacing.md,
-            alignSelf: "stretch",
-            justifyContent: "center",
-            backgroundColor: colors.surfaceLight,
+            paddingVertical: spacing.sm,
+            marginRight: spacing.md,
+            borderRadius: 20,
+            backgroundColor: colors.primary,
         },
         triggerText: {
-            fontSize: fontSize.md,
+            fontSize: fontSize.sm,
             fontWeight: "600",
-            color: colors.text,
+            color: colors.white,
         },
         overlay: {
             flex: 1,

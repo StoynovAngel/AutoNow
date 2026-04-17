@@ -5,15 +5,18 @@ export const createHeaderScreenOptions = (colors: ThemeColors) =>
   ({
     headerTitle: "",
     headerShadowVisible: false,
-    headerStyle: { backgroundColor: "#00E8C5" },
+    headerStyle: {
+      backgroundColor: colors.surface,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: colors.border,
+    },
   }) as const;
 
 export const createHeaderTitleStyle = (colors: ThemeColors): TextStyle =>
   ({
     color: colors.text,
-    fontSize: 24,
-    fontWeight: "600",
-    fontFamily: "Courier New",
+    fontSize: 22,
+    fontWeight: "700",
   });
 
 export const createTabBarStyles = (colors: ThemeColors) =>
