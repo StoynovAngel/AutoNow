@@ -1,13 +1,24 @@
 import {useMemo} from "react";
+import {View} from "react-native";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import type {MainTabParamList} from "@/types/navigation";
 import {useThemeStore} from "@/stores/themeStore";
 import {useTranslation} from "@/hooks/useTranslation";
 import AccessibilityMenu from "@/components/AccessibilityMenu/AccessibilityMenu";
+import LogoutButton from "@/components/LogoutButton/LogoutButton";
 import {createHeaderScreenOptions, createHeaderTitleStyle} from "./navigation.styles";
 import HomeStack from "./HomeStack";
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
+
+function HeaderRight() {
+    return (
+        <View style={{flexDirection: "row", alignItems: "center"}}>
+            <AccessibilityMenu />
+            <LogoutButton />
+        </View>
+    );
+}
 
 export default function MainTabs() {
     const colors = useThemeStore((s) => s.colors);
@@ -22,7 +33,7 @@ export default function MainTabs() {
                 headerTitle: "AutoNow",
                 headerTitleStyle: headerTitleStyle,
                 headerLeft: () => null,
-                headerRight: () => <AccessibilityMenu />,
+                headerRight: () => <HeaderRight />,
                 headerRightContainerStyle: {marginRight: 0, paddingRight: 0},
                 tabBarStyle: {display: "none"},
             }}
