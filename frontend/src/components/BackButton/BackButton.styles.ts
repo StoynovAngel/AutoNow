@@ -6,10 +6,7 @@ export const createStyles = (colors: ThemeColors) =>
         button: {
             paddingHorizontal: spacing.md,
             paddingTop: spacing.md,
-            position: "absolute",
-            top: 0,
-            left: 0,
-            zIndex: 10,
+            alignSelf: "flex-start",
         },
         text: {
             fontSize: fontSize.lg,
