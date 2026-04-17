@@ -83,6 +83,8 @@ export default function AccessibilityMenu() {
                 <TouchableOpacity
                   style={[styles.toggle, showBlobs ? styles.toggleOn : styles.toggleOff]}
                   onPress={toggleBlobs}
+                  accessibilityRole="switch"
+                  accessibilityState={{ checked: showBlobs }}
                 >
                   <Text
                     style={[
