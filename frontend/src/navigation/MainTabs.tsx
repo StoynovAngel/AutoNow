@@ -1,7 +1,8 @@
 import {useMemo} from "react";
 import {View, Image, Pressable} from "react-native";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
-import {useNavigation, CommonActions} from "@react-navigation/native";
+import {useNavigation} from "@react-navigation/native";
+import type {NavigationProp} from "@react-navigation/native";
 import {useSafeAreaInsets} from "react-native-safe-area-context";
 import type {MainTabParamList} from "@/types/navigation";
 import {useThemeStore} from "@/stores/themeStore";
@@ -14,17 +15,17 @@ import HomeStack from "./HomeStack";
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
 function HeaderLogo() {
-    const navigation = useNavigation();
+    const navigation = useNavigation<NavigationProp<MainTabParamList>>();
     const handlePress = () => {
-        navigation.dispatch(
-            CommonActions.reset({
-                index: 0,
-                routes: [{name: "HomeStack", state: {routes: [{name: "SelectService"}]}}],
-            })
-        );
+        navigation.navigate("HomeStack", { screen: "SelectService" });
     };
     return (
-        <Pressable onPress={handlePress}>
+        <Pressable
+            onPress={handlePress}
+            hitSlop={8}
+            accessibilityRole="button"
+            accessibilityLabel="Go to home"
+        >
             <Image source={require("../../assets/favicon.png")} style={{width: 36, height: 36}}/>
         </Pressable>
     );
