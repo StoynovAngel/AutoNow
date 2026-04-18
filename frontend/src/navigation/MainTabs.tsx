@@ -14,6 +14,7 @@ import HomeStack from "./HomeStack";
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
+
 function HeaderLogo() {
     const navigation = useNavigation<NavigationProp<MainTabParamList>>();
     const handlePress = () => {
@@ -52,8 +53,8 @@ function IslandHeader() {
 function MainContent() {
     return (
         <View style={{flex: 1}}>
-            <HomeStack/>
             <IslandHeader/>
+            <HomeStack/>
         </View>
     );
 }

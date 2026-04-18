@@ -22,12 +22,8 @@ export const createHeaderTitleStyle = (colors: ThemeColors): TextStyle =>
 export const createIslandHeaderStyles = (colors: ThemeColors, topInset: number) =>
   StyleSheet.create({
     wrapper: {
-      position: "absolute",
-      top: 0,
-      left: 0,
-      right: 0,
-      zIndex: 10,
       paddingTop: topInset,
+      backgroundColor: colors.background,
     },
     island: {
       flexDirection: "row",
