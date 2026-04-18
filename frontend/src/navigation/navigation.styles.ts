@@ -19,6 +19,35 @@ export const createHeaderTitleStyle = (colors: ThemeColors): TextStyle =>
     fontWeight: "700",
   });
 
+export const createIslandHeaderStyles = (colors: ThemeColors, topInset: number) =>
+  StyleSheet.create({
+    wrapper: {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      zIndex: 10,
+      paddingTop: topInset,
+    },
+    island: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      marginHorizontal: 12,
+      marginVertical: 8,
+      paddingHorizontal: 16,
+      paddingVertical: 10,
+      borderRadius: 20,
+      backgroundColor: colors.surface,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: colors.border,
+    },
+    right: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+  });
+
 export const createTabBarStyles = (colors: ThemeColors) =>
   StyleSheet.create({
     tabBar: {
