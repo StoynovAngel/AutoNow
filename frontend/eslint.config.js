@@ -41,6 +41,8 @@ export default [
         ecmaFeatures: {
           jsx: true,
         },
+        project: './tsconfig.json',
+        tsconfigRootDir: import.meta.dirname,
       },
       globals: {
         __DEV__: 'readonly',
@@ -67,10 +69,13 @@ export default [
 
       // TypeScript
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
-      '@typescript-eslint/explicit-module-boundary-types': 'off',
-      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/explicit-module-boundary-types': 'warn',
+      '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/consistent-type-imports': ['error', { prefer: 'type-imports' }],
-      '@typescript-eslint/no-require-imports': 'off',
+      '@typescript-eslint/no-require-imports': 'warn',
+      '@typescript-eslint/no-floating-promises': 'error',
+      '@typescript-eslint/await-thenable': 'error',
+      '@typescript-eslint/no-misused-promises': 'error',
 
       // React
       'react/react-in-jsx-scope': 'off',
@@ -84,9 +89,13 @@ export default [
       'react-native/no-inline-styles': 'warn',
 
       // General
-      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      'no-console': ['error', { allow: ['warn', 'error'] }],
       'prefer-const': 'error',
       'no-var': 'error',
+      'eqeqeq': ['error', 'always'],
+      'no-implicit-coercion': 'error',
+      'no-return-await': 'error',
+      'require-await': 'error',
     },
     settings: {
       react: {

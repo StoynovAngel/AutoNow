@@ -16,8 +16,8 @@ function AppContent() {
   useAuthState();
 
   useEffect(() => {
-    hydrateLocale();
-    hydrateTheme();
+    void hydrateLocale();
+    void hydrateTheme();
   }, []);
 
   return <RootNavigator />;

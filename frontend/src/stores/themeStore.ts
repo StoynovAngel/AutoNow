@@ -24,7 +24,7 @@ export const useThemeStore = create<ThemeState>((set, get) => ({
 
   setMode: (mode) => {
     set({ mode, colors: mode === "dark" ? darkColors : lightColors });
-    SecureStore.setItemAsync(THEME_KEY, mode);
+    void SecureStore.setItemAsync(THEME_KEY, mode);
   },
 
   toggleMode: () => {
@@ -35,7 +35,7 @@ export const useThemeStore = create<ThemeState>((set, get) => ({
   toggleBlobs: () => {
     const next = !get().showBlobs;
     set({ showBlobs: next });
-    SecureStore.setItemAsync(BLOBS_KEY, String(next));
+    void SecureStore.setItemAsync(BLOBS_KEY, String(next));
   },
 }));
 

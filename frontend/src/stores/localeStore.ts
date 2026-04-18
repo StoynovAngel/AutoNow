@@ -24,7 +24,7 @@ export const useLocaleStore = create<LocaleState>((set) => ({
 
   setLocale: (locale) => {
     set({ locale });
-    SecureStore.setItemAsync(LOCALE_KEY, locale);
+    void SecureStore.setItemAsync(LOCALE_KEY, locale);
   },
 
   setHydrated: () => set({ isHydrated: true }),

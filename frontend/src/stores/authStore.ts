@@ -27,12 +27,12 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   setAuth: (token, email) => {
     set({ token, userEmail: email });
-    saveToken(token);
+    void saveToken(token);
   },
 
   clearAuth: () => {
     set({ token: null, userEmail: null });
-    deleteToken();
+    void deleteToken();
   },
 
   setHydrated: () => set({ isHydrated: true }),

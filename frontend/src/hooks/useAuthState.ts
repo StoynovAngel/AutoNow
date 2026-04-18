@@ -8,7 +8,7 @@ export function useAuthState() {
   useEffect(() => {
     if (isHydrated) return;
 
-    (async () => {
+    void (async () => {
       try {
         const stored = await getToken();
         if (stored) {
@@ -31,5 +31,5 @@ export function useAuthState() {
     })();
   }, [isHydrated, setAuth, clearAuth, setHydrated]);
 
-  return { isHydrated, isAuthenticated: !!token };
+  return { isHydrated, isAuthenticated: Boolean(token) };
 }
