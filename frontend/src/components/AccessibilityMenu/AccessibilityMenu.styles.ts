@@ -4,18 +4,16 @@ import {borderRadius, fontSize, spacing, ThemeColors} from "@/constants/theme";
 export const createStyles = (colors: ThemeColors) =>
     StyleSheet.create({
         trigger: {
-            paddingHorizontal: spacing.sm + 4,
+            paddingHorizontal: spacing.md,
             paddingVertical: spacing.sm,
-            marginRight: spacing.sm,
-            backgroundColor: colors.surfaceLight,
-            borderRadius: borderRadius.sm,
-            borderWidth: 1,
-            borderColor: colors.border,
+            marginRight: spacing.md,
+            borderRadius: 20,
+            backgroundColor: colors.primary,
         },
         triggerText: {
-            fontSize: fontSize.md,
+            fontSize: fontSize.sm,
             fontWeight: "600",
-            color: colors.text,
+            color: colors.white,
         },
         overlay: {
             flex: 1,

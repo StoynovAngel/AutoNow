@@ -48,7 +48,7 @@ public class CompanyController {
 	}
 
 	@GetMapping
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'DRIVER', 'COMPANY_ADMIN')")
 	public List<CompanyResponseDTO> getAllCompanies() {
 		return companyService.getAllCompanies();
 	}

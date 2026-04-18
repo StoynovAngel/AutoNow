@@ -14,9 +14,20 @@
   },
   "home": {
     "tab": "Начало",
-    "title": "Добре дошли в AutoNow",
-    "placeholder": "Вашите пътувания ще се появят тук",
-    "logout": "Изход"
+    "searchPlaceholder": "Търси компании...",
+    "noServices": "Няма налични компании в момента",
+    "noResults": "Няма компании, отговарящи на търсенето",
+    "selectService": "Изберете услуга",
+    "selectOption": "Как искате да продължите?",
+    "browseCompanies": "Преглед на компании",
+    "browseCompaniesDesc": "Изберете от наличните доставчици",
+    "serviceTypes": {
+      "TAXI": "Такси",
+      "LOGISTICS": "Логистика",
+      "AMBULANCE": "Медицински транспорт",
+      "MOVING": "Преместване",
+      "RENTAL": "Рент-а-кар"
+    }
   },
   "errors": {
     "emailRequired": "Имейлът е задължителен",
@@ -31,6 +42,7 @@
     "english": "English",
     "bulgarian": "Български",
     "on": "Вкл",
-    "off": "Изкл"
+    "off": "Изкл",
+    "blobs": "Фонови петна"
   }
 }
