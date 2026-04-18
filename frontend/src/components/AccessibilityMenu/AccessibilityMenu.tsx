@@ -6,7 +6,8 @@ import {
   Modal,
   TouchableWithoutFeedback,
 } from "react-native";
-import { useLocaleStore, Locale } from "@/stores/localeStore";
+import type { Locale } from "@/stores/localeStore";
+import { useLocaleStore } from "@/stores/localeStore";
 import { useThemeStore } from "@/stores/themeStore";
 import { useTranslation } from "@/hooks/useTranslation";
 import { createStyles } from "./AccessibilityMenu.styles";

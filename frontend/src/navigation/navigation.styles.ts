@@ -1,5 +1,6 @@
-import { StyleSheet, TextStyle } from "react-native";
-import { ThemeColors } from "@/constants/theme";
+import type { TextStyle } from "react-native";
+import { StyleSheet } from "react-native";
+import type { ThemeColors } from "@/constants/theme";
 
 export const createHeaderScreenOptions = (colors: ThemeColors) =>
   ({
@@ -42,7 +43,17 @@ export const createIslandHeaderStyles = (colors: ThemeColors, topInset: number) 
       flexDirection: "row",
       alignItems: "center",
     },
+    logo: {
+      width: 36,
+      height: 36,
+    },
   });
+
+export const mainContentStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
 
 export const createTabBarStyles = (colors: ThemeColors) =>
   StyleSheet.create({

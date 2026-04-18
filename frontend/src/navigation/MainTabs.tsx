@@ -9,7 +9,7 @@ import {useThemeStore} from "@/stores/themeStore";
 import {useTranslation} from "@/hooks/useTranslation";
 import AccessibilityMenu from "@/components/AccessibilityMenu/AccessibilityMenu";
 import LogoutButton from "@/components/LogoutButton/LogoutButton";
-import {createIslandHeaderStyles} from "./navigation.styles";
+import {createIslandHeaderStyles, mainContentStyles} from "./navigation.styles";
 import HomeStack from "./HomeStack";
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
@@ -17,6 +17,10 @@ const Tab = createBottomTabNavigator<MainTabParamList>();
 
 function HeaderLogo() {
     const navigation = useNavigation<NavigationProp<MainTabParamList>>();
+    const colors = useThemeStore((s) => s.colors);
+    const insets = useSafeAreaInsets();
+    const styles = useMemo(() => createIslandHeaderStyles(colors, insets.top), [colors, insets.top]);
+
     const handlePress = () => {
         navigation.navigate("HomeStack", { screen: "SelectService" });
     };
@@ -27,7 +31,7 @@ function HeaderLogo() {
             accessibilityRole="button"
             accessibilityLabel="Go to home"
         >
-            <Image source={require("../../assets/favicon.png")} style={{width: 36, height: 36}}/>
+            <Image source={require("../../assets/favicon.png")} style={styles.logo}/>
         </Pressable>
     );
 }
@@ -52,7 +56,7 @@ function IslandHeader() {
 
 function MainContent() {
     return (
-        <View style={{flex: 1}}>
+        <View style={mainContentStyles.container}>
             <IslandHeader/>
             <HomeStack/>
         </View>

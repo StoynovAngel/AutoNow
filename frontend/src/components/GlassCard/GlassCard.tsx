@@ -1,5 +1,7 @@
-import {useMemo, useState, ReactNode} from "react";
-import {View, TouchableOpacity, StyleProp, ViewStyle} from "react-native";
+import type { ReactNode} from "react";
+import {useMemo, useState} from "react";
+import type { StyleProp, ViewStyle} from "react-native";
+import {View, TouchableOpacity} from "react-native";
 import {useThemeStore} from "@/stores/themeStore";
 import {createStyles} from "./GlassCard.styles";
 

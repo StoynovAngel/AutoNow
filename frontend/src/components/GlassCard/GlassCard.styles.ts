@@ -1,5 +1,6 @@
 import {StyleSheet} from "react-native";
-import {ThemeColors, spacing, borderRadius} from "@/constants/theme";
+import type {ThemeColors} from "@/constants/theme";
+import { spacing, borderRadius} from "@/constants/theme";
 
 export const createStyles = (colors: ThemeColors) =>
     StyleSheet.create({

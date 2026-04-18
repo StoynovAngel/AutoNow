@@ -35,6 +35,7 @@ export default function BackgroundShapes() {
       {blobs.map((blob, i) => (
         <View
           key={i}
+          // eslint-disable-next-line react-native/no-inline-styles
           style={{
             position: "absolute",
             top: blob.top,

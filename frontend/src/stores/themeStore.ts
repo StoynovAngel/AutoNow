@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import * as SecureStore from "expo-secure-store";
-import { lightColors, darkColors, ThemeColors } from "@/constants/theme";
+import type { ThemeColors } from "@/constants/theme";
+import { lightColors, darkColors } from "@/constants/theme";
 
 export type ThemeMode = "light" | "dark";
 
