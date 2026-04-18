@@ -1,5 +1,5 @@
 import {useMemo} from "react";
-import {View} from "react-native";
+import {View, Image} from "react-native";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import type {MainTabParamList} from "@/types/navigation";
 import {useThemeStore} from "@/stores/themeStore";
@@ -14,8 +14,8 @@ const Tab = createBottomTabNavigator<MainTabParamList>();
 function HeaderRight() {
     return (
         <View style={{flexDirection: "row", alignItems: "center"}}>
-            <AccessibilityMenu />
-            <LogoutButton />
+            <AccessibilityMenu/>
+            <LogoutButton/>
         </View>
     );
 }
@@ -30,10 +30,10 @@ export default function MainTabs() {
         <Tab.Navigator
             screenOptions={{
                 ...headerOptions,
-                headerTitle: "AutoNow",
+                headerTitle: () => <Image source={require("../../assets/favicon.png")} style={{width: 36, height: 36}} />,
                 headerTitleStyle: headerTitleStyle,
                 headerLeft: () => null,
-                headerRight: () => <HeaderRight />,
+                headerRight: () => <HeaderRight/>,
                 headerRightContainerStyle: {marginRight: 0, paddingRight: 0},
                 tabBarStyle: {display: "none"},
             }}
