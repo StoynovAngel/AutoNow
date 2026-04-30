@@ -1,4 +1,4 @@
-export const theme = {
+export const lightTheme = {
     colors: {
         primary: '#444444',
         secondary: '#CECECC',
@@ -114,4 +114,30 @@ export const theme = {
     }
 };
 
-export default theme;
+export const darkTheme = {
+    colors: {
+        primary: '#BB86FC',
+        secondary: '#03DAC6',
+        background: '#121212',
+        surface: '#1E1E1E',
+        textPrimary: '#E1E1E1',
+        textSecondary: '#A1A1A1',
+        border: '#2C2C2C',
+        ripple: 'rgba(255,255,255,0.1)',
+        shadow: '#000',
+        transparent: 'transparent',
+        textTertiary: '#B1B1B1',
+        textValidationError: '#CF6679',
+        error: '#CF6679'
+    },
+    spacing: lightTheme.spacing,
+    fontSizes: lightTheme.fontSizes,
+    radii: lightTheme.radii,
+    sizes: lightTheme.sizes,
+    iconSizes: lightTheme.iconSizes,
+    elevation: lightTheme.elevation,
+    lineHeights: lightTheme.lineHeights,
+    components: lightTheme.components,
+};
+
+export const theme = lightTheme;
