@@ -3,7 +3,7 @@
     "name": "frontend-temp",
     "slug": "frontend-temp",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "default",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
@@ -13,7 +13,9 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "requireFullScreen": false,
+      "orientation": "default"
     },
     "android": {
       "adaptiveIcon": {
@@ -21,7 +23,8 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "orientation": "default"
     },
     "web": {
       "favicon": "./assets/favicon.png"
