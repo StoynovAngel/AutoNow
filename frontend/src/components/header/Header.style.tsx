@@ -6,13 +6,15 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingHorizontal: 16,
+        paddingHorizontal: 20,
         paddingVertical: 12,
+        marginVertical: 36,
         backgroundColor: theme.colors.surface,
         borderBottomWidth: 1,
         borderBottomColor: theme.colors.border,
-        width: "100%",
+        width: "80%",
         height: 60,
+        borderRadius: 20
     },
     userInfo: {
         flexDirection: 'row',
