@@ -18,7 +18,7 @@ const Header = () => {
                 <Text style={styles.username}>AutoNow</Text>
             </View>
 
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View style={styles.buttonContainer}>
                 <Pressable onPress={toggleTheme} style={styles.logoutButton}>
                     <MaterialIcons
                         name={themeMode === 'dark' ? 'light-mode' : 'dark-mode'}
