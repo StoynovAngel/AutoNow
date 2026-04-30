@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
         borderBottomColor: theme.colors.border,
         width: "80%",
         height: 60,
-        borderRadius: 20
+        borderRadius: 20,
     },
     userInfo: {
         flexDirection: 'row',
@@ -29,7 +29,8 @@ const styles = StyleSheet.create({
     },
     username: {
         fontSize: 16,
-        fontWeight: '500',
+        fontFamily: 'Courier New',
+        fontWeight: '800',
         color: theme.colors.textPrimary,
     },
     logoutButton: {
