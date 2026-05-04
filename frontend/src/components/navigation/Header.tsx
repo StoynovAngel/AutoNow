@@ -6,11 +6,18 @@ import {MaterialIcons} from "@expo/vector-icons";
 import type {RootStackParamList} from "../../navigation/Navigation";
 import {createStyles} from "./Header.style";
 import {useTheme} from "../../hooks/useTheme";
+import {useAuth} from "../../services/AuthContext";
 
 const Header = () => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const {theme, toggleTheme, themeMode} = useTheme();
+    const {logout} = useAuth();
     const styles = createStyles(theme);
+
+    const handleLogout = async () => {
+        await logout();
+        navigation.navigate("login");
+    };
 
     return (
         <View style={styles.container}>
@@ -28,7 +35,7 @@ const Header = () => {
                         />
                     </Pressable>
 
-                    <Pressable style={styles.logoutButton}>
+                    <Pressable onPress={handleLogout} style={styles.logoutButton}>
                         <MaterialIcons name="logout" color={theme.colors.textPrimary} size={24}/>
                     </Pressable>
                 </View>
