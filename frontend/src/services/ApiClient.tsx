@@ -8,9 +8,14 @@ const customAPI = axios.create({
 });
 
 customAPI.interceptors.request.use(async (config) => {
-    const token = await AsyncStorage.getItem('jwt');
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+    // Don't add token for login/register endpoints
+    const isAuthEndpoint = config.url?.includes('/auth/login') || config.url?.includes('/auth/register');
+
+    if (!isAuthEndpoint) {
+        const token = await AsyncStorage.getItem('jwt');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
     }
     return config;
 });
