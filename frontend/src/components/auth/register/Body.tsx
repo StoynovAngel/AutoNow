@@ -16,7 +16,6 @@ const Body = () => {
     const [password, setPassword] = useState('');
     const [apiError, setApiError] = useState('');
     const [loading, setLoading] = useState(false);
-    const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
     const {t} = useTranslation();
 
     const {theme} = useTheme();
@@ -26,7 +25,6 @@ const Body = () => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
     const handleRegister = async () => {
-        setFormErrors({});
         setApiError('');
 
         setLoading(true);
@@ -60,7 +58,6 @@ const Body = () => {
                                 value={email}
                                 onChangeText={(text: React.SetStateAction<string>) => {
                                     setEmail(text);
-                                    setFormErrors(prev => ({...prev, email: ''}));
                                 }}
                                 keyboardType="email-address"
                                 autoCapitalize="none"
@@ -69,16 +66,12 @@ const Body = () => {
                                 outlineColor="transparent"
                                 activeOutlineColor={theme.colors.primary}
                             />
-                            {!!(formErrors.email) && (
-                                <Text style={styles.errorText}>{formErrors.email}</Text>
-                            )}
 
                             <TextInput
                                 label={t('password')}
                                 value={password}
                                 onChangeText={(text: React.SetStateAction<string>) => {
                                     setPassword(text);
-                                    setFormErrors(prev => ({...prev, password: ''}));
                                 }}
                                 secureTextEntry
                                 style={styles.input}
@@ -86,9 +79,6 @@ const Body = () => {
                                 outlineColor="transparent"
                                 activeOutlineColor={theme.colors.primary}
                             />
-                            {!!(formErrors.password) && (
-                                <Text style={styles.errorText}>{formErrors.password}</Text>
-                            )}
                         </View>
 
                         <Button
