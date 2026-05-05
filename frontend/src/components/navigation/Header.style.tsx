@@ -10,7 +10,6 @@ export const createStyles = (theme: Theme) => StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: 20,
         paddingVertical: 12,
-        marginVertical: 36,
         backgroundColor: theme.colors.surface,
         borderBottomWidth: 1,
         borderBottomColor: theme.colors.border,
@@ -41,20 +40,21 @@ export const createStyles = (theme: Theme) => StyleSheet.create({
         marginLeft: 8,
     },
 
-    adminButton: {
-        backgroundColor: theme.colors.primary,
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        borderRadius: 8,
-        justifyContent: 'center',
+    actionsContainer: {
+        flexDirection: 'row',
         alignItems: 'center',
-        marginHorizontal: 8,
     },
 
-    adminButtonText: {
-        color: theme.colors.surface,
-        fontSize: 14,
-        fontWeight: '600',
+    container: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: 'transparent',
+        zIndex: 10,
+        paddingTop: 36,
     },
     buttonContainer: {
         flexDirection: 'row',
