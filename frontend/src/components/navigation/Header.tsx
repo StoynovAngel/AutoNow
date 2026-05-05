@@ -6,7 +6,7 @@ import {MaterialIcons} from "@expo/vector-icons";
 import type {RootStackParamList} from "../../navigation/Navigation";
 import {createStyles} from "./Header.style";
 import {useTheme} from "../../hooks/useTheme";
-import {useAuth} from "../../services/AuthContext";
+import {useAuth} from "../../hooks/useAuth";
 
 const Header = () => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();

@@ -4,7 +4,7 @@ import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 import type {RootStackParamList} from "../../../navigation/Navigation";
 import {TextInput, Button, Text} from 'react-native-paper';
 import {createStyles} from "./Body.style";
-import {useAuth} from "../../../services/AuthContext";
+import {useAuth} from "../../../hooks/useAuth";
 import {useNavigation} from '@react-navigation/native';
 import {useTranslation} from 'react-i18next';
 import {useTheme} from "../../../hooks/useTheme";
