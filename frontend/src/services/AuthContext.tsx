@@ -10,19 +10,26 @@ export const AuthProvider = ({children}: { children: ReactNode }) => {
 
     useEffect(() => {
         const loadUser = async () => {
+            console.log('[AuthContext] Starting loadUser...');
             try {
+                console.log('[AuthContext] Getting stored token...');
                 const token = await authService.getStoredToken();
+                console.log('[AuthContext] Token retrieved:', token ? 'exists' : 'null');
                 if (token) {
                     try {
+                        console.log('[AuthContext] Decoding token...');
                         const decoded = authService.decodeToken(token);
+                        console.log('[AuthContext] Token decoded successfully:', decoded);
                         setUser(decoded);
                     } catch (error) {
+                        console.warn('[AuthContext] Failed to decode token:', error);
                         await authService.logout();
                     }
                 }
             } catch (error) {
-                console.error('Failed to load user:', error);
+                console.error('[AuthContext] Failed to load user:', error);
             } finally {
+                console.log('[AuthContext] Setting loading to false');
                 setLoading(false);
             }
         };

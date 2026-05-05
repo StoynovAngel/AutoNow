@@ -1,5 +1,5 @@
 import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 import Constants from 'expo-constants';
 
 const apiUrl = Constants.expoConfig?.extra?.apiUrl || process.env.API_URL || 'http://localhost:8080';
@@ -18,7 +18,7 @@ customAPI.interceptors.request.use(async (config) => {
     const isAuthEndpoint = config.url?.includes('/auth/login') || config.url?.includes('/auth/register');
 
     if (!isAuthEndpoint) {
-        const token = await AsyncStorage.getItem('jwt');
+        const token = await SecureStore.getItemAsync('jwt');
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
@@ -30,7 +30,7 @@ customAPI.interceptors.response.use(
     response => response,
     async (error) => {
         if (error.response?.status === 401) {
-            await AsyncStorage.removeItem('jwt');
+            await SecureStore.deleteItemAsync('jwt');
         }
         throw error;
     }

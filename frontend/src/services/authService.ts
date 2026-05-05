@@ -1,5 +1,5 @@
 import customAPI from './ApiClient';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 import type { JwtResponse } from '../types/auth';
 
 const decodeToken = (token: string) => {
@@ -17,7 +17,7 @@ export const login = async (email: string, password: string) => {
     const response = await customAPI.post<JwtResponse>('api/auth/login', {email, password});
 
     const token = response.data.token;
-    await AsyncStorage.setItem('jwt', token);
+    await SecureStore.setItemAsync('jwt', token);
 
     return decodeToken(token);
 };
@@ -30,17 +30,17 @@ export const register = async (email: string, password: string) => {
     });
 
     const token = response.data.token;
-    await AsyncStorage.setItem('jwt', token);
+    await SecureStore.setItemAsync('jwt', token);
 
     return decodeToken(token);
 };
 
 export const logout = async () => {
-    await AsyncStorage.removeItem('jwt');
+    await SecureStore.deleteItemAsync('jwt');
 };
 
 export const getStoredToken = async () => {
-    return await AsyncStorage.getItem('jwt');
+    return await SecureStore.getItemAsync('jwt');
 };
 
 export { decodeToken };

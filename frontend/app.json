@@ -3,7 +3,7 @@
     "name": "frontend-temp",
     "slug": "frontend-temp",
     "version": "1.0.0",
-    "orientation": "default",
+    "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
@@ -15,7 +15,7 @@
     "ios": {
       "supportsTablet": true,
       "requireFullScreen": false,
-      "orientation": "default"
+      "orientation": "portrait"
     },
     "android": {
       "adaptiveIcon": {
@@ -24,7 +24,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "orientation": "default"
+      "orientation": "portrait"
     },
     "web": {
       "favicon": "./assets/favicon.png"
