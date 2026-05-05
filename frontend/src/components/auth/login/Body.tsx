@@ -8,6 +8,7 @@ import {useAuth} from "../../../hooks/useAuth";
 import {useNavigation} from '@react-navigation/native';
 import {useTranslation} from 'react-i18next';
 import {useTheme} from "../../../hooks/useTheme";
+import {parseApiError} from "../../../utils/errorParser";
 
 const loginBackground = require("../../../assets/images/background.jpg");
 
@@ -32,7 +33,7 @@ const Body = () => {
             await login(email, password);
             navigation.navigate("home");
         } catch (err: any) {
-            setApiError(err.message);
+            setApiError(parseApiError(err));
         } finally {
             setLoading(false);
         }
