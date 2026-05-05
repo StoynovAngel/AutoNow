@@ -8,14 +8,13 @@ export const createStyles = (theme: any) => StyleSheet.create({
     content: {
         padding: 20,
         flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
     },
     title: {
         fontSize: 28,
         fontWeight: 'bold',
         color: theme.colors.textPrimary,
         marginBottom: 8,
+        textAlign: "center"
     },
     subtitle: {
         fontSize: 16,
@@ -23,7 +22,8 @@ export const createStyles = (theme: any) => StyleSheet.create({
         marginBottom: 24,
         borderBottomColor: theme.colors.textPrimary,
         borderBottomWidth: 2,
-        paddingBottom: 4
+        paddingBottom: 4,
+        textAlign: "center"
     },
     vehicleGrid: {
         flexDirection: 'row',
