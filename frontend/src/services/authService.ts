@@ -1,27 +1,43 @@
 import customAPI from './ApiClient';
-import * as SecureStore from 'expo-secure-store';
-import type { UserRequestDTO, JwtResponse } from '../types/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export const authService = {
-  register: async (credentials: UserRequestDTO): Promise<JwtResponse> => {
-    const response = await customAPI.post<JwtResponse>('/auth/register', credentials);
-    await SecureStore.setItemAsync('authToken', response.data.token);
-    return response.data;
-  },
-
-  login: async (credentials: UserRequestDTO): Promise<JwtResponse> => {
-    const response = await customAPI.post<JwtResponse>('/auth/login', credentials);
-    await SecureStore.setItemAsync('authToken', response.data.token);
-    return response.data;
-  },
-
-  logout: async (): Promise<void> => {
-    await SecureStore.deleteItemAsync('authToken');
-  },
-
-  getToken: async (): Promise<string | null> => {
-    return await SecureStore.getItemAsync('authToken');
-  },
+const decodeToken = (token: string) => {
+    const payload = token.split('.')[1];
+    return JSON.parse(atob(payload));
 };
 
-export default customAPI;
+export const login = async (email: string, password: string) => {
+    const response = await customAPI.post('api/auth/login', {email, password}, {
+        transformResponse: [(data) => data]
+    });
+
+    const token = response.data;
+    await AsyncStorage.setItem('jwt', token);
+
+    return decodeToken(token);
+};
+
+export const register = async (email: string, password: string) => {
+    const response = await customAPI.post('api/auth/register', {
+        email,
+        password,
+        roleNames: ['CUSTOMER']
+    }, {
+        transformResponse: [(data) => data]
+    });
+
+    const token = response.data;
+    await AsyncStorage.setItem('jwt', token);
+
+    return decodeToken(token);
+};
+
+export const logout = async () => {
+    await AsyncStorage.removeItem('jwt');
+};
+
+export const getStoredToken = async () => {
+    return await AsyncStorage.getItem('jwt');
+};
+
+export { decodeToken };

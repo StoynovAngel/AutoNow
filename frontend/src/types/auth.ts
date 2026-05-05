@@ -7,7 +7,21 @@ export interface JwtResponse {
   token: string;
 }
 
-export interface User {
-  email: string;
-  token: string;
-}
+export type Role = {
+    authority: string;
+};
+
+export type User = {
+    id: number;
+    username: string;
+    sub: string;
+    roles: Role[];
+};
+
+export type AuthContextType = {
+    user: User | null;
+    loading: boolean;
+    login: (email: string, password: string) => Promise<void>;
+    register: (email: string, password: string) => Promise<void>;
+    logout: () => Promise<void>;
+};
