@@ -1,6 +1,9 @@
 import { StyleSheet } from 'react-native';
+import type { lightTheme } from '../../constants/theme';
 
-export const createStyles = (theme: any) => StyleSheet.create({
+type Theme = typeof lightTheme;
+
+export const createStyles = (theme: Theme) => StyleSheet.create({
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -52,5 +55,9 @@ export const createStyles = (theme: any) => StyleSheet.create({
         backgroundColor: 'transparent',
         zIndex: 10,
         paddingTop: 36,
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
     },
 });
