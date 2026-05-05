@@ -10,18 +10,23 @@ export const AuthProvider = ({children}: { children: ReactNode }) => {
 
     useEffect(() => {
         const loadUser = async () => {
-            const token = await authService.getStoredToken();
-            if (token) {
-                try {
-                    const decoded = authService.decodeToken(token);
-                    setUser(decoded);
-                } catch (error) {
-                    await authService.logout();
+            try {
+                const token = await authService.getStoredToken();
+                if (token) {
+                    try {
+                        const decoded = authService.decodeToken(token);
+                        setUser(decoded);
+                    } catch (error) {
+                        await authService.logout();
+                    }
                 }
+            } catch (error) {
+                console.error('Failed to load user:', error);
+            } finally {
+                setLoading(false);
             }
-            setLoading(false);
         };
-        loadUser().then(r => console.log('User loaded'));
+        loadUser();
     }, []);
 
     const login = async (email: string, password: string) => {
