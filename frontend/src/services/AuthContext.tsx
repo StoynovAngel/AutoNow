@@ -30,14 +30,24 @@ export const AuthProvider = ({children}: { children: ReactNode }) => {
     }, []);
 
     const login = async (email: string, password: string) => {
-        const decoded = await authService.login(email, password);
-        console.log(decoded.id);
-        setUser(decoded);
+        try {
+            const decoded = await authService.login(email, password);
+            console.log(decoded.id);
+            setUser(decoded);
+        } catch (error) {
+            await authService.logout();
+            throw error;
+        }
     };
 
     const register = async (email: string, password: string) => {
-        const decoded = await authService.register(email, password);
-        setUser(decoded);
+        try {
+            const decoded = await authService.register(email, password);
+            setUser(decoded);
+        } catch (error) {
+            await authService.logout();
+            throw error;
+        }
     };
 
     const logout = async () => {

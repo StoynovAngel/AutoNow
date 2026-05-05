@@ -3,7 +3,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const decodeToken = (token: string) => {
     const payload = token.split('.')[1];
-    return JSON.parse(atob(payload));
+    let base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+
+    while (base64.length % 4 !== 0) {
+        base64 += '=';
+    }
+
+    return JSON.parse(atob(base64));
 };
 
 export const login = async (email: string, password: string) => {
