@@ -1,5 +1,6 @@
 import customAPI from './ApiClient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import type { JwtResponse } from '../types/auth';
 
 const decodeToken = (token: string) => {
     const payload = token.split('.')[1];
@@ -13,26 +14,22 @@ const decodeToken = (token: string) => {
 };
 
 export const login = async (email: string, password: string) => {
-    const response = await customAPI.post('api/auth/login', {email, password}, {
-        transformResponse: [(data) => data]
-    });
+    const response = await customAPI.post<JwtResponse>('api/auth/login', {email, password});
 
-    const token = response.data;
+    const token = response.data.token;
     await AsyncStorage.setItem('jwt', token);
 
     return decodeToken(token);
 };
 
 export const register = async (email: string, password: string) => {
-    const response = await customAPI.post('api/auth/register', {
+    const response = await customAPI.post<JwtResponse>('api/auth/register', {
         email,
         password,
         roleNames: ['CUSTOMER']
-    }, {
-        transformResponse: [(data) => data]
     });
 
-    const token = response.data;
+    const token = response.data.token;
     await AsyncStorage.setItem('jwt', token);
 
     return decodeToken(token);
