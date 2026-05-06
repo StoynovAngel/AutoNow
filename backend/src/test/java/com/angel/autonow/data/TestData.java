@@ -277,6 +277,16 @@ public final class TestData {
 				.build();
 	}
 
+	public static CompanyEntity createAnotherCompanyEntity() {
+		return CompanyEntity.builder()
+				.name("Test Fleet Co 2")
+				.address("123 Test St")
+				.phone("+1234567890")
+				.email("test@fleet.com")
+				.companyType(CompanyType.TAXI)
+				.build();
+	}
+
 	public static CompanyRequestDTO createCompanyRequest() {
 		return CompanyRequestDTO.builder()
 				.name("Test Fleet Co")
