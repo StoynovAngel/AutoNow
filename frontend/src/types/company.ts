@@ -4,7 +4,7 @@ export interface Company {
     id: number;
     name: string;
     description?: string;
-    phone: string;
+    phone?: string;
     email?: string;
     address?: string;
     rating?: number;
