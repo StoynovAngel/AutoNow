@@ -16,6 +16,7 @@ export const useCompanies = (vehicleType: VehicleType) => {
     const loadCompanies = async () => {
         setLoading(true);
         setError('');
+
         try {
             const companies = await getCompaniesByType(vehicleType);
             setCompanies(companies);
