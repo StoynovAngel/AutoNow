@@ -51,7 +51,7 @@ const CompanyCard = ({ company, onCall }: CompanyCardProps) => {
 
             <Pressable
                 style={styles.callButton}
-                onPress={() => onCall(company.phone)}
+                onPress={() => company.phone && onCall(company.phone)}
             >
                 <MaterialIcons name="phone" size={24} color="#FFFFFF" />
             </Pressable>
