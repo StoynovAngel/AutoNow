@@ -30,8 +30,12 @@ const Body = () => {
 
     const { companies, loading, error, reload } = useCompanies(vehicleType);
 
-    const handleCallCompany = (phoneNumber: string) => {
-        Linking.openURL(`tel:${phoneNumber}`);
+    const handleCallCompany = async (phoneNumber: string) => {
+        try {
+            await Linking.openURL(`tel:${phoneNumber}`);
+        } catch (error) {
+            console.warn('Failed to open phone dialer:', error);
+        }
     };
 
     const handleBackPress = () => {
