@@ -280,9 +280,9 @@ public final class TestData {
 	public static CompanyEntity createAnotherCompanyEntity() {
 		return CompanyEntity.builder()
 				.name("Test Fleet Co 2")
-				.address("123 Test St")
-				.phone("+1234567890")
-				.email("test@fleet.com")
+				.address("456 Another St")
+				.phone("+9876543210")
+				.email("test2@fleet.com")
 				.companyType(CompanyType.TAXI)
 				.build();
 	}
