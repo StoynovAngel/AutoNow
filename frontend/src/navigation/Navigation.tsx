@@ -4,13 +4,15 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Home from '../screens/home/Home';
 import Register from "../screens/auth/Register";
 import Login from "../screens/auth/Login";
+import CompanyList from '../screens/company/CompanyList';
+import { VehicleType } from '../types/vehicle';
 
 export type RootStackParamList = {
     home: undefined;
     login: undefined;
     register: undefined;
     profile: { userId: number };
-    test: undefined;
+    companyList: { vehicleType: VehicleType };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -21,6 +23,7 @@ const Navigation = () => {
             <Stack.Screen name="home" component={Home}/>
             <Stack.Screen name="login" component={Login}/>
             <Stack.Screen name="register" component={Register}/>
+            <Stack.Screen name="companyList" component={CompanyList}/>
         </Stack.Navigator>
     );
 };

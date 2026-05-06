@@ -53,6 +53,12 @@ public class CompanyController {
 		return companyService.getAllCompanies();
 	}
 
+	@GetMapping("/type/{companyType}")
+	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'DRIVER', 'COMPANY_ADMIN')")
+	public List<CompanyResponseDTO> getAllCompaniesByCompanyType(@PathVariable String companyType) {
+		return companyService.getAllCompaniesByCompanyType(companyType);
+	}
+
 	@PutMapping("/{id}")
 	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN')")
 	public ResponseEntity<CompanyResponseDTO> updateCompany(@PathVariable Long id, @Valid @RequestBody CompanyRequestDTO request, Authentication authentication) {

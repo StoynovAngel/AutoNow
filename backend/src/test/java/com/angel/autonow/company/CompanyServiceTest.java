@@ -19,6 +19,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static com.angel.autonow.data.TestData.NON_EXISTENT_ID;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -286,5 +287,43 @@ class CompanyServiceTest {
 
 		assertFalse(result);
 		verify(companyRepository, never()).deleteById(any());
+	}
+
+	@Test
+	void getAllCompaniesByType_returnMatchingCompanies() {
+		CompanyEntity first = CompanyEntity.builder()
+				.id(1L)
+				.name("Fleet A")
+				.companyType(CompanyType.TAXI)
+				.build();
+
+		CompanyEntity second = CompanyEntity.builder()
+				.id(2L)
+				.name("Fleet B")
+				.companyType(CompanyType.TAXI)
+				.build();
+
+		CompanyResponseDTO firstResponse = CompanyResponseDTO.builder()
+				.id(1L)
+				.name("Fleet A")
+				.build();
+
+		CompanyResponseDTO secondResponse = CompanyResponseDTO.builder()
+				.id(2L)
+				.name("Fleet B")
+				.build();
+
+		when(companyRepository.findByCompanyType(CompanyType.TAXI)).thenReturn(List.of(first, second));
+
+		when(companyMapper.toDTO(first)).thenReturn(firstResponse);
+		when(companyMapper.toDTO(second)).thenReturn(secondResponse);
+
+		var result = companyService.getAllCompaniesByCompanyType(CompanyType.TAXI.name());
+
+		assertEquals(2, result.size());
+
+		assertThat(result)
+				.extracting(CompanyResponseDTO::name)
+				.containsExactlyInAnyOrder("Fleet A", "Fleet B");
 	}
 }

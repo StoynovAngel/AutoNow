@@ -124,6 +124,147 @@ class CompanyControllerIT {
 	}
 
 	@Test
+	void getAllCompanyByCompanyType_multipleCompanies() throws Exception {
+		var company = TestData.createCompanyEntity();
+		var company2 = TestData.createAnotherCompanyEntity();
+		companyRepository.save(company);
+		companyRepository.save(company2);
+
+		mockMvc.perform(get("/api/companies/type/{companyType}", company.getCompanyType())
+						.with(TestData.customerJwt()))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$").isArray())
+				.andExpect(jsonPath("$.length()").value(2))
+				.andExpect(jsonPath("$[0].name").value("Test Fleet Co"))
+				.andExpect(jsonPath("$[0].companyType").value("TAXI"))
+				.andExpect(jsonPath("$[1].name").value("Test Fleet Co 2"))
+				.andExpect(jsonPath("$[1].companyType").value("TAXI"));
+	}
+
+	@Test
+	void getAllCompanyByCompanyType_singleCompany() throws Exception {
+		var company = CompanyEntity.builder()
+				.name("Logistics Fleet")
+				.address("456 Warehouse Ave")
+				.phone("+1234567891")
+				.email("logistics@fleet.com")
+				.companyType(CompanyType.LOGISTICS)
+				.build();
+		companyRepository.save(company);
+
+		mockMvc.perform(get("/api/companies/type/{companyType}", CompanyType.LOGISTICS)
+						.with(TestData.customerJwt()))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$").isArray())
+				.andExpect(jsonPath("$.length()").value(1))
+				.andExpect(jsonPath("$[0].name").value("Logistics Fleet"))
+				.andExpect(jsonPath("$[0].companyType").value("LOGISTICS"));
+	}
+
+	@Test
+	void getAllCompanyByCompanyType_emptyList() throws Exception {
+		var taxiCompany = TestData.createCompanyEntity();
+		companyRepository.save(taxiCompany);
+
+		mockMvc.perform(get("/api/companies/type/{companyType}", CompanyType.AMBULANCE)
+						.with(TestData.customerJwt()))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$").isArray())
+				.andExpect(jsonPath("$.length()").value(0))
+				.andExpect(jsonPath("$").isEmpty());
+	}
+
+	@Test
+	void getAllCompanyByCompanyType_filterCorrectly() throws Exception {
+		var taxi1 = CompanyEntity.builder()
+				.name("Taxi Co 1")
+				.address("123 Taxi St")
+				.phone("+1111111111")
+				.email("taxi1@test.com")
+				.companyType(CompanyType.TAXI)
+				.build();
+		var taxi2 = CompanyEntity.builder()
+				.name("Taxi Co 2")
+				.address("456 Taxi Ave")
+				.phone("+2222222222")
+				.email("taxi2@test.com")
+				.companyType(CompanyType.TAXI)
+				.build();
+		var ambulance = CompanyEntity.builder()
+				.name("Ambulance Co")
+				.address("789 Hospital Rd")
+				.phone("+3333333333")
+				.email("ambulance@test.com")
+				.companyType(CompanyType.AMBULANCE)
+				.build();
+		var rental = CompanyEntity.builder()
+				.name("Rental Co")
+				.address("321 Rental Blvd")
+				.phone("+4444444444")
+				.email("rental@test.com")
+				.companyType(CompanyType.RENTAL)
+				.build();
+
+		companyRepository.save(taxi1);
+		companyRepository.save(taxi2);
+		companyRepository.save(ambulance);
+		companyRepository.save(rental);
+
+		mockMvc.perform(get("/api/companies/type/{companyType}", CompanyType.TAXI)
+						.with(TestData.customerJwt()))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$").isArray())
+				.andExpect(jsonPath("$.length()").value(2))
+				.andExpect(jsonPath("$[0].companyType").value("TAXI"))
+				.andExpect(jsonPath("$[1].companyType").value("TAXI"));
+	}
+
+	@Test
+	void getAllCompanyByCompanyType_caseInsensitive() throws Exception {
+		var company = TestData.createCompanyEntity();
+		companyRepository.save(company);
+
+		mockMvc.perform(get("/api/companies/type/{companyType}", "taxi")
+						.with(TestData.customerJwt()))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$").isArray())
+				.andExpect(jsonPath("$.length()").value(1))
+				.andExpect(jsonPath("$[0].companyType").value("TAXI"));
+	}
+
+	@Test
+	void getAllCompanyByCompanyType_invalidType_returnsBadRequest() throws Exception {
+		mockMvc.perform(get("/api/companies/type/{companyType}", "INVALID_TYPE")
+						.with(TestData.customerJwt()))
+				.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void getAllCompanyByCompanyType_asGuest_returnsForbidden() throws Exception {
+		mockMvc.perform(get("/api/companies/type/{companyType}", CompanyType.TAXI)
+						.with(TestData.guestJwt()))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	void getAllCompanyByCompanyType_withoutAuth_returnsUnauthorized() throws Exception {
+		mockMvc.perform(get("/api/companies/type/{companyType}", CompanyType.TAXI))
+				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	void getAllCompanyByCompanyType_asAdmin() throws Exception {
+		var company = TestData.createCompanyEntity();
+		companyRepository.save(company);
+
+		mockMvc.perform(get("/api/companies/type/{companyType}", CompanyType.TAXI)
+						.with(TestData.adminJwt()))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$").isArray())
+				.andExpect(jsonPath("$.length()").value(1));
+	}
+
+	@Test
 	void getCompanyById() throws Exception {
 		var company = TestData.createCompanyEntity();
 		companyRepository.save(company);

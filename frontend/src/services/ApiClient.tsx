@@ -1,5 +1,5 @@
 import axios from 'axios';
-import * as SecureStore from 'expo-secure-store';
+import storage from './storage';
 import Constants from 'expo-constants';
 
 const apiUrl = Constants.expoConfig?.extra?.apiUrl || process.env.API_URL || 'http://localhost:8080';
@@ -18,9 +18,13 @@ customAPI.interceptors.request.use(async (config) => {
     const isAuthEndpoint = config.url?.includes('/auth/login') || config.url?.includes('/auth/register');
 
     if (!isAuthEndpoint) {
-        const token = await SecureStore.getItemAsync('jwt');
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
+        try {
+            const token = await storage.getItem('jwt');
+            if (token) {
+                config.headers.Authorization = `Bearer ${token}`;
+            }
+        } catch (error) {
+            console.warn('Failed to get token from storage:', error);
         }
     }
     return config;
@@ -30,7 +34,11 @@ customAPI.interceptors.response.use(
     response => response,
     async (error) => {
         if (error.response?.status === 401) {
-            await SecureStore.deleteItemAsync('jwt');
+            try {
+                await storage.deleteItem('jwt');
+            } catch (deleteError) {
+                console.warn('Failed to delete token from storage:', deleteError);
+            }
         }
         throw error;
     }

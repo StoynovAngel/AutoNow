@@ -1,5 +1,5 @@
 import customAPI from './ApiClient';
-import * as SecureStore from 'expo-secure-store';
+import storage from './storage';
 import type { JwtResponse } from '../types/auth';
 
 const decodeToken = (token: string) => {
@@ -34,7 +34,11 @@ export const login = async (email: string, password: string) => {
     const response = await customAPI.post<JwtResponse>('api/auth/login', {email, password});
 
     const token = response.data.token;
-    await SecureStore.setItemAsync('jwt', token);
+    try {
+        await storage.setItem('jwt', token);
+    } catch (error) {
+        console.warn('Failed to store token:', error);
+    }
 
     return decodeToken(token);
 };
@@ -47,17 +51,30 @@ export const register = async (email: string, password: string) => {
     });
 
     const token = response.data.token;
-    await SecureStore.setItemAsync('jwt', token);
+    try {
+        await storage.setItem('jwt', token);
+    } catch (error) {
+        console.warn('Failed to store token:', error);
+    }
 
     return decodeToken(token);
 };
 
 export const logout = async () => {
-    await SecureStore.deleteItemAsync('jwt');
+    try {
+        await storage.deleteItem('jwt');
+    } catch (error) {
+        console.warn('Failed to delete token:', error);
+    }
 };
 
 export const getStoredToken = async () => {
-    return await SecureStore.getItemAsync('jwt');
+    try {
+        return await storage.getItem('jwt');
+    } catch (error) {
+        console.warn('Failed to get stored token:', error);
+        return null;
+    }
 };
 
 export { decodeToken };

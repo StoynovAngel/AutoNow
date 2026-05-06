@@ -17,8 +17,7 @@ const Body = () => {
     const vehicleOptions = getVehicleOptions(t);
 
     const handleVehicleSelect = (type: VehicleType) => {
-        console.log('Selected vehicle type:', type);
-        // TODO: Navigate to booking screen with vehicle type
+        navigation.navigate('companyList', { vehicleType: type });
     };
 
     return (
