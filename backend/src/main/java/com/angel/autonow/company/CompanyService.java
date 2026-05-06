@@ -60,7 +60,7 @@ public class CompanyService {
 	}
 
 	public List<CompanyResponseDTO> getAllCompaniesByCompanyType(String companyType) {
-		CompanyType type = CompanyType.valueOf(companyType.toUpperCase());
+		CompanyType type = CompanyType.valueOf(companyType.toUpperCase().trim());
 		return companyRepository.findByCompanyType(type).stream()
 				.map(companyMapper::toDTO)
 				.toList();
