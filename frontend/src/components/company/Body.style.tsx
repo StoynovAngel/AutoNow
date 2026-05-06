@@ -67,7 +67,6 @@ export const createStyles = (theme: any) => StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         gap: 16,
-        marginBottom: 12,
         borderWidth: 1,
         borderColor: theme.colors.border,
         shadowColor: theme.colors.shadow,
