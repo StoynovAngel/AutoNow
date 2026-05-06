@@ -3,6 +3,7 @@ package com.angel.autonow.exception;
 import com.angel.autonow.user.UserException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -96,7 +97,7 @@ public class GlobalControllerExceptionHandler {
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
 	public ProblemDetail handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
-		log.warn(e.getMessage(), HttpStatus.BAD_REQUEST, e);
+		log.warn("Type mismatch for parameter '{}': {}", e.getName(), e.getMessage());
 		return handle(e, HttpStatus.BAD_REQUEST);
 	}
 
@@ -104,6 +105,20 @@ public class GlobalControllerExceptionHandler {
 	@ExceptionHandler(NoResourceFoundException.class)
 	public ProblemDetail handleNoResourceFoundException(NoResourceFoundException e) {
 		return handle(e, HttpStatus.NOT_FOUND);
+	}
+
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	@ExceptionHandler(IllegalStateException.class)
+	public ProblemDetail handleIllegalStateException(IllegalStateException e) {
+		log.error("Illegal state exception occurred: {}", e.getMessage(), e);
+		return handle(e, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	@ExceptionHandler(InvalidDataAccessApiUsageException.class)
+	public ProblemDetail handleInvalidDataAccessApiUsageException(InvalidDataAccessApiUsageException e) {
+		log.error("Invalid data access API usage: {}", e.getMessage(), e);
+		return handle(e, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

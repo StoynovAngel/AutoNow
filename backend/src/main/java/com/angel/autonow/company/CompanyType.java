@@ -4,6 +4,7 @@ public enum CompanyType {
 	TAXI,
 	LOGISTICS,
 	AMBULANCE,
-	MOVING,
-	RENTAL
+	RENTAL,
+	FUNERAL,
+	PROM
 }

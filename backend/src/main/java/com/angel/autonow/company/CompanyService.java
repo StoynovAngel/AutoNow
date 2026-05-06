@@ -59,6 +59,13 @@ public class CompanyService {
 				.toList();
 	}
 
+	public List<CompanyResponseDTO> getAllCompaniesByCompanyType(String companyType) {
+		CompanyType type = CompanyType.valueOf(companyType.toUpperCase());
+		return companyRepository.findByCompanyType(type).stream()
+				.map(companyMapper::toDTO)
+				.toList();
+	}
+
 	@Transactional
 	public Optional<CompanyResponseDTO> updateCompany(Long id, CompanyRequestDTO request, String userEmail) {
 		Optional<UserEntity> userOpt = userRepository.findByEmail(userEmail);
