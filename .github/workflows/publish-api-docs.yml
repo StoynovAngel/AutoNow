@@ -6,9 +6,12 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   generate-openapi:
+    # Skip if the push was made by github-actions bot (to prevent infinite loops when merging docs PRs)
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
 
     services:
@@ -43,12 +46,13 @@ jobs:
       - name: Start backend
         working-directory: backend
         env:
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/autoNow
-          SPRING_DATASOURCE_USERNAME: postgres
-          SPRING_DATASOURCE_PASSWORD: postgres
+          DB_URL: jdbc:postgresql://localhost:5432/autoNow
+          DB_USERNAME: postgres
+          DB_PASSWORD: postgres
           JWT_SECRET: dummy-secret-for-docs
           JWT_ALGORITHM: HS256
           JWT_EXPIRATION: 3600000
+          CORS_ALLOWED_ORIGINS: http://localhost:3000
         run: |
           java -jar target/*.jar &
           echo $! > app.pid
@@ -56,7 +60,7 @@ jobs:
 
       - name: Fetch OpenAPI spec
         run: |
-          curl http://localhost:8081/v3/api-docs.yaml -o docs/openapi.yaml
+          curl http://localhost:8080/v3/api-docs.yaml -o docs/openapi.yaml
 
       - name: Stop backend
         run: |
@@ -75,12 +79,16 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          git diff --quiet && echo "No changes" && exit 0
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          if git diff --quiet docs/openapi.yaml; then
+            echo "No changes to OpenAPI docs"
+            exit 0
+          fi
 
           BRANCH_NAME="docs/update-openapi-$(date +%s)"
 
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
           git checkout -b "$BRANCH_NAME"
           git add docs/openapi.yaml
           git commit -m "Update API docs"
