@@ -3,7 +3,7 @@ info:
   title: OpenAPI definition
   version: v0
 servers:
-  - url: 'http://localhost:8081'
+  - url: 'http://localhost:8080'
     description: Generated server url
 paths:
   '/api/vehicles/{id}':
@@ -1680,6 +1680,50 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+  '/api/companies/type/{companyType}':
+    get:
+      tags:
+        - company-controller
+      operationId: getAllCompaniesByCompanyType
+      parameters:
+        - name: companyType
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CompanyResponseDTO'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: Internal Server Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
 components:
   schemas:
     ProblemDetail:
@@ -2081,8 +2125,9 @@ components:
             - TAXI
             - LOGISTICS
             - AMBULANCE
-            - MOVING
             - RENTAL
+            - FUNERAL
+            - PROM
       required:
         - address
         - companyType
@@ -2113,8 +2158,9 @@ components:
             - TAXI
             - LOGISTICS
             - AMBULANCE
-            - MOVING
             - RENTAL
+            - FUNERAL
+            - PROM
         createdAt:
           type: string
           format: date-time
