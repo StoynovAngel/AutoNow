@@ -6,9 +6,12 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   generate-openapi:
+    # Skip if the push was made by github-actions bot (to prevent infinite loops when merging docs PRs)
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
 
     services:
