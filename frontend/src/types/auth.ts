@@ -1,7 +1,25 @@
-export type { UserRequestDTO, JwtResponse, Role, User } from '../../../shared/types/auth';
+export interface UserRequestDTO {
+  email: string;
+  password: string;
+}
+
+export interface JwtResponse {
+  token: string;
+}
+
+export type Role = {
+    authority: string;
+};
+
+export type User = {
+    id: number;
+    username: string;
+    sub: string;
+    roles: Role[];
+};
 
 export type AuthContextType = {
-    user: import('../../../shared/types/auth').User | null;
+    user: User | null;
     loading: boolean;
     login: (email: string, password: string) => Promise<void>;
     register: (email: string, password: string) => Promise<void>;
