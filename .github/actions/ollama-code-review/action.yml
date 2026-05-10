@@ -1,0 +1,77 @@
+name: 'Ollama Code Review'
+description: 'Automated code review using Ollama LLM'
+inputs:
+  llm-model:
+    description: 'Ollama model to use for review'
+    required: false
+    default: 'codegemma'
+  github-token:
+    description: 'GitHub token for API access'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install Ollama
+      shell: bash
+      run: |
+        curl -fsSL https://ollama.com/install.sh | sh
+
+    - name: Start Ollama service
+      shell: bash
+      run: |
+        ollama serve &
+        sleep 5
+
+    - name: Pull model
+      shell: bash
+      run: |
+        ollama pull ${{ inputs.llm-model }}
+
+    - name: Get PR diff
+      shell: bash
+      run: |
+        gh pr diff ${{ github.event.pull_request.number }} > pr_diff.txt || echo "Failed to get diff"
+        if [ ! -s pr_diff.txt ]; then
+          echo "No changes found in PR"
+          echo "No code changes to review." > pr_diff.txt
+        fi
+        echo "Diff size: $(wc -l < pr_diff.txt) lines"
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+
+    - name: Review code with Ollama
+      shell: bash
+      run: |
+        echo "Starting code review..."
+
+        DIFF_CONTENT=$(cat pr_diff.txt)
+
+        if [ -z "$DIFF_CONTENT" ]; then
+          echo "No code changes to review" > review.txt
+          exit 0
+        fi
+
+        PROMPT="You are an expert code reviewer. Review the following git diff and provide constructive feedback.
+        Focus on: code quality, potential bugs, performance, and security.
+        Be concise and specific. If the code looks good, say so briefly.
+
+        Git diff:
+        $DIFF_CONTENT"
+
+        echo "$PROMPT" | ollama run ${{ inputs.llm-model }} > review.txt 2>&1
+
+        if [ ! -s review.txt ]; then
+          echo "Review completed but no output generated." > review.txt
+        fi
+
+        echo "Review generated: $(wc -l < review.txt) lines"
+
+    - name: Post review comment
+      shell: bash
+      run: |
+        gh pr comment ${{ github.event.pull_request.number }} --body "## 🤖 Ollama Code Review
+
+        $(cat review.txt)"
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
