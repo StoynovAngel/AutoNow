@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { VehicleOption } from '../../types/vehicle';
+import { VehicleOption } from '../../constants/vehicleOptions';
 import { useTheme } from '../../hooks/useTheme';
 import { createStyles } from './Body.style';
 import { useTranslation } from 'react-i18next';
