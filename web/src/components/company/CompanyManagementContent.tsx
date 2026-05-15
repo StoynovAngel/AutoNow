@@ -1,9 +1,10 @@
 import CompanyInfo from './CompanyInfo';
+import type { Company } from './CompanyInfo';
 import DriverInfo from './DriverInfo';
 import VehicleInfo from './VehicleInfo';
 
 interface CompanyManagementContentProps {
-    selectedCompany: any;
+    selectedCompany: Company | null;
     selectedDriver: any;
     driverVehicles: any[];
 }

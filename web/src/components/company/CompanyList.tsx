@@ -1,5 +1,7 @@
+import type { Company } from './CompanyInfo';
+
 interface CompanyListProps {
-    companies: any[];
+    companies: Company[];
     selectedCompanyId: string | null;
     onSelectCompany: (companyId: string) => void;
     onAddCompany: () => void;
@@ -12,9 +14,9 @@ const CompanyList = ({companies, selectedCompanyId, onSelectCompany, onAddCompan
                 {companies.map((company) => (
                     <div
                         key={company.id}
-                        onClick={() => onSelectCompany(company.id)}
+                        onClick={() => onSelectCompany(String(company.id))}
                         className={`px-3 py-2 border rounded-lg cursor-pointer transition ${
-                            selectedCompanyId === company.id
+                            selectedCompanyId === String(company.id)
                                 ? "bg-violet-100 border-violet-500"
                                 : "bg-white border-gray-300 hover:bg-gray-50"
                         }`}

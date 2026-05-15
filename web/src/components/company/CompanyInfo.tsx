@@ -1,5 +1,18 @@
+export interface Company {
+    id: number;
+    name: string;
+    address: string;
+    phone: string;
+    email: string;
+    logoUrl?: string;
+    description?: string;
+    companyType: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
 interface CompanyInfoProps {
-    company: any;
+    company: Company | null;
 }
 
 const CompanyInfo = ({company}: CompanyInfoProps) => {
