@@ -27,14 +27,14 @@ const Login = () => {
 
     const decodeJWT = (token: string) => {
         try {
-            const base64Url = token.split('.')[1];
-            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const parts = token.split('.');
+            if (parts.length !== 3) return null;
+            const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
             const jsonPayload = decodeURIComponent(atob(base64).split('').map((c) => {
                 return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
             }).join(''));
             return JSON.parse(jsonPayload);
-        } catch (error) {
-            console.error("Failed to decode JWT", error);
+        } catch {
             return null;
         }
     };
@@ -47,6 +47,11 @@ const Login = () => {
             const token = data.token;
 
             const decodedToken = decodeJWT(token);
+            if (!decodedToken || !decodedToken.sub || !decodedToken.authorities) {
+                setErrorMessage("Authentication failed: invalid token received");
+                return;
+            }
+
             const userInfo = {
                 id: decodedToken.sub,
                 email: formData.email,
