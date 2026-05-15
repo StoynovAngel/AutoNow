@@ -1,12 +1,14 @@
 import {useState, useEffect} from 'react';
 import {driverService} from '../services/company/driverService';
 import {vehicleService} from '../services/company/vehicleService';
+import type {Driver} from '../components/company/DriverInfo';
+import type {Vehicle} from '../components/company/VehicleInfo';
 
 export const useDrivers = (companyId?: string | null) => {
-    const [drivers, setDrivers] = useState([]);
+    const [drivers, setDrivers] = useState<Driver[]>([]);
     const [selectedDriverId, setSelectedDriverId] = useState<string | null>(null);
-    const [selectedDriver, setSelectedDriver] = useState(null);
-    const [driverVehicles, setDriverVehicles] = useState([]);
+    const [selectedDriver, setSelectedDriver] = useState<Driver | null>(null);
+    const [driverVehicles, setDriverVehicles] = useState<Vehicle[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -27,7 +29,7 @@ export const useDrivers = (companyId?: string | null) => {
             console.log('Drivers fetched:', data);
             setDrivers(data);
             // Clear selected driver if it's not in the new list
-            if (selectedDriverId && !data.find((d: any) => d.id === selectedDriverId)) {
+            if (selectedDriverId && !data.find((d: Driver) => String(d.id) === selectedDriverId)) {
                 setSelectedDriverId(null);
                 setSelectedDriver(null);
                 setDriverVehicles([]);
