@@ -1,5 +1,4 @@
 import {createContext, useContext, useState, useEffect, type ReactNode} from "react";
-import axios from "axios";
 
 interface User {
     id: string;
@@ -31,7 +30,6 @@ export const AuthProvider = ({children}: { children: ReactNode }) => {
         if (storedToken && storedUser) {
             setAccessToken(storedToken);
             setUser(JSON.parse(storedUser));
-            axios.defaults.headers.common["Authorization"] = `Bearer ${storedToken}`;
         }
         setIsLoading(false);
     }, []);
@@ -41,7 +39,6 @@ export const AuthProvider = ({children}: { children: ReactNode }) => {
         setAccessToken(token);
         localStorage.setItem("accessToken", token);
         localStorage.setItem("userInfo", JSON.stringify(userInfo));
-        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     };
 
     const logout = () => {
@@ -49,7 +46,6 @@ export const AuthProvider = ({children}: { children: ReactNode }) => {
         setAccessToken(null);
         localStorage.removeItem("accessToken");
         localStorage.removeItem("userInfo");
-        delete axios.defaults.headers.common["Authorization"];
     };
 
     return (
