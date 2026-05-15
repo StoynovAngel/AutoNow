@@ -6,6 +6,10 @@ AutoNow is a SaaS platform for renting auto services (taxi, ambulance, logistics
 
 ## Code Rules
 
+### Priority: Backend First
+
+When working on features or fixes, prioritize the backend (Spring Boot) over the frontend. The backend is the source of truth — define entities, DTOs, validation, and business logic there first, then build the frontend to match. When making decisions about data shape, validation rules, or behavior, defer to what the backend requires.
+
 ### TypeScript — No `any`
 
 Never use `any` in component props, hook state, or service methods. Always define and export typed interfaces. When backend DTOs exist, mirror their fields in the frontend type.
@@ -16,7 +20,7 @@ Never use `any` in component props, hook state, or service methods. Always defin
 
 ### ID Type Consistency
 
-The backend uses `Long` (number) for entity IDs. The hooks currently pass IDs as strings. When comparing numeric IDs against string state, always normalize with `String(entity.id)`.
+The backend uses `Long` (number) for entity IDs. Hooks and components must use `number | null` for selected IDs. Only convert to `string` at the service layer boundary (URL path params). Never use `String()` in components for ID comparisons.
 
 ### Accessibility
 
