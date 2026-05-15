@@ -1,10 +1,11 @@
 import {useState, useEffect} from 'react';
 import {companyService} from '../services/company/companyService';
+import type {Company} from '../components/company/CompanyInfo';
 
 export const useCompanies = () => {
-    const [companies, setCompanies] = useState([]);
+    const [companies, setCompanies] = useState<Company[]>([]);
     const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(null);
-    const [selectedCompany, setSelectedCompany] = useState(null);
+    const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
