@@ -4,9 +4,9 @@ import {vehicleService} from '../services/company/vehicleService';
 import type {Driver} from '../components/company/DriverInfo';
 import type {Vehicle} from '../components/company/VehicleInfo';
 
-export const useDrivers = (companyId?: string | null) => {
+export const useDrivers = (companyId?: number | null) => {
     const [drivers, setDrivers] = useState<Driver[]>([]);
-    const [selectedDriverId, setSelectedDriverId] = useState<string | null>(null);
+    const [selectedDriverId, setSelectedDriverId] = useState<number | null>(null);
     const [selectedDriver, setSelectedDriver] = useState<Driver | null>(null);
     const [driverVehicles, setDriverVehicles] = useState<Vehicle[]>([]);
     const [loading, setLoading] = useState(true);
@@ -22,14 +22,14 @@ export const useDrivers = (companyId?: string | null) => {
         try {
             let data;
             if (companyId) {
-                data = await driverService.getDriversByCompany(companyId);
+                data = await driverService.getDriversByCompany(String(companyId));
             } else {
                 data = await driverService.getAllDrivers();
             }
             console.log('Drivers fetched:', data);
             setDrivers(data);
             // Clear selected driver if it's not in the new list
-            if (selectedDriverId && !data.find((d: Driver) => String(d.id) === selectedDriverId)) {
+            if (selectedDriverId && !data.find((d: Driver) => d.id === selectedDriverId)) {
                 setSelectedDriverId(null);
                 setSelectedDriver(null);
                 setDriverVehicles([]);
@@ -43,11 +43,11 @@ export const useDrivers = (companyId?: string | null) => {
         }
     };
 
-    const selectDriver = async (driverId: string) => {
+    const selectDriver = async (driverId: number) => {
         setSelectedDriverId(driverId);
         if (driverId) {
             try {
-                const data = await driverService.getDriverById(driverId);
+                const data = await driverService.getDriverById(String(driverId));
                 console.log('Driver details:', data);
                 setSelectedDriver(data);
 

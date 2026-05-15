@@ -2,8 +2,8 @@ import type { Company } from './CompanyInfo';
 
 interface CompanyListProps {
     companies: Company[];
-    selectedCompanyId: string | null;
-    onSelectCompany: (companyId: string) => void;
+    selectedCompanyId: number | null;
+    onSelectCompany: (companyId: number) => void;
     onAddCompany: () => void;
 }
 
@@ -15,10 +15,10 @@ const CompanyList = ({companies, selectedCompanyId, onSelectCompany, onAddCompan
                     <button
                         key={company.id}
                         type="button"
-                        onClick={() => onSelectCompany(String(company.id))}
-                        aria-pressed={selectedCompanyId === String(company.id)}
+                        onClick={() => onSelectCompany(company.id)}
+                        aria-pressed={selectedCompanyId === company.id}
                         className={`w-full text-left px-3 py-2 border rounded-lg cursor-pointer transition ${
-                            selectedCompanyId === String(company.id)
+                            selectedCompanyId === company.id
                                 ? "bg-violet-100 border-violet-500"
                                 : "bg-white border-gray-300 hover:bg-gray-50"
                         }`}

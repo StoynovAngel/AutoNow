@@ -4,7 +4,7 @@ import type {Company} from '../components/company/CompanyInfo';
 
 export const useCompanies = () => {
     const [companies, setCompanies] = useState<Company[]>([]);
-    const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(null);
+    const [selectedCompanyId, setSelectedCompanyId] = useState<number | null>(null);
     const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -29,11 +29,11 @@ export const useCompanies = () => {
         }
     };
 
-    const selectCompany = async (companyId: string) => {
+    const selectCompany = async (companyId: number) => {
         setSelectedCompanyId(companyId);
         if (companyId) {
             try {
-                const data = await companyService.getCompanyById(companyId);
+                const data = await companyService.getCompanyById(String(companyId));
                 console.log('Company details:', data);
                 setSelectedCompany(data);
             } catch (err: any) {
