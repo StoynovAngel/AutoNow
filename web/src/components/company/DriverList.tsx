@@ -1,5 +1,7 @@
+import type { Driver } from './DriverInfo';
+
 interface DriverListProps {
-    drivers: any[];
+    drivers: Driver[];
     selectedDriverId: string | null;
     onSelectDriver: (driverId: string) => void;
     onAddDriver: () => void;
@@ -12,9 +14,9 @@ const DriverList = ({drivers, selectedDriverId, onSelectDriver, onAddDriver}: Dr
                 {drivers.map((driver) => (
                     <div
                         key={driver.id}
-                        onClick={() => onSelectDriver(driver.id)}
+                        onClick={() => onSelectDriver(String(driver.id))}
                         className={`px-3 py-2 border rounded-lg cursor-pointer transition ${
-                            selectedDriverId === driver.id
+                            selectedDriverId === String(driver.id)
                                 ? "bg-violet-100 border-violet-500"
                                 : "bg-white border-gray-300 hover:bg-gray-50"
                         }`}
