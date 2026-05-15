@@ -1,6 +1,9 @@
+import type { Company } from './CompanyInfo';
+import type { Driver } from './DriverInfo';
+
 interface CompanyManagementSidebarProps {
-    companies: any[];
-    drivers: any[];
+    companies: Company[];
+    drivers: Driver[];
     selectedCompanyId: string | null;
     selectedDriverId: string | null;
     onSelectCompany: (companyId: string) => void;
@@ -35,16 +38,16 @@ const CompanyManagementSidebar = ({
                         companies.map((company) => (
                             <div
                                 key={company.id}
-                                onClick={() => onSelectCompany(company.id)}
+                                onClick={() => onSelectCompany(String(company.id))}
                                 className={`px-3 py-2.5 rounded-lg cursor-pointer transition-all ${
-                                    selectedCompanyId === company.id
+                                    selectedCompanyId === String(company.id)
                                         ? "bg-gradient-to-r from-violet-500 to-purple-500 text-white shadow-lg transform scale-[1.02]"
                                         : "bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200"
                                 }`}
                             >
                                 <p className="font-semibold text-sm">{company.name}</p>
                                 {company.companyType && (
-                                    <p className={`text-xs mt-0.5 ${selectedCompanyId === company.id ? 'text-violet-100' : 'text-gray-500'}`}>
+                                    <p className={`text-xs mt-0.5 ${selectedCompanyId === String(company.id) ? 'text-violet-100' : 'text-gray-500'}`}>
                                         {company.companyType}
                                     </p>
                                 )}
@@ -76,9 +79,9 @@ const CompanyManagementSidebar = ({
                         drivers.map((driver) => (
                             <div
                                 key={driver.id}
-                                onClick={() => onSelectDriver(driver.id)}
+                                onClick={() => onSelectDriver(String(driver.id))}
                                 className={`px-3 py-2.5 rounded-lg cursor-pointer transition-all ${
-                                    selectedDriverId === driver.id
+                                    selectedDriverId === String(driver.id)
                                         ? "bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg transform scale-[1.02]"
                                         : "bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200"
                                 }`}
@@ -87,7 +90,7 @@ const CompanyManagementSidebar = ({
                                     {driver.firstName} {driver.lastName}
                                 </p>
                                 {driver.licenseNumber && (
-                                    <p className={`text-xs mt-0.5 ${selectedDriverId === driver.id ? 'text-blue-100' : 'text-gray-500'}`}>
+                                    <p className={`text-xs mt-0.5 ${selectedDriverId === String(driver.id) ? 'text-blue-100' : 'text-gray-500'}`}>
                                         License: {driver.licenseNumber}
                                     </p>
                                 )}
