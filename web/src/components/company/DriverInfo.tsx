@@ -1,5 +1,18 @@
+export interface Driver {
+    id: number;
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+    licenseNumber: string;
+    expertiseType: string;
+    available: boolean;
+    imageUrl?: string;
+    companyId: number;
+    vehicleIds: number[];
+}
+
 interface DriverInfoProps {
-    driver: any;
+    driver: Driver | null;
 }
 
 const DriverInfo = ({driver}: DriverInfoProps) => {

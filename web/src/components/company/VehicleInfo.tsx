@@ -1,5 +1,17 @@
+export interface Vehicle {
+    id: number;
+    brand: string;
+    model: string;
+    imageURL?: string;
+    airConditioning: boolean;
+    numberOfSeats: number;
+    trunkCapacity: number;
+    vehicleType: string;
+    companyId: number;
+}
+
 interface VehicleInfoProps {
-    vehicles: any[];
+    vehicles: Vehicle[];
 }
 
 const VehicleInfo = ({vehicles}: VehicleInfoProps) => {
