@@ -1,5 +1,16 @@
 import apiClient from '../apiClient';
 
+export interface VehiclePayload {
+    brand: string;
+    model: string;
+    imageURL?: string;
+    airConditioning: boolean;
+    numberOfSeats: number;
+    trunkCapacity: number;
+    vehicleType: string;
+    companyId?: number;
+}
+
 export const vehicleService = {
     getAllVehicles: async () => {
         const {data} = await apiClient.get('/vehicles');
@@ -17,12 +28,12 @@ export const vehicleService = {
         return responses.map(response => response.data);
     },
 
-    createVehicle: async (vehicleData: any) => {
+    createVehicle: async (vehicleData: VehiclePayload) => {
         const {data} = await apiClient.post('/vehicles', vehicleData);
         return data;
     },
 
-    updateVehicle: async (id: string, vehicleData: any) => {
+    updateVehicle: async (id: string, vehicleData: VehiclePayload) => {
         const {data} = await apiClient.put(`/vehicles/${id}`, vehicleData);
         return data;
     },

@@ -1,5 +1,15 @@
 import apiClient from '../apiClient';
 
+export interface CompanyPayload {
+    name: string;
+    address: string;
+    phone: string;
+    email: string;
+    logoUrl?: string;
+    description?: string;
+    companyType: string;
+}
+
 export const companyService = {
     getAllCompanies: async () => {
         const {data} = await apiClient.get('/companies');
@@ -11,12 +21,12 @@ export const companyService = {
         return data;
     },
 
-    createCompany: async (companyData: any) => {
+    createCompany: async (companyData: CompanyPayload) => {
         const {data} = await apiClient.post('/companies', companyData);
         return data;
     },
 
-    updateCompany: async (id: string, companyData: any) => {
+    updateCompany: async (id: string, companyData: CompanyPayload) => {
         const {data} = await apiClient.put(`/companies/${id}`, companyData);
         return data;
     },

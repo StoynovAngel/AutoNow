@@ -1,5 +1,16 @@
 import apiClient from '../apiClient';
 
+export interface DriverPayload {
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+    licenseNumber: string;
+    expertiseType: string;
+    available: boolean;
+    imageUrl?: string;
+    companyId?: number;
+}
+
 export const driverService = {
     getAllDrivers: async () => {
         const {data} = await apiClient.get('/drivers');
@@ -16,12 +27,12 @@ export const driverService = {
         return data;
     },
 
-    createDriver: async (driverData: any) => {
+    createDriver: async (driverData: DriverPayload) => {
         const {data} = await apiClient.post('/drivers', driverData);
         return data;
     },
 
-    updateDriver: async (id: string, driverData: any) => {
+    updateDriver: async (id: string, driverData: DriverPayload) => {
         const {data} = await apiClient.put(`/drivers/${id}`, driverData);
         return data;
     },
