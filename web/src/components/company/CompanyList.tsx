@@ -12,17 +12,19 @@ const CompanyList = ({companies, selectedCompanyId, onSelectCompany, onAddCompan
         <div className="w-64 bg-white rounded-lg shadow-lg p-4 flex flex-col">
             <div className="flex-1 space-y-2 mb-4 overflow-y-auto">
                 {companies.map((company) => (
-                    <div
+                    <button
                         key={company.id}
+                        type="button"
                         onClick={() => onSelectCompany(String(company.id))}
-                        className={`px-3 py-2 border rounded-lg cursor-pointer transition ${
+                        aria-pressed={selectedCompanyId === String(company.id)}
+                        className={`w-full text-left px-3 py-2 border rounded-lg cursor-pointer transition ${
                             selectedCompanyId === String(company.id)
                                 ? "bg-violet-100 border-violet-500"
                                 : "bg-white border-gray-300 hover:bg-gray-50"
                         }`}
                     >
                         {company.name}
-                    </div>
+                    </button>
                 ))}
             </div>
 
