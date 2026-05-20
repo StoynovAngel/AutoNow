@@ -36,10 +36,12 @@ const CompanyManagementSidebar = ({
                         <p className="text-xs text-gray-400 text-center py-6">No companies yet</p>
                     ) : (
                         companies.map((company) => (
-                            <div
+                            <button
                                 key={company.id}
+                                type="button"
                                 onClick={() => onSelectCompany(company.id)}
-                                className={`px-3 py-2.5 rounded-lg cursor-pointer transition-all ${
+                                aria-pressed={selectedCompanyId === company.id}
+                                className={`w-full text-left px-3 py-2.5 rounded-lg cursor-pointer transition-all ${
                                     selectedCompanyId === company.id
                                         ? "bg-gradient-to-r from-violet-500 to-purple-500 text-white shadow-lg transform scale-[1.02]"
                                         : "bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200"
@@ -51,7 +53,7 @@ const CompanyManagementSidebar = ({
                                         {company.companyType}
                                     </p>
                                 )}
-                            </div>
+                            </button>
                         ))
                     )}
                 </div>
@@ -77,10 +79,12 @@ const CompanyManagementSidebar = ({
                         </p>
                     ) : (
                         drivers.map((driver) => (
-                            <div
+                            <button
                                 key={driver.id}
+                                type="button"
                                 onClick={() => onSelectDriver(driver.id)}
-                                className={`px-3 py-2.5 rounded-lg cursor-pointer transition-all ${
+                                aria-pressed={selectedDriverId === driver.id}
+                                className={`w-full text-left px-3 py-2.5 rounded-lg cursor-pointer transition-all ${
                                     selectedDriverId === driver.id
                                         ? "bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg transform scale-[1.02]"
                                         : "bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200"
@@ -94,7 +98,7 @@ const CompanyManagementSidebar = ({
                                         License: {driver.licenseNumber}
                                     </p>
                                 )}
-                            </div>
+                            </button>
                         ))
                     )}
                 </div>
