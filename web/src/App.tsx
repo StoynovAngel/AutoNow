@@ -4,6 +4,7 @@ import {AuthProvider} from './contexts/AuthContext';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import Home from './pages/Home.tsx';
 import Company from './pages/Company.tsx';
+import Order from './pages/Order.tsx';
 import Login from './pages/Login';
 
 import './index.css';
@@ -32,6 +33,11 @@ function App() {
                         <Route path="/companies" element={
                             <ProtectedRoute>
                                 <Company/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="/orders" element={
+                            <ProtectedRoute>
+                                <Order/>
                             </ProtectedRoute>
                         }/>
                         <Route path="/" element={<Navigate to="/login" replace/>}/>

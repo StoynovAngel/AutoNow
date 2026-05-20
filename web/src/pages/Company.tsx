@@ -55,7 +55,7 @@ const Company = () => {
         return (
             <>
                 <Navigation/>
-                <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 pt-24 px-6 flex items-center justify-center">
+                <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 pt-24 px-6 flex items-center justify-center">
                     <div className="bg-white rounded-xl shadow-lg p-8 max-w-md">
                         <div className="text-center">
                             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -75,8 +75,8 @@ const Company = () => {
     return (
         <>
             <Navigation/>
-            <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 pt-24 px-6 pb-6">
-                <div className="max-w-[1600px] mx-auto">
+            <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 pt-24 px-6 pb-6">
+                <div className="max-w-400 mx-auto">
                     <div className="mb-4">
                         <h1 className="text-2xl font-bold text-gray-900">Company Management</h1>
                         <p className="text-sm text-gray-600 mt-0.5">Manage companies, drivers, and vehicles</p>
