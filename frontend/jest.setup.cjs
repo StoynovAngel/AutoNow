@@ -18,3 +18,30 @@ jest.mock('expo-secure-store', () => {
         __memory: memory,
     };
 });
+
+jest.mock('react-i18next', () => ({
+    useTranslation: () => ({
+        t: (key, options) => {
+            if (!options) return key;
+            return Object.keys(options).reduce(
+                (acc, k) => acc.replaceAll(`{{${k}}}`, String(options[k])),
+                key,
+            );
+        },
+        i18n: { language: 'en', changeLanguage: jest.fn() },
+    }),
+    initReactI18next: { type: '3rdParty', init: jest.fn() },
+    Trans: ({ children }) => children,
+}));
+
+jest.mock('@expo/vector-icons', () => {
+    const React = require('react');
+    const { Text } = require('react-native');
+    const Icon = ({ name }) => React.createElement(Text, { testID: `icon-${name}` }, name);
+    return new Proxy(
+        {},
+        {
+            get: () => Icon,
+        },
+    );
+});
