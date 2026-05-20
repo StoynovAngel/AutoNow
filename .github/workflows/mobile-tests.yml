@@ -1,0 +1,39 @@
+name: Mobile Tests
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/mobile-tests.yml'
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/mobile-tests.yml'
+
+jobs:
+  test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Run unit tests
+        working-directory: frontend
+        run: npm run test:ci
