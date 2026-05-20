@@ -25,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,6 +45,7 @@ public class DataSeeder implements ApplicationRunner {
 	private final OrderRepository orderRepository;
 	private final PaymentRepository paymentRepository;
 	private final RatingRepository ratingRepository;
+	private final PasswordEncoder passwordEncoder;
 
 	@Override
 	@Transactional
@@ -78,8 +80,8 @@ public class DataSeeder implements ApplicationRunner {
 				.companyType(CompanyType.AMBULANCE)
 				.build());
 
-		// Users (password: 'password123' BCrypt hashed)
-		String bcryptPassword = "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZRGdjGj/n3.jLMYwB1czXG0IuMqHO";
+		// Users (password: 'Password123' BCrypt hashed at runtime)
+		String bcryptPassword = passwordEncoder.encode("Password123");
 
 		UserEntity admin = userRepository.save(UserEntity.builder()
 				.email("admin@autonow.com")
