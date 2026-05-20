@@ -41,14 +41,17 @@ public class DriverService {
 		return Optional.of(driverMapper.toDTO(saved));
 	}
 
+	@Transactional(readOnly = true)
 	public Optional<DriverResponseDTO> getDriverById(Long id) {
 		return driverRepository.findById(id).map(driverMapper::toDTO);
 	}
 
+	@Transactional(readOnly = true)
 	public Optional<DriverResponseDTO> getDriverByLicenseNumber(String licenseNumber) {
 		return driverRepository.findByLicenseNumber(licenseNumber).map(driverMapper::toDTO);
 	}
 
+	@Transactional(readOnly = true)
 	public List<DriverResponseDTO> getAllDrivers() {
 		return driverRepository.findAll().stream()
 				.map(driverMapper::toDTO)
@@ -92,6 +95,7 @@ public class DriverService {
 		return Optional.of(driverMapper.toDTO(driverRepository.save(driver)));
 	}
 
+	@Transactional(readOnly = true)
 	public List<DriverResponseDTO> getDriversByCompanyId(Long companyId) {
 		return driverRepository.findByCompanyId(companyId).stream()
 				.map(driverMapper::toDTO)
