@@ -2,17 +2,20 @@ import apiClient from '../apiClient';
 import type {Order, OrderStatus} from '../../components/order/OrderInfo';
 
 export interface OrderPayload {
-    customerName: string;
-    customerPhone: string;
-    customerEmail?: string;
-    companyId: number;
+    userId: number;
     driverId?: number;
+    vehicleId?: number;
     vehicleType: string;
     pickupAddress: string;
+    pickupLatitude: number;
+    pickupLongitude: number;
     dropoffAddress: string;
-    scheduledAt: string;
-    notes?: string;
-    totalPrice?: number;
+    dropoffLatitude: number;
+    dropoffLongitude: number;
+    estimatedPrice?: number;
+    distanceKm?: number;
+    estimatedDurationMinutes?: number;
+    specialRequirements?: string;
 }
 
 export const orderService = {
@@ -26,8 +29,8 @@ export const orderService = {
         return data;
     },
 
-    getOrdersByCompany: async (companyId: string): Promise<Order[]> => {
-        const {data} = await apiClient.get(`/orders/company/${companyId}`);
+    getOrdersByUser: async (userId: string): Promise<Order[]> => {
+        const {data} = await apiClient.get(`/orders/user/${userId}`);
         return data;
     },
 

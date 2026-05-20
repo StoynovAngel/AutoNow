@@ -1,49 +1,52 @@
 export type OrderStatus =
-    | 'PENDING'
-    | 'ASSIGNED'
+    | 'CREATED'
+    | 'ACCEPTED'
     | 'IN_PROGRESS'
     | 'COMPLETED'
-    | 'CANCELLED';
+    | 'CANCELED';
 
 export const ORDER_STATUSES: OrderStatus[] = [
-    'PENDING',
-    'ASSIGNED',
+    'CREATED',
+    'ACCEPTED',
     'IN_PROGRESS',
     'COMPLETED',
-    'CANCELLED',
+    'CANCELED',
 ];
 
 export interface Order {
     id: number;
-    customerName: string;
-    customerPhone: string;
-    customerEmail?: string;
-    companyId: number;
-    companyName?: string;
+    userId: number;
     driverId?: number;
-    driverName?: string;
+    vehicleId?: number;
     vehicleType: string;
-    status: OrderStatus;
     pickupAddress: string;
+    pickupLatitude: number;
+    pickupLongitude: number;
     dropoffAddress: string;
-    scheduledAt: string;
-    notes?: string;
-    totalPrice?: number;
+    dropoffLatitude: number;
+    dropoffLongitude: number;
+    status: OrderStatus;
+    estimatedPrice?: number;
+    finalPrice?: number;
+    distanceKm?: number;
+    estimatedDurationMinutes?: number;
+    specialRequirements?: string;
+    cancellationReason?: string;
     createdAt: string;
     updatedAt: string;
 }
 
 export const statusBadgeClass = (status: OrderStatus): string => {
     switch (status) {
-        case 'PENDING':
+        case 'CREATED':
             return 'bg-gray-100 text-gray-700';
-        case 'ASSIGNED':
+        case 'ACCEPTED':
             return 'bg-blue-100 text-blue-700';
         case 'IN_PROGRESS':
             return 'bg-violet-100 text-violet-700';
         case 'COMPLETED':
             return 'bg-green-100 text-green-700';
-        case 'CANCELLED':
+        case 'CANCELED':
             return 'bg-red-100 text-red-700';
     }
 };
@@ -106,44 +109,28 @@ const OrderInfo = ({order, onChangeStatus}: OrderInfoProps) => {
 
             <div className="grid grid-cols-2 gap-3">
                 <div>
-                    <label className="block text-xs font-semibold text-gray-500 mb-1">Customer</label>
-                    <p className="text-sm font-semibold text-gray-900 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
-                        {order.customerName}
-                    </p>
-                </div>
-                <div>
-                    <label className="block text-xs font-semibold text-gray-500 mb-1">Phone</label>
+                    <label className="block text-xs font-semibold text-gray-500 mb-1">User</label>
                     <p className="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
-                        {order.customerPhone}
-                    </p>
-                </div>
-
-                {order.customerEmail && (
-                    <div className="col-span-2">
-                        <label className="block text-xs font-semibold text-gray-500 mb-1">Email</label>
-                        <p className="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
-                            {order.customerEmail}
-                        </p>
-                    </div>
-                )}
-
-                <div>
-                    <label className="block text-xs font-semibold text-gray-500 mb-1">Company</label>
-                    <p className="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
-                        {order.companyName ?? `#${order.companyId}`}
+                        #{order.userId}
                     </p>
                 </div>
                 <div>
                     <label className="block text-xs font-semibold text-gray-500 mb-1">Driver</label>
                     <p className="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
-                        {order.driverName ?? (order.driverId ? `#${order.driverId}` : 'Unassigned')}
+                        {order.driverId ? `#${order.driverId}` : 'Unassigned'}
                     </p>
                 </div>
 
-                <div className="col-span-2">
+                <div>
                     <label className="block text-xs font-semibold text-gray-500 mb-1">Vehicle Type</label>
                     <p className="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
                         {order.vehicleType}
+                    </p>
+                </div>
+                <div>
+                    <label className="block text-xs font-semibold text-gray-500 mb-1">Vehicle</label>
+                    <p className="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
+                        {order.vehicleId ? `#${order.vehicleId}` : '—'}
                     </p>
                 </div>
 
@@ -161,23 +148,45 @@ const OrderInfo = ({order, onChangeStatus}: OrderInfoProps) => {
                 </div>
 
                 <div>
-                    <label className="block text-xs font-semibold text-gray-500 mb-1">Scheduled</label>
+                    <label className="block text-xs font-semibold text-gray-500 mb-1">Estimated Price</label>
                     <p className="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
-                        {formatDateTime(order.scheduledAt)}
+                        {order.estimatedPrice !== undefined ? order.estimatedPrice.toFixed(2) : '—'}
                     </p>
                 </div>
                 <div>
-                    <label className="block text-xs font-semibold text-gray-500 mb-1">Total</label>
+                    <label className="block text-xs font-semibold text-gray-500 mb-1">Final Price</label>
                     <p className="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
-                        {order.totalPrice !== undefined ? order.totalPrice.toFixed(2) : '—'}
+                        {order.finalPrice !== undefined ? order.finalPrice.toFixed(2) : '—'}
                     </p>
                 </div>
 
-                {order.notes && (
+                <div>
+                    <label className="block text-xs font-semibold text-gray-500 mb-1">Distance (km)</label>
+                    <p className="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
+                        {order.distanceKm !== undefined ? order.distanceKm.toFixed(2) : '—'}
+                    </p>
+                </div>
+                <div>
+                    <label className="block text-xs font-semibold text-gray-500 mb-1">Est. Duration (min)</label>
+                    <p className="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
+                        {order.estimatedDurationMinutes ?? '—'}
+                    </p>
+                </div>
+
+                {order.specialRequirements && (
                     <div className="col-span-2">
-                        <label className="block text-xs font-semibold text-gray-500 mb-1">Notes</label>
+                        <label className="block text-xs font-semibold text-gray-500 mb-1">Special Requirements</label>
                         <p className="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200 whitespace-pre-wrap">
-                            {order.notes}
+                            {order.specialRequirements}
+                        </p>
+                    </div>
+                )}
+
+                {order.cancellationReason && (
+                    <div className="col-span-2">
+                        <label className="block text-xs font-semibold text-gray-500 mb-1">Cancellation Reason</label>
+                        <p className="text-sm text-red-700 bg-red-50 px-3 py-2 rounded-lg border border-red-200 whitespace-pre-wrap">
+                            {order.cancellationReason}
                         </p>
                     </div>
                 )}

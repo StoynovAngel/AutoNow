@@ -18,11 +18,6 @@ const Order = () => {
 
     const [statusFilter, setStatusFilter] = useState<StatusFilter>('ALL');
 
-    const handleAddOrder = () => {
-        // TODO: Implement add order modal
-        console.log('Add new order');
-    };
-
     if (loading) {
         return (
             <>
@@ -74,7 +69,6 @@ const Order = () => {
                             statusFilter={statusFilter}
                             onSelectOrder={selectOrder}
                             onChangeFilter={setStatusFilter}
-                            onAddOrder={handleAddOrder}
                         />
                         <OrderManagementContent
                             selectedOrder={selectedOrder}

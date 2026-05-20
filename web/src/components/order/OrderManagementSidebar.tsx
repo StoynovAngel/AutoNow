@@ -9,7 +9,6 @@ interface OrderManagementSidebarProps {
     statusFilter: StatusFilter;
     onSelectOrder: (orderId: number) => void;
     onChangeFilter: (filter: StatusFilter) => void;
-    onAddOrder: () => void;
 }
 
 const OrderManagementSidebar = ({
@@ -18,7 +17,6 @@ const OrderManagementSidebar = ({
     statusFilter,
     onSelectOrder,
     onChangeFilter,
-    onAddOrder,
 }: OrderManagementSidebarProps) => {
     const filteredOrders = statusFilter === 'ALL'
         ? orders
@@ -54,7 +52,7 @@ const OrderManagementSidebar = ({
                     ))}
                 </div>
 
-                <div className="flex-1 space-y-2 mb-3 overflow-y-auto max-h-[28rem] scrollbar-hide">
+                <div className="flex-1 space-y-2 overflow-y-auto max-h-[28rem] scrollbar-hide">
                     {filteredOrders.length === 0 ? (
                         <p className="text-xs text-gray-400 text-center py-6">
                             {statusFilter === 'ALL' ? 'No orders yet' : `No ${statusFilter} orders`}
@@ -73,7 +71,7 @@ const OrderManagementSidebar = ({
                                 }`}
                             >
                                 <div className="flex items-center justify-between">
-                                    <p className="font-semibold text-sm">#{order.id} · {order.customerName}</p>
+                                    <p className="font-semibold text-sm">#{order.id}</p>
                                     <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${
                                         selectedOrderId === order.id ? 'bg-white/20 text-white' : statusBadgeClass(order.status)
                                     }`}>
@@ -87,14 +85,6 @@ const OrderManagementSidebar = ({
                         ))
                     )}
                 </div>
-
-                <button
-                    type="button"
-                    onClick={onAddOrder}
-                    className="w-full px-3 py-2 bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-lg hover:from-violet-700 hover:to-purple-700 transition-all font-semibold text-sm shadow-md hover:shadow-lg"
-                >
-                    + Add Order
-                </button>
             </div>
         </div>
     );
