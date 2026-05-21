@@ -37,7 +37,7 @@ const VehicleInfo = ({vehicles, onEdit, onDelete, layout = 'grid'}: VehicleInfoP
 
     return (
         <div className={layout === 'sidebar' ? 'w-72 flex-shrink-0' : 'w-full'}>
-            <div className={layout === 'sidebar' ? 'flex flex-col gap-3' : 'grid grid-cols-3 gap-4'}>
+            <div className={layout === 'sidebar' ? 'flex flex-col gap-3 max-h-[calc(100vh-12rem)] overflow-y-auto pr-1' : 'grid grid-cols-3 gap-4'}>
                 {vehicles.map((vehicle, index) => (
                     <div
                         key={vehicle.id}
