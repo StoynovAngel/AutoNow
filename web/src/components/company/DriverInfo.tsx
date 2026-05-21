@@ -33,7 +33,7 @@ const DriverInfo = ({driver}: DriverInfoProps) => {
     }
 
     return (
-        <div className="flex-1 bg-white rounded-xl shadow-md p-4 border border-gray-100">
+        <div className="flex-1 bg-white rounded-xl shadow-md p-4 border border-gray-100 relative">
             <div className="flex items-center justify-between mb-3">
                 <h2 className="text-lg font-bold text-gray-800">Driver Information</h2>
                 <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
@@ -75,14 +75,19 @@ const DriverInfo = ({driver}: DriverInfoProps) => {
                         {driver.expertiseType}
                     </p>
                 </div>
-                {driver.imageUrl && (
-                    <div className="col-span-2">
-                        <label className="block text-xs font-semibold text-gray-500 mb-1">Profile Image</label>
-                        <img
-                            src={driver.imageUrl}
-                            alt={`${driver.firstName} ${driver.lastName}`}
-                            className="w-16 h-16 rounded-full border-2 border-gray-200 shadow-md object-cover"
-                        />
+            </div>
+            <div className="absolute bottom-4 right-4">
+                {driver.imageUrl ? (
+                    <img
+                        src={driver.imageUrl}
+                        alt={`${driver.firstName} ${driver.lastName}`}
+                        className="w-24 h-24 rounded-full border-2 border-gray-200 shadow-md object-cover"
+                    />
+                ) : (
+                    <div className="w-24 h-24 rounded-full border-2 border-gray-200 bg-gray-100 flex items-center justify-center">
+                        <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
                     </div>
                 )}
             </div>
