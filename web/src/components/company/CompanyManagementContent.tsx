@@ -13,7 +13,7 @@ interface CompanyManagementContentProps {
 
 const CompanyManagementContent = ({selectedCompany, selectedDriver, driverVehicles}: CompanyManagementContentProps) => {
     return (
-        <div className="flex-1 flex gap-4">
+        <div className="flex-1 flex gap-4 items-start min-w-0">
             <div className="flex-1 flex flex-col gap-4">
                 <CompanyInfo company={selectedCompany}/>
                 <DriverInfo driver={selectedDriver}/>

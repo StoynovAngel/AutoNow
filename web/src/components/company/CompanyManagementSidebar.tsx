@@ -23,7 +23,7 @@ const CompanyManagementSidebar = ({
     onAddDriver
 }: CompanyManagementSidebarProps) => {
     return (
-        <div className="flex flex-col gap-3 w-64 sticky top-24 max-h-[calc(100vh-7rem)]">
+        <div className="flex flex-col gap-3 w-72 sticky top-24 max-h-[calc(100vh-7rem)]">
             <div className="bg-white rounded-xl shadow-md p-4 flex flex-col border border-gray-100 min-h-0 flex-1">
                 <div className="flex items-center justify-between mb-3">
                     <h3 className="text-lg font-bold text-gray-800">Companies</h3>

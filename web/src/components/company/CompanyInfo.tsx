@@ -18,7 +18,7 @@ interface CompanyInfoProps {
 const CompanyInfo = ({company}: CompanyInfoProps) => {
     if (!company) {
         return (
-            <div className="flex-1 bg-white rounded-xl shadow-md p-4 border border-gray-100">
+            <div className="bg-white rounded-xl shadow-md p-4 border border-gray-100">
                 <div className="flex flex-col items-center justify-center h-full text-center">
                     <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
                         <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -33,7 +33,7 @@ const CompanyInfo = ({company}: CompanyInfoProps) => {
     }
 
     return (
-        <div className="flex-1 bg-white rounded-xl shadow-md p-4 border border-gray-100">
+        <div className="bg-white rounded-xl shadow-md p-4 border border-gray-100">
             <div className="flex items-center justify-between mb-3">
                 <h2 className="text-lg font-bold text-gray-800">Company Information</h2>
                 <span className="px-2 py-1 bg-violet-100 text-violet-700 rounded-full text-xs font-semibold">

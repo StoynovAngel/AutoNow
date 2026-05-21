@@ -20,7 +20,7 @@ interface DriverInfoProps {
 const DriverInfo = ({driver}: DriverInfoProps) => {
     if (!driver) {
         return (
-            <div className="flex-1 bg-white rounded-xl shadow-md p-4 border border-gray-100">
+            <div className="bg-white rounded-xl shadow-md p-4 border border-gray-100">
                 <div className="flex flex-col items-center justify-center h-full text-center">
                     <img src={profilePicture} alt="No driver selected" className="w-16 h-16 rounded-full border-2 border-gray-200 mb-3 object-cover opacity-40" />
                     <p className="text-gray-500 text-sm font-semibold">Select a driver to view details</p>
@@ -31,7 +31,7 @@ const DriverInfo = ({driver}: DriverInfoProps) => {
     }
 
     return (
-        <div className="flex-1 bg-white rounded-xl shadow-md p-4 pb-32 border border-gray-100 relative min-h-64">
+        <div className="bg-white rounded-xl shadow-md p-4 pb-32 border border-gray-100 relative">
             <div className="flex items-center justify-between mb-3">
                 <h2 className="text-lg font-bold text-gray-800">Driver Information</h2>
                 <span className={`px-2 py-1 rounded-full text-xs font-semibold ${

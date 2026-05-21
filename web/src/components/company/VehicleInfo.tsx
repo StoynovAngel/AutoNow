@@ -20,7 +20,7 @@ interface VehicleInfoProps {
 const VehicleInfo = ({vehicles, onEdit, onDelete, layout = 'grid'}: VehicleInfoProps) => {
     if (!vehicles || vehicles.length === 0) {
         return (
-            <div className={`bg-white rounded-xl shadow-md p-4 border border-gray-100 ${layout === 'sidebar' ? 'w-72' : 'w-full'}`}>
+            <div className={`bg-white rounded-xl shadow-md p-4 border border-gray-100 ${layout === 'sidebar' ? 'w-72 h-64' : 'w-full'}`}>
                 <div className="flex flex-col items-center justify-center h-full text-center">
                     <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
                         <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -75,13 +75,13 @@ const Company = () => {
     return (
         <>
             <Navigation/>
-            <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 pt-24 px-6 pb-6">
-                <div className="max-w-400 mx-auto">
+            <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 pt-24 px-6 pb-6 overflow-x-hidden">
+                <div className="w-full max-w-full">
                     <div className="mb-4">
                         <h1 className="text-2xl font-bold text-gray-900">Company Management</h1>
-                        <p className="text-sm text-gray-600 mt-0.5">Manage companies, drivers, and vehicles</p>
+                        <p className="text-sm text-gray-600 mt-0.5">Manage companies, drivers and vehicles</p>
                     </div>
-                    <div className="flex gap-4">
+                    <div className="flex gap-4 min-w-0">
                         <CompanyManagementSidebar
                             companies={companies}
                             drivers={drivers}
