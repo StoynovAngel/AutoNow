@@ -150,7 +150,7 @@ public class DataSeeder implements ApplicationRunner {
 				.firstName("Michael").lastName("Johnson")
 				.phoneNumber("+1234567890").licenseNumber("DL-001-2024")
 				.expertiseType(ExpertiseType.B).available(true)
-				.imageUrl("https://example.com/images/driver1.jpg")
+				.imageUrl("https://i.redd.it/oufits-goku-kid-v0-8utkgtut35xg1.jpg?width=736&format=pjpg&auto=webp&s=ff7228651faae2febec4a09148e33ed62f7c20a9")
 				.company(fleetCompany).vehicles(Set.of(camry, crv))
 				.build());
 
