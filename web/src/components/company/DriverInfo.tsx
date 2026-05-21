@@ -1,3 +1,5 @@
+import profilePicture from '../../assets/profile-picture.png';
+
 export interface Driver {
     id: number;
     firstName: string;
@@ -20,11 +22,7 @@ const DriverInfo = ({driver}: DriverInfoProps) => {
         return (
             <div className="flex-1 bg-white rounded-xl shadow-md p-4 border border-gray-100">
                 <div className="flex flex-col items-center justify-center h-full text-center">
-                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
-                        <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                        </svg>
-                    </div>
+                    <img src={profilePicture} alt="No driver selected" className="w-16 h-16 rounded-full border-2 border-gray-200 mb-3 object-cover opacity-40" />
                     <p className="text-gray-500 text-sm font-semibold">Select a driver to view details</p>
                     <p className="text-gray-400 text-xs mt-1">Choose from the list on the left</p>
                 </div>
@@ -69,27 +67,31 @@ const DriverInfo = ({driver}: DriverInfoProps) => {
                         {driver.licenseNumber}
                     </p>
                 </div>
-                <div className="col-span-2">
-                    <label className="block text-xs font-semibold text-gray-500 mb-1">License Type</label>
-                    <p className="text-sm text-gray-900 bg-blue-50 px-3 py-2 rounded-lg border border-blue-200 inline-block font-mono">
-                        {driver.expertiseType}
+                <div>
+                    <label className="block text-xs font-semibold text-gray-500 mb-1">Company ID</label>
+                    <p className="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
+                        #{driver.companyId}
+                    </p>
+                </div>
+                <div>
+                    <label className="block text-xs font-semibold text-gray-500 mb-1">Assigned Vehicles</label>
+                    <p className="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
+                        {driver.vehicleIds.length} vehicle{driver.vehicleIds.length !== 1 ? 's' : ''}
                     </p>
                 </div>
             </div>
+            <div className="col-span-2">
+                <label className="block text-xs font-semibold text-gray-500 mb-1 mt-2">License Type</label>
+                <p className="text-sm text-gray-900 bg-blue-50 px-3 py-2 rounded-lg border border-blue-200 inline-block font-mono">
+                    {driver.expertiseType}
+                </p>
+            </div>
             <div className="absolute bottom-4 right-4">
-                {driver.imageUrl ? (
-                    <img
-                        src={driver.imageUrl}
-                        alt={`${driver.firstName} ${driver.lastName}`}
-                        className="w-24 h-24 rounded-full border-2 border-gray-200 shadow-md object-cover"
-                    />
-                ) : (
-                    <div className="w-24 h-24 rounded-full border-2 border-gray-200 bg-gray-100 flex items-center justify-center">
-                        <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                        </svg>
-                    </div>
-                )}
+                <img
+                    src={driver.imageUrl ?? profilePicture}
+                    alt={`${driver.firstName} ${driver.lastName}`}
+                    className="w-24 h-24 rounded-full border-2 border-gray-200 shadow-md object-cover"
+                />
             </div>
         </div>
     );
