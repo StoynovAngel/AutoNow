@@ -31,7 +31,7 @@ const DriverInfo = ({driver}: DriverInfoProps) => {
     }
 
     return (
-        <div className="flex-1 bg-white rounded-xl shadow-md p-4 border border-gray-100 relative">
+        <div className="flex-1 bg-white rounded-xl shadow-md p-4 pb-32 border border-gray-100 relative min-h-64">
             <div className="flex items-center justify-between mb-3">
                 <h2 className="text-lg font-bold text-gray-800">Driver Information</h2>
                 <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
