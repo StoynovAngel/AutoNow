@@ -158,7 +158,6 @@ public class DataSeeder implements ApplicationRunner {
 				.firstName("Sarah").lastName("Williams")
 				.phoneNumber("+1234567891").licenseNumber("DL-002-2024")
 				.expertiseType(ExpertiseType.B).available(true)
-				.imageUrl("https://example.com/images/driver2.jpg")
 				.company(fleetCompany).vehicles(Set.of(octavia))
 				.build());
 
@@ -166,7 +165,6 @@ public class DataSeeder implements ApplicationRunner {
 				.firstName("David").lastName("Brown")
 				.phoneNumber("+1234567892").licenseNumber("DL-003-2024")
 				.expertiseType(ExpertiseType.C).available(true)
-				.imageUrl("https://example.com/images/driver3.jpg")
 				.vehicles(Set.of(volvo))
 				.build());
 
@@ -174,7 +172,6 @@ public class DataSeeder implements ApplicationRunner {
 				.firstName("Emily").lastName("Davis")
 				.phoneNumber("+1234567893").licenseNumber("DL-004-2024")
 				.expertiseType(ExpertiseType.CE).available(false)
-				.imageUrl("https://example.com/images/driver4.jpg")
 				.company(medCompany).vehicles(Set.of(sprinter))
 				.build());
 
@@ -182,7 +179,6 @@ public class DataSeeder implements ApplicationRunner {
 				.firstName("Robert").lastName("Miller")
 				.phoneNumber("+1234567894").licenseNumber("DL-005-2024")
 				.expertiseType(ExpertiseType.B).available(true)
-				.imageUrl("https://example.com/images/driver5.jpg")
 				.company(fleetCompany).vehicles(Set.of(passat))
 				.build());
 
