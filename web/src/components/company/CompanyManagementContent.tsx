@@ -18,7 +18,7 @@ const CompanyManagementContent = ({selectedCompany, selectedDriver, driverVehicl
                 <CompanyInfo company={selectedCompany}/>
                 <DriverInfo driver={selectedDriver}/>
             </div>
-            <VehicleInfo vehicles={driverVehicles} />
+            <VehicleInfo vehicles={driverVehicles} layout="sidebar" />
         </div>
     );
 };

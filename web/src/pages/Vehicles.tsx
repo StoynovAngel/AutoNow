@@ -6,12 +6,16 @@ import { useVehicles } from '../hooks/useVehicles';
 import type { Vehicle } from '../components/company/VehicleInfo';
 import type { VehiclePayload } from '../services/company/vehicleService';
 
+const VEHICLE_TYPES = ['TAXI', 'SEMI', 'AMBULANCE', 'RENTAL', 'PROM', 'FUNERAL'] as const;
+
 const Vehicles = () => {
     const { vehicles, loading, error, addVehicle, updateVehicle, removeVehicle, refreshVehicles } = useVehicles();
     const [showForm, setShowForm] = useState(false);
     const [editingVehicle, setEditingVehicle] = useState<Vehicle | null>(null);
     const [deletingId, setDeletingId] = useState<number | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
+    const [filterType, setFilterType] = useState('');
+    const [filterCompanyId, setFilterCompanyId] = useState('');
 
     const showSuccess = (msg: string) => {
         setSuccessMessage(msg);
@@ -46,6 +50,12 @@ const Vehicles = () => {
         setShowForm(false);
         setEditingVehicle(vehicle);
     };
+
+    const filteredVehicles = vehicles.filter(v => {
+        if (filterType && v.vehicleType !== filterType) return false;
+        if (filterCompanyId && String(v.companyId) !== filterCompanyId.trim()) return false;
+        return true;
+    });
 
     if (loading) {
         return (
@@ -97,7 +107,7 @@ const Vehicles = () => {
                         <div>
                             <h1 className="text-2xl font-bold text-gray-900">Vehicle Management</h1>
                             <p className="text-sm text-gray-600 mt-0.5">
-                                {vehicles.length} vehicle{vehicles.length !== 1 ? 's' : ''} registered
+                                {filteredVehicles.length}{filteredVehicles.length !== vehicles.length ? ` of ${vehicles.length}` : ''} vehicle{filteredVehicles.length !== 1 ? 's' : ''}
                             </p>
                         </div>
                         <button
@@ -109,6 +119,36 @@ const Vehicles = () => {
                             </svg>
                             Add Vehicle
                         </button>
+                    </div>
+
+                    <div className="flex gap-3 mb-6">
+                        <select
+                            value={filterType}
+                            onChange={e => setFilterType(e.target.value)}
+                            className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-violet-500 bg-white"
+                            aria-label="Filter by vehicle type"
+                        >
+                            <option value="">All Types</option>
+                            {VEHICLE_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                        </select>
+                        <input
+                            type="number"
+                            min={1}
+                            value={filterCompanyId}
+                            onChange={e => setFilterCompanyId(e.target.value)}
+                            placeholder="Filter by Company ID"
+                            className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-black focus:outline-none focus:ring-2 focus:ring-violet-500 w-48"
+                            aria-label="Filter by company ID"
+                        />
+                        {(filterType || filterCompanyId) && (
+                            <button
+                                type="button"
+                                onClick={() => { setFilterType(''); setFilterCompanyId(''); }}
+                                className="text-sm text-gray-500 hover:text-gray-700 px-2 underline"
+                            >
+                                Clear
+                            </button>
+                        )}
                     </div>
 
                     {successMessage && (
@@ -137,7 +177,7 @@ const Vehicles = () => {
                     )}
 
                     <VehicleInfo
-                        vehicles={vehicles}
+                        vehicles={filteredVehicles}
                         onEdit={handleEditClick}
                         onDelete={handleDeleteClick}
                     />

@@ -14,9 +14,10 @@ interface VehicleInfoProps {
     vehicles: Vehicle[];
     onEdit?: (vehicle: Vehicle) => void;
     onDelete?: (id: number) => void;
+    layout?: 'sidebar' | 'grid';
 }
 
-const VehicleInfo = ({vehicles, onEdit, onDelete}: VehicleInfoProps) => {
+const VehicleInfo = ({vehicles, onEdit, onDelete, layout = 'grid'}: VehicleInfoProps) => {
     if (!vehicles || vehicles.length === 0) {
         return (
             <div className="w-72 bg-white rounded-xl shadow-md p-4 border border-gray-100">
@@ -35,8 +36,8 @@ const VehicleInfo = ({vehicles, onEdit, onDelete}: VehicleInfoProps) => {
     }
 
     return (
-        <div className="w-full">
-            <div className="grid grid-cols-3 gap-4">
+        <div className={layout === 'sidebar' ? 'w-72 flex-shrink-0' : 'w-full'}>
+            <div className={layout === 'sidebar' ? 'flex flex-col gap-3' : 'grid grid-cols-3 gap-4'}>
                 {vehicles.map((vehicle, index) => (
                     <div
                         key={vehicle.id}
