@@ -6,7 +6,7 @@ export interface VehiclePayload {
     imageURL?: string;
     airConditioning: boolean;
     numberOfSeats: number;
-    trunkCapacity: number;
+    trunkCapacity?: number;
     vehicleType: string;
     companyId?: number;
 }
@@ -19,6 +19,11 @@ export const vehicleService = {
 
     getVehicleById: async (id: string) => {
         const {data} = await apiClient.get(`/vehicles/${id}`);
+        return data;
+    },
+
+    getVehiclesByCompany: async (companyId: string) => {
+        const {data} = await apiClient.get(`/vehicles/company/${companyId}`);
         return data;
     },
 

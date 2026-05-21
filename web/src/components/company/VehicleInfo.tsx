@@ -12,9 +12,11 @@ export interface Vehicle {
 
 interface VehicleInfoProps {
     vehicles: Vehicle[];
+    onEdit?: (vehicle: Vehicle) => void;
+    onDelete?: (id: number) => void;
 }
 
-const VehicleInfo = ({vehicles}: VehicleInfoProps) => {
+const VehicleInfo = ({vehicles, onEdit, onDelete}: VehicleInfoProps) => {
     if (!vehicles || vehicles.length === 0) {
         return (
             <div className="w-72 bg-white rounded-xl shadow-md p-4 border border-gray-100">
@@ -33,21 +35,15 @@ const VehicleInfo = ({vehicles}: VehicleInfoProps) => {
     }
 
     return (
-        <div className="w-72 bg-white rounded-xl shadow-md p-4 border border-gray-100 flex flex-col">
-            <div className="flex items-center justify-between mb-3">
-                <h3 className="text-lg font-bold text-gray-800">Assigned Vehicles</h3>
-                <span className="text-xs font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                    {vehicles.length} {vehicles.length === 1 ? 'Vehicle' : 'Vehicles'}
-                </span>
-            </div>
-            <div className="flex-1 space-y-3 overflow-y-auto scrollbar-hide">
+        <div className="w-full">
+            <div className="grid grid-cols-3 gap-4">
                 {vehicles.map((vehicle, index) => (
                     <div
                         key={vehicle.id}
                         className="bg-gradient-to-br from-green-500 via-emerald-500 to-teal-500 text-white rounded-lg shadow-lg overflow-hidden"
                     >
                         {vehicle.imageURL && (
-                            <div className="w-full h-32 overflow-hidden bg-white/10">
+                            <div className="w-full h-48 overflow-hidden bg-white/10">
                                 <img
                                     src={vehicle.imageURL}
                                     alt={`${vehicle.brand} ${vehicle.model}`}
@@ -93,7 +89,7 @@ const VehicleInfo = ({vehicles}: VehicleInfoProps) => {
                                         </svg>
                                         <span className="text-xs text-green-100 font-semibold">TRUNK</span>
                                     </div>
-                                    <p className="text-sm font-bold">{vehicle.trunkCapacity}L</p>
+                                    <p className="text-sm font-bold">{vehicle.trunkCapacity ? `${vehicle.trunkCapacity}L` : '—'}</p>
                                 </div>
                             </div>
 
@@ -124,8 +120,33 @@ const VehicleInfo = ({vehicles}: VehicleInfoProps) => {
 
                             <div className="mt-2 pt-2 border-t border-white/20">
                                 <div className="flex items-center justify-between">
-                                    <span className="text-xs text-green-100 font-semibold">VEHICLE ID</span>
-                                    <span className="text-xs font-mono font-bold bg-white/20 px-2 py-0.5 rounded">#{vehicle.id}</span>
+                                    <span className="text-xs text-green-100 font-semibold">VEHICLE ID #{vehicle.id}</span>
+                                    <div className="flex gap-1.5">
+                                        {onEdit && (
+                                            <button
+                                                type="button"
+                                                onClick={() => onEdit(vehicle)}
+                                                className="bg-white/20 hover:bg-white/30 text-white px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1"
+                                            >
+                                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                </svg>
+                                                Edit
+                                            </button>
+                                        )}
+                                        {onDelete && (
+                                            <button
+                                                type="button"
+                                                onClick={() => onDelete(vehicle.id)}
+                                                className="bg-red-500/40 hover:bg-red-500/60 text-white px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1"
+                                            >
+                                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                                Delete
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         </div>
