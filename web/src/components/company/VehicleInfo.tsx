@@ -20,7 +20,7 @@ interface VehicleInfoProps {
 const VehicleInfo = ({vehicles, onEdit, onDelete, layout = 'grid'}: VehicleInfoProps) => {
     if (!vehicles || vehicles.length === 0) {
         return (
-            <div className="w-72 bg-white rounded-xl shadow-md p-4 border border-gray-100">
+            <div className={`bg-white rounded-xl shadow-md p-4 border border-gray-100 ${layout === 'sidebar' ? 'w-72' : 'w-full'}`}>
                 <div className="flex flex-col items-center justify-center h-full text-center">
                     <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
                         <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -44,7 +44,7 @@ const VehicleInfo = ({vehicles, onEdit, onDelete, layout = 'grid'}: VehicleInfoP
                         className="bg-gradient-to-br from-green-500 via-emerald-500 to-teal-500 text-white rounded-lg shadow-lg overflow-hidden"
                     >
                         {vehicle.imageURL && (
-                            <div className="w-full h-48 overflow-hidden bg-white/10">
+                            <div className={`w-full overflow-hidden bg-white/10 ${layout === 'sidebar' ? 'h-32' : 'h-48'}`}>
                                 <img
                                     src={vehicle.imageURL}
                                     alt={`${vehicle.brand} ${vehicle.model}`}
