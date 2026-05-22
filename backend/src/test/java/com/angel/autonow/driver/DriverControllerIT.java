@@ -168,7 +168,7 @@ class DriverControllerIT {
 		var updateRequest = DriverRequestDTO.builder()
 				.firstName("Jane")
 				.lastName("Smith")
-				.phoneNumber("+9876543210")
+				.phoneNumber("+359877200100")
 				.expertiseType(ExpertiseType.C)
 				.available(false)
 				.build();
@@ -232,7 +232,7 @@ class DriverControllerIT {
 	@Test
 	void getDriversByCompanyId_asAdmin() throws Exception {
 		var company = companyRepository.save(CompanyEntity.builder()
-				.name("Fleet Co").address("123 St").phone("+1234567890")
+				.name("Fleet Co").address("123 St").phone("+359888500101")
 				.email("fleet@co.com").companyType(CompanyType.TAXI).build());
 
 		var driver = TestData.createDriverEntity();

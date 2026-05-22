@@ -173,7 +173,7 @@ public final class TestData {
 		return DriverRequestDTO.builder()
 				.firstName("Michael")
 				.lastName("Johnson")
-				.phoneNumber("+1234567890")
+				.phoneNumber("+359888100200")
 				.expertiseType(ExpertiseType.B)
 				.available(true)
 				.build();
@@ -183,7 +183,7 @@ public final class TestData {
 		return DriverEntity.builder()
 				.firstName("Michael")
 				.lastName("Johnson")
-				.phoneNumber("+1234567890")
+				.phoneNumber("+359888100200")
 				.expertiseType(ExpertiseType.B)
 				.available(true)
 				.build();
@@ -194,7 +194,7 @@ public final class TestData {
 				.id(id)
 				.firstName("Michael")
 				.lastName("Johnson")
-				.phoneNumber("+1234567890")
+				.phoneNumber("+359888100200")
 				.expertiseType(ExpertiseType.B)
 				.available(true)
 				.vehicleIds(Collections.emptySet())
@@ -271,7 +271,7 @@ public final class TestData {
 		return CompanyEntity.builder()
 				.name("Test Fleet Co")
 				.address("123 Test St")
-				.phone("+1234567890")
+				.phone("+359888300100")
 				.email("test@fleet.com")
 				.companyType(CompanyType.TAXI)
 				.build();
@@ -281,7 +281,7 @@ public final class TestData {
 		return CompanyEntity.builder()
 				.name("Test Fleet Co 2")
 				.address("456 Another St")
-				.phone("+9876543210")
+				.phone("+359888300101")
 				.email("test2@fleet.com")
 				.companyType(CompanyType.TAXI)
 				.build();
@@ -291,7 +291,7 @@ public final class TestData {
 		return CompanyRequestDTO.builder()
 				.name("Test Fleet Co")
 				.address("123 Test St")
-				.phone("+1234567890")
+				.phone("+359888300100")
 				.email("test@fleet.com")
 				.companyType(CompanyType.TAXI)
 				.build();
@@ -302,7 +302,7 @@ public final class TestData {
 				.id(id)
 				.name("Test Fleet Co")
 				.address("123 Test St")
-				.phone("+1234567890")
+				.phone("+359888300100")
 				.email("test@fleet.com")
 				.companyType(CompanyType.TAXI)
 				.build();
