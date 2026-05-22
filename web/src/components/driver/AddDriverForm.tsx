@@ -127,27 +127,37 @@ const AddDriverForm = ({ onSubmit, onCancel, initialData }: AddDriverFormProps) 
                     </label>
                     <input id="phoneNumber" type="text" value={fields.phoneNumber} onChange={e => set('phoneNumber', e.target.value)} className={INPUT_CLASS} placeholder="e.g. +359888123456" required />
                 </div>
-                <div>
+                <div className="col-span-3">
                     <span className="block text-sm font-medium text-gray-700 mb-1">
                         License Categories <span className="text-red-500">*</span>
                     </span>
-                    <div className="flex gap-3 pt-2">
-                        {EXPERTISE_TYPES.map(t => (
-                            <label key={t} className="flex items-center gap-1.5 text-sm text-gray-700 cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    checked={fields.expertiseType.includes(t)}
-                                    onChange={e => {
-                                        const next = e.target.checked
-                                            ? [...fields.expertiseType, t]
-                                            : fields.expertiseType.filter(x => x !== t);
-                                        set('expertiseType', next);
-                                    }}
-                                    className="h-4 w-4 rounded border-gray-300 text-violet-600 focus:ring-violet-500"
-                                />
-                                <span className="font-mono">{t}</span>
-                            </label>
-                        ))}
+                    <div className="flex flex-wrap gap-2 pt-1">
+                        {EXPERTISE_TYPES.map(t => {
+                            const checked = fields.expertiseType.includes(t);
+                            return (
+                                <label
+                                    key={t}
+                                    className={`inline-flex items-center justify-center min-w-[3rem] px-3 py-1.5 rounded-full border text-sm font-mono cursor-pointer transition-colors ${
+                                        checked
+                                            ? 'bg-violet-600 border-violet-600 text-white'
+                                            : 'bg-white border-gray-300 text-gray-700 hover:border-violet-400 hover:bg-violet-50'
+                                    }`}
+                                >
+                                    <input
+                                        type="checkbox"
+                                        checked={checked}
+                                        onChange={e => {
+                                            const next = e.target.checked
+                                                ? [...fields.expertiseType, t]
+                                                : fields.expertiseType.filter(x => x !== t);
+                                            set('expertiseType', next);
+                                        }}
+                                        className="sr-only"
+                                    />
+                                    {t}
+                                </label>
+                            );
+                        })}
                     </div>
                 </div>
                 <div>

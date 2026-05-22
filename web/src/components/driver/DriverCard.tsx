@@ -22,7 +22,7 @@ const DriverCard = ({ driver, index, onEdit, onDelete, onAssign }: DriverCardPro
         <div className="p-3">
             <div className="flex items-start justify-between mb-2">
                 <div className="flex-1">
-                    <div className="flex items-center gap-1 mb-1.5">
+                    <div className="flex flex-wrap items-center gap-1 mb-1.5">
                         <span className="text-violet-100 text-xs font-bold bg-white/20 px-2 py-0.5 rounded-full">
                             #{index + 1}
                         </span>
