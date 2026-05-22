@@ -211,7 +211,7 @@ class VehicleControllerIT {
 	@Test
 	void getVehiclesByCompanyId_asAdmin() throws Exception {
 		var company = companyRepository.save(CompanyEntity.builder()
-				.name("Fleet Co").address("123 St").phone("+1234567890")
+				.name("Fleet Co").address("123 St").phone("+359888500100")
 				.email("fleet@co.com").companyType(CompanyType.TAXI).build());
 
 		var vehicle = TestData.createVehicleEntity();
