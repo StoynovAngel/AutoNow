@@ -15,6 +15,9 @@ public record VehicleRequestDTO(
 		@NotBlank(message = "Model is required")
 		String model,
 
+		@NotBlank(message = "License plate is required")
+		String licensePlate,
+
 		@URL(message = "Image URL must be valid")
 		String imageURL,
 

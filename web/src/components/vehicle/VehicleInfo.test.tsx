@@ -8,6 +8,7 @@ const makeVehicle = (overrides: Partial<Vehicle> = {}): Vehicle => ({
     id: 1,
     brand: 'Toyota',
     model: 'Camry',
+    licensePlate: 'CB1234AB',
     airConditioning: true,
     numberOfSeats: 5,
     trunkCapacity: 400,
@@ -26,6 +27,7 @@ describe('VehicleInfo', () => {
         render(<VehicleInfo vehicles={[makeVehicle()]} />);
         expect(screen.getByText('Toyota')).toBeInTheDocument();
         expect(screen.getByText('Camry')).toBeInTheDocument();
+        expect(screen.getByText('CB1234AB')).toBeInTheDocument();
         expect(screen.getByText('TAXI')).toBeInTheDocument();
         expect(screen.getByText('5')).toBeInTheDocument();
         expect(screen.getByText('400L')).toBeInTheDocument();

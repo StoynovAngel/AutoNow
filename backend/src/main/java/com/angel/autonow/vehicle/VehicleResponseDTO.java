@@ -7,6 +7,7 @@ public record VehicleResponseDTO(
 		Long id,
 		String brand,
 		String model,
+		String licensePlate,
 		String imageURL,
 		boolean airConditioning,
 		Integer numberOfSeats,

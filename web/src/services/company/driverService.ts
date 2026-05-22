@@ -4,7 +4,6 @@ export interface DriverPayload {
     firstName: string;
     lastName: string;
     phoneNumber: string;
-    licenseNumber: string;
     expertiseType: string;
     available: boolean;
     imageUrl?: string;
@@ -39,5 +38,15 @@ export const driverService = {
 
     deleteDriver: async (id: string) => {
         await apiClient.delete(`/drivers/${id}`);
-    }
+    },
+
+    assignVehicle: async (driverId: number, vehicleId: number) => {
+        const { data } = await apiClient.put(`/drivers/${driverId}/vehicles/${vehicleId}`);
+        return data;
+    },
+
+    unassignVehicle: async (driverId: number, vehicleId: number) => {
+        const { data } = await apiClient.delete(`/drivers/${driverId}/vehicles/${vehicleId}`);
+        return data;
+    },
 };

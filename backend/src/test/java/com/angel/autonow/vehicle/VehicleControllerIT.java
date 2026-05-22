@@ -54,6 +54,7 @@ class VehicleControllerIT {
 				.andExpect(jsonPath("$.id").exists())
 				.andExpect(jsonPath("$.brand").value("Toyota"))
 				.andExpect(jsonPath("$.model").value("Camry"))
+				.andExpect(jsonPath("$.licensePlate").value("CB1234AB"))
 				.andExpect(jsonPath("$.vehicleType").value("TAXI"));
 	}
 
@@ -143,6 +144,7 @@ class VehicleControllerIT {
 		var updateRequest = VehicleRequestDTO.builder()
 				.brand("Honda")
 				.model("Civic")
+				.licensePlate("CB9876BA")
 				.airConditioning(false)
 				.numberOfSeats(4)
 				.trunkCapacity(380.0)
@@ -156,6 +158,7 @@ class VehicleControllerIT {
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.brand").value("Honda"))
 				.andExpect(jsonPath("$.model").value("Civic"))
+				.andExpect(jsonPath("$.licensePlate").value("CB9876BA"))
 				.andExpect(jsonPath("$.numberOfSeats").value(4));
 	}
 

@@ -2,6 +2,7 @@ export interface Vehicle {
     id: number;
     brand: string;
     model: string;
+    licensePlate: string;
     imageURL?: string;
     airConditioning: boolean;
     numberOfSeats: number;
@@ -69,6 +70,9 @@ const VehicleInfo = ({vehicles, onEdit, onDelete, layout = 'grid'}: VehicleInfoP
                                     </div>
                                     <p className="font-bold text-lg mb-0.5">{vehicle.brand}</p>
                                     <p className="text-sm text-green-50">{vehicle.model}</p>
+                                    <p className="text-xs font-mono mt-1 inline-block bg-white/25 text-white px-2 py-0.5 rounded">
+                                        {vehicle.licensePlate}
+                                    </p>
                                 </div>
                             </div>
 

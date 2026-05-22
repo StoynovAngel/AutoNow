@@ -11,7 +11,6 @@ public record DriverResponseDTO(
 		String firstName,
 		String lastName,
 		String phoneNumber,
-		String licenseNumber,
 		ExpertiseType expertiseType,
 		boolean available,
 		String imageUrl,

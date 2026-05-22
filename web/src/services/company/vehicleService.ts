@@ -3,6 +3,7 @@ import apiClient from '../apiClient';
 export interface VehiclePayload {
     brand: string;
     model: string;
+    licensePlate: string;
     imageURL?: string;
     airConditioning: boolean;
     numberOfSeats: number;

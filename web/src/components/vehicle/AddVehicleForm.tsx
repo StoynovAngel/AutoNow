@@ -15,6 +15,7 @@ interface AddVehicleFormProps {
 interface FormFields {
     brand: string;
     model: string;
+    licensePlate: string;
     vehicleType: string;
     numberOfSeats: string;
     trunkCapacity: string;
@@ -28,6 +29,7 @@ interface FormFields {
 const buildInitialFields = (initialData?: Vehicle, defaultCompanyId?: number): FormFields => ({
     brand: initialData?.brand ?? '',
     model: initialData?.model ?? '',
+    licensePlate: initialData?.licensePlate ?? '',
     vehicleType: initialData?.vehicleType ?? 'TAXI',
     numberOfSeats: initialData?.numberOfSeats ? String(initialData.numberOfSeats) : '',
     trunkCapacity: initialData?.trunkCapacity ? String(initialData.trunkCapacity) : '',
@@ -62,6 +64,10 @@ const AddVehicleForm = ({ onSubmit, onCancel, initialData, defaultCompanyId }: A
         const seats = parseInt(fields.numberOfSeats, 10);
         const trunk = parseFloat(fields.trunkCapacity);
 
+        if (!fields.licensePlate.trim()) {
+            setError('License plate is required.');
+            return;
+        }
         if (!fields.brand.trim() || !fields.model.trim()) {
             setError('Brand and model are required.');
             return;
@@ -78,6 +84,7 @@ const AddVehicleForm = ({ onSubmit, onCancel, initialData, defaultCompanyId }: A
         const payload: VehiclePayload = {
             brand: fields.brand.trim(),
             model: fields.model.trim(),
+            licensePlate: fields.licensePlate.trim(),
             imageURL: fields.imageURL || undefined,
             airConditioning: fields.airConditioning,
             numberOfSeats: seats,
@@ -116,9 +123,11 @@ const AddVehicleForm = ({ onSubmit, onCancel, initialData, defaultCompanyId }: A
                     onError={setError}
                 />
                 <VehicleBasicFields
+                    licensePlate={fields.licensePlate}
                     brand={fields.brand}
                     model={fields.model}
                     vehicleType={fields.vehicleType}
+                    onLicensePlateChange={v => set('licensePlate', v)}
                     onBrandChange={v => set('brand', v)}
                     onModelChange={v => set('model', v)}
                     onVehicleTypeChange={v => set('vehicleType', v)}

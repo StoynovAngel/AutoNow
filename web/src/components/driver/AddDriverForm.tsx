@@ -16,7 +16,6 @@ interface FormFields {
     firstName: string;
     lastName: string;
     phoneNumber: string;
-    licenseNumber: string;
     expertiseType: string;
     available: boolean;
     companyId: string;
@@ -29,7 +28,6 @@ const buildInitialFields = (initialData?: Driver): FormFields => ({
     firstName: initialData?.firstName ?? '',
     lastName: initialData?.lastName ?? '',
     phoneNumber: initialData?.phoneNumber ?? '',
-    licenseNumber: initialData?.licenseNumber ?? '',
     expertiseType: initialData?.expertiseType ?? 'B',
     available: initialData?.available ?? true,
     companyId: initialData?.companyId ? String(initialData.companyId) : '',
@@ -64,16 +62,11 @@ const AddDriverForm = ({ onSubmit, onCancel, initialData }: AddDriverFormProps) 
             setError('Phone number is required.');
             return;
         }
-        if (!fields.licenseNumber.trim()) {
-            setError('License number is required.');
-            return;
-        }
 
         const payload: DriverPayload = {
             firstName: fields.firstName.trim(),
             lastName: fields.lastName.trim(),
             phoneNumber: fields.phoneNumber.trim(),
-            licenseNumber: fields.licenseNumber.trim(),
             expertiseType: fields.expertiseType,
             available: fields.available,
             imageUrl: fields.imageUrl || undefined,
@@ -127,12 +120,6 @@ const AddDriverForm = ({ onSubmit, onCancel, initialData }: AddDriverFormProps) 
                         Phone Number <span className="text-red-500">*</span>
                     </label>
                     <input id="phoneNumber" type="text" value={fields.phoneNumber} onChange={e => set('phoneNumber', e.target.value)} className={INPUT_CLASS} placeholder="e.g. +1234567890" required />
-                </div>
-                <div>
-                    <label htmlFor="licenseNumber" className="block text-sm font-medium text-gray-700 mb-1">
-                        License Number <span className="text-red-500">*</span>
-                    </label>
-                    <input id="licenseNumber" type="text" value={fields.licenseNumber} onChange={e => set('licenseNumber', e.target.value)} className={INPUT_CLASS} placeholder="e.g. DL-001-2024" required />
                 </div>
                 <div>
                     <label htmlFor="expertiseType" className="block text-sm font-medium text-gray-700 mb-1">

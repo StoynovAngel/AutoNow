@@ -93,9 +93,9 @@ const CompanyManagementSidebar = ({
                                 <p className="font-semibold text-sm">
                                     {driver.firstName} {driver.lastName}
                                 </p>
-                                {driver.licenseNumber && (
+                                {driver.expertiseType && (
                                     <p className={`text-xs mt-0.5 ${selectedDriverId === driver.id ? 'text-blue-100' : 'text-gray-500'}`}>
-                                        License: {driver.licenseNumber}
+                                        License: {driver.expertiseType}
                                     </p>
                                 )}
                             </button>

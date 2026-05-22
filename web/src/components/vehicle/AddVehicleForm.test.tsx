@@ -7,6 +7,7 @@ import type { VehiclePayload } from '../../services/company/vehicleService';
 vi.mock('axios');
 
 const fillRequiredFields = async (user: ReturnType<typeof userEvent.setup>) => {
+    await user.type(screen.getByLabelText(/license plate/i), 'CB1234AB');
     await user.type(screen.getByLabelText(/brand/i), 'Toyota');
     await user.type(screen.getByLabelText(/model/i), 'Camry');
     await user.type(screen.getByLabelText(/number of seats/i), '5');
@@ -30,7 +31,7 @@ describe('AddVehicleForm', () => {
 
     it('renders edit mode title and button when initialData is provided', () => {
         const vehicle = {
-            id: 1, brand: 'Toyota', model: 'Camry', airConditioning: true,
+            id: 1, brand: 'Toyota', model: 'Camry', licensePlate: 'CB1234AB', airConditioning: true,
             numberOfSeats: 5, trunkCapacity: 400, vehicleType: 'TAXI', companyId: 1,
         };
         render(<AddVehicleForm onSubmit={onSubmit} onCancel={onCancel} initialData={vehicle} />);
@@ -40,10 +41,11 @@ describe('AddVehicleForm', () => {
 
     it('pre-fills fields from initialData', () => {
         const vehicle = {
-            id: 1, brand: 'Ferrari', model: 'Enzo', airConditioning: true,
+            id: 1, brand: 'Ferrari', model: 'Enzo', licensePlate: 'PB5555MT', airConditioning: true,
             numberOfSeats: 2, trunkCapacity: 100, vehicleType: 'PROM', companyId: 3,
         };
         render(<AddVehicleForm onSubmit={onSubmit} onCancel={onCancel} initialData={vehicle} />);
+        expect(screen.getByLabelText(/license plate/i)).toHaveValue('PB5555MT');
         expect(screen.getByLabelText(/brand/i)).toHaveValue('Ferrari');
         expect(screen.getByLabelText(/model/i)).toHaveValue('Enzo');
         expect(screen.getByLabelText(/number of seats/i)).toHaveValue(2);
@@ -51,9 +53,21 @@ describe('AddVehicleForm', () => {
         expect(screen.getByLabelText(/air conditioning/i)).toBeChecked();
     });
 
+    it('shows validation error when license plate is missing', async () => {
+        const user = userEvent.setup();
+        const { container } = render(<AddVehicleForm onSubmit={onSubmit} onCancel={onCancel} />);
+        await user.type(screen.getByLabelText(/brand/i), 'Toyota');
+        await user.type(screen.getByLabelText(/model/i), 'Camry');
+        await user.type(screen.getByLabelText(/number of seats/i), '5');
+        fireEvent.submit(container.querySelector('form')!);
+        expect(await screen.findByRole('alert')).toHaveTextContent('License plate is required');
+        expect(onSubmit).not.toHaveBeenCalled();
+    });
+
     it('shows validation error when brand is missing', async () => {
         const user = userEvent.setup();
         const { container } = render(<AddVehicleForm onSubmit={onSubmit} onCancel={onCancel} />);
+        await user.type(screen.getByLabelText(/license plate/i), 'CB1234AB');
         await user.type(screen.getByLabelText(/model/i), 'Camry');
         fireEvent.submit(container.querySelector('form')!);
         expect(await screen.findByRole('alert')).toHaveTextContent('Brand and model are required');
@@ -63,6 +77,7 @@ describe('AddVehicleForm', () => {
     it('shows validation error for non-positive seats', async () => {
         const user = userEvent.setup();
         const { container } = render(<AddVehicleForm onSubmit={onSubmit} onCancel={onCancel} />);
+        await user.type(screen.getByLabelText(/license plate/i), 'CB1234AB');
         await user.type(screen.getByLabelText(/brand/i), 'Toyota');
         await user.type(screen.getByLabelText(/model/i), 'Camry');
         await user.type(screen.getByLabelText(/number of seats/i), '0');
@@ -94,6 +109,7 @@ describe('AddVehicleForm', () => {
         const payload: VehiclePayload = onSubmit.mock.calls[0][0];
         expect(payload.brand).toBe('Toyota');
         expect(payload.model).toBe('Camry');
+        expect(payload.licensePlate).toBe('CB1234AB');
         expect(payload.numberOfSeats).toBe(5);
         expect(payload.trunkCapacity).toBe(400);
         expect(payload.companyId).toBe(2);

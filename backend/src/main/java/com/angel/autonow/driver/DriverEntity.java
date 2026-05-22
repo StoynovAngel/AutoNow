@@ -40,10 +40,6 @@ public class DriverEntity {
 	@Column(name = "phone_number", nullable = false)
 	private String phoneNumber;
 
-	@NotBlank(message = "License number is required")
-	@Column(name = "license_number", unique = true, nullable = false)
-	private String licenseNumber;
-
 	@NotNull(message = "Expertise type is required")
 	@Enumerated(EnumType.STRING)
 	@Column(name = "expertise_type", nullable = false)
@@ -60,7 +56,7 @@ public class DriverEntity {
 	@JoinColumn(name = "company_id")
 	private CompanyEntity company;
 
-	@OneToMany
+	@ManyToMany
 	@JoinTable(
 		name = "driver_vehicles",
 		joinColumns = @JoinColumn(name = "driver_id"),

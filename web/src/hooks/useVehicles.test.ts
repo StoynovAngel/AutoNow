@@ -7,8 +7,8 @@ import type { Vehicle } from '../components/company/VehicleInfo';
 vi.mock('../services/company/vehicleService');
 
 const mockVehicles: Vehicle[] = [
-    { id: 1, brand: 'Toyota', model: 'Camry', airConditioning: true, numberOfSeats: 5, trunkCapacity: 400, vehicleType: 'TAXI', companyId: 1 },
-    { id: 2, brand: 'Honda', model: 'Civic', airConditioning: false, numberOfSeats: 4, trunkCapacity: 300, vehicleType: 'SEMI', companyId: 1 },
+    { id: 1, brand: 'Toyota', model: 'Camry', licensePlate: 'CB1234AB', airConditioning: true, numberOfSeats: 5, trunkCapacity: 400, vehicleType: 'TAXI', companyId: 1 },
+    { id: 2, brand: 'Honda', model: 'Civic', licensePlate: 'CB2345CD', airConditioning: false, numberOfSeats: 4, trunkCapacity: 300, vehicleType: 'SEMI', companyId: 1 },
 ];
 
 describe('useVehicles', () => {
@@ -49,7 +49,7 @@ describe('useVehicles', () => {
         await act(async () => {});
         await act(async () => {
             await result.current.addVehicle({
-                brand: 'New', model: 'Car', airConditioning: false,
+                brand: 'New', model: 'Car', licensePlate: 'B7777KM', airConditioning: false,
                 numberOfSeats: 4, vehicleType: 'TAXI',
             });
         });
@@ -62,7 +62,7 @@ describe('useVehicles', () => {
         await act(async () => {});
         await act(async () => {
             await result.current.updateVehicle(1, {
-                brand: 'Updated', model: 'Camry', airConditioning: true,
+                brand: 'Updated', model: 'Camry', licensePlate: 'CB8888TX', airConditioning: true,
                 numberOfSeats: 5, vehicleType: 'TAXI',
             });
         });

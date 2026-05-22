@@ -79,7 +79,6 @@ class DriverControllerIT {
 				.andExpect(jsonPath("$.id").exists())
 				.andExpect(jsonPath("$.firstName").value("Michael"))
 				.andExpect(jsonPath("$.lastName").value("Johnson"))
-				.andExpect(jsonPath("$.licenseNumber").value("DL-TEST-001"))
 				.andExpect(jsonPath("$.expertiseType").value("B"));
 	}
 
@@ -135,24 +134,6 @@ class DriverControllerIT {
 	}
 
 	@Test
-	void getDriverByLicenseNumber() throws Exception {
-		var driver = TestData.createDriverEntity();
-		driverRepository.save(driver);
-
-		mockMvc.perform(get("/api/drivers/license/{licenseNumber}", "DL-TEST-001")
-						.with(TestData.adminJwt(ADMIN_EMAIL)))
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.licenseNumber").value("DL-TEST-001"));
-	}
-
-	@Test
-	void getDriverByLicenseNumber_asCustomer_returnsForbidden() throws Exception {
-		mockMvc.perform(get("/api/drivers/license/{licenseNumber}", "DL-TEST-001")
-						.with(TestData.customerJwt()))
-				.andExpect(status().isForbidden());
-	}
-
-	@Test
 	void getAllDrivers() throws Exception {
 		var driver = TestData.createDriverEntity();
 		driverRepository.save(driver);
@@ -188,7 +169,6 @@ class DriverControllerIT {
 				.firstName("Jane")
 				.lastName("Smith")
 				.phoneNumber("+9876543210")
-				.licenseNumber("DL-UPD-001")
 				.expertiseType(ExpertiseType.C)
 				.available(false)
 				.build();
@@ -200,7 +180,6 @@ class DriverControllerIT {
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.firstName").value("Jane"))
 				.andExpect(jsonPath("$.lastName").value("Smith"))
-				.andExpect(jsonPath("$.licenseNumber").value("DL-UPD-001"))
 				.andExpect(jsonPath("$.expertiseType").value("C"));
 	}
 

@@ -38,12 +38,6 @@ public class DriverController {
 		return driverService.getDriverById(id).orElse(null);
 	}
 
-	@GetMapping("/license/{licenseNumber}")
-	@PreAuthorize("hasAnyRole('ADMIN', 'DRIVER')")
-	public DriverResponseDTO getDriverByLicenseNumber(@PathVariable String licenseNumber) {
-		return driverService.getDriverByLicenseNumber(licenseNumber).orElse(null);
-	}
-
 	@GetMapping
 	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'DRIVER')")
 	public List<DriverResponseDTO> getAllDrivers() {

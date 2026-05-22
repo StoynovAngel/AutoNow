@@ -34,7 +34,6 @@ const DriverCard = ({ driver, index, onEdit, onDelete, onAssign }: DriverCardPro
                         </span>
                     </div>
                     <p className="font-bold text-lg mb-0.5">{driver.firstName} {driver.lastName}</p>
-                    <p className="text-sm text-violet-100">{driver.licenseNumber}</p>
                 </div>
             </div>
 

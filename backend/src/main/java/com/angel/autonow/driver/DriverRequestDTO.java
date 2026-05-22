@@ -20,9 +20,6 @@ public record DriverRequestDTO(
 		@Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "Phone number must be valid")
 		String phoneNumber,
 
-		@NotBlank(message = "License number is required")
-		String licenseNumber,
-
 		@NotNull(message = "Expertise type is required")
 		ExpertiseType expertiseType,
 
