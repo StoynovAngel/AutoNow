@@ -59,7 +59,7 @@ const Login = () => {
             };
 
             login(userInfo, token);
-            navigate("/home");
+            navigate("/companies");
         } catch (error: any) {
             console.error("Login error", error);
             setErrorMessage(error.response?.data?.message || "Invalid email or password");
