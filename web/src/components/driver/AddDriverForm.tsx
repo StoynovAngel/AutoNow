@@ -119,7 +119,7 @@ const AddDriverForm = ({ onSubmit, onCancel, initialData }: AddDriverFormProps) 
                     <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700 mb-1">
                         Phone Number <span className="text-red-500">*</span>
                     </label>
-                    <input id="phoneNumber" type="text" value={fields.phoneNumber} onChange={e => set('phoneNumber', e.target.value)} className={INPUT_CLASS} placeholder="e.g. +1234567890" required />
+                    <input id="phoneNumber" type="text" value={fields.phoneNumber} onChange={e => set('phoneNumber', e.target.value)} className={INPUT_CLASS} placeholder="e.g. +359888123456" required />
                 </div>
                 <div>
                     <label htmlFor="expertiseType" className="block text-sm font-medium text-gray-700 mb-1">
