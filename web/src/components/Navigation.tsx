@@ -8,7 +8,6 @@ const Navigation = () => {
     const currentPage = location.pathname;
 
     const navItems = [
-        {path: '/home', label: 'Home'},
         {path: '/companies', label: 'Companies'},
         {path: '/drivers', label: 'Drivers'},
         {path: '/vehicles', label: 'Vehicles'},
