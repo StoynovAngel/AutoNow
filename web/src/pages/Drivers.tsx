@@ -21,6 +21,7 @@ const Drivers = () => {
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [filterType, setFilterType] = useState('');
     const [filterCompanyId, setFilterCompanyId] = useState('');
+    const [searchName, setSearchName] = useState('');
 
     const showSuccess = (msg: string) => {
         setSuccessMessage(msg);
@@ -65,6 +66,10 @@ const Drivers = () => {
     const filteredDrivers = drivers.filter(d => {
         if (filterType && d.expertiseType !== filterType) return false;
         if (filterCompanyId && String(d.companyId) !== filterCompanyId.trim()) return false;
+        if (searchName.trim()) {
+            const fullName = `${d.firstName} ${d.lastName}`.toLowerCase();
+            if (!fullName.includes(searchName.trim().toLowerCase())) return false;
+        }
         return true;
     });
 
@@ -148,8 +153,16 @@ const Drivers = () => {
                             className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-black focus:outline-none focus:ring-2 focus:ring-violet-500 w-48"
                             aria-label="Filter by company ID"
                         />
-                        {(filterType || filterCompanyId) && (
-                            <button type="button" onClick={() => { setFilterType(''); setFilterCompanyId(''); }} className="text-sm text-gray-500 hover:text-gray-700 px-2 underline">
+                        <input
+                            type="text"
+                            value={searchName}
+                            onChange={e => setSearchName(e.target.value)}
+                            placeholder="Search by name"
+                            className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-black focus:outline-none focus:ring-2 focus:ring-violet-500 flex-1"
+                            aria-label="Search drivers by name"
+                        />
+                        {(filterType || filterCompanyId || searchName) && (
+                            <button type="button" onClick={() => { setFilterType(''); setFilterCompanyId(''); setSearchName(''); }} className="text-sm text-gray-500 hover:text-gray-700 px-2 underline">
                                 Clear
                             </button>
                         )}
