@@ -3,7 +3,7 @@ import type { Driver } from '../company/DriverInfo';
 import type { DriverPayload } from '../../services/company/driverService';
 import VehicleImageUpload from '../vehicle/VehicleImageUpload';
 
-const EXPERTISE_TYPES = ['B', 'C', 'CE'] as const;
+const EXPERTISE_TYPES = ['AM', 'A1', 'A2', 'A', 'B1', 'B', 'BE', 'C1', 'C1E', 'C', 'CE', 'D1', 'D1E', 'D', 'DE', 'Tkt'] as const;
 const INPUT_CLASS = 'w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-black focus:outline-none focus:ring-2 focus:ring-violet-500';
 
 interface AddDriverFormProps {

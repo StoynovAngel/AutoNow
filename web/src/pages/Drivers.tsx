@@ -8,7 +8,7 @@ import { useVehicles } from '../hooks/useVehicles';
 import type { Driver } from '../components/company/DriverInfo';
 import type { DriverPayload } from '../services/company/driverService';
 
-const EXPERTISE_TYPES = ['B', 'C', 'CE'] as const;
+const EXPERTISE_TYPES = ['AM', 'A1', 'A2', 'A', 'B1', 'B', 'BE', 'C1', 'C1E', 'C', 'CE', 'D1', 'D1E', 'D', 'DE', 'Tkt'] as const;
 
 const Drivers = () => {
     const { drivers, loading, error, addDriver, updateDriver, removeDriver, assignVehicle, unassignVehicle, refreshDrivers } = useAllDrivers();
