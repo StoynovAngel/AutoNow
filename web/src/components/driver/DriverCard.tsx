@@ -26,9 +26,11 @@ const DriverCard = ({ driver, index, onEdit, onDelete, onAssign }: DriverCardPro
                         <span className="text-violet-100 text-xs font-bold bg-white/20 px-2 py-0.5 rounded-full">
                             #{index + 1}
                         </span>
-                        <span className="text-violet-100 text-xs font-bold bg-white/20 px-2 py-0.5 rounded-full">
-                            {driver.expertiseType}
-                        </span>
+                        {driver.expertiseType.map(t => (
+                            <span key={t} className="text-violet-100 text-xs font-bold bg-white/20 px-2 py-0.5 rounded-full">
+                                {t}
+                            </span>
+                        ))}
                         <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${driver.available ? 'bg-green-400/30 text-green-100' : 'bg-red-400/30 text-red-100'}`}>
                             {driver.available ? 'Available' : 'Unavailable'}
                         </span>

@@ -109,7 +109,7 @@ class DriverServiceTest {
 		DriverResponseDTO secondResponse = DriverResponseDTO.builder()
 				.id(2L).firstName("Jane").lastName("Smith")
 				.phoneNumber("+359888100201")
-				.expertiseType(ExpertiseType.C).available(true)
+				.expertiseType(Set.of(ExpertiseType.C)).available(true)
 				.vehicleIds(emptySet())
 				.build();
 
@@ -186,7 +186,7 @@ class DriverServiceTest {
 				.firstName("Sarah")
 				.lastName("Williams")
 				.phoneNumber("+359888100201")
-				.expertiseType(ExpertiseType.B)
+				.expertiseType(Set.of(ExpertiseType.B))
 				.available(true)
 				.vehicleIds(emptySet())
 				.build();

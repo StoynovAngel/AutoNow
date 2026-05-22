@@ -149,7 +149,7 @@ public class DataSeeder implements ApplicationRunner {
 		DriverEntity michael = driverRepository.save(DriverEntity.builder()
 				.firstName("Michael").lastName("Johnson")
 				.phoneNumber("+359888100100")
-				.expertiseType(ExpertiseType.B).available(true)
+				.expertiseType(Set.of(ExpertiseType.B, ExpertiseType.C)).available(true)
 				.imageUrl("https://i.redd.it/oufits-goku-kid-v0-8utkgtut35xg1.jpg?width=736&format=pjpg&auto=webp&s=ff7228651faae2febec4a09148e33ed62f7c20a9")
 				.company(fleetCompany).vehicles(Set.of(camry, crv))
 				.build());
@@ -157,28 +157,28 @@ public class DataSeeder implements ApplicationRunner {
 		DriverEntity sarah = driverRepository.save(DriverEntity.builder()
 				.firstName("Sarah").lastName("Williams")
 				.phoneNumber("+359888100101")
-				.expertiseType(ExpertiseType.B).available(true)
+				.expertiseType(Set.of(ExpertiseType.B)).available(true)
 				.company(fleetCompany).vehicles(Set.of(octavia))
 				.build());
 
 		DriverEntity david = driverRepository.save(DriverEntity.builder()
 				.firstName("David").lastName("Brown")
 				.phoneNumber("+359888100102")
-				.expertiseType(ExpertiseType.C).available(true)
+				.expertiseType(Set.of(ExpertiseType.C, ExpertiseType.CE)).available(true)
 				.vehicles(Set.of(volvo))
 				.build());
 
 		DriverEntity emily = driverRepository.save(DriverEntity.builder()
 				.firstName("Emily").lastName("Davis")
 				.phoneNumber("+359888100103")
-				.expertiseType(ExpertiseType.CE).available(false)
+				.expertiseType(Set.of(ExpertiseType.CE)).available(false)
 				.company(medCompany).vehicles(Set.of(sprinter))
 				.build());
 
 		DriverEntity robert = driverRepository.save(DriverEntity.builder()
 				.firstName("Robert").lastName("Miller")
 				.phoneNumber("+359888100104")
-				.expertiseType(ExpertiseType.B).available(true)
+				.expertiseType(Set.of(ExpertiseType.B)).available(true)
 				.company(fleetCompany).vehicles(Set.of(passat))
 				.build());
 

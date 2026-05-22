@@ -4,7 +4,7 @@ export interface DriverPayload {
     firstName: string;
     lastName: string;
     phoneNumber: string;
-    expertiseType: string;
+    expertiseType: string[];
     available: boolean;
     imageUrl?: string;
     companyId?: number;

@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static com.angel.autonow.data.TestData.NON_EXISTENT_ID;
+import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -79,7 +80,7 @@ class DriverControllerIT {
 				.andExpect(jsonPath("$.id").exists())
 				.andExpect(jsonPath("$.firstName").value("Michael"))
 				.andExpect(jsonPath("$.lastName").value("Johnson"))
-				.andExpect(jsonPath("$.expertiseType").value("B"));
+				.andExpect(jsonPath("$.expertiseType", hasItem("B")));
 	}
 
 	@Test
@@ -169,7 +170,7 @@ class DriverControllerIT {
 				.firstName("Jane")
 				.lastName("Smith")
 				.phoneNumber("+359877200100")
-				.expertiseType(ExpertiseType.C)
+				.expertiseType(Set.of(ExpertiseType.C))
 				.available(false)
 				.build();
 
@@ -180,7 +181,7 @@ class DriverControllerIT {
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.firstName").value("Jane"))
 				.andExpect(jsonPath("$.lastName").value("Smith"))
-				.andExpect(jsonPath("$.expertiseType").value("C"));
+				.andExpect(jsonPath("$.expertiseType", hasItem("C")));
 	}
 
 	@Test

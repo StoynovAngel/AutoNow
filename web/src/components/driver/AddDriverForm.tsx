@@ -16,7 +16,7 @@ interface FormFields {
     firstName: string;
     lastName: string;
     phoneNumber: string;
-    expertiseType: string;
+    expertiseType: string[];
     available: boolean;
     companyId: string;
     imageUrl: string;
@@ -28,7 +28,7 @@ const buildInitialFields = (initialData?: Driver): FormFields => ({
     firstName: initialData?.firstName ?? '',
     lastName: initialData?.lastName ?? '',
     phoneNumber: initialData?.phoneNumber ?? '',
-    expertiseType: initialData?.expertiseType ?? 'B',
+    expertiseType: initialData?.expertiseType ?? [],
     available: initialData?.available ?? true,
     companyId: initialData?.companyId ? String(initialData.companyId) : '',
     imageUrl: initialData?.imageUrl ?? '',
@@ -60,6 +60,10 @@ const AddDriverForm = ({ onSubmit, onCancel, initialData }: AddDriverFormProps) 
         }
         if (!fields.phoneNumber.trim()) {
             setError('Phone number is required.');
+            return;
+        }
+        if (fields.expertiseType.length === 0) {
+            setError('Select at least one license category.');
             return;
         }
 
@@ -124,12 +128,27 @@ const AddDriverForm = ({ onSubmit, onCancel, initialData }: AddDriverFormProps) 
                     <input id="phoneNumber" type="text" value={fields.phoneNumber} onChange={e => set('phoneNumber', e.target.value)} className={INPUT_CLASS} placeholder="e.g. +359888123456" required />
                 </div>
                 <div>
-                    <label htmlFor="expertiseType" className="block text-sm font-medium text-gray-700 mb-1">
-                        License Type <span className="text-red-500">*</span>
-                    </label>
-                    <select id="expertiseType" value={fields.expertiseType} onChange={e => set('expertiseType', e.target.value)} className={INPUT_CLASS}>
-                        {EXPERTISE_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
-                    </select>
+                    <span className="block text-sm font-medium text-gray-700 mb-1">
+                        License Categories <span className="text-red-500">*</span>
+                    </span>
+                    <div className="flex gap-3 pt-2">
+                        {EXPERTISE_TYPES.map(t => (
+                            <label key={t} className="flex items-center gap-1.5 text-sm text-gray-700 cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    checked={fields.expertiseType.includes(t)}
+                                    onChange={e => {
+                                        const next = e.target.checked
+                                            ? [...fields.expertiseType, t]
+                                            : fields.expertiseType.filter(x => x !== t);
+                                        set('expertiseType', next);
+                                    }}
+                                    className="h-4 w-4 rounded border-gray-300 text-violet-600 focus:ring-violet-500"
+                                />
+                                <span className="font-mono">{t}</span>
+                            </label>
+                        ))}
+                    </div>
                 </div>
                 <div>
                     <label htmlFor="companyId" className="block text-sm font-medium text-gray-700 mb-1">Company ID</label>

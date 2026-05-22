@@ -8,7 +8,7 @@ const makeDriver = (overrides: Partial<Driver> = {}): Driver => ({
     firstName: 'Ivan',
     lastName: 'Petrov',
     phoneNumber: '+359888100100',
-    expertiseType: 'B',
+    expertiseType: ['B'],
     available: true,
     companyId: 1,
     vehicleIds: [10, 11],

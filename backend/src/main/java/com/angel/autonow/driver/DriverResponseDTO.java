@@ -11,7 +11,7 @@ public record DriverResponseDTO(
 		String firstName,
 		String lastName,
 		String phoneNumber,
-		ExpertiseType expertiseType,
+		Set<ExpertiseType> expertiseType,
 		boolean available,
 		String imageUrl,
 		Long companyId,

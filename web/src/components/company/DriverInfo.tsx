@@ -5,7 +5,7 @@ export interface Driver {
     firstName: string;
     lastName: string;
     phoneNumber: string;
-    expertiseType: string;
+    expertiseType: string[];
     available: boolean;
     imageUrl?: string;
     companyId: number;
@@ -71,10 +71,14 @@ const DriverInfo = ({driver}: DriverInfoProps) => {
                 </div>
             </div>
             <div className="col-span-2">
-                <label className="block text-xs font-semibold text-gray-500 mb-1 mt-2">License Type</label>
-                <p className="text-sm text-gray-900 bg-blue-50 px-3 py-2 rounded-lg border border-blue-200 inline-block font-mono">
-                    {driver.expertiseType}
-                </p>
+                <label className="block text-xs font-semibold text-gray-500 mb-1 mt-2">License Types</label>
+                <div className="flex flex-wrap gap-1.5">
+                    {driver.expertiseType.map(t => (
+                        <span key={t} className="text-sm text-gray-900 bg-blue-50 px-3 py-2 rounded-lg border border-blue-200 inline-block font-mono">
+                            {t}
+                        </span>
+                    ))}
+                </div>
             </div>
             <div className="absolute bottom-4 right-4">
                 <img

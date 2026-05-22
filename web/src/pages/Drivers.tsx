@@ -64,7 +64,7 @@ const Drivers = () => {
     };
 
     const filteredDrivers = drivers.filter(d => {
-        if (filterType && d.expertiseType !== filterType) return false;
+        if (filterType && !d.expertiseType.includes(filterType)) return false;
         if (filterCompanyId && String(d.companyId) !== filterCompanyId.trim()) return false;
         if (searchName.trim()) {
             const fullName = `${d.firstName} ${d.lastName}`.toLowerCase();

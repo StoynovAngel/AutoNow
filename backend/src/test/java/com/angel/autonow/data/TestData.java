@@ -174,7 +174,7 @@ public final class TestData {
 				.firstName("Michael")
 				.lastName("Johnson")
 				.phoneNumber("+359888100200")
-				.expertiseType(ExpertiseType.B)
+				.expertiseType(Set.of(ExpertiseType.B))
 				.available(true)
 				.build();
 	}
@@ -184,7 +184,7 @@ public final class TestData {
 				.firstName("Michael")
 				.lastName("Johnson")
 				.phoneNumber("+359888100200")
-				.expertiseType(ExpertiseType.B)
+				.expertiseType(Set.of(ExpertiseType.B))
 				.available(true)
 				.build();
 	}
@@ -195,7 +195,7 @@ public final class TestData {
 				.firstName("Michael")
 				.lastName("Johnson")
 				.phoneNumber("+359888100200")
-				.expertiseType(ExpertiseType.B)
+				.expertiseType(Set.of(ExpertiseType.B))
 				.available(true)
 				.vehicleIds(Collections.emptySet())
 				.build();

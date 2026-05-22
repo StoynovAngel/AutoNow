@@ -9,9 +9,9 @@ vi.mock('../components/Navigation', () => ({
 }));
 
 const mockDrivers: Driver[] = [
-    { id: 1, firstName: 'Ivan', lastName: 'Petrov', phoneNumber: '+359888100100', expertiseType: 'B', available: true, companyId: 1, vehicleIds: [] },
-    { id: 2, firstName: 'Maria', lastName: 'Ivanova', phoneNumber: '+359888100101', expertiseType: 'C', available: true, companyId: 1, vehicleIds: [] },
-    { id: 3, firstName: 'Stefan', lastName: 'Dimitrov', phoneNumber: '+359888100102', expertiseType: 'B', available: false, companyId: 2, vehicleIds: [] },
+    { id: 1, firstName: 'Ivan', lastName: 'Petrov', phoneNumber: '+359888100100', expertiseType: ['B'], available: true, companyId: 1, vehicleIds: [] },
+    { id: 2, firstName: 'Maria', lastName: 'Ivanova', phoneNumber: '+359888100101', expertiseType: ['C'], available: true, companyId: 1, vehicleIds: [] },
+    { id: 3, firstName: 'Stefan', lastName: 'Dimitrov', phoneNumber: '+359888100102', expertiseType: ['B'], available: false, companyId: 2, vehicleIds: [] },
 ];
 
 vi.mock('../hooks/useAllDrivers', () => ({
