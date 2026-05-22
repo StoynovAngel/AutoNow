@@ -24,16 +24,6 @@ const Company = () => {
         selectDriver
     } = useDrivers(selectedCompanyId);
 
-    const handleAddCompany = () => {
-        // TODO: Implement add company modal
-        console.log('Add new company');
-    };
-
-    const handleAddDriver = () => {
-        // TODO: Implement add driver modal
-        console.log('Add new driver');
-    };
-
     const loading = companiesLoading || driversLoading;
     const error = companiesError || driversError;
 
@@ -89,8 +79,6 @@ const Company = () => {
                             selectedDriverId={selectedDriverId}
                             onSelectCompany={selectCompany}
                             onSelectDriver={selectDriver}
-                            onAddCompany={handleAddCompany}
-                            onAddDriver={handleAddDriver}
                         />
                         <CompanyManagementContent
                             selectedCompany={selectedCompany}

@@ -8,8 +8,6 @@ interface CompanyManagementSidebarProps {
     selectedDriverId: number | null;
     onSelectCompany: (companyId: number) => void;
     onSelectDriver: (driverId: number) => void;
-    onAddCompany: () => void;
-    onAddDriver: () => void;
 }
 
 const CompanyManagementSidebar = ({
@@ -19,8 +17,6 @@ const CompanyManagementSidebar = ({
     selectedDriverId,
     onSelectCompany,
     onSelectDriver,
-    onAddCompany,
-    onAddDriver
 }: CompanyManagementSidebarProps) => {
     return (
         <div className="flex flex-col gap-3 w-72 sticky top-24 max-h-[calc(100vh-7rem)]">
@@ -57,12 +53,6 @@ const CompanyManagementSidebar = ({
                         ))
                     )}
                 </div>
-                <button
-                    onClick={onAddCompany}
-                    className="w-full px-3 py-2 bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-lg hover:from-violet-700 hover:to-purple-700 transition-all font-semibold text-sm shadow-md hover:shadow-lg flex-shrink-0"
-                >
-                    + Add Company
-                </button>
             </div>
 
             <div className="bg-white rounded-xl shadow-md p-4 flex flex-col border border-gray-100 min-h-0 flex-1">
@@ -102,12 +92,6 @@ const CompanyManagementSidebar = ({
                         ))
                     )}
                 </div>
-                <button
-                    onClick={onAddDriver}
-                    className="w-full px-3 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg hover:from-blue-700 hover:to-cyan-700 transition-all font-semibold text-sm shadow-md hover:shadow-lg flex-shrink-0"
-                >
-                    + Add Driver
-                </button>
             </div>
         </div>
     );
