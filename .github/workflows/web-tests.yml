@@ -1,0 +1,39 @@
+name: Web Tests
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'web/**'
+      - '.github/workflows/web-tests.yml'
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - 'web/**'
+      - '.github/workflows/web-tests.yml'
+
+jobs:
+  test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install dependencies
+        working-directory: web
+        run: npm ci
+
+      - name: Run unit tests
+        working-directory: web
+        run: npm run test:run
