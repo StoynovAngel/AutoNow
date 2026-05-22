@@ -6,6 +6,7 @@ import Home from './pages/Home.tsx';
 import Company from './pages/Company.tsx';
 import Order from './pages/Order.tsx';
 import Vehicles from './pages/Vehicles.tsx';
+import Drivers from './pages/Drivers.tsx';
 import Login from './pages/Login';
 
 import './index.css';
@@ -44,6 +45,11 @@ function App() {
                         <Route path="/vehicles" element={
                             <ProtectedRoute>
                                 <Vehicles/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="/drivers" element={
+                            <ProtectedRoute>
+                                <Drivers/>
                             </ProtectedRoute>
                         }/>
                         <Route path="/" element={<Navigate to="/login" replace/>}/>
