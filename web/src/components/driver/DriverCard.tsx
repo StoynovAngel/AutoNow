@@ -11,7 +11,7 @@ interface DriverCardProps {
 
 const DriverCard = ({ driver, index, onEdit, onDelete, onAssign }: DriverCardProps) => (
     <div className="bg-gradient-to-br from-violet-500 via-purple-500 to-indigo-500 text-white rounded-lg shadow-lg overflow-hidden">
-        <div className="w-full h-48 overflow-hidden bg-white/10">
+        <div className="w-full h-72 overflow-hidden bg-white/10">
             <img
                 src={driver.imageUrl ?? profilePicture}
                 alt={`${driver.firstName} ${driver.lastName}`}

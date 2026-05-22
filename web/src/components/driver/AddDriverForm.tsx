@@ -101,6 +101,8 @@ const AddDriverForm = ({ onSubmit, onCancel, initialData }: AddDriverFormProps) 
                     onUpload={handleUpload}
                     onRemove={() => setFields(f => ({ ...f, imageUrl: '', imagePreview: null }))}
                     onError={setError}
+                    label="Driver Photo"
+                    previewHeightClass="h-72"
                 />
 
                 <div>
