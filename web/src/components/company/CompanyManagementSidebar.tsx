@@ -76,7 +76,7 @@ const CompanyManagementSidebar = ({
                                 aria-pressed={selectedDriverId === driver.id}
                                 className={`w-full text-left px-3 py-2.5 rounded-lg cursor-pointer transition-all ${
                                     selectedDriverId === driver.id
-                                        ? "bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg transform scale-[1.02]"
+                                        ? "bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg transform scale-[1.02]"
                                         : "bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200"
                                 }`}
                             >
@@ -84,7 +84,7 @@ const CompanyManagementSidebar = ({
                                     {driver.firstName} {driver.lastName}
                                 </p>
                                 {driver.expertiseType.length > 0 && (
-                                    <p className={`text-xs mt-0.5 ${selectedDriverId === driver.id ? 'text-blue-100' : 'text-gray-500'}`}>
+                                    <p className={`text-xs mt-0.5 ${selectedDriverId === driver.id ? 'text-orange-100' : 'text-gray-500'}`}>
                                         License: {driver.expertiseType.join(', ')}
                                     </p>
                                 )}
