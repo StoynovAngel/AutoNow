@@ -21,7 +21,7 @@ interface FormFields {
     trunkCapacity: string;
     companyId: string;
     airConditioning: boolean;
-    imageURL: string;
+    imageUrl: string;
     imagePreview: string | null;
     uploading: boolean;
 }
@@ -35,8 +35,8 @@ const buildInitialFields = (initialData?: Vehicle, defaultCompanyId?: number): F
     trunkCapacity: initialData?.trunkCapacity ? String(initialData.trunkCapacity) : '',
     companyId: initialData?.companyId ? String(initialData.companyId) : defaultCompanyId ? String(defaultCompanyId) : '',
     airConditioning: initialData?.airConditioning ?? false,
-    imageURL: initialData?.imageURL ?? '',
-    imagePreview: initialData?.imageURL ?? null,
+    imageUrl: initialData?.imageUrl ?? '',
+    imagePreview: initialData?.imageUrl ?? null,
     uploading: false,
 });
 
@@ -50,11 +50,11 @@ const AddVehicleForm = ({ onSubmit, onCancel, initialData, defaultCompanyId }: A
     const isEditing = !!initialData;
 
     const handleUpload = (url: string, preview: string) => {
-        setFields(f => ({ ...f, imageURL: url, imagePreview: preview, uploading: url === preview }));
+        setFields(f => ({ ...f, imageUrl: url, imagePreview: preview, uploading: url === preview }));
     };
 
     const handleRemoveImage = () => {
-        setFields(f => ({ ...f, imageURL: '', imagePreview: null }));
+        setFields(f => ({ ...f, imageUrl: '', imagePreview: null }));
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -85,7 +85,7 @@ const AddVehicleForm = ({ onSubmit, onCancel, initialData, defaultCompanyId }: A
             brand: fields.brand.trim(),
             model: fields.model.trim(),
             licensePlate: fields.licensePlate.trim(),
-            imageURL: fields.imageURL || undefined,
+            imageUrl: fields.imageUrl || undefined,
             airConditioning: fields.airConditioning,
             numberOfSeats: seats,
             trunkCapacity: trunk || undefined,

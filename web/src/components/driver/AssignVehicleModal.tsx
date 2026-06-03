@@ -62,8 +62,8 @@ const AssignVehicleModal = ({ driver, allVehicles, onAssign, onUnassign, onClose
                             return (
                                 <div key={vehicle.id} className="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-lg px-3 py-2.5">
                                     <div className="flex items-center gap-3">
-                                        {vehicle.imageURL && (
-                                            <img src={vehicle.imageURL} alt="" className="w-10 h-10 rounded-lg object-cover flex-shrink-0" />
+                                        {vehicle.imageUrl && (
+                                            <img src={vehicle.imageUrl} alt="" className="w-10 h-10 rounded-lg object-cover flex-shrink-0" />
                                         )}
                                         <div>
                                             <p className="text-sm font-semibold text-gray-900">{vehicle.brand} {vehicle.model}</p>

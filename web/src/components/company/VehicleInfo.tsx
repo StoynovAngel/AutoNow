@@ -3,7 +3,7 @@ export interface Vehicle {
     brand: string;
     model: string;
     licensePlate: string;
-    imageURL?: string;
+    imageUrl?: string;
     airConditioning: boolean;
     numberOfSeats: number;
     trunkCapacity: number;
@@ -44,10 +44,10 @@ const VehicleInfo = ({vehicles, onEdit, onDelete, layout = 'grid'}: VehicleInfoP
                         key={vehicle.id}
                         className="bg-gradient-to-br from-green-500 via-emerald-500 to-teal-500 text-white rounded-lg shadow-lg overflow-hidden"
                     >
-                        {vehicle.imageURL && (
+                        {vehicle.imageUrl && (
                             <div className={`w-full overflow-hidden bg-white/10 ${layout === 'sidebar' ? 'h-32' : 'h-48'}`}>
                                 <img
-                                    src={vehicle.imageURL}
+                                    src={vehicle.imageUrl}
                                     alt={`${vehicle.brand} ${vehicle.model}`}
                                     className="w-full h-full object-cover"
                                     onError={(e) => {

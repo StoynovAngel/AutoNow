@@ -4,7 +4,7 @@ export interface VehiclePayload {
     brand: string;
     model: string;
     licensePlate: string;
-    imageURL?: string;
+    imageUrl?: string;
     airConditioning: boolean;
     numberOfSeats: number;
     trunkCapacity?: number;
