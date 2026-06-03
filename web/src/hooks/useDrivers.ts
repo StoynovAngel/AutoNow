@@ -3,6 +3,7 @@ import {driverService} from '../services/driver/driverService';
 import {vehicleService} from '../services/vehicle/vehicleService';
 import type {Driver} from '../components/company/DriverInfo';
 import type {Vehicle} from '../components/company/VehicleInfo';
+import {getErrorMessage} from '../utils/errors';
 
 export const useDrivers = (companyId?: number | null) => {
     const [drivers, setDrivers] = useState<Driver[]>([]);
@@ -27,10 +28,8 @@ export const useDrivers = (companyId?: number | null) => {
                 }
                 return prevId;
             });
-        } catch (err: any) {
-            console.error('Failed to fetch drivers', err);
-            console.error('Error response:', err.response?.data);
-            setError('Failed to load drivers');
+        } catch (err: unknown) {
+            setError(getErrorMessage(err, 'Failed to load drivers'));
         } finally {
             setLoading(false);
         }
@@ -56,9 +55,7 @@ export const useDrivers = (companyId?: number | null) => {
                 } else {
                     setDriverVehicles([]);
                 }
-            } catch (err: any) {
-                console.error('Failed to fetch driver details', err);
-                console.error('Error response:', err.response?.data);
+            } catch {
                 setDriverVehicles([]);
             }
         } else {

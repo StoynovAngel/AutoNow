@@ -1,6 +1,7 @@
 import {useState, useEffect} from 'react';
 import {companyService} from '../services/company/companyService';
 import type {Company} from '../components/company/CompanyInfo';
+import {getErrorMessage} from '../utils/errors';
 
 export const useCompanies = () => {
     const [companies, setCompanies] = useState<Company[]>([]);
@@ -18,12 +19,9 @@ export const useCompanies = () => {
         setError(null);
         try {
             const data = await companyService.getAllCompanies();
-            console.log('Companies fetched:', data);
             setCompanies(data);
-        } catch (err: any) {
-            console.error('Failed to fetch companies', err);
-            console.error('Error response:', err.response?.data);
-            setError('Failed to load companies');
+        } catch (err: unknown) {
+            setError(getErrorMessage(err, 'Failed to load companies'));
         } finally {
             setLoading(false);
         }
@@ -34,11 +32,9 @@ export const useCompanies = () => {
         if (companyId) {
             try {
                 const data = await companyService.getCompanyById(String(companyId));
-                console.log('Company details:', data);
                 setSelectedCompany(data);
-            } catch (err: any) {
-                console.error('Failed to fetch company details', err);
-                console.error('Error response:', err.response?.data);
+            } catch {
+                setSelectedCompany(null);
             }
         } else {
             setSelectedCompany(null);
