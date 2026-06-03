@@ -1,5 +1,13 @@
 import apiClient from '../apiClient';
 
+export type VehicleTier = 'BASIC' | 'PREMIUM';
+
+export type VehicleClass = 'STANDARD' | 'XL' | 'PREMIUM';
+
+export const VEHICLE_TIERS: VehicleTier[] = ['BASIC', 'PREMIUM'];
+
+export const VEHICLE_CLASSES: VehicleClass[] = ['STANDARD', 'XL', 'PREMIUM'];
+
 export interface VehiclePayload {
     brand: string;
     model: string;
@@ -9,6 +17,7 @@ export interface VehiclePayload {
     numberOfSeats: number;
     trunkCapacity?: number;
     vehicleType: string;
+    vehicleTier?: VehicleTier;
     companyId?: number;
 }
 
