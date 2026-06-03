@@ -55,7 +55,7 @@ const LoginForm = ({formData, errorMessage, onSubmit, onChange}: LoginFormProps)
                 />
             </div>
 
-            <Button type="submit" color="purple" className="w-full">
+            <Button type="submit" className="w-full">
                 Login
             </Button>
         </form>

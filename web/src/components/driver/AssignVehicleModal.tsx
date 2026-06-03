@@ -65,7 +65,7 @@ const AssignVehicleModal = ({ driver, allVehicles, onAssign, onUnassign, onClose
                                     </div>
                                     <Button
                                         size="xs"
-                                        color={assigned ? 'failure' : 'purple'}
+                                        color={assigned ? 'failure' : 'default'}
                                         disabled={isLoading}
                                         onClick={() => handle(vehicle.id, assigned)}
                                     >

@@ -177,7 +177,6 @@ const AddDriverForm = ({ onSubmit, onCancel, initialData }: AddDriverFormProps) 
             <div className="flex gap-3 mt-6">
                 <Button
                     type="submit"
-                    color="purple"
                     disabled={submitting || fields.uploading}
                     className="flex-1"
                 >

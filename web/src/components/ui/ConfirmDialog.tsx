@@ -28,7 +28,7 @@ const ConfirmDialog = ({
                 <p className="text-sm text-gray-600 mb-6">{message}</p>
                 <div className="flex gap-3">
                     <Button
-                        color={confirmVariant === 'danger' ? 'failure' : 'purple'}
+                        color={confirmVariant === 'danger' ? 'failure' : 'default'}
                         onClick={onConfirm}
                         className="flex-1"
                     >

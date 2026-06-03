@@ -81,7 +81,6 @@ const Vehicles = () => {
                             </p>
                         </div>
                         <Button
-                            color="purple"
                             onClick={() => { setShowForm(true); setEditingVehicle(null); setSuccessMessage(null); }}
                             size="sm"
                         >

@@ -97,7 +97,6 @@ const Drivers = () => {
                             </p>
                         </div>
                         <Button
-                            color="purple"
                             onClick={() => { setShowForm(true); setEditingDriver(null); setSuccessMessage(null); }}
                             size="sm"
                         >
