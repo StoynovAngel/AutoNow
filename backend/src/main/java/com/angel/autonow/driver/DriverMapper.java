@@ -1,6 +1,7 @@
 package com.angel.autonow.driver;
 
 import com.angel.autonow.vehicle.VehicleEntity;
+import org.mapstruct.CollectionMappingStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -10,7 +11,7 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", collectionMappingStrategy = CollectionMappingStrategy.TARGET_IMMUTABLE)
 public interface DriverMapper {
 
 	@Mapping(source = "vehicles", target = "vehicleIds", qualifiedByName = "vehiclesToIds")
