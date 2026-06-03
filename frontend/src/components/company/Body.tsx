@@ -42,6 +42,10 @@ const Body = () => {
         navigation.goBack();
     };
 
+    const handleBookCompany = (companyId: number) => {
+        navigation.navigate('bookingPreferences', { companyId, vehicleType });
+    };
+
     return (
         <View style={styles.container}>
             <CompanyListHeader
@@ -65,6 +69,7 @@ const Body = () => {
                                 key={company.id}
                                 company={company}
                                 onCall={handleCallCompany}
+                                onBook={handleBookCompany}
                             />
                         ))}
                     </View>

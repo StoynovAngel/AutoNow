@@ -137,6 +137,19 @@ export const createStyles = (theme: any) => StyleSheet.create({
         shadowRadius: 4,
         elevation: 3,
     },
+    bookButton: {
+        marginTop: 12,
+        backgroundColor: theme.colors.primary,
+        borderRadius: 12,
+        paddingVertical: 10,
+        paddingHorizontal: 16,
+        alignSelf: 'flex-start',
+    },
+    bookButtonText: {
+        fontSize: 14,
+        fontWeight: '700',
+        color: '#FFFFFF',
+    },
 
     loadingState: {
         flex: 1,

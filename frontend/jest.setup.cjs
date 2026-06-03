@@ -45,3 +45,33 @@ jest.mock('@expo/vector-icons', () => {
         },
     );
 });
+
+jest.mock('@rnmapbox/maps', () => {
+    const React = require('react');
+    const { View } = require('react-native');
+    const Pass = ({ children }) => React.createElement(View, null, children);
+    return {
+        __esModule: true,
+        default: { setAccessToken: jest.fn() },
+        setAccessToken: jest.fn(),
+        MapView: Pass,
+        Camera: Pass,
+        ShapeSource: Pass,
+        LineLayer: Pass,
+        MarkerView: Pass,
+        PointAnnotation: Pass,
+    };
+});
+
+jest.mock('mapbox-gl', () => ({
+    __esModule: true,
+    default: {
+        accessToken: '',
+        Map: jest.fn(),
+        Marker: jest.fn(),
+        LngLatBounds: jest.fn(),
+    },
+    Map: jest.fn(),
+    Marker: jest.fn(),
+    LngLatBounds: jest.fn(),
+}));

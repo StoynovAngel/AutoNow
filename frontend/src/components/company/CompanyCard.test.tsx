@@ -66,4 +66,27 @@ describe('CompanyCard', () => {
 
         expect(onCall).toHaveBeenCalledWith('+1-555-0100');
     });
+
+    it('does not render the Book button when onBook is omitted', () => {
+        const { queryByTestId } = renderWithProviders(
+            <CompanyCard company={baseCompany} onCall={jest.fn()} />,
+        );
+        expect(queryByTestId('book-1')).toBeNull();
+    });
+
+    it('renders the Book button when onBook is provided', () => {
+        const { queryByTestId } = renderWithProviders(
+            <CompanyCard company={baseCompany} onCall={jest.fn()} onBook={jest.fn()} />,
+        );
+        expect(queryByTestId('book-1')).toBeTruthy();
+    });
+
+    it('calls onBook with the company id when Book is pressed', () => {
+        const onBook = jest.fn();
+        const { getByTestId } = renderWithProviders(
+            <CompanyCard company={baseCompany} onCall={jest.fn()} onBook={onBook} />,
+        );
+        fireEvent.press(getByTestId('book-1'));
+        expect(onBook).toHaveBeenCalledWith(1);
+    });
 });
