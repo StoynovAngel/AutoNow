@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'flowbite-react';
+import { Alert, Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'flowbite-react';
 import type { Vehicle } from '../company/VehicleInfo';
 import type { Driver } from '../company/DriverInfo';
 
@@ -40,9 +40,9 @@ const AssignVehicleModal = ({ driver, allVehicles, onAssign, onUnassign, onClose
             </ModalHeader>
             <ModalBody>
                 {error && (
-                    <div role="alert" aria-live="assertive" className="mb-3 bg-red-50 border border-red-200 text-red-700 rounded-lg px-3 py-2 text-sm">
+                    <Alert color="failure" aria-live="assertive" className="mb-3">
                         {error}
-                    </div>
+                    </Alert>
                 )}
 
                 {allVehicles.length === 0 ? (

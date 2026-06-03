@@ -1,3 +1,5 @@
+import { Badge, Select } from 'flowbite-react';
+
 export type OrderStatus =
     | 'CREATED'
     | 'ACCEPTED'
@@ -51,6 +53,21 @@ export const statusBadgeClass = (status: OrderStatus): string => {
     }
 };
 
+const statusBadgeColor = (status: OrderStatus): 'gray' | 'info' | 'purple' | 'success' | 'failure' => {
+    switch (status) {
+        case 'CREATED':
+            return 'gray';
+        case 'ACCEPTED':
+            return 'info';
+        case 'IN_PROGRESS':
+            return 'purple';
+        case 'COMPLETED':
+            return 'success';
+        case 'CANCELED':
+            return 'failure';
+    }
+};
+
 const formatDateTime = (iso: string): string => {
     if (!iso) return '';
     const d = new Date(iso);
@@ -86,23 +103,23 @@ const OrderInfo = ({order, onChangeStatus}: OrderInfoProps) => {
             <div className="flex items-center justify-between mb-3">
                 <h2 className="text-lg font-bold text-gray-800">Order #{order.id}</h2>
                 <div className="flex items-center gap-2">
-                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${statusBadgeClass(order.status)}`}>
+                    <Badge color={statusBadgeColor(order.status)}>
                         {order.status}
-                    </span>
+                    </Badge>
                     {onChangeStatus && (
                         <label className="sr-only" htmlFor={`order-${order.id}-status`}>Change status</label>
                     )}
                     {onChangeStatus && (
-                        <select
+                        <Select
                             id={`order-${order.id}-status`}
                             value={order.status}
                             onChange={(e) => onChangeStatus(e.target.value as OrderStatus)}
-                            className="text-xs font-semibold border border-gray-200 rounded-lg px-2 py-1 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-violet-400"
+                            sizing="sm"
                         >
                             {ORDER_STATUSES.map((s) => (
                                 <option key={s} value={s}>{s}</option>
                             ))}
-                        </select>
+                        </Select>
                     )}
                 </div>
             </div>
