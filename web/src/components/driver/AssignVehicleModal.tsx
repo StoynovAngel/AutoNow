@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'flowbite-react';
 import type { Vehicle } from '../company/VehicleInfo';
 import type { Driver } from '../company/DriverInfo';
 
@@ -33,21 +34,13 @@ const AssignVehicleModal = ({ driver, allVehicles, onAssign, onUnassign, onClose
     };
 
     return (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-xl shadow-xl p-6 max-w-lg w-full mx-4">
-                <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-bold text-gray-900">
-                        Assign Vehicles — {driver.firstName} {driver.lastName}
-                    </h3>
-                    <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-600">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
-
+        <Modal show onClose={onClose} size="lg" dismissible>
+            <ModalHeader>
+                Assign Vehicles — {driver.firstName} {driver.lastName}
+            </ModalHeader>
+            <ModalBody>
                 {error && (
-                    <div role="alert" className="mb-3 bg-red-50 border border-red-200 text-red-700 rounded-lg px-3 py-2 text-sm">
+                    <div role="alert" aria-live="assertive" className="mb-3 bg-red-50 border border-red-200 text-red-700 rounded-lg px-3 py-2 text-sm">
                         {error}
                     </div>
                 )}
@@ -70,33 +63,26 @@ const AssignVehicleModal = ({ driver, allVehicles, onAssign, onUnassign, onClose
                                             <p className="text-xs text-gray-500">{vehicle.vehicleType} · {vehicle.numberOfSeats} seats</p>
                                         </div>
                                     </div>
-                                    <button
-                                        type="button"
+                                    <Button
+                                        size="xs"
+                                        color={assigned ? 'failure' : 'purple'}
                                         disabled={isLoading}
                                         onClick={() => handle(vehicle.id, assigned)}
-                                        className={`text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50 ${
-                                            assigned
-                                                ? 'bg-red-100 hover:bg-red-200 text-red-700'
-                                                : 'bg-violet-100 hover:bg-violet-200 text-violet-700'
-                                        }`}
                                     >
                                         {isLoading ? '...' : assigned ? 'Unassign' : 'Assign'}
-                                    </button>
+                                    </Button>
                                 </div>
                             );
                         })}
                     </div>
                 )}
-
-                <button
-                    type="button"
-                    onClick={onClose}
-                    className="mt-4 w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-lg transition-colors text-sm"
-                >
+            </ModalBody>
+            <ModalFooter>
+                <Button color="gray" onClick={onClose} className="w-full">
                     Done
-                </button>
-            </div>
-        </div>
+                </Button>
+            </ModalFooter>
+        </Modal>
     );
 };
 

@@ -1,3 +1,5 @@
+import { Button, Modal, ModalBody, ModalHeader } from 'flowbite-react';
+
 interface ConfirmDialogProps {
     open: boolean;
     title: string;
@@ -9,11 +11,6 @@ interface ConfirmDialogProps {
     onCancel: () => void;
 }
 
-const VARIANT_CLASSES: Record<NonNullable<ConfirmDialogProps['confirmVariant']>, string> = {
-    danger: 'bg-red-600 hover:bg-red-700 text-white',
-    primary: 'bg-violet-600 hover:bg-violet-700 text-white',
-};
-
 const ConfirmDialog = ({
     open,
     title,
@@ -24,29 +21,25 @@ const ConfirmDialog = ({
     onConfirm,
     onCancel,
 }: ConfirmDialogProps) => {
-    if (!open) return null;
-
     return (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" role="dialog" aria-modal="true" aria-labelledby="confirm-dialog-title">
-            <div className="bg-white rounded-xl shadow-xl p-6 max-w-sm w-full mx-4">
-                <h3 id="confirm-dialog-title" className="text-lg font-bold text-gray-900 mb-2">{title}</h3>
-                <p className="text-gray-600 text-sm mb-6">{message}</p>
+        <Modal show={open} onClose={onCancel} size="md" popup>
+            <ModalHeader>{title}</ModalHeader>
+            <ModalBody>
+                <p className="text-sm text-gray-600 mb-6">{message}</p>
                 <div className="flex gap-3">
-                    <button
+                    <Button
+                        color={confirmVariant === 'danger' ? 'failure' : 'purple'}
                         onClick={onConfirm}
-                        className={`flex-1 ${VARIANT_CLASSES[confirmVariant]} font-semibold py-2 px-4 rounded-lg transition-colors text-sm`}
+                        className="flex-1"
                     >
                         {confirmLabel}
-                    </button>
-                    <button
-                        onClick={onCancel}
-                        className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-lg transition-colors text-sm"
-                    >
+                    </Button>
+                    <Button color="gray" onClick={onCancel} className="flex-1">
                         {cancelLabel}
-                    </button>
+                    </Button>
                 </div>
-            </div>
-        </div>
+            </ModalBody>
+        </Modal>
     );
 };
 
