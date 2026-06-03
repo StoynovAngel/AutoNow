@@ -114,7 +114,7 @@ const Drivers = () => {
                             onChange={e => setFilterType(e.target.value)}
                             aria-label="Filter by license type"
                         >
-                            <option value="">All License Types</option>
+                            <option value="">License Types</option>
                             {EXPERTISE_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
                         </Select>
                         <TextInput

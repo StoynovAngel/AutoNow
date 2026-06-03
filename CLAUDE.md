@@ -49,6 +49,15 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 - Use `import type { ReactNode }` instead of `React.ReactNode` (the project uses `jsx: "react-jsx"` and `verbatimModuleSyntax: true`).
 - Shared interfaces (Company, Driver, Vehicle) are exported from their primary component file and imported where needed — don't redefine them.
 
+### UI Theme — Light/White Only
+
+The web app uses a light (white) theme exclusively. Never apply dark-mode styling.
+
+- Do not use Tailwind `dark:` variants — strip them when copying snippets from docs or component libraries.
+- Backgrounds default to white or light gray (`bg-white`, `bg-gray-50`, `bg-gray-100`); text defaults to dark gray (`text-gray-900`, `text-gray-700`).
+- When configuring Flowbite React components, pass props that suppress dark variants where applicable; do not enable a theme toggle.
+- Do not add `darkMode` config, `prefers-color-scheme` media queries, or theme-switcher UI.
+
 ## Project Structure
 
 ### Backend (`backend/`)
