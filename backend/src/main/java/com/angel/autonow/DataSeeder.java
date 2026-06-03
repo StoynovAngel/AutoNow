@@ -105,42 +105,42 @@ public class DataSeeder implements ApplicationRunner {
 		// Vehicles
 		VehicleEntity camry = vehicleRepository.save(VehicleEntity.builder()
 				.brand("Toyota").model("Camry").licensePlate("CB1234AA")
-				.imageURL("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRaqTdC-vRAN7L0DOSV0gRBI0cXZNfG03svJQ&s")
+				.imageUrl("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRaqTdC-vRAN7L0DOSV0gRBI0cXZNfG03svJQ&s")
 				.airConditioning(true).numberOfSeats(5).trunkCapacity(450.0)
 				.vehicleType(VehicleType.TAXI).company(fleetCompany)
 				.build());
 
 		VehicleEntity crv = vehicleRepository.save(VehicleEntity.builder()
 				.brand("Honda").model("CR-V").licensePlate("CB2345BB")
-				.imageURL("https://www.taxi-heute.de/sites/default/files/public/styles/_news_1050x700_/public/images-news-teaser/2017-05-11-fahrzeuge-honda-automatik-suv_0.jpg")
+				.imageUrl("https://www.taxi-heute.de/sites/default/files/public/styles/_news_1050x700_/public/images-news-teaser/2017-05-11-fahrzeuge-honda-automatik-suv_0.jpg")
 				.airConditioning(true).numberOfSeats(5).trunkCapacity(600.0)
 				.vehicleType(VehicleType.TAXI).company(fleetCompany)
 				.build());
 
 		VehicleEntity sprinter = vehicleRepository.save(VehicleEntity.builder()
 				.brand("Mercedes").model("Sprinter").licensePlate("CB3456CC")
-				.imageURL("https://www.nvsuk.com/images/sprinter/IMG-20210905-WA0020.jpg")
+				.imageUrl("https://www.nvsuk.com/images/sprinter/IMG-20210905-WA0020.jpg")
 				.airConditioning(true).numberOfSeats(2).trunkCapacity(1500.0)
 				.vehicleType(VehicleType.AMBULANCE).company(medCompany)
 				.build());
 
 		VehicleEntity volvo = vehicleRepository.save(VehicleEntity.builder()
 				.brand("Volvo").model("FH16").licensePlate("CB4567KH")
-				.imageURL("https://blog.truckscout24.com/de/wp-content/uploads/2013/10/Volvo-FH16-750-19-fotoshowImageNew-58e110e5-80060.jpg")
+				.imageUrl("https://blog.truckscout24.com/de/wp-content/uploads/2013/10/Volvo-FH16-750-19-fotoshowImageNew-58e110e5-80060.jpg")
 				.airConditioning(true).numberOfSeats(2).trunkCapacity(5000.0)
 				.vehicleType(VehicleType.SEMI)
 				.build());
 
 		VehicleEntity octavia = vehicleRepository.save(VehicleEntity.builder()
 				.brand("Skoda").model("Octavia").licensePlate("CB5678MT")
-				.imageURL("https://upload.wikimedia.org/wikipedia/commons/0/05/Octavia_taxi_chisinau_004.jpg?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original")
+				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/0/05/Octavia_taxi_chisinau_004.jpg?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original")
 				.airConditioning(true).numberOfSeats(5).trunkCapacity(530.0)
 				.vehicleType(VehicleType.TAXI).company(fleetCompany)
 				.build());
 
 		VehicleEntity passat = vehicleRepository.save(VehicleEntity.builder()
 				.brand("Volkswagen").model("Passat").licensePlate("CB6789TX")
-				.imageURL("https://www.dalamanairporttaxi.com/en/img-page/340-volkswagen-passat.jpg")
+				.imageUrl("https://www.dalamanairporttaxi.com/en/img-page/340-volkswagen-passat.jpg")
 				.airConditioning(true).numberOfSeats(5).trunkCapacity(480.0)
 				.vehicleType(VehicleType.TAXI).company(fleetCompany)
 				.build());

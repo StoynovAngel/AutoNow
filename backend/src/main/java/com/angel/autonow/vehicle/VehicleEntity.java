@@ -37,7 +37,7 @@ public class VehicleEntity {
 
 	@URL(message = "Image URL must be valid")
 	@Column(name = "image_url")
-	private String imageURL;
+	private String imageUrl;
 
 	@Column(name = "air_conditioning")
 	private boolean airConditioning;

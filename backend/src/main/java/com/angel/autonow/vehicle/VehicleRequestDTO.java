@@ -19,7 +19,7 @@ public record VehicleRequestDTO(
 		String licensePlate,
 
 		@URL(message = "Image URL must be valid")
-		String imageURL,
+		String imageUrl,
 
 		boolean airConditioning,
 
