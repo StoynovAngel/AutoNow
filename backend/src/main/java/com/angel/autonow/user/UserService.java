@@ -38,7 +38,7 @@ public class UserService {
 		userRepository.save(newUser);
 		log.info("User registered successfully [{}]", email);
 
-		return jwtService.generateToken(email, newUser.getAuthorities());
+		return jwtService.generateToken(newUser.getId(), email, newUser.getAuthorities());
 	}
 
 	public String login(UserRequestDTO request) {
@@ -56,6 +56,6 @@ public class UserService {
 		}
 
 		log.info("User logged in successfully [{}]", email);
-		return jwtService.generateToken(email, user.getAuthorities());
+		return jwtService.generateToken(user.getId(), email, user.getAuthorities());
 	}
 }

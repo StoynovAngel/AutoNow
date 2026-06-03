@@ -78,7 +78,7 @@ class CompanyServiceTest {
 
 		when(companyRepository.findById(1L)).thenReturn(Optional.of(company));
 		when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(user));
-		when(jwtService.generateToken(eq("test@example.com"), any())).thenReturn("new-jwt-token");
+		when(jwtService.generateToken(any(), eq("test@example.com"), any())).thenReturn("new-jwt-token");
 
 		var result = companyService.joinCompany(1L, "test@example.com");
 

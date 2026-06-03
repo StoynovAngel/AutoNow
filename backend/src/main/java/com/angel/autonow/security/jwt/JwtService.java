@@ -14,6 +14,7 @@ import java.util.Date;
 public class JwtService {
 
 	private static final String AUTHORITIES = "authorities";
+	private static final String USER_ID = "id";
 
 	@Value("${jwt.secret}")
 	private String secret;
@@ -21,7 +22,7 @@ public class JwtService {
 	@Value("${jwt.expiration}")
 	private long expiration;
 
-	public String generateToken(String email, Collection<String> authorities) {
+	public String generateToken(Long userId, String email, Collection<String> authorities) {
 		Algorithm signHMAC256 = Algorithm.HMAC256(secret);
 
 		Date issuedAt = new Date();
@@ -30,7 +31,8 @@ public class JwtService {
 		var builder = JWT.create()
 				.withSubject(email)
 				.withIssuedAt(issuedAt)
-				.withExpiresAt(expiresAt);
+				.withExpiresAt(expiresAt)
+				.withClaim(USER_ID, userId);
 
 		if (authorities != null && !authorities.isEmpty()) {
 			builder.withArrayClaim(AUTHORITIES, authorities.toArray(String[]::new));
