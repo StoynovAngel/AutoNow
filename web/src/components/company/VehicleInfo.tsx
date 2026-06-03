@@ -57,7 +57,7 @@ const VehicleInfo = ({vehicles, onEdit, onDelete, layout = 'grid'}: VehicleInfoP
                             </div>
                         )}
 
-                        <div className="p-3 flex flex-col flex-1">
+                        <div className="p-3 flex flex-col flex-1 min-h-0 overflow-hidden">
                             <div className="flex items-start justify-between mb-2">
                                 <div className="flex-1">
                                     <div className="flex flex-wrap items-center gap-1.5 mb-1.5">
