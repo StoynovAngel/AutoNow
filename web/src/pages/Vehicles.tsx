@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button } from 'flowbite-react';
+import { Alert, Button, Select, TextInput } from 'flowbite-react';
 import Navigation from '../components/ui/Navigation.tsx';
 import PageStatus from '../components/ui/PageStatus';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
@@ -93,16 +93,15 @@ const Vehicles = () => {
                     </div>
 
                     <div className="flex gap-3 mb-6">
-                        <select
+                        <Select
                             value={filterType}
                             onChange={e => setFilterType(e.target.value)}
-                            className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-violet-500 bg-white"
                             aria-label="Filter by vehicle type"
                         >
                             <option value="">All Types</option>
                             {VEHICLE_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
-                        </select>
-                        <input
+                        </Select>
+                        <TextInput
                             type="number"
                             min={1}
                             value={filterCompanyId ?? ''}
@@ -113,7 +112,7 @@ const Vehicles = () => {
                                 setFilterCompanyId(Number.isFinite(n) ? n : null);
                             }}
                             placeholder="Filter by Company ID"
-                            className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-black focus:outline-none focus:ring-2 focus:ring-violet-500 w-48"
+                            className="w-48"
                             aria-label="Filter by company ID"
                         />
                         {(filterType || filterCompanyId !== null) && (
@@ -128,9 +127,9 @@ const Vehicles = () => {
                     </div>
 
                     {successMessage && (
-                        <div role="alert" aria-live="assertive" className="mb-4 bg-green-50 border border-green-200 text-green-700 rounded-lg px-4 py-3 text-sm">
+                        <Alert color="success" aria-live="assertive" className="mb-4">
                             {successMessage}
-                        </div>
+                        </Alert>
                     )}
 
                     {showForm && (

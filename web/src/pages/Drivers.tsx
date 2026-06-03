@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button } from 'flowbite-react';
+import { Alert, Button, Select, TextInput } from 'flowbite-react';
 import Navigation from '../components/ui/Navigation.tsx';
 import PageStatus from '../components/ui/PageStatus.tsx';
 import ConfirmDialog from '../components/ui/ConfirmDialog.tsx';
@@ -109,16 +109,15 @@ const Drivers = () => {
                     </div>
 
                     <div className="flex gap-3 mb-6">
-                        <select
+                        <Select
                             value={filterType}
                             onChange={e => setFilterType(e.target.value)}
-                            className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-violet-500 bg-white"
                             aria-label="Filter by license type"
                         >
                             <option value="">All License Types</option>
                             {EXPERTISE_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
-                        </select>
-                        <input
+                        </Select>
+                        <TextInput
                             type="number"
                             min={1}
                             value={filterCompanyId ?? ''}
@@ -129,15 +128,15 @@ const Drivers = () => {
                                 setFilterCompanyId(Number.isFinite(n) ? n : null);
                             }}
                             placeholder="Filter by Company ID"
-                            className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-black focus:outline-none focus:ring-2 focus:ring-violet-500 w-48"
+                            className="w-48"
                             aria-label="Filter by company ID"
                         />
-                        <input
+                        <TextInput
                             type="text"
                             value={searchName}
                             onChange={e => setSearchName(e.target.value)}
                             placeholder="Search by name"
-                            className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-black focus:outline-none focus:ring-2 focus:ring-violet-500 flex-1"
+                            className="flex-1"
                             aria-label="Search drivers by name"
                         />
                         {(filterType || filterCompanyId !== null || searchName.trim()) && (
@@ -148,9 +147,9 @@ const Drivers = () => {
                     </div>
 
                     {successMessage && (
-                        <div role="alert" aria-live="assertive" className="mb-4 bg-green-50 border border-green-200 text-green-700 rounded-lg px-4 py-3 text-sm">
+                        <Alert color="success" aria-live="assertive" className="mb-4">
                             {successMessage}
-                        </div>
+                        </Alert>
                     )}
 
                     {showForm && (

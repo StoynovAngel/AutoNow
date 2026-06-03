@@ -1,11 +1,10 @@
 import { useState } from 'react';
-import { Button } from 'flowbite-react';
+import { Alert, Button, Checkbox, Label, TextInput } from 'flowbite-react';
 import type { Driver } from '../company/DriverInfo';
 import type { DriverPayload } from '../../services/driver/driverService';
 import VehicleImageUpload from '../vehicle/VehicleImageUpload';
 
 const EXPERTISE_TYPES = ['AM', 'A1', 'A2', 'A', 'B1', 'B', 'BE', 'C1', 'C1E', 'C', 'CE', 'D1', 'D1E', 'D', 'DE', 'Tkt'] as const;
-const INPUT_CLASS = 'w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-black focus:outline-none focus:ring-2 focus:ring-violet-500';
 
 interface AddDriverFormProps {
     onSubmit: (payload: DriverPayload) => Promise<void>;
@@ -94,9 +93,9 @@ const AddDriverForm = ({ onSubmit, onCancel, initialData }: AddDriverFormProps) 
             <h2 className="text-xl font-bold text-gray-900 mb-5">{isEditing ? 'Edit Driver' : 'Add Driver'}</h2>
 
             {error && (
-                <div role="alert" aria-live="assertive" className="mb-4 bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 text-sm">
+                <Alert color="failure" aria-live="assertive" className="mb-4">
                     {error}
-                </div>
+                </Alert>
             )}
 
             <div className="grid grid-cols-3 gap-4">
@@ -111,22 +110,22 @@ const AddDriverForm = ({ onSubmit, onCancel, initialData }: AddDriverFormProps) 
                 />
 
                 <div>
-                    <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
+                    <Label htmlFor="firstName" className="mb-1 block">
                         First Name <span className="text-red-500">*</span>
-                    </label>
-                    <input id="firstName" type="text" value={fields.firstName} onChange={e => set('firstName', e.target.value)} className={INPUT_CLASS} placeholder="e.g. John" required />
+                    </Label>
+                    <TextInput id="firstName" type="text" value={fields.firstName} onChange={e => set('firstName', e.target.value)} placeholder="e.g. John" required />
                 </div>
                 <div>
-                    <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
+                    <Label htmlFor="lastName" className="mb-1 block">
                         Last Name <span className="text-red-500">*</span>
-                    </label>
-                    <input id="lastName" type="text" value={fields.lastName} onChange={e => set('lastName', e.target.value)} className={INPUT_CLASS} placeholder="e.g. Doe" required />
+                    </Label>
+                    <TextInput id="lastName" type="text" value={fields.lastName} onChange={e => set('lastName', e.target.value)} placeholder="e.g. Doe" required />
                 </div>
                 <div>
-                    <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700 mb-1">
+                    <Label htmlFor="phoneNumber" className="mb-1 block">
                         Phone Number <span className="text-red-500">*</span>
-                    </label>
-                    <input id="phoneNumber" type="text" value={fields.phoneNumber} onChange={e => set('phoneNumber', e.target.value)} className={INPUT_CLASS} placeholder="e.g. +359888123456" required />
+                    </Label>
+                    <TextInput id="phoneNumber" type="text" value={fields.phoneNumber} onChange={e => set('phoneNumber', e.target.value)} placeholder="e.g. +359888123456" required />
                 </div>
                 <div className="col-span-3">
                     <span className="block text-sm font-medium text-gray-700 mb-1">
@@ -162,18 +161,16 @@ const AddDriverForm = ({ onSubmit, onCancel, initialData }: AddDriverFormProps) 
                     </div>
                 </div>
                 <div>
-                    <label htmlFor="companyId" className="block text-sm font-medium text-gray-700 mb-1">Company ID</label>
-                    <input id="companyId" type="number" min={1} value={fields.companyId} onChange={e => set('companyId', e.target.value)} className={INPUT_CLASS} placeholder="Optional" />
+                    <Label htmlFor="companyId" className="mb-1 block">Company ID</Label>
+                    <TextInput id="companyId" type="number" min={1} value={fields.companyId} onChange={e => set('companyId', e.target.value)} placeholder="Optional" />
                 </div>
                 <div className="col-span-3 flex items-center gap-3 pt-1">
-                    <input
+                    <Checkbox
                         id="available"
-                        type="checkbox"
                         checked={fields.available}
                         onChange={e => set('available', e.target.checked)}
-                        className="h-4 w-4 rounded border-gray-300 text-violet-600 focus:ring-violet-500"
                     />
-                    <label htmlFor="available" className="text-sm font-medium text-gray-700">Available</label>
+                    <Label htmlFor="available">Available</Label>
                 </div>
             </div>
 

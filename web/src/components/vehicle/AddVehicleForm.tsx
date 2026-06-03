@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button } from 'flowbite-react';
+import { Alert, Button } from 'flowbite-react';
 import type { Vehicle } from '../company/VehicleInfo';
 import type { VehiclePayload } from '../../services/vehicle/vehicleService';
 import VehicleImageUpload from './VehicleImageUpload';
@@ -110,9 +110,9 @@ const AddVehicleForm = ({ onSubmit, onCancel, initialData, defaultCompanyId }: A
             <h2 className="text-xl font-bold text-gray-900 mb-5">{isEditing ? 'Edit Vehicle' : 'Add Vehicle'}</h2>
 
             {error && (
-                <div role="alert" aria-live="assertive" className="mb-4 bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 text-sm">
+                <Alert color="failure" aria-live="assertive" className="mb-4">
                     {error}
-                </div>
+                </Alert>
             )}
 
             <div className="grid grid-cols-3 gap-4">
