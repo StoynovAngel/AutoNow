@@ -45,7 +45,7 @@ const Company = () => {
                         <h1 className="text-2xl font-bold text-gray-900">Company Management</h1>
                         <p className="text-sm text-gray-600 mt-0.5">Manage companies, drivers and vehicles</p>
                     </div>
-                    <div className="flex gap-4 min-w-0">
+                    <div className="flex gap-4 min-w-0 h-[calc(100vh-9rem)]">
                         <CompanyManagementSidebar
                             companies={companies}
                             drivers={drivers}
