@@ -144,6 +144,35 @@ class RatingServiceTest {
 	}
 
 	@Test
+	void getRatingsByDriverId_returnList() {
+		OrderEntity firstOrder = OrderEntity.builder().id(1L).build();
+		OrderEntity secondOrder = OrderEntity.builder().id(2L).build();
+		RatingEntity firstRating = RatingEntity.builder().id(1L).order(firstOrder).rating(5).createdAt(NOW).build();
+		RatingEntity secondRating = RatingEntity.builder().id(2L).order(secondOrder).rating(4).createdAt(NOW).build();
+		RatingResponseDTO firstResponse = TestData.createRatingResponse(1L, 1L, 5, null, NOW);
+		RatingResponseDTO secondResponse = TestData.createRatingResponse(2L, 2L, 4, null, NOW);
+
+		when(ratingRepository.findByOrderDriverId(7L)).thenReturn(List.of(firstRating, secondRating));
+		when(ratingMapper.toDTO(firstRating)).thenReturn(firstResponse);
+		when(ratingMapper.toDTO(secondRating)).thenReturn(secondResponse);
+
+		var result = ratingService.getRatingsByDriverId(7L);
+
+		assertEquals(2, result.size());
+		assertEquals(5, result.get(0).rating());
+		assertEquals(4, result.get(1).rating());
+	}
+
+	@Test
+	void getRatingsByDriverId_emptyList() {
+		when(ratingRepository.findByOrderDriverId(NON_EXISTENT_ID)).thenReturn(List.of());
+
+		var result = ratingService.getRatingsByDriverId(NON_EXISTENT_ID);
+
+		assertTrue(result.isEmpty());
+	}
+
+	@Test
 	void updateRating_returnUpdatedResponse() {
 		RatingRequestDTO request = TestData.createRatingRequest(1L, 4, "Updated comment");
 		OrderEntity order = OrderEntity.builder().id(1L).build();

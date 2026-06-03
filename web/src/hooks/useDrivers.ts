@@ -1,8 +1,10 @@
 import {useState, useEffect, useCallback} from 'react';
 import {driverService} from '../services/driver/driverService';
 import {vehicleService} from '../services/vehicle/vehicleService';
+import {ratingService} from '../services/rating/ratingService';
 import type {Driver} from '../components/company/DriverInfo';
 import type {Vehicle} from '../components/company/VehicleInfo';
+import type {Rating} from '../services/rating/ratingService';
 import {getErrorMessage} from '../utils/errors';
 
 export const useDrivers = (companyId?: number | null) => {
@@ -10,6 +12,7 @@ export const useDrivers = (companyId?: number | null) => {
     const [selectedDriverId, setSelectedDriverId] = useState<number | null>(null);
     const [selectedDriver, setSelectedDriver] = useState<Driver | null>(null);
     const [driverVehicles, setDriverVehicles] = useState<Vehicle[]>([]);
+    const [driverRatings, setDriverRatings] = useState<Rating[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -24,6 +27,7 @@ export const useDrivers = (companyId?: number | null) => {
                 if (prevId && !data.find((d: Driver) => d.id === prevId)) {
                     setSelectedDriver(null);
                     setDriverVehicles([]);
+                    setDriverRatings([]);
                     return null;
                 }
                 return prevId;
@@ -55,12 +59,21 @@ export const useDrivers = (companyId?: number | null) => {
                 } else {
                     setDriverVehicles([]);
                 }
+
+                try {
+                    const ratings = await ratingService.getRatingsByDriverId(String(driverId));
+                    setDriverRatings(ratings);
+                } catch {
+                    setDriverRatings([]);
+                }
             } catch {
                 setDriverVehicles([]);
+                setDriverRatings([]);
             }
         } else {
             setSelectedDriver(null);
             setDriverVehicles([]);
+            setDriverRatings([]);
         }
     };
 
@@ -71,6 +84,7 @@ export const useDrivers = (companyId?: number | null) => {
         selectedDriverId: hasCompany ? selectedDriverId : null,
         selectedDriver: hasCompany ? selectedDriver : null,
         driverVehicles: hasCompany ? driverVehicles : [],
+        driverRatings: hasCompany ? driverRatings : [],
         loading: hasCompany ? loading : false,
         error: hasCompany ? error : null,
         selectDriver,

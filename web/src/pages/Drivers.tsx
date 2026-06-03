@@ -112,6 +112,7 @@ const Drivers = () => {
                             value={filterType}
                             onChange={e => setFilterType(e.target.value)}
                             aria-label="Filter by license type"
+                            className="w-48"
                         >
                             <option value="">License Types</option>
                             {EXPERTISE_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
@@ -139,9 +140,14 @@ const Drivers = () => {
                             aria-label="Search drivers by name"
                         />
                         {(filterType || filterCompanyId !== null || searchName.trim()) && (
-                            <button type="button" onClick={() => { setFilterType(''); setFilterCompanyId(null); setSearchName(''); }} className="text-sm text-gray-500 hover:text-gray-700 px-2 underline">
+                            <Button
+                                type="button"
+                                color="light"
+                                size="sm"
+                                onClick={() => { setFilterType(''); setFilterCompanyId(null); setSearchName(''); }}
+                            >
                                 Clear
-                            </button>
+                            </Button>
                         )}
                     </div>
 

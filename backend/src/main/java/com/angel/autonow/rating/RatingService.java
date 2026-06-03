@@ -46,6 +46,12 @@ public class RatingService {
 				.toList();
 	}
 
+	public List<RatingResponseDTO> getRatingsByDriverId(Long driverId) {
+		return ratingRepository.findByOrderDriverId(driverId).stream()
+				.map(ratingMapper::toDTO)
+				.toList();
+	}
+
 	@Transactional
 	public Optional<RatingResponseDTO> updateRating(Long id, RatingRequestDTO request) {
 		Optional<RatingEntity> existing = ratingRepository.findById(id);

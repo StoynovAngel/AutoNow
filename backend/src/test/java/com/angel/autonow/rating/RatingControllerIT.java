@@ -1,6 +1,8 @@
 package com.angel.autonow.rating;
 
 import com.angel.autonow.data.TestData;
+import com.angel.autonow.driver.DriverEntity;
+import com.angel.autonow.driver.DriverRepository;
 import com.angel.autonow.order.OrderEntity;
 import com.angel.autonow.order.OrderRepository;
 import com.angel.autonow.user.UserEntity;
@@ -45,6 +47,9 @@ class RatingControllerIT {
 
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private DriverRepository driverRepository;
 
 	private OrderEntity order;
 
@@ -224,6 +229,54 @@ class RatingControllerIT {
 	@Test
 	void getAllRatings_withoutAuth_returnsUnauthorized() throws Exception {
 		mockMvc.perform(get("/api/ratings"))
+				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	void getRatingsByDriverId_returnsList() throws Exception {
+		DriverEntity driver = TestData.createDriverEntity();
+		driverRepository.save(driver);
+		order.setDriver(driver);
+		orderRepository.save(order);
+
+		var rating = TestData.createRatingEntity(order, 5, "Excellent");
+		ratingRepository.save(rating);
+
+		mockMvc.perform(get("/api/ratings/driver/{driverId}", driver.getId())
+						.with(TestData.customerJwt()))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.length()").value(1))
+				.andExpect(jsonPath("$[0].rating").value(5))
+				.andExpect(jsonPath("$[0].comment").value("Excellent"));
+	}
+
+	@Test
+	void getRatingsByDriverId_noEntries_returnsEmptyList() throws Exception {
+		mockMvc.perform(get("/api/ratings/driver/{driverId}", NON_EXISTENT_ID)
+						.with(TestData.customerJwt()))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$").isArray())
+				.andExpect(jsonPath("$").isEmpty());
+	}
+
+	@Test
+	void getRatingsByDriverId_asDriver() throws Exception {
+		mockMvc.perform(get("/api/ratings/driver/{driverId}", 1L)
+						.with(TestData.driverJwt()))
+				.andExpect(status().isOk());
+	}
+
+	@Test
+	void getRatingsByDriverId_asGuest_returnsForbidden() throws Exception {
+		mockMvc.perform(get("/api/ratings/driver/{driverId}", 1L)
+						.with(TestData.guestJwt()))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	void getRatingsByDriverId_withoutAuth_returnsUnauthorized() throws Exception {
+		mockMvc.perform(get("/api/ratings/driver/{driverId}", 1L))
 				.andExpect(status().isUnauthorized());
 	}
 

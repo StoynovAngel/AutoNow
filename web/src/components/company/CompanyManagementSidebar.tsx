@@ -27,7 +27,7 @@ const CompanyManagementSidebar = ({
                         {companies.length}
                     </span>
                 </div>
-                <div className="flex-1 space-y-2 mb-3 overflow-y-auto min-h-0">
+                <div className="flex-1 space-y-2 mb-3 overflow-hidden min-h-0">
                     {companies.length === 0 ? (
                         <p className="text-xs text-gray-400 text-center py-6">No companies yet</p>
                     ) : (
@@ -62,7 +62,7 @@ const CompanyManagementSidebar = ({
                         {drivers.length}
                     </span>
                 </div>
-                <div className="flex-1 space-y-2 mb-3 overflow-y-auto min-h-0">
+                <div className="flex-1 space-y-2 mb-3 overflow-hidden min-h-0">
                     {drivers.length === 0 ? (
                         <p className="text-xs text-gray-400 text-center py-6">
                             {selectedCompanyId ? 'No drivers in this company' : 'Select a company'}

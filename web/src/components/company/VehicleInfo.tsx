@@ -38,14 +38,14 @@ const VehicleInfo = ({vehicles, onEdit, onDelete, layout = 'grid'}: VehicleInfoP
 
     return (
         <div className={layout === 'sidebar' ? 'w-72 flex-shrink-0 h-full' : 'w-full'}>
-            <div className={layout === 'sidebar' ? 'flex flex-col gap-2 h-full overflow-hidden' : 'grid grid-cols-3 gap-4'}>
+            <div className={layout === 'sidebar' ? 'flex flex-col gap-2 h-full overflow-y-auto pr-1' : 'grid grid-cols-3 gap-4'}>
                 {vehicles.map((vehicle, index) => (
                     <div
                         key={vehicle.id}
-                        className={`flex flex-col bg-white border border-gray-200 text-gray-900 rounded-lg shadow-sm overflow-hidden ${layout === 'sidebar' ? 'flex-1 min-h-0' : 'h-full'}`}
+                        className={`flex flex-col bg-white border border-gray-200 text-gray-900 rounded-lg shadow-sm overflow-hidden ${layout === 'sidebar' ? 'flex-shrink-0 h-[calc(50%-0.25rem)]' : 'h-full'}`}
                     >
                         {vehicle.imageUrl && (
-                            <div className={`w-full overflow-hidden bg-gray-100 flex-shrink-0 ${layout === 'sidebar' ? 'h-20' : 'h-48'}`}>
+                            <div className={`w-full overflow-hidden bg-gray-100 flex-shrink-0 ${layout === 'sidebar' ? 'h-42' : 'h-42'}`}>
                                 <img
                                     src={vehicle.imageUrl}
                                     alt={`${vehicle.brand} ${vehicle.model}`}
@@ -58,8 +58,8 @@ const VehicleInfo = ({vehicles, onEdit, onDelete, layout = 'grid'}: VehicleInfoP
                         )}
 
                         <div className="p-3 flex flex-col flex-1 min-h-0 overflow-hidden">
-                            <div className="flex items-start justify-between mb-2">
-                                <div className="flex-1">
+                            <div className="flex items-start justify-between mb-2 gap-2">
+                                <div className="flex-1 min-w-0">
                                     <div className="flex flex-wrap items-center gap-1.5 mb-1.5">
                                         <span className="text-brand-700 text-xs font-bold bg-brand-100 px-2.5 py-1 rounded-full">
                                             #{index + 1}
@@ -68,12 +68,11 @@ const VehicleInfo = ({vehicles, onEdit, onDelete, layout = 'grid'}: VehicleInfoP
                                             {vehicle.vehicleType}
                                         </span>
                                     </div>
-                                    <p className="font-bold text-lg mb-0.5 text-gray-900">{vehicle.brand}</p>
-                                    <p className="text-sm text-gray-600">{vehicle.model}</p>
-                                    <p className="text-xs font-mono mt-1 inline-block bg-gray-100 text-gray-900 border border-gray-200 px-2 py-0.5 rounded">
-                                        {vehicle.licensePlate}
-                                    </p>
+                                    <p className="font-bold text-lg mb-0.5 text-gray-900">{vehicle.brand} - {vehicle.model}</p>
                                 </div>
+                                <p className="text-xs font-mono inline-block bg-gray-100 text-gray-900 border border-gray-200 px-2 py-0.5 rounded flex-shrink-0">
+                                    {vehicle.licensePlate}
+                                </p>
                             </div>
 
                             <div className="grid grid-cols-2 gap-2 mb-2">
