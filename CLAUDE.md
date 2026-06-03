@@ -131,7 +131,7 @@ Every change must include tests. Write tests before reporting a task as complete
 - **Backend**: Every new or modified Service/Controller must have corresponding unit and/or integration tests. Run `cd backend && ./mvnw test` after changes and confirm all tests pass.
 - **Web frontend**: Every new or modified hook, service, or component with logic must have a test file. Run `cd web && npm test` (or `npx vitest run`) after changes and confirm all tests pass.
 - **Do not skip tests**. If a test fails, fix the code or the test — never leave failing tests.
-- **Test naming**: backend tests go in `src/test/java` mirroring the main package structure. Frontend tests go alongside the source file as `{filename}.test.ts(x)`.
+- **Test naming**: backend tests go in `src/test/java` mirroring the main package structure. Frontend tests go in a `__tests__/` subdirectory next to the source file (e.g., `src/hooks/__tests__/useCompanies.test.ts` for `src/hooks/useCompanies.ts`).
 - **Integration tests**: backend integration test classes end with `IT` (e.g., `CompanyControllerIT.java`). They use H2 in-memory DB — no Docker needed.
 - **What to test**:
   - Services: business logic, edge cases, error paths
@@ -152,5 +152,5 @@ cd backend && ./mvnw test -Dtest=CompanyServiceTest
 cd web && npx vitest run
 
 # Web frontend — single file
-cd web && npx vitest run src/hooks/useCompanies.test.ts
+cd web && npx vitest run src/hooks/__tests__/useCompanies.test.ts
 ```
