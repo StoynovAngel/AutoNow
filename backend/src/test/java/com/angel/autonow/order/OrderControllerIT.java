@@ -3,6 +3,7 @@ package com.angel.autonow.order;
 import com.angel.autonow.data.TestData;
 import com.angel.autonow.user.UserEntity;
 import com.angel.autonow.user.UserRepository;
+import com.angel.autonow.vehicle.VehicleClass;
 import com.angel.autonow.vehicle.VehicleType;
 import tools.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -65,6 +66,79 @@ class OrderControllerIT {
 				.andExpect(jsonPath("$.vehicleType").value("TAXI"))
 				.andExpect(jsonPath("$.status").value("CREATED"))
 				.andExpect(jsonPath("$.pickupAddress").value("123 Main St"));
+	}
+
+	@Test
+	void createOrder_withCapacityFields_persistsAndReturns() throws Exception {
+		var request = OrderRequestDTO.builder()
+				.userId(user.getId())
+				.vehicleType(VehicleType.TAXI)
+				.pickupAddress(TestData.DEFAULT_PICKUP_ADDRESS)
+				.pickupLatitude(TestData.DEFAULT_PICKUP_LAT)
+				.pickupLongitude(TestData.DEFAULT_PICKUP_LNG)
+				.dropoffAddress(TestData.DEFAULT_DROPOFF_ADDRESS)
+				.dropoffLatitude(TestData.DEFAULT_DROPOFF_LAT)
+				.dropoffLongitude(TestData.DEFAULT_DROPOFF_LNG)
+				.estimatedPrice(15.50)
+				.distanceKm(5.2)
+				.estimatedDurationMinutes(15)
+				.passengerCount(6)
+				.luggageCount(4)
+				.vehicleClass(VehicleClass.XL)
+				.requiresAirConditioning(true)
+				.build();
+
+		mockMvc.perform(post("/api/orders")
+						.with(TestData.customerJwt())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(request)))
+				.andExpect(status().isCreated())
+				.andExpect(jsonPath("$.passengerCount").value(6))
+				.andExpect(jsonPath("$.luggageCount").value(4))
+				.andExpect(jsonPath("$.vehicleClass").value("XL"))
+				.andExpect(jsonPath("$.requiresAirConditioning").value(true));
+	}
+
+	@Test
+	void createOrder_zeroPassengerCount_returnsBadRequest() throws Exception {
+		var request = OrderRequestDTO.builder()
+				.userId(user.getId())
+				.vehicleType(VehicleType.TAXI)
+				.pickupAddress(TestData.DEFAULT_PICKUP_ADDRESS)
+				.pickupLatitude(TestData.DEFAULT_PICKUP_LAT)
+				.pickupLongitude(TestData.DEFAULT_PICKUP_LNG)
+				.dropoffAddress(TestData.DEFAULT_DROPOFF_ADDRESS)
+				.dropoffLatitude(TestData.DEFAULT_DROPOFF_LAT)
+				.dropoffLongitude(TestData.DEFAULT_DROPOFF_LNG)
+				.passengerCount(0)
+				.build();
+
+		mockMvc.perform(post("/api/orders")
+						.with(TestData.customerJwt())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(request)))
+				.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void createOrder_negativeLuggageCount_returnsBadRequest() throws Exception {
+		var request = OrderRequestDTO.builder()
+				.userId(user.getId())
+				.vehicleType(VehicleType.TAXI)
+				.pickupAddress(TestData.DEFAULT_PICKUP_ADDRESS)
+				.pickupLatitude(TestData.DEFAULT_PICKUP_LAT)
+				.pickupLongitude(TestData.DEFAULT_PICKUP_LNG)
+				.dropoffAddress(TestData.DEFAULT_DROPOFF_ADDRESS)
+				.dropoffLatitude(TestData.DEFAULT_DROPOFF_LAT)
+				.dropoffLongitude(TestData.DEFAULT_DROPOFF_LNG)
+				.luggageCount(-1)
+				.build();
+
+		mockMvc.perform(post("/api/orders")
+						.with(TestData.customerJwt())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(request)))
+				.andExpect(status().isBadRequest());
 	}
 
 	@Test

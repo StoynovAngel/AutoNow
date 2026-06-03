@@ -57,6 +57,25 @@ describe('OrderInfo', () => {
         expect(screen.getByText('driver no-show')).toBeInTheDocument();
     });
 
+    it('renders capacity fields when set', () => {
+        render(<OrderInfo order={makeOrder({
+            passengerCount: 6,
+            luggageCount: 4,
+            vehicleClass: 'XL',
+            requiresAirConditioning: true,
+        })} />);
+
+        expect(screen.getByText('6')).toBeInTheDocument();
+        expect(screen.getByText('4')).toBeInTheDocument();
+        expect(screen.getByText('XL')).toBeInTheDocument();
+        expect(screen.getByText('Required')).toBeInTheDocument();
+    });
+
+    it('renders "Not required" when requiresAirConditioning is explicitly false', () => {
+        render(<OrderInfo order={makeOrder({ requiresAirConditioning: false })} />);
+        expect(screen.getByText('Not required')).toBeInTheDocument();
+    });
+
     it('does not render the status select when onChangeStatus is not provided', () => {
         render(<OrderInfo order={makeOrder()} />);
         expect(screen.queryByRole('combobox')).not.toBeInTheDocument();

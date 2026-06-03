@@ -22,9 +22,11 @@ import com.angel.autonow.rating.RatingRequestDTO;
 import com.angel.autonow.rating.RatingResponseDTO;
 import com.angel.autonow.user.UserEntity;
 import com.angel.autonow.user.role.Role;
+import com.angel.autonow.vehicle.VehicleClass;
 import com.angel.autonow.vehicle.VehicleEntity;
 import com.angel.autonow.vehicle.VehicleRequestDTO;
 import com.angel.autonow.vehicle.VehicleResponseDTO;
+import com.angel.autonow.vehicle.VehicleTier;
 import com.angel.autonow.vehicle.VehicleType;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
@@ -141,6 +143,7 @@ public final class TestData {
 				.numberOfSeats(5)
 				.trunkCapacity(450.0)
 				.vehicleType(VehicleType.TAXI)
+				.vehicleTier(VehicleTier.BASIC)
 				.build();
 	}
 
@@ -153,6 +156,7 @@ public final class TestData {
 				.numberOfSeats(5)
 				.trunkCapacity(450.0)
 				.vehicleType(VehicleType.TAXI)
+				.vehicleTier(VehicleTier.BASIC)
 				.build();
 	}
 
@@ -166,6 +170,8 @@ public final class TestData {
 				.numberOfSeats(5)
 				.trunkCapacity(450.0)
 				.vehicleType(VehicleType.TAXI)
+				.vehicleTier(VehicleTier.BASIC)
+				.vehicleClasses(java.util.Set.of(VehicleClass.STANDARD))
 				.build();
 	}
 
