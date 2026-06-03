@@ -49,6 +49,12 @@ public class RatingController {
 		return ratingService.getAllRatings();
 	}
 
+	@GetMapping("/driver/{driverId}")
+	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'DRIVER')")
+	public List<RatingResponseDTO> getRatingsByDriverId(@PathVariable Long driverId) {
+		return ratingService.getRatingsByDriverId(driverId);
+	}
+
 	@PutMapping("/{id}")
 	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
 	public ResponseEntity<RatingResponseDTO> updateRating(@PathVariable Long id, @Valid @RequestBody RatingRequestDTO request) {

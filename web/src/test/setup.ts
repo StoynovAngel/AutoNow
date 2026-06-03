@@ -1,38 +1,49 @@
-import '@testing-library/jest-dom/vitest';
-import { afterEach, beforeEach } from 'vitest';
-import { cleanup } from '@testing-library/react';
+import '@testing-library/jest-dom';
 
+// jsdom 29 + vitest 4 don't reliably attach Storage to window/globalThis on
+// every platform. Tests that reference bare `localStorage`/`sessionStorage`
+// crash when it's missing. Provide a minimal in-memory Storage shim when the
+// environment hasn't supplied one, so behaviour matches a browser.
 const createStorage = (): Storage => {
     let store: Record<string, string> = {};
     return {
         get length() {
             return Object.keys(store).length;
         },
-        clear: () => {
+        clear() {
             store = {};
         },
-        getItem: (key: string) => (key in store ? store[key] : null),
-        setItem: (key: string, value: string) => {
-            store[key] = String(value);
+        getItem(key: string) {
+            return key in store ? store[key] : null;
         },
-        removeItem: (key: string) => {
+        key(index: number) {
+            return Object.keys(store)[index] ?? null;
+        },
+        removeItem(key: string) {
             delete store[key];
         },
-        key: (index: number) => Object.keys(store)[index] ?? null,
+        setItem(key: string, value: string) {
+            store[key] = String(value);
+        },
     };
 };
 
-if (typeof globalThis.localStorage === 'undefined') {
-    Object.defineProperty(globalThis, 'localStorage', {
+const ensureStorage = (name: 'localStorage' | 'sessionStorage'): void => {
+    if (typeof globalThis[name] !== 'undefined') return;
+    const storage = createStorage();
+    Object.defineProperty(globalThis, name, {
+        value: storage,
+        writable: true,
         configurable: true,
-        value: createStorage(),
     });
-}
+    if (typeof window !== 'undefined' && typeof window[name] === 'undefined') {
+        Object.defineProperty(window, name, {
+            value: storage,
+            writable: true,
+            configurable: true,
+        });
+    }
+};
 
-beforeEach(() => {
-    globalThis.localStorage.clear();
-});
-
-afterEach(() => {
-    cleanup();
-});
+ensureStorage('localStorage');
+ensureStorage('sessionStorage');

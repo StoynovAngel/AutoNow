@@ -104,43 +104,43 @@ public class DataSeeder implements ApplicationRunner {
 
 		// Vehicles
 		VehicleEntity camry = vehicleRepository.save(VehicleEntity.builder()
-				.brand("Toyota").model("Camry")
-				.imageURL("https://example.com/images/camry.jpg")
+				.brand("Toyota").model("Camry").licensePlate("CB1234AA")
+				.imageUrl("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRaqTdC-vRAN7L0DOSV0gRBI0cXZNfG03svJQ&s")
 				.airConditioning(true).numberOfSeats(5).trunkCapacity(450.0)
 				.vehicleType(VehicleType.TAXI).company(fleetCompany)
 				.build());
 
 		VehicleEntity crv = vehicleRepository.save(VehicleEntity.builder()
-				.brand("Honda").model("CR-V")
-				.imageURL("https://example.com/images/crv.jpg")
+				.brand("Honda").model("CR-V").licensePlate("CB2345BB")
+				.imageUrl("https://www.taxi-heute.de/sites/default/files/public/styles/_news_1050x700_/public/images-news-teaser/2017-05-11-fahrzeuge-honda-automatik-suv_0.jpg")
 				.airConditioning(true).numberOfSeats(5).trunkCapacity(600.0)
 				.vehicleType(VehicleType.TAXI).company(fleetCompany)
 				.build());
 
 		VehicleEntity sprinter = vehicleRepository.save(VehicleEntity.builder()
-				.brand("Mercedes").model("Sprinter")
-				.imageURL("https://example.com/images/sprinter.jpg")
+				.brand("Mercedes").model("Sprinter").licensePlate("CB3456CC")
+				.imageUrl("https://www.nvsuk.com/images/sprinter/IMG-20210905-WA0020.jpg")
 				.airConditioning(true).numberOfSeats(2).trunkCapacity(1500.0)
 				.vehicleType(VehicleType.AMBULANCE).company(medCompany)
 				.build());
 
 		VehicleEntity volvo = vehicleRepository.save(VehicleEntity.builder()
-				.brand("Volvo").model("FH16")
-				.imageURL("https://example.com/images/volvo.jpg")
+				.brand("Volvo").model("FH16").licensePlate("CB4567KH")
+				.imageUrl("https://blog.truckscout24.com/de/wp-content/uploads/2013/10/Volvo-FH16-750-19-fotoshowImageNew-58e110e5-80060.jpg")
 				.airConditioning(true).numberOfSeats(2).trunkCapacity(5000.0)
 				.vehicleType(VehicleType.SEMI)
 				.build());
 
 		VehicleEntity octavia = vehicleRepository.save(VehicleEntity.builder()
-				.brand("Skoda").model("Octavia")
-				.imageURL("https://example.com/images/octavia.jpg")
+				.brand("Skoda").model("Octavia").licensePlate("CB5678MT")
+				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/0/05/Octavia_taxi_chisinau_004.jpg?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original")
 				.airConditioning(true).numberOfSeats(5).trunkCapacity(530.0)
 				.vehicleType(VehicleType.TAXI).company(fleetCompany)
 				.build());
 
 		VehicleEntity passat = vehicleRepository.save(VehicleEntity.builder()
-				.brand("Volkswagen").model("Passat")
-				.imageURL("https://example.com/images/passat.jpg")
+				.brand("Volkswagen").model("Passat").licensePlate("CB6789TX")
+				.imageUrl("https://www.dalamanairporttaxi.com/en/img-page/340-volkswagen-passat.jpg")
 				.airConditioning(true).numberOfSeats(5).trunkCapacity(480.0)
 				.vehicleType(VehicleType.TAXI).company(fleetCompany)
 				.build());
@@ -148,41 +148,37 @@ public class DataSeeder implements ApplicationRunner {
 		// Drivers
 		DriverEntity michael = driverRepository.save(DriverEntity.builder()
 				.firstName("Michael").lastName("Johnson")
-				.phoneNumber("+1234567890").licenseNumber("DL-001-2024")
-				.expertiseType(ExpertiseType.B).available(true)
-				.imageUrl("https://example.com/images/driver1.jpg")
+				.phoneNumber("+359888100100")
+				.expertiseType(Set.of(ExpertiseType.B, ExpertiseType.C)).available(true)
+				.imageUrl("https://i.redd.it/oufits-goku-kid-v0-8utkgtut35xg1.jpg?width=736&format=pjpg&auto=webp&s=ff7228651faae2febec4a09148e33ed62f7c20a9")
 				.company(fleetCompany).vehicles(Set.of(camry, crv))
 				.build());
 
 		DriverEntity sarah = driverRepository.save(DriverEntity.builder()
 				.firstName("Sarah").lastName("Williams")
-				.phoneNumber("+1234567891").licenseNumber("DL-002-2024")
-				.expertiseType(ExpertiseType.B).available(true)
-				.imageUrl("https://example.com/images/driver2.jpg")
+				.phoneNumber("+359888100101")
+				.expertiseType(Set.of(ExpertiseType.B)).available(true)
 				.company(fleetCompany).vehicles(Set.of(octavia))
 				.build());
 
 		DriverEntity david = driverRepository.save(DriverEntity.builder()
 				.firstName("David").lastName("Brown")
-				.phoneNumber("+1234567892").licenseNumber("DL-003-2024")
-				.expertiseType(ExpertiseType.C).available(true)
-				.imageUrl("https://example.com/images/driver3.jpg")
+				.phoneNumber("+359888100102")
+				.expertiseType(Set.of(ExpertiseType.C, ExpertiseType.CE)).available(true)
 				.vehicles(Set.of(volvo))
 				.build());
 
 		DriverEntity emily = driverRepository.save(DriverEntity.builder()
 				.firstName("Emily").lastName("Davis")
-				.phoneNumber("+1234567893").licenseNumber("DL-004-2024")
-				.expertiseType(ExpertiseType.CE).available(false)
-				.imageUrl("https://example.com/images/driver4.jpg")
+				.phoneNumber("+359888100103")
+				.expertiseType(Set.of(ExpertiseType.CE)).available(false)
 				.company(medCompany).vehicles(Set.of(sprinter))
 				.build());
 
 		DriverEntity robert = driverRepository.save(DriverEntity.builder()
 				.firstName("Robert").lastName("Miller")
-				.phoneNumber("+1234567894").licenseNumber("DL-005-2024")
-				.expertiseType(ExpertiseType.B).available(true)
-				.imageUrl("https://example.com/images/driver5.jpg")
+				.phoneNumber("+359888100104")
+				.expertiseType(Set.of(ExpertiseType.B)).available(true)
 				.company(fleetCompany).vehicles(Set.of(passat))
 				.build());
 

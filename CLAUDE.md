@@ -49,6 +49,15 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 - Use `import type { ReactNode }` instead of `React.ReactNode` (the project uses `jsx: "react-jsx"` and `verbatimModuleSyntax: true`).
 - Shared interfaces (Company, Driver, Vehicle) are exported from their primary component file and imported where needed — don't redefine them.
 
+### UI Theme — Light/White Only
+
+The web app uses a light (white) theme exclusively. Never apply dark-mode styling.
+
+- Do not use Tailwind `dark:` variants — strip them when copying snippets from docs or component libraries.
+- Backgrounds default to white or light gray (`bg-white`, `bg-gray-50`, `bg-gray-100`); text defaults to dark gray (`text-gray-900`, `text-gray-700`).
+- When configuring Flowbite React components, pass props that suppress dark variants where applicable; do not enable a theme toggle.
+- Do not add `darkMode` config, `prefers-color-scheme` media queries, or theme-switcher UI.
+
 ## Project Structure
 
 ### Backend (`backend/`)
@@ -131,7 +140,7 @@ Every change must include tests. Write tests before reporting a task as complete
 - **Backend**: Every new or modified Service/Controller must have corresponding unit and/or integration tests. Run `cd backend && ./mvnw test` after changes and confirm all tests pass.
 - **Web frontend**: Every new or modified hook, service, or component with logic must have a test file. Run `cd web && npm test` (or `npx vitest run`) after changes and confirm all tests pass.
 - **Do not skip tests**. If a test fails, fix the code or the test — never leave failing tests.
-- **Test naming**: backend tests go in `src/test/java` mirroring the main package structure. Frontend tests go alongside the source file as `{filename}.test.ts(x)`.
+- **Test naming**: backend tests go in `src/test/java` mirroring the main package structure. Frontend tests go in a `__tests__/` subdirectory next to the source file (e.g., `src/hooks/__tests__/useCompanies.test.ts` for `src/hooks/useCompanies.ts`).
 - **Integration tests**: backend integration test classes end with `IT` (e.g., `CompanyControllerIT.java`). They use H2 in-memory DB — no Docker needed.
 - **What to test**:
   - Services: business logic, edge cases, error paths
@@ -152,5 +161,5 @@ cd backend && ./mvnw test -Dtest=CompanyServiceTest
 cd web && npx vitest run
 
 # Web frontend — single file
-cd web && npx vitest run src/hooks/useCompanies.test.ts
+cd web && npx vitest run src/hooks/__tests__/useCompanies.test.ts
 ```

@@ -1,3 +1,4 @@
+import { Button } from 'flowbite-react';
 import type { Driver } from './DriverInfo';
 
 interface DriverListProps {
@@ -17,7 +18,7 @@ const DriverList = ({drivers, selectedDriverId, onSelectDriver, onAddDriver}: Dr
                         onClick={() => onSelectDriver(driver.id)}
                         className={`px-3 py-2 border rounded-lg cursor-pointer transition ${
                             selectedDriverId === driver.id
-                                ? "bg-violet-100 border-violet-500"
+                                ? "bg-brand-50 border-brand-500"
                                 : "bg-white border-gray-300 hover:bg-gray-50"
                         }`}
                     >
@@ -26,12 +27,9 @@ const DriverList = ({drivers, selectedDriverId, onSelectDriver, onAddDriver}: Dr
                 ))}
             </div>
 
-            <button
-                onClick={onAddDriver}
-                className="w-full px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition"
-            >
+            <Button onClick={onAddDriver} className="w-full">
                 Add new driver
-            </button>
+            </Button>
         </div>
     );
 };

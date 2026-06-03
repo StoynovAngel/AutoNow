@@ -38,12 +38,6 @@ public class DriverController {
 		return driverService.getDriverById(id).orElse(null);
 	}
 
-	@GetMapping("/license/{licenseNumber}")
-	@PreAuthorize("hasAnyRole('ADMIN', 'DRIVER')")
-	public DriverResponseDTO getDriverByLicenseNumber(@PathVariable String licenseNumber) {
-		return driverService.getDriverByLicenseNumber(licenseNumber).orElse(null);
-	}
-
 	@GetMapping
 	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'DRIVER')")
 	public List<DriverResponseDTO> getAllDrivers() {
@@ -70,5 +64,21 @@ public class DriverController {
 		return driverService.deleteDriver(id, authentication.getName())
 				? ResponseEntity.noContent().build()
 				: ResponseEntity.badRequest().build();
+	}
+
+	@PutMapping("/{id}/vehicles/{vehicleId}")
+	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN')")
+	public ResponseEntity<DriverResponseDTO> assignVehicle(@PathVariable Long id, @PathVariable Long vehicleId) {
+		return driverService.assignVehicle(id, vehicleId)
+				.map(ResponseEntity::ok)
+				.orElse(ResponseEntity.notFound().build());
+	}
+
+	@DeleteMapping("/{id}/vehicles/{vehicleId}")
+	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN')")
+	public ResponseEntity<DriverResponseDTO> unassignVehicle(@PathVariable Long id, @PathVariable Long vehicleId) {
+		return driverService.unassignVehicle(id, vehicleId)
+				.map(ResponseEntity::ok)
+				.orElse(ResponseEntity.notFound().build());
 	}
 }

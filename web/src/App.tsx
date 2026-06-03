@@ -2,8 +2,10 @@ import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {BrowserRouter as Router, Routes, Route, Navigate} from 'react-router-dom';
 import {AuthProvider} from './contexts/AuthContext';
 import ProtectedRoute from './components/auth/ProtectedRoute';
-import Home from './pages/Home.tsx';
 import Company from './pages/Company.tsx';
+import Order from './pages/Order.tsx';
+import Vehicles from './pages/Vehicles.tsx';
+import Drivers from './pages/Drivers.tsx';
 import Login from './pages/Login';
 
 import './index.css';
@@ -24,14 +26,24 @@ function App() {
                 <Router>
                     <Routes>
                         <Route path="/login" element={<Login/>}/>
-                        <Route path="/home" element={
-                            <ProtectedRoute>
-                                <Home/>
-                            </ProtectedRoute>
-                        }/>
                         <Route path="/companies" element={
                             <ProtectedRoute>
                                 <Company/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="/orders" element={
+                            <ProtectedRoute>
+                                <Order/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="/vehicles" element={
+                            <ProtectedRoute>
+                                <Vehicles/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="/drivers" element={
+                            <ProtectedRoute>
+                                <Drivers/>
                             </ProtectedRoute>
                         }/>
                         <Route path="/" element={<Navigate to="/login" replace/>}/>

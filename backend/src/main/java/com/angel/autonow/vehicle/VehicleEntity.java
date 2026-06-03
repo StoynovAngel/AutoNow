@@ -31,9 +31,13 @@ public class VehicleEntity {
 	@Column(name = "model", nullable = false)
 	private String model;
 
+	@NotBlank(message = "License plate is required")
+	@Column(name = "license_plate", unique = true, nullable = false)
+	private String licensePlate;
+
 	@URL(message = "Image URL must be valid")
 	@Column(name = "image_url")
-	private String imageURL;
+	private String imageUrl;
 
 	@Column(name = "air_conditioning")
 	private boolean airConditioning;

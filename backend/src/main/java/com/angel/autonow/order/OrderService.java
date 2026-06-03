@@ -128,4 +128,13 @@ public class OrderService {
 
 		return true;
 	}
+
+	@Transactional
+	public Optional<OrderResponseDTO> updateOrderStatus(Long id, OrderStatus status) {
+		return orderRepository.findById(id)
+				.map(order -> {
+					order.setStatus(status);
+					return orderMapper.toDTO(orderRepository.save(order));
+				});
+	}
 }

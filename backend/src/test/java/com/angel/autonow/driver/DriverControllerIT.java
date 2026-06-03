@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static com.angel.autonow.data.TestData.NON_EXISTENT_ID;
+import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -79,8 +80,7 @@ class DriverControllerIT {
 				.andExpect(jsonPath("$.id").exists())
 				.andExpect(jsonPath("$.firstName").value("Michael"))
 				.andExpect(jsonPath("$.lastName").value("Johnson"))
-				.andExpect(jsonPath("$.licenseNumber").value("DL-TEST-001"))
-				.andExpect(jsonPath("$.expertiseType").value("B"));
+				.andExpect(jsonPath("$.expertiseType", hasItem("B")));
 	}
 
 	@Test
@@ -135,24 +135,6 @@ class DriverControllerIT {
 	}
 
 	@Test
-	void getDriverByLicenseNumber() throws Exception {
-		var driver = TestData.createDriverEntity();
-		driverRepository.save(driver);
-
-		mockMvc.perform(get("/api/drivers/license/{licenseNumber}", "DL-TEST-001")
-						.with(TestData.adminJwt(ADMIN_EMAIL)))
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.licenseNumber").value("DL-TEST-001"));
-	}
-
-	@Test
-	void getDriverByLicenseNumber_asCustomer_returnsForbidden() throws Exception {
-		mockMvc.perform(get("/api/drivers/license/{licenseNumber}", "DL-TEST-001")
-						.with(TestData.customerJwt()))
-				.andExpect(status().isForbidden());
-	}
-
-	@Test
 	void getAllDrivers() throws Exception {
 		var driver = TestData.createDriverEntity();
 		driverRepository.save(driver);
@@ -187,9 +169,8 @@ class DriverControllerIT {
 		var updateRequest = DriverRequestDTO.builder()
 				.firstName("Jane")
 				.lastName("Smith")
-				.phoneNumber("+9876543210")
-				.licenseNumber("DL-UPD-001")
-				.expertiseType(ExpertiseType.C)
+				.phoneNumber("+359877200100")
+				.expertiseType(Set.of(ExpertiseType.C))
 				.available(false)
 				.build();
 
@@ -200,8 +181,7 @@ class DriverControllerIT {
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.firstName").value("Jane"))
 				.andExpect(jsonPath("$.lastName").value("Smith"))
-				.andExpect(jsonPath("$.licenseNumber").value("DL-UPD-001"))
-				.andExpect(jsonPath("$.expertiseType").value("C"));
+				.andExpect(jsonPath("$.expertiseType", hasItem("C")));
 	}
 
 	@Test
@@ -253,7 +233,7 @@ class DriverControllerIT {
 	@Test
 	void getDriversByCompanyId_asAdmin() throws Exception {
 		var company = companyRepository.save(CompanyEntity.builder()
-				.name("Fleet Co").address("123 St").phone("+1234567890")
+				.name("Fleet Co").address("123 St").phone("+359888500101")
 				.email("fleet@co.com").companyType(CompanyType.TAXI).build());
 
 		var driver = TestData.createDriverEntity();

@@ -102,35 +102,14 @@ class DriverServiceTest {
 	}
 
 	@Test
-	void getDriverByLicenseNumber_returnDriverResponse() {
-		DriverEntity entity = DriverEntity.builder().id(1L).licenseNumber("DL-TEST-001").build();
-		DriverResponseDTO response = TestData.createDriverResponse(1L);
-
-		when(driverRepository.findByLicenseNumber("DL-TEST-001")).thenReturn(Optional.of(entity));
-		when(driverMapper.toDTO(entity)).thenReturn(response);
-
-		var result = driverService.getDriverByLicenseNumber("DL-TEST-001");
-
-		assertTrue(result.isPresent());
-		assertEquals("DL-TEST-001", result.get().licenseNumber());
-	}
-
-	@Test
-	void getDriverByLicenseNumber_notFound_returnsEmpty() {
-		when(driverRepository.findByLicenseNumber("INVALID")).thenReturn(Optional.empty());
-		var result = driverService.getDriverByLicenseNumber("INVALID");
-		assertTrue(result.isEmpty());
-	}
-
-	@Test
 	void getAllDrivers_returnList() {
 		DriverEntity firstDriver = DriverEntity.builder().id(1L).firstName("Michael").build();
 		DriverEntity secondDriver = DriverEntity.builder().id(2L).firstName("Jane").build();
 		DriverResponseDTO firstResponse = TestData.createDriverResponse(1L);
 		DriverResponseDTO secondResponse = DriverResponseDTO.builder()
 				.id(2L).firstName("Jane").lastName("Smith")
-				.phoneNumber("+1234567891").licenseNumber("DL-002")
-				.expertiseType(ExpertiseType.C).available(true)
+				.phoneNumber("+359888100201")
+				.expertiseType(Set.of(ExpertiseType.C)).available(true)
 				.vehicleIds(emptySet())
 				.build();
 
@@ -206,9 +185,8 @@ class DriverServiceTest {
 				.id(2L)
 				.firstName("Sarah")
 				.lastName("Williams")
-				.phoneNumber("+1234567891")
-				.licenseNumber("DL-002")
-				.expertiseType(ExpertiseType.B)
+				.phoneNumber("+359888100201")
+				.expertiseType(Set.of(ExpertiseType.B))
 				.available(true)
 				.vehicleIds(emptySet())
 				.build();

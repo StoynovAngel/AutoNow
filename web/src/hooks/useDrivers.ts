@@ -1,14 +1,18 @@
 import {useState, useEffect, useCallback} from 'react';
-import {driverService} from '../services/company/driverService';
-import {vehicleService} from '../services/company/vehicleService';
+import {driverService} from '../services/driver/driverService';
+import {vehicleService} from '../services/vehicle/vehicleService';
+import {ratingService} from '../services/rating/ratingService';
 import type {Driver} from '../components/company/DriverInfo';
 import type {Vehicle} from '../components/company/VehicleInfo';
+import type {Rating} from '../services/rating/ratingService';
+import {getErrorMessage} from '../utils/errors';
 
 export const useDrivers = (companyId?: number | null) => {
     const [drivers, setDrivers] = useState<Driver[]>([]);
     const [selectedDriverId, setSelectedDriverId] = useState<number | null>(null);
     const [selectedDriver, setSelectedDriver] = useState<Driver | null>(null);
     const [driverVehicles, setDriverVehicles] = useState<Vehicle[]>([]);
+    const [driverRatings, setDriverRatings] = useState<Rating[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -23,14 +27,13 @@ export const useDrivers = (companyId?: number | null) => {
                 if (prevId && !data.find((d: Driver) => d.id === prevId)) {
                     setSelectedDriver(null);
                     setDriverVehicles([]);
+                    setDriverRatings([]);
                     return null;
                 }
                 return prevId;
             });
-        } catch (err: any) {
-            console.error('Failed to fetch drivers', err);
-            console.error('Error response:', err.response?.data);
-            setError('Failed to load drivers');
+        } catch (err: unknown) {
+            setError(getErrorMessage(err, 'Failed to load drivers'));
         } finally {
             setLoading(false);
         }
@@ -56,14 +59,21 @@ export const useDrivers = (companyId?: number | null) => {
                 } else {
                     setDriverVehicles([]);
                 }
-            } catch (err: any) {
-                console.error('Failed to fetch driver details', err);
-                console.error('Error response:', err.response?.data);
+
+                try {
+                    const ratings = await ratingService.getRatingsByDriverId(String(driverId));
+                    setDriverRatings(ratings);
+                } catch {
+                    setDriverRatings([]);
+                }
+            } catch {
                 setDriverVehicles([]);
+                setDriverRatings([]);
             }
         } else {
             setSelectedDriver(null);
             setDriverVehicles([]);
+            setDriverRatings([]);
         }
     };
 
@@ -74,6 +84,7 @@ export const useDrivers = (companyId?: number | null) => {
         selectedDriverId: hasCompany ? selectedDriverId : null,
         selectedDriver: hasCompany ? selectedDriver : null,
         driverVehicles: hasCompany ? driverVehicles : [],
+        driverRatings: hasCompany ? driverRatings : [],
         loading: hasCompany ? loading : false,
         error: hasCompany ? error : null,
         selectDriver,

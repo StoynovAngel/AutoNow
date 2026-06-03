@@ -2,6 +2,8 @@ package com.angel.autonow.driver;
 
 import com.angel.autonow.company.CompanyEntity;
 import com.angel.autonow.company.CompanyRepository;
+import com.angel.autonow.vehicle.VehicleEntity;
+import com.angel.autonow.vehicle.VehicleRepository;
 import com.angel.autonow.user.UserEntity;
 import com.angel.autonow.user.UserRepository;
 import com.angel.autonow.user.role.Role;
@@ -20,6 +22,7 @@ public class DriverService {
 	private final DriverMapper driverMapper;
 	private final CompanyRepository companyRepository;
 	private final UserRepository userRepository;
+	private final VehicleRepository vehicleRepository;
 
 	public Optional<DriverResponseDTO> createDriver(DriverRequestDTO request, String userEmail) {
 		Optional<UserEntity> userOpt = userRepository.findByEmail(userEmail);
@@ -44,11 +47,6 @@ public class DriverService {
 	@Transactional(readOnly = true)
 	public Optional<DriverResponseDTO> getDriverById(Long id) {
 		return driverRepository.findById(id).map(driverMapper::toDTO);
-	}
-
-	@Transactional(readOnly = true)
-	public Optional<DriverResponseDTO> getDriverByLicenseNumber(String licenseNumber) {
-		return driverRepository.findByLicenseNumber(licenseNumber).map(driverMapper::toDTO);
 	}
 
 	@Transactional(readOnly = true)
@@ -120,6 +118,36 @@ public class DriverService {
 
 		driverRepository.deleteById(id);
 		return true;
+	}
+
+	@Transactional
+	public Optional<DriverResponseDTO> assignVehicle(Long driverId, Long vehicleId) {
+		Optional<DriverEntity> driver = driverRepository.findById(driverId);
+		Optional<VehicleEntity> vehicle = vehicleRepository.findById(vehicleId);
+
+		if (driver.isEmpty() || vehicle.isEmpty()) {
+			return Optional.empty();
+		}
+
+		DriverEntity entity = driver.get();
+		entity.getVehicles().add(vehicle.get());
+
+		return Optional.of(driverMapper.toDTO(driverRepository.save(entity)));
+	}
+
+	@Transactional
+	public Optional<DriverResponseDTO> unassignVehicle(Long driverId, Long vehicleId) {
+		Optional<DriverEntity> driverOpt = driverRepository.findById(driverId);
+		Optional<VehicleEntity> vehicleOpt = vehicleRepository.findById(vehicleId);
+
+		if (driverOpt.isEmpty() || vehicleOpt.isEmpty()) {
+			return Optional.empty();
+		}
+
+		DriverEntity driver = driverOpt.get();
+		driver.getVehicles().removeIf(v -> v.getId().equals(vehicleId));
+
+		return Optional.of(driverMapper.toDTO(driverRepository.save(driver)));
 	}
 
 	private boolean canManageCompany(UserEntity user, Long companyId) {

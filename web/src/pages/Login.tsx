@@ -1,7 +1,9 @@
 import {useState, type FormEvent, type ChangeEvent} from "react";
 import {useNavigate} from "react-router-dom";
 import {useAuth} from "../contexts/AuthContext";
-import apiClient from "../services/apiClient";
+import {authService} from "../services/auth/authService";
+import {decodeJWT} from "../utils/jwt";
+import {getErrorMessage} from "../utils/errors";
 import AuthLayout from "../components/auth/AuthLayout";
 import LoginForm from "../components/auth/LoginForm";
 
@@ -25,44 +27,29 @@ const Login = () => {
         setErrorMessage("");
     };
 
-    const decodeJWT = (token: string) => {
-        try {
-            const parts = token.split('.');
-            if (parts.length !== 3) return null;
-            const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
-            const jsonPayload = decodeURIComponent(atob(base64).split('').map((c) => {
-                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-            }).join(''));
-            return JSON.parse(jsonPayload);
-        } catch {
-            return null;
-        }
-    };
-
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
 
         try {
-            const {data} = await apiClient.post("/auth/login", formData);
-            const token = data.token;
+            const {token} = await authService.login(formData);
 
             const decodedToken = decodeJWT(token);
-            if (!decodedToken || !decodedToken.sub || !decodedToken.authorities) {
+            if (!decodedToken) {
                 setErrorMessage("Authentication failed: invalid token received");
                 return;
             }
 
-            const userInfo = {
-                id: decodedToken.sub,
-                email: formData.email,
-                authorities: decodedToken.authorities
-            };
-
-            login(userInfo, token);
-            navigate("/home");
-        } catch (error: any) {
-            console.error("Login error", error);
-            setErrorMessage(error.response?.data?.message || "Invalid email or password");
+            login(
+                {
+                    id: decodedToken.sub,
+                    email: formData.email,
+                    authorities: decodedToken.authorities,
+                },
+                token
+            );
+            navigate("/companies");
+        } catch (error: unknown) {
+            setErrorMessage(getErrorMessage(error, "Invalid email or password"));
         }
     };
 

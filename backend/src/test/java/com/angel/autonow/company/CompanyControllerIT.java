@@ -148,7 +148,7 @@ class CompanyControllerIT {
 		var company = CompanyEntity.builder()
 				.name("Logistics Fleet")
 				.address("456 Warehouse Ave")
-				.phone("+1234567891")
+				.phone("+359888400100")
 				.email("logistics@fleet.com")
 				.companyType(CompanyType.LOGISTICS)
 				.build();
@@ -341,7 +341,7 @@ class CompanyControllerIT {
 		var updateRequest = CompanyRequestDTO.builder()
 				.name("Updated Fleet")
 				.address("456 New St")
-				.phone("+9876543210")
+				.phone("+359888400101")
 				.email("updated@fleet.com")
 				.companyType(CompanyType.LOGISTICS)
 				.build();

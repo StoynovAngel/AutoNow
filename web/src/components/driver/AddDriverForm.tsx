@@ -1,0 +1,199 @@
+import { useState } from 'react';
+import { Alert, Button, Checkbox, Label, TextInput } from 'flowbite-react';
+import type { Driver } from '../company/DriverInfo';
+import type { DriverPayload } from '../../services/driver/driverService';
+import VehicleImageUpload from '../vehicle/VehicleImageUpload';
+
+const EXPERTISE_TYPES = ['AM', 'A1', 'A2', 'A', 'B1', 'B', 'BE', 'C1', 'C1E', 'C', 'CE', 'D1', 'D1E', 'D', 'DE', 'Tkt'] as const;
+
+interface AddDriverFormProps {
+    onSubmit: (payload: DriverPayload) => Promise<void>;
+    onCancel: () => void;
+    initialData?: Driver;
+}
+
+interface FormFields {
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+    expertiseType: string[];
+    available: boolean;
+    companyId: string;
+    imageUrl: string;
+    imagePreview: string | null;
+    uploading: boolean;
+}
+
+const buildInitialFields = (initialData?: Driver): FormFields => ({
+    firstName: initialData?.firstName ?? '',
+    lastName: initialData?.lastName ?? '',
+    phoneNumber: initialData?.phoneNumber ?? '',
+    expertiseType: initialData?.expertiseType ?? [],
+    available: initialData?.available ?? true,
+    companyId: initialData?.companyId ? String(initialData.companyId) : '',
+    imageUrl: initialData?.imageUrl ?? '',
+    imagePreview: initialData?.imageUrl ?? null,
+    uploading: false,
+});
+
+const AddDriverForm = ({ onSubmit, onCancel, initialData }: AddDriverFormProps) => {
+    const [fields, setFields] = useState<FormFields>(() => buildInitialFields(initialData));
+    const [submitting, setSubmitting] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const set = <K extends keyof FormFields>(key: K, value: FormFields[K]) =>
+        setFields(f => ({ ...f, [key]: value }));
+
+    const isEditing = !!initialData;
+
+    const handleUpload = (url: string, preview: string) => {
+        setFields(f => ({ ...f, imageUrl: url, imagePreview: preview, uploading: url === preview }));
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError(null);
+
+        if (!fields.firstName.trim() || !fields.lastName.trim()) {
+            setError('First and last name are required.');
+            return;
+        }
+        if (!fields.phoneNumber.trim()) {
+            setError('Phone number is required.');
+            return;
+        }
+        if (fields.expertiseType.length === 0) {
+            setError('Select at least one license category.');
+            return;
+        }
+
+        const payload: DriverPayload = {
+            firstName: fields.firstName.trim(),
+            lastName: fields.lastName.trim(),
+            phoneNumber: fields.phoneNumber.trim(),
+            expertiseType: fields.expertiseType,
+            available: fields.available,
+            imageUrl: fields.imageUrl || undefined,
+            companyId: fields.companyId ? Number(fields.companyId) : undefined,
+        };
+
+        setSubmitting(true);
+        try {
+            await onSubmit(payload);
+        } catch (err: unknown) {
+            const message = err instanceof Error ? err.message : 'Failed to save driver.';
+            setError(message);
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    return (
+        <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-md p-6 w-full">
+            <h2 className="text-xl font-bold text-gray-900 mb-5">{isEditing ? 'Edit Driver' : 'Add Driver'}</h2>
+
+            {error && (
+                <Alert color="failure" aria-live="assertive" className="mb-4">
+                    {error}
+                </Alert>
+            )}
+
+            <div className="grid grid-cols-3 gap-4">
+                <VehicleImageUpload
+                    imagePreview={fields.imagePreview}
+                    uploading={fields.uploading}
+                    onUpload={handleUpload}
+                    onRemove={() => setFields(f => ({ ...f, imageUrl: '', imagePreview: null }))}
+                    onError={setError}
+                    label="Driver Photo"
+                    previewHeightClass="h-72"
+                />
+
+                <div>
+                    <Label htmlFor="firstName" className="mb-1 block">
+                        First Name <span className="text-red-500">*</span>
+                    </Label>
+                    <TextInput id="firstName" type="text" value={fields.firstName} onChange={e => set('firstName', e.target.value)} placeholder="e.g. John" required />
+                </div>
+                <div>
+                    <Label htmlFor="lastName" className="mb-1 block">
+                        Last Name <span className="text-red-500">*</span>
+                    </Label>
+                    <TextInput id="lastName" type="text" value={fields.lastName} onChange={e => set('lastName', e.target.value)} placeholder="e.g. Doe" required />
+                </div>
+                <div>
+                    <Label htmlFor="phoneNumber" className="mb-1 block">
+                        Phone Number <span className="text-red-500">*</span>
+                    </Label>
+                    <TextInput id="phoneNumber" type="text" value={fields.phoneNumber} onChange={e => set('phoneNumber', e.target.value)} placeholder="e.g. +359888123456" required />
+                </div>
+                <div className="col-span-3">
+                    <span className="block text-sm font-medium text-gray-700 mb-1">
+                        License Categories <span className="text-red-500">*</span>
+                    </span>
+                    <div className="flex flex-wrap gap-2 pt-1">
+                        {EXPERTISE_TYPES.map(t => {
+                            const checked = fields.expertiseType.includes(t);
+                            return (
+                                <label
+                                    key={t}
+                                    className={`inline-flex items-center justify-center min-w-[3rem] px-3 py-1.5 rounded-full border text-sm font-mono cursor-pointer transition-colors ${
+                                        checked
+                                            ? 'bg-brand-500 border-brand-500 text-white'
+                                            : 'bg-white border-gray-300 text-gray-700 hover:border-brand-400 hover:bg-brand-50'
+                                    }`}
+                                >
+                                    <input
+                                        type="checkbox"
+                                        checked={checked}
+                                        onChange={e => {
+                                            const next = e.target.checked
+                                                ? [...fields.expertiseType, t]
+                                                : fields.expertiseType.filter(x => x !== t);
+                                            set('expertiseType', next);
+                                        }}
+                                        className="sr-only"
+                                    />
+                                    {t}
+                                </label>
+                            );
+                        })}
+                    </div>
+                </div>
+                <div>
+                    <Label htmlFor="companyId" className="mb-1 block">Company ID</Label>
+                    <TextInput id="companyId" type="number" min={1} value={fields.companyId} onChange={e => set('companyId', e.target.value)} placeholder="Optional" />
+                </div>
+                <div className="col-span-3 flex items-center gap-3 pt-1">
+                    <Checkbox
+                        id="available"
+                        checked={fields.available}
+                        onChange={e => set('available', e.target.checked)}
+                    />
+                    <Label htmlFor="available">Available</Label>
+                </div>
+            </div>
+
+            <div className="flex gap-3 mt-6">
+                <Button
+                    type="submit"
+                    disabled={submitting || fields.uploading}
+                    className="flex-1"
+                >
+                    {submitting ? 'Saving...' : isEditing ? 'Save Changes' : 'Add Driver'}
+                </Button>
+                <Button
+                    type="button"
+                    color="gray"
+                    onClick={onCancel}
+                    disabled={submitting || fields.uploading}
+                    className="flex-1"
+                >
+                    Cancel
+                </Button>
+            </div>
+        </form>
+    );
+};
+
+export default AddDriverForm;
