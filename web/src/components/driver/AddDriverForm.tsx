@@ -139,8 +139,8 @@ const AddDriverForm = ({ onSubmit, onCancel, initialData }: AddDriverFormProps) 
                                     key={t}
                                     className={`inline-flex items-center justify-center min-w-[3rem] px-3 py-1.5 rounded-full border text-sm font-mono cursor-pointer transition-colors ${
                                         checked
-                                            ? 'bg-violet-600 border-violet-600 text-white'
-                                            : 'bg-white border-gray-300 text-gray-700 hover:border-violet-400 hover:bg-violet-50'
+                                            ? 'bg-brand-500 border-brand-500 text-white'
+                                            : 'bg-white border-gray-300 text-gray-700 hover:border-brand-400 hover:bg-brand-50'
                                     }`}
                                 >
                                     <input

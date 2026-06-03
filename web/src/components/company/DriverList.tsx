@@ -18,7 +18,7 @@ const DriverList = ({drivers, selectedDriverId, onSelectDriver, onAddDriver}: Dr
                         onClick={() => onSelectDriver(driver.id)}
                         className={`px-3 py-2 border rounded-lg cursor-pointer transition ${
                             selectedDriverId === driver.id
-                                ? "bg-violet-100 border-violet-500"
+                                ? "bg-brand-50 border-brand-500"
                                 : "bg-white border-gray-300 hover:bg-gray-50"
                         }`}
                     >
@@ -27,7 +27,7 @@ const DriverList = ({drivers, selectedDriverId, onSelectDriver, onAddDriver}: Dr
                 ))}
             </div>
 
-            <Button color="purple" onClick={onAddDriver} className="w-full">
+            <Button onClick={onAddDriver} className="w-full">
                 Add new driver
             </Button>
         </div>

@@ -20,7 +20,7 @@ const CompanyList = ({companies, selectedCompanyId, onSelectCompany, onAddCompan
                         aria-pressed={selectedCompanyId === company.id}
                         className={`w-full text-left px-3 py-2 border rounded-lg cursor-pointer transition ${
                             selectedCompanyId === company.id
-                                ? "bg-violet-100 border-violet-500"
+                                ? "bg-brand-50 border-brand-500"
                                 : "bg-white border-gray-300 hover:bg-gray-50"
                         }`}
                     >
@@ -29,7 +29,7 @@ const CompanyList = ({companies, selectedCompanyId, onSelectCompany, onAddCompan
                 ))}
             </div>
 
-            <Button color="purple" onClick={onAddCompany} className="w-full">
+            <Button onClick={onAddCompany} className="w-full">
                 Add new company
             </Button>
         </div>

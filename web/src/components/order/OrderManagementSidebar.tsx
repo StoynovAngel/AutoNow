@@ -43,7 +43,7 @@ const OrderManagementSidebar = ({
                             aria-pressed={statusFilter === f}
                             className={`text-xs font-semibold px-2 py-1 rounded-full border transition-all ${
                                 statusFilter === f
-                                    ? 'bg-violet-600 text-white border-violet-600'
+                                    ? 'bg-brand-500 text-white border-brand-500'
                                     : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
                             }`}
                         >
@@ -66,7 +66,7 @@ const OrderManagementSidebar = ({
                                 aria-pressed={selectedOrderId === order.id}
                                 className={`w-full text-left px-3 py-2.5 rounded-lg cursor-pointer transition-all ${
                                     selectedOrderId === order.id
-                                        ? 'bg-gradient-to-r from-violet-500 to-purple-500 text-white shadow-lg transform scale-[1.02]'
+                                        ? 'bg-gradient-to-r from-brand-400 to-brand-500 text-white shadow-lg transform scale-[1.02]'
                                         : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200'
                                 }`}
                             >
@@ -78,7 +78,7 @@ const OrderManagementSidebar = ({
                                         {order.status}
                                     </span>
                                 </div>
-                                <p className={`text-xs mt-0.5 truncate ${selectedOrderId === order.id ? 'text-violet-100' : 'text-gray-500'}`}>
+                                <p className={`text-xs mt-0.5 truncate ${selectedOrderId === order.id ? 'text-brand-50' : 'text-gray-500'}`}>
                                     {order.pickupAddress} → {order.dropoffAddress}
                                 </p>
                             </button>

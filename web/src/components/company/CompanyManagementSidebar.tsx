@@ -19,7 +19,7 @@ const CompanyManagementSidebar = ({
     onSelectDriver,
 }: CompanyManagementSidebarProps) => {
     return (
-        <div className="flex flex-col gap-3 w-72 sticky top-24 max-h-[calc(100vh-7rem)]">
+        <div className="flex flex-col gap-3 w-72 h-full">
             <div className="bg-white rounded-xl shadow-md p-4 flex flex-col border border-gray-100 min-h-0 flex-1">
                 <div className="flex items-center justify-between mb-3">
                     <h3 className="text-lg font-bold text-gray-800">Companies</h3>
@@ -39,13 +39,13 @@ const CompanyManagementSidebar = ({
                                 aria-pressed={selectedCompanyId === company.id}
                                 className={`w-full text-left px-3 py-2.5 rounded-lg cursor-pointer transition-all ${
                                     selectedCompanyId === company.id
-                                        ? "bg-gradient-to-r from-violet-500 to-purple-500 text-white shadow-lg transform scale-[1.02]"
+                                        ? "bg-gradient-to-r from-brand-400 to-brand-500 text-white shadow-lg transform scale-[1.02]"
                                         : "bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200"
                                 }`}
                             >
                                 <p className="font-semibold text-sm">{company.name}</p>
                                 {company.companyType && (
-                                    <p className={`text-xs mt-0.5 ${selectedCompanyId === company.id ? 'text-violet-100' : 'text-gray-500'}`}>
+                                    <p className={`text-xs mt-0.5 ${selectedCompanyId === company.id ? 'text-brand-50' : 'text-gray-500'}`}>
                                         {company.companyType}
                                     </p>
                                 )}
