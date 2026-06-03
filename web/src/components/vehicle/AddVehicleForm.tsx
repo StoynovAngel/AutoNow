@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Button } from 'flowbite-react';
 import type { Vehicle } from '../company/VehicleInfo';
 import type { VehiclePayload } from '../../services/vehicle/vehicleService';
 import VehicleImageUpload from './VehicleImageUpload';
@@ -145,21 +146,23 @@ const AddVehicleForm = ({ onSubmit, onCancel, initialData, defaultCompanyId }: A
             </div>
 
             <div className="flex gap-3 mt-6">
-                <button
+                <Button
                     type="submit"
+                    color="purple"
                     disabled={submitting || fields.uploading}
-                    className="flex-1 bg-violet-600 hover:bg-violet-700 disabled:opacity-50 text-white font-semibold py-2 px-4 rounded-lg transition-colors text-sm"
+                    className="flex-1"
                 >
                     {submitting ? 'Saving...' : isEditing ? 'Save Changes' : 'Add Vehicle'}
-                </button>
-                <button
+                </Button>
+                <Button
                     type="button"
+                    color="gray"
                     onClick={onCancel}
                     disabled={submitting || fields.uploading}
-                    className="flex-1 bg-gray-100 hover:bg-gray-200 disabled:opacity-50 text-gray-700 font-semibold py-2 px-4 rounded-lg transition-colors text-sm"
+                    className="flex-1"
                 >
                     Cancel
-                </button>
+                </Button>
             </div>
         </form>
     );

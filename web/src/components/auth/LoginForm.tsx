@@ -1,4 +1,5 @@
 import {type FormEvent, type ChangeEvent} from "react";
+import { Button } from 'flowbite-react';
 
 interface LoginFormProps {
     formData: {
@@ -56,12 +57,9 @@ const LoginForm = ({formData, errorMessage, onSubmit, onChange}: LoginFormProps)
                 />
             </div>
 
-            <button
-                type="submit"
-                className="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-3 rounded-lg transition"
-            >
+            <Button type="submit" color="purple" className="w-full">
                 Login
-            </button>
+            </Button>
         </form>
     );
 };

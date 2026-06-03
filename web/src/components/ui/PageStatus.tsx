@@ -1,3 +1,4 @@
+import { Button } from 'flowbite-react';
 import Navigation from './Navigation.tsx';
 
 interface PageStatusProps {
@@ -28,12 +29,9 @@ const PageStatus = ({ state, title, message, onRetry }: PageStatusProps) => {
                             <h3 className="text-xl font-bold text-gray-900 mb-2">{title ?? 'Error Loading Data'}</h3>
                             {message && <p className="text-red-600 mb-4">{message}</p>}
                             {onRetry && (
-                                <button
-                                    onClick={onRetry}
-                                    className="bg-violet-600 hover:bg-violet-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors text-sm"
-                                >
+                                <Button color="purple" onClick={onRetry} size="sm">
                                     Retry
-                                </button>
+                                </Button>
                             )}
                         </div>
                     </div>

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Button } from 'flowbite-react';
 import Navigation from '../components/ui/Navigation.tsx';
 import PageStatus from '../components/ui/PageStatus';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
@@ -79,15 +80,16 @@ const Vehicles = () => {
                                 {filteredVehicles.length}{filteredVehicles.length !== vehicles.length ? ` of ${vehicles.length}` : ''} vehicle{filteredVehicles.length !== 1 ? 's' : ''}
                             </p>
                         </div>
-                        <button
+                        <Button
+                            color="purple"
                             onClick={() => { setShowForm(true); setEditingVehicle(null); setSuccessMessage(null); }}
-                            className="bg-violet-600 hover:bg-violet-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors text-sm flex items-center gap-2"
+                            size="sm"
                         >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                             </svg>
                             Add Vehicle
-                        </button>
+                        </Button>
                     </div>
 
                     <div className="flex gap-3 mb-6">
