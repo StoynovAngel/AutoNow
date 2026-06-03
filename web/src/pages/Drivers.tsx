@@ -6,7 +6,7 @@ import AssignVehicleModal from '../components/driver/AssignVehicleModal';
 import { useAllDrivers } from '../hooks/useAllDrivers';
 import { useVehicles } from '../hooks/useVehicles';
 import type { Driver } from '../components/company/DriverInfo';
-import type { DriverPayload } from '../services/company/driverService';
+import type { DriverPayload } from '../services/driver/driverService';
 
 const EXPERTISE_TYPES = ['AM', 'A1', 'A2', 'A', 'B1', 'B', 'BE', 'C1', 'C1E', 'C', 'CE', 'D1', 'D1E', 'D', 'DE', 'Tkt'] as const;
 

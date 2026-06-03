@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useVehicles } from '../hooks/useVehicles';
-import { vehicleService } from '../services/company/vehicleService';
+import { vehicleService } from '../services/vehicle/vehicleService';
 import type { Vehicle } from '../components/company/VehicleInfo';
 
-vi.mock('../services/company/vehicleService');
+vi.mock('../services/vehicle/vehicleService');
 
 const mockVehicles: Vehicle[] = [
     { id: 1, brand: 'Toyota', model: 'Camry', licensePlate: 'CB1234AB', airConditioning: true, numberOfSeats: 5, trunkCapacity: 400, vehicleType: 'TAXI', companyId: 1 },

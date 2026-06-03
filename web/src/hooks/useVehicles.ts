@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
-import { vehicleService } from '../services/company/vehicleService';
+import { vehicleService } from '../services/vehicle/vehicleService';
 import type { Vehicle } from '../components/company/VehicleInfo';
-import type { VehiclePayload } from '../services/company/vehicleService';
+import type { VehiclePayload } from '../services/vehicle/vehicleService';
 
 export const useVehicles = (companyId?: number | null) => {
     const [vehicles, setVehicles] = useState<Vehicle[]>([]);

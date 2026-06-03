@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { driverService } from '../services/company/driverService';
-import type { DriverPayload } from '../services/company/driverService';
+import { driverService } from '../services/driver/driverService';
+import type { DriverPayload } from '../services/driver/driverService';
 import type { Driver } from '../components/company/DriverInfo';
 
 export const useAllDrivers = () => {

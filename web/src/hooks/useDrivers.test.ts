@@ -1,13 +1,13 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, waitFor, act } from '@testing-library/react';
 import { useDrivers } from './useDrivers';
-import { driverService } from '../services/company/driverService';
-import { vehicleService } from '../services/company/vehicleService';
+import { driverService } from '../services/driver/driverService';
+import { vehicleService } from '../services/vehicle/vehicleService';
 import type { Driver } from '../components/company/DriverInfo';
 import type { Vehicle } from '../components/company/VehicleInfo';
 
-vi.mock('../services/company/driverService');
-vi.mock('../services/company/vehicleService');
+vi.mock('../services/driver/driverService');
+vi.mock('../services/vehicle/vehicleService');
 
 const driver = (id: number, overrides: Partial<Driver> = {}): Driver => ({
     id,

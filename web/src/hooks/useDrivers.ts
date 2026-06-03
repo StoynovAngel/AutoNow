@@ -1,6 +1,6 @@
 import {useState, useEffect, useCallback} from 'react';
-import {driverService} from '../services/company/driverService';
-import {vehicleService} from '../services/company/vehicleService';
+import {driverService} from '../services/driver/driverService';
+import {vehicleService} from '../services/vehicle/vehicleService';
 import type {Driver} from '../components/company/DriverInfo';
 import type {Vehicle} from '../components/company/VehicleInfo';
 

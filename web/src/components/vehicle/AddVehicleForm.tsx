@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { Vehicle } from '../company/VehicleInfo';
-import type { VehiclePayload } from '../../services/company/vehicleService';
+import type { VehiclePayload } from '../../services/vehicle/vehicleService';
 import VehicleImageUpload from './VehicleImageUpload';
 import VehicleBasicFields from './VehicleBasicFields';
 import VehicleDetailsFields from './VehicleDetailsFields';

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { Driver } from '../company/DriverInfo';
-import type { DriverPayload } from '../../services/company/driverService';
+import type { DriverPayload } from '../../services/driver/driverService';
 import VehicleImageUpload from '../vehicle/VehicleImageUpload';
 
 const EXPERTISE_TYPES = ['AM', 'A1', 'A2', 'A', 'B1', 'B', 'BE', 'C1', 'C1E', 'C', 'CE', 'D1', 'D1E', 'D', 'DE', 'Tkt'] as const;

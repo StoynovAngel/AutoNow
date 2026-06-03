@@ -4,7 +4,7 @@ import AddVehicleForm from '../components/vehicle/AddVehicleForm';
 import VehicleInfo from '../components/company/VehicleInfo';
 import { useVehicles } from '../hooks/useVehicles';
 import type { Vehicle } from '../components/company/VehicleInfo';
-import type { VehiclePayload } from '../services/company/vehicleService';
+import type { VehiclePayload } from '../services/vehicle/vehicleService';
 
 const VEHICLE_TYPES = ['TAXI', 'SEMI', 'AMBULANCE', 'RENTAL', 'PROM', 'FUNERAL'] as const;
 
