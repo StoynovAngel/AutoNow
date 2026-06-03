@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import Navigation from '../components/Navigation';
+import Navigation from '../components/ui/Navigation.tsx';
+import PageStatus from '../components/ui/PageStatus.tsx';
+import ConfirmDialog from '../components/ui/ConfirmDialog.tsx';
 import AddDriverForm from '../components/driver/AddDriverForm';
 import DriverCard from '../components/driver/DriverCard';
 import AssignVehicleModal from '../components/driver/AssignVehicleModal';
@@ -20,7 +22,7 @@ const Drivers = () => {
     const [assigningDriver, setAssigningDriver] = useState<Driver | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [filterType, setFilterType] = useState('');
-    const [filterCompanyId, setFilterCompanyId] = useState('');
+    const [filterCompanyId, setFilterCompanyId] = useState<number | null>(null);
     const [searchName, setSearchName] = useState('');
 
     const showSuccess = (msg: string) => {
@@ -65,7 +67,7 @@ const Drivers = () => {
 
     const filteredDrivers = drivers.filter(d => {
         if (filterType && !d.expertiseType.includes(filterType)) return false;
-        if (filterCompanyId && String(d.companyId) !== filterCompanyId.trim()) return false;
+        if (filterCompanyId !== null && d.companyId !== filterCompanyId) return false;
         if (searchName.trim()) {
             const fullName = `${d.firstName} ${d.lastName}`.toLowerCase();
             if (!fullName.includes(searchName.trim().toLowerCase())) return false;
@@ -74,41 +76,11 @@ const Drivers = () => {
     });
 
     if (loading) {
-        return (
-            <>
-                <Navigation />
-                <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 pt-24 px-6 flex items-center justify-center">
-                    <div className="text-center">
-                        <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-violet-600 mx-auto mb-4" />
-                        <p className="text-xl text-gray-600">Loading...</p>
-                    </div>
-                </div>
-            </>
-        );
+        return <PageStatus state="loading" />;
     }
 
     if (error) {
-        return (
-            <>
-                <Navigation />
-                <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 pt-24 px-6 flex items-center justify-center">
-                    <div className="bg-white rounded-xl shadow-lg p-8 max-w-md">
-                        <div className="text-center">
-                            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                            </div>
-                            <h3 className="text-xl font-bold text-gray-900 mb-2">Error Loading Drivers</h3>
-                            <p className="text-red-600 mb-4">{error}</p>
-                            <button onClick={refreshDrivers} className="bg-violet-600 hover:bg-violet-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors text-sm">
-                                Retry
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </>
-        );
+        return <PageStatus state="error" title="Error Loading Drivers" message={error} onRetry={refreshDrivers} />;
     }
 
     return (
@@ -147,8 +119,13 @@ const Drivers = () => {
                         <input
                             type="number"
                             min={1}
-                            value={filterCompanyId}
-                            onChange={e => setFilterCompanyId(e.target.value)}
+                            value={filterCompanyId ?? ''}
+                            onChange={e => {
+                                const v = e.target.value;
+                                if (v === '') return setFilterCompanyId(null);
+                                const n = Number(v);
+                                setFilterCompanyId(Number.isFinite(n) ? n : null);
+                            }}
                             placeholder="Filter by Company ID"
                             className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-black focus:outline-none focus:ring-2 focus:ring-violet-500 w-48"
                             aria-label="Filter by company ID"
@@ -161,8 +138,8 @@ const Drivers = () => {
                             className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-black focus:outline-none focus:ring-2 focus:ring-violet-500 flex-1"
                             aria-label="Search drivers by name"
                         />
-                        {(filterType || filterCompanyId || searchName) && (
-                            <button type="button" onClick={() => { setFilterType(''); setFilterCompanyId(''); setSearchName(''); }} className="text-sm text-gray-500 hover:text-gray-700 px-2 underline">
+                        {(filterType || filterCompanyId !== null || searchName.trim()) && (
+                            <button type="button" onClick={() => { setFilterType(''); setFilterCompanyId(null); setSearchName(''); }} className="text-sm text-gray-500 hover:text-gray-700 px-2 underline">
                                 Clear
                             </button>
                         )}
@@ -210,18 +187,13 @@ const Drivers = () => {
                 </div>
             </div>
 
-            {deletingId !== null && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-xl shadow-xl p-6 max-w-sm w-full mx-4">
-                        <h3 className="text-lg font-bold text-gray-900 mb-2">Delete Driver</h3>
-                        <p className="text-gray-600 text-sm mb-6">Are you sure? This cannot be undone.</p>
-                        <div className="flex gap-3">
-                            <button onClick={handleDeleteConfirm} className="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors text-sm">Delete</button>
-                            <button onClick={() => setDeletingId(null)} className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-lg transition-colors text-sm">Cancel</button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <ConfirmDialog
+                open={deletingId !== null}
+                title="Delete Driver"
+                message="Are you sure? This cannot be undone."
+                onConfirm={handleDeleteConfirm}
+                onCancel={() => setDeletingId(null)}
+            />
 
             {assigningDriver && (
                 <AssignVehicleModal
