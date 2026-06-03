@@ -25,8 +25,7 @@ describe('VehicleInfo', () => {
 
     it('renders a vehicle card with correct data', () => {
         render(<VehicleInfo vehicles={[makeVehicle()]} />);
-        expect(screen.getByText('Toyota')).toBeInTheDocument();
-        expect(screen.getByText('Camry')).toBeInTheDocument();
+        expect(screen.getByText('Toyota - Camry')).toBeInTheDocument();
         expect(screen.getByText('CB1234AB')).toBeInTheDocument();
         expect(screen.getByText('TAXI')).toBeInTheDocument();
         expect(screen.getByText('5')).toBeInTheDocument();
@@ -94,8 +93,8 @@ describe('VehicleInfo', () => {
             makeVehicle({ id: 3, brand: 'BMW' }),
         ];
         render(<VehicleInfo vehicles={vehicles} />);
-        expect(screen.getByText('Toyota')).toBeInTheDocument();
-        expect(screen.getByText('Honda')).toBeInTheDocument();
-        expect(screen.getByText('BMW')).toBeInTheDocument();
+        expect(screen.getByText('Toyota - Camry')).toBeInTheDocument();
+        expect(screen.getByText('Honda - Camry')).toBeInTheDocument();
+        expect(screen.getByText('BMW - Camry')).toBeInTheDocument();
     });
 });

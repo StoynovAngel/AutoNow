@@ -3,11 +3,14 @@ import { renderHook, waitFor, act } from '@testing-library/react';
 import { useDrivers } from '../useDrivers';
 import { driverService } from '../../services/driver/driverService';
 import { vehicleService } from '../../services/vehicle/vehicleService';
+import { ratingService } from '../../services/rating/ratingService';
 import type { Driver } from '../../components/company/DriverInfo';
 import type { Vehicle } from '../../components/company/VehicleInfo';
+import type { Rating } from '../../services/rating/ratingService';
 
 vi.mock('../../services/driver/driverService');
 vi.mock('../../services/vehicle/vehicleService');
+vi.mock('../../services/rating/ratingService');
 
 const driver = (id: number, overrides: Partial<Driver> = {}): Driver => ({
     id,
@@ -27,9 +30,18 @@ const vehicle = (id: number): Vehicle => ({
     licensePlate: `PL-${id}`,
 } as Vehicle);
 
+const rating = (id: number, value = 5, comment?: string): Rating => ({
+    id,
+    orderId: id * 10,
+    rating: value,
+    comment,
+    createdAt: '2026-06-01T00:00:00Z',
+});
+
 describe('useDrivers', () => {
     beforeEach(() => {
         vi.resetAllMocks();
+        vi.mocked(ratingService.getRatingsByDriverId).mockResolvedValue([]);
     });
 
     it('returns empty drivers and does not fetch when no companyId is provided', async () => {
@@ -163,5 +175,57 @@ describe('useDrivers', () => {
             expect(result.current.error).toBe('Failed to load drivers');
             expect(result.current.loading).toBe(false);
         });
+    });
+
+    it('selectDriver loads driver ratings', async () => {
+        vi.mocked(driverService.getDriversByCompany).mockResolvedValue([driver(1)]);
+        vi.mocked(driverService.getDriverById).mockResolvedValue(driver(1, { vehicleIds: [] }));
+        vi.mocked(ratingService.getRatingsByDriverId).mockResolvedValue([rating(1, 5, 'great'), rating(2, 4)]);
+
+        const { result } = renderHook(() => useDrivers(10));
+        await waitFor(() => expect(result.current.drivers).toHaveLength(1));
+
+        await act(async () => {
+            await result.current.selectDriver(1);
+        });
+
+        expect(ratingService.getRatingsByDriverId).toHaveBeenCalledWith('1');
+        expect(result.current.driverRatings).toHaveLength(2);
+        expect(result.current.driverRatings[0].rating).toBe(5);
+    });
+
+    it('selectDriver leaves ratings empty if rating fetch fails but keeps driver', async () => {
+        vi.mocked(driverService.getDriversByCompany).mockResolvedValue([driver(1)]);
+        vi.mocked(driverService.getDriverById).mockResolvedValue(driver(1, { vehicleIds: [] }));
+        vi.mocked(ratingService.getRatingsByDriverId).mockRejectedValue(new Error('rating fail'));
+
+        const { result } = renderHook(() => useDrivers(10));
+        await waitFor(() => expect(result.current.drivers).toHaveLength(1));
+
+        await act(async () => {
+            await result.current.selectDriver(1);
+        });
+
+        expect(result.current.selectedDriver?.id).toBe(1);
+        expect(result.current.driverRatings).toEqual([]);
+    });
+
+    it('clears driverRatings when companyId becomes null', async () => {
+        vi.mocked(driverService.getDriversByCompany).mockResolvedValue([driver(1)]);
+        vi.mocked(driverService.getDriverById).mockResolvedValue(driver(1, { vehicleIds: [] }));
+        vi.mocked(ratingService.getRatingsByDriverId).mockResolvedValue([rating(1)]);
+
+        const { result, rerender } = renderHook(({ id }: { id: number | null }) => useDrivers(id), {
+            initialProps: { id: 10 as number | null },
+        });
+        await waitFor(() => expect(result.current.drivers).toHaveLength(1));
+
+        await act(async () => {
+            await result.current.selectDriver(1);
+        });
+        expect(result.current.driverRatings).toHaveLength(1);
+
+        rerender({ id: null });
+        expect(result.current.driverRatings).toEqual([]);
     });
 });
