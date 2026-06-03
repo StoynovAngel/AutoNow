@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import Navigation from '../components/Navigation';
-import PageStatus from '../components/PageStatus';
-import ConfirmDialog from '../components/ConfirmDialog';
+import Navigation from '../components/ui/Navigation.tsx';
+import PageStatus from '../components/ui/PageStatus';
+import ConfirmDialog from '../components/ui/ConfirmDialog';
 import AddVehicleForm from '../components/vehicle/AddVehicleForm';
 import VehicleInfo from '../components/company/VehicleInfo';
 import { useVehicles } from '../hooks/useVehicles';
