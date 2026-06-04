@@ -56,6 +56,11 @@ public final class TestData {
 		return jwt().authorities(new SimpleGrantedAuthority(Role.CUSTOMER.getAuthority()));
 	}
 
+	public static RequestPostProcessor customerJwt(String email) {
+		return jwt().jwt(j -> j.subject(email))
+				.authorities(new SimpleGrantedAuthority(Role.CUSTOMER.getAuthority()));
+	}
+
 	public static RequestPostProcessor adminJwt() {
 		return jwt().authorities(new SimpleGrantedAuthority(Role.ADMIN.getAuthority()));
 	}

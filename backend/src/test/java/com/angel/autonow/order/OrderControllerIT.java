@@ -452,4 +452,150 @@ class OrderControllerIT {
 						.content(objectMapper.writeValueAsString(request)))
 				.andExpect(status().isUnauthorized());
 	}
+
+	@Test
+	void createOrder_userHasActiveOrder_returnsConflict() throws Exception {
+		var existingActive = TestData.createOrderEntity(user);
+		existingActive.setStatus(OrderStatus.CREATED);
+		orderRepository.save(existingActive);
+
+		var request = TestData.createOrderRequest(user.getId());
+
+		mockMvc.perform(post("/api/orders")
+						.with(TestData.customerJwt())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(request)))
+				.andExpect(status().isConflict());
+	}
+
+	@Test
+	void cancelOrder_byOwner_returnsCanceled() throws Exception {
+		var order = TestData.createOrderEntity(user);
+		order.setStatus(OrderStatus.CREATED);
+		orderRepository.save(order);
+
+		mockMvc.perform(post("/api/orders/{id}/cancel", order.getId())
+						.with(TestData.customerJwt(user.getEmail())))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.status").value("CANCELED"));
+	}
+
+	@Test
+	void cancelOrder_byOwnerWhenAccepted_returnsCanceled() throws Exception {
+		var order = TestData.createOrderEntity(user);
+		order.setStatus(OrderStatus.ACCEPTED);
+		orderRepository.save(order);
+
+		mockMvc.perform(post("/api/orders/{id}/cancel", order.getId())
+						.with(TestData.customerJwt(user.getEmail())))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.status").value("CANCELED"));
+	}
+
+	@Test
+	void cancelOrder_byAdmin_returnsForbidden() throws Exception {
+		var order = TestData.createOrderEntity(user);
+		order.setStatus(OrderStatus.CREATED);
+		orderRepository.save(order);
+
+		mockMvc.perform(post("/api/orders/{id}/cancel", order.getId())
+						.with(TestData.adminJwt()))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	void adminCancelOrder_returnsCanceled() throws Exception {
+		var order = TestData.createOrderEntity(user);
+		order.setStatus(OrderStatus.CREATED);
+		orderRepository.save(order);
+
+		mockMvc.perform(post("/api/orders/{id}/admin-cancel", order.getId())
+						.with(TestData.adminJwt()))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.status").value("CANCELED"));
+	}
+
+	@Test
+	void adminCancelOrder_inProgressStatus_returnsConflict() throws Exception {
+		var order = TestData.createOrderEntity(user);
+		order.setStatus(OrderStatus.IN_PROGRESS);
+		orderRepository.save(order);
+
+		mockMvc.perform(post("/api/orders/{id}/admin-cancel", order.getId())
+						.with(TestData.adminJwt()))
+				.andExpect(status().isConflict());
+	}
+
+	@Test
+	void adminCancelOrder_notFound_returnsNotFound() throws Exception {
+		mockMvc.perform(post("/api/orders/{id}/admin-cancel", NON_EXISTENT_ID)
+						.with(TestData.adminJwt()))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void adminCancelOrder_asCustomer_returnsForbidden() throws Exception {
+		mockMvc.perform(post("/api/orders/{id}/admin-cancel", 1L)
+						.with(TestData.customerJwt()))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	void adminCancelOrder_withoutAuth_returnsUnauthorized() throws Exception {
+		mockMvc.perform(post("/api/orders/{id}/admin-cancel", 1L))
+				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	void cancelOrder_byNonOwner_returnsForbidden() throws Exception {
+		var order = TestData.createOrderEntity(user);
+		order.setStatus(OrderStatus.CREATED);
+		orderRepository.save(order);
+
+		mockMvc.perform(post("/api/orders/{id}/cancel", order.getId())
+						.with(TestData.customerJwt("stranger@example.com")))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	void cancelOrder_inProgressStatus_returnsConflict() throws Exception {
+		var order = TestData.createOrderEntity(user);
+		order.setStatus(OrderStatus.IN_PROGRESS);
+		orderRepository.save(order);
+
+		mockMvc.perform(post("/api/orders/{id}/cancel", order.getId())
+						.with(TestData.customerJwt(user.getEmail())))
+				.andExpect(status().isConflict());
+	}
+
+	@Test
+	void cancelOrder_completedStatus_returnsConflict() throws Exception {
+		var order = TestData.createOrderEntity(user);
+		order.setStatus(OrderStatus.COMPLETED);
+		orderRepository.save(order);
+
+		mockMvc.perform(post("/api/orders/{id}/cancel", order.getId())
+						.with(TestData.customerJwt(user.getEmail())))
+				.andExpect(status().isConflict());
+	}
+
+	@Test
+	void cancelOrder_notFound_returnsNotFound() throws Exception {
+		mockMvc.perform(post("/api/orders/{id}/cancel", NON_EXISTENT_ID)
+						.with(TestData.customerJwt(user.getEmail())))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void cancelOrder_asDriver_returnsForbidden() throws Exception {
+		mockMvc.perform(post("/api/orders/{id}/cancel", 1L)
+						.with(TestData.driverJwt()))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	void cancelOrder_withoutAuth_returnsUnauthorized() throws Exception {
+		mockMvc.perform(post("/api/orders/{id}/cancel", 1L))
+				.andExpect(status().isUnauthorized());
+	}
 }

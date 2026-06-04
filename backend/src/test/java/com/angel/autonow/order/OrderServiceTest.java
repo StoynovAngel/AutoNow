@@ -24,6 +24,8 @@ import static com.angel.autonow.data.TestData.NON_EXISTENT_ID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -451,6 +453,117 @@ class OrderServiceTest {
 		when(vehicleRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
 
 		var result = orderService.assignOrder(1L, request);
+
+		assertTrue(result.isEmpty());
+		verify(orderRepository, never()).save(any());
+	}
+
+	@Test
+	void createOrder_userHasActiveOrder_throwsConflict() {
+		OrderRequestDTO request = TestData.createOrderRequest(1L);
+		UserEntity user = UserEntity.builder().id(1L).build();
+
+		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+		when(orderRepository.existsByUserIdAndStatusIn(eq(1L), anySet())).thenReturn(true);
+
+		assertThrows(OrderConflictException.class, () -> orderService.createOrder(request));
+		verify(orderRepository, never()).save(any());
+	}
+
+	@Test
+	void cancelOrder_byOwner_setsStatusCanceled() {
+		UserEntity owner = UserEntity.builder().id(1L).email("owner@example.com").build();
+		OrderEntity order = OrderEntity.builder().id(1L).user(owner).status(OrderStatus.CREATED).build();
+		OrderResponseDTO response = TestData.createOrderResponse(1L, 1L, OrderStatus.CANCELED, NOW);
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+		when(orderRepository.save(order)).thenReturn(order);
+		when(orderMapper.toDTO(order)).thenReturn(response);
+
+		var result = orderService.cancelOrder(1L, "owner@example.com");
+
+		assertTrue(result.isPresent());
+		assertEquals(OrderStatus.CANCELED, order.getStatus());
+	}
+
+	@Test
+	void adminCancelOrder_setsStatusCanceled() {
+		UserEntity owner = UserEntity.builder().id(1L).email("owner@example.com").build();
+		OrderEntity order = OrderEntity.builder().id(1L).user(owner).status(OrderStatus.ACCEPTED).build();
+		OrderResponseDTO response = TestData.createOrderResponse(1L, 1L, OrderStatus.CANCELED, NOW);
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+		when(orderRepository.save(order)).thenReturn(order);
+		when(orderMapper.toDTO(order)).thenReturn(response);
+
+		var result = orderService.adminCancelOrder(1L);
+
+		assertTrue(result.isPresent());
+		assertEquals(OrderStatus.CANCELED, order.getStatus());
+	}
+
+	@Test
+	void cancelOrder_byNonOwner_throwsForbidden() {
+		UserEntity owner = UserEntity.builder().id(1L).email("owner@example.com").build();
+		OrderEntity order = OrderEntity.builder().id(1L).user(owner).status(OrderStatus.CREATED).build();
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+
+		assertThrows(OrderForbiddenException.class,
+				() -> orderService.cancelOrder(1L, "stranger@example.com"));
+		verify(orderRepository, never()).save(any());
+	}
+
+	@Test
+	void cancelOrder_inProgressStatus_throwsConflict() {
+		UserEntity owner = UserEntity.builder().id(1L).email("owner@example.com").build();
+		OrderEntity order = OrderEntity.builder().id(1L).user(owner).status(OrderStatus.IN_PROGRESS).build();
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+
+		assertThrows(OrderConflictException.class,
+				() -> orderService.cancelOrder(1L, "owner@example.com"));
+		verify(orderRepository, never()).save(any());
+	}
+
+	@Test
+	void cancelOrder_completedStatus_throwsConflict() {
+		UserEntity owner = UserEntity.builder().id(1L).email("owner@example.com").build();
+		OrderEntity order = OrderEntity.builder().id(1L).user(owner).status(OrderStatus.COMPLETED).build();
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+
+		assertThrows(OrderConflictException.class,
+				() -> orderService.cancelOrder(1L, "owner@example.com"));
+		verify(orderRepository, never()).save(any());
+	}
+
+	@Test
+	void adminCancelOrder_inProgressStatus_throwsConflict() {
+		UserEntity owner = UserEntity.builder().id(1L).email("owner@example.com").build();
+		OrderEntity order = OrderEntity.builder().id(1L).user(owner).status(OrderStatus.IN_PROGRESS).build();
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+
+		assertThrows(OrderConflictException.class, () -> orderService.adminCancelOrder(1L));
+		verify(orderRepository, never()).save(any());
+	}
+
+	@Test
+	void cancelOrder_orderNotFound_returnsEmpty() {
+		when(orderRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
+
+		var result = orderService.cancelOrder(NON_EXISTENT_ID, "owner@example.com");
+
+		assertTrue(result.isEmpty());
+		verify(orderRepository, never()).save(any());
+	}
+
+	@Test
+	void adminCancelOrder_orderNotFound_returnsEmpty() {
+		when(orderRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
+
+		var result = orderService.adminCancelOrder(NON_EXISTENT_ID);
 
 		assertTrue(result.isEmpty());
 		verify(orderRepository, never()).save(any());

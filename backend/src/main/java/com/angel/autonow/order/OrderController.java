@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -76,6 +77,22 @@ public class OrderController {
 	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<OrderResponseDTO> assignOrder(@PathVariable Long id, @Valid @RequestBody OrderAssignmentRequestDTO request) {
 		return orderService.assignOrder(id, request)
+				.map(ResponseEntity::ok)
+				.orElse(ResponseEntity.notFound().build());
+	}
+
+	@PostMapping("/{id}/cancel")
+	@PreAuthorize("hasRole('CUSTOMER')")
+	public ResponseEntity<OrderResponseDTO> cancelOrder(@PathVariable Long id, Authentication authentication) {
+		return orderService.cancelOrder(id, authentication.getName())
+				.map(ResponseEntity::ok)
+				.orElse(ResponseEntity.notFound().build());
+	}
+
+	@PostMapping("/{id}/admin-cancel")
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<OrderResponseDTO> adminCancelOrder(@PathVariable Long id) {
+		return orderService.adminCancelOrder(id)
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());
 	}
