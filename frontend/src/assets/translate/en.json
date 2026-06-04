@@ -109,8 +109,20 @@
   "booking-waiting-in-progress": "On the way to your destination",
   "booking-waiting-in-progress-hint": "Enjoy your ride.",
   "booking-waiting-poll-failed": "Connection issue. Retrying…",
+  "booking-waiting-reassigned": "A new driver has been assigned to your ride",
   "booking-cancel": "Cancel ride",
   "booking-cancel-failed": "Could not cancel the ride",
   "booking-completed": "Ride completed",
-  "booking-back-home": "Back to home"
+  "booking-completed-hint": "Thanks for riding with us.",
+  "booking-back-home": "Back to home",
+  "booking-from": "From",
+  "booking-to": "To",
+  "booking-distance": "Distance",
+  "booking-final-price": "Total",
+  "booking-load-failed": "Could not load ride details",
+  "rating-rate-driver": "Rate {{name}}",
+  "rating-comment-placeholder": "Leave a comment (optional)",
+  "rating-submit": "Submit",
+  "rating-skip": "Skip",
+  "rating-failed": "Could not submit rating"
 }

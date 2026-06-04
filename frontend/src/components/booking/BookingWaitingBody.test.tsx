@@ -145,4 +145,38 @@ describe('BookingWaitingBody', () => {
             expect(mockReset).toHaveBeenCalledWith({ index: 0, routes: [{ name: 'home' }] }),
         );
     });
+
+    it('shows the re-assignment banner when the driver changes between polls', async () => {
+        mockGetOrder.mockReset();
+        const driverA = { ...driverInfo, id: 5 };
+        const driverB = { ...driverInfo, id: 9, firstName: 'Георги' };
+
+        mockGetOrder
+            .mockResolvedValueOnce({ ...baseOrder, status: 'ACCEPTED', driver: driverA })
+            .mockResolvedValue({ ...baseOrder, status: 'ACCEPTED', driver: driverB });
+
+        const { findByTestId, queryByTestId } = renderWithProviders(<BookingWaitingBody />);
+
+        await findByTestId('waiting-driver');
+        expect(queryByTestId('waiting-reassigned')).toBeNull();
+
+        await waitFor(
+            () => expect(mockGetOrder).toHaveBeenCalledTimes(2),
+            { timeout: 6500, interval: 100 },
+        );
+        await findByTestId('waiting-reassigned');
+    }, 10000);
+
+    it('does not show the banner on the very first poll (no previous driver)', async () => {
+        mockGetOrder.mockResolvedValue({
+            ...baseOrder,
+            status: 'ACCEPTED',
+            driver: driverInfo,
+        });
+
+        const { findByTestId, queryByTestId } = renderWithProviders(<BookingWaitingBody />);
+
+        await findByTestId('waiting-driver');
+        expect(queryByTestId('waiting-reassigned')).toBeNull();
+    });
 });

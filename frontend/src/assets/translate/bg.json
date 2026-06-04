@@ -109,8 +109,20 @@
   "booking-waiting-in-progress": "На път към дестинацията",
   "booking-waiting-in-progress-hint": "Приятно пътуване.",
   "booking-waiting-poll-failed": "Проблем с връзката. Опитваме отново…",
+  "booking-waiting-reassigned": "Нов шофьор беше назначен на вашата поръчка",
   "booking-cancel": "Отмени поръчката",
   "booking-cancel-failed": "Поръчката не може да бъде отменена",
   "booking-completed": "Поръчката е изпълнена",
-  "booking-back-home": "Към началото"
+  "booking-completed-hint": "Благодарим, че пътувахте с нас.",
+  "booking-back-home": "Към началото",
+  "booking-from": "От",
+  "booking-to": "До",
+  "booking-distance": "Разстояние",
+  "booking-final-price": "Общо",
+  "booking-load-failed": "Детайлите за поръчката не могат да бъдат заредени",
+  "rating-rate-driver": "Оценете {{name}}",
+  "rating-comment-placeholder": "Оставете коментар (по желание)",
+  "rating-submit": "Изпрати",
+  "rating-skip": "Пропусни",
+  "rating-failed": "Оценката не може да бъде изпратена"
 }

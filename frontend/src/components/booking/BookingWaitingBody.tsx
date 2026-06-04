@@ -18,6 +18,7 @@ import { createStyles } from './BookingWaitingBody.style';
 type BookingWaitingRouteProp = RouteProp<RootStackParamList, 'bookingWaiting'>;
 
 const POLL_INTERVAL_MS = 5000;
+const REASSIGN_BANNER_MS = 6000;
 
 const BookingWaitingBody = () => {
     const { theme } = useTheme();
@@ -32,19 +33,24 @@ const BookingWaitingBody = () => {
     const [order, setOrder] = useState<OrderResponse | undefined>();
     const [error, setError] = useState<string | undefined>();
     const [cancelling, setCancelling] = useState(false);
+    const [reassigned, setReassigned] = useState(false);
 
     const cancelledRef = useRef(false);
     const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const reassignTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const previousDriverIdRef = useRef<number | undefined>(undefined);
+    const navigationRef = useRef(navigation);
+    navigationRef.current = navigation;
 
     const handleTerminal = useCallback(
         (status: OrderStatus) => {
             if (status === 'COMPLETED') {
-                navigation.replace('bookingComplete', { orderId });
+                navigationRef.current.replace('bookingComplete', { orderId });
             } else if (status === 'CANCELED') {
-                navigation.reset({ index: 0, routes: [{ name: 'home' }] });
+                navigationRef.current.reset({ index: 0, routes: [{ name: 'home' }] });
             }
         },
-        [navigation, orderId],
+        [orderId],
     );
 
     const poll = useCallback(async () => {
@@ -52,6 +58,20 @@ const BookingWaitingBody = () => {
         try {
             const next = await getOrderById(orderId);
             if (cancelledRef.current) return;
+            const previousDriverId = previousDriverIdRef.current;
+            const nextDriverId = next.driver?.id;
+            if (
+                previousDriverId != null &&
+                nextDriverId != null &&
+                previousDriverId !== nextDriverId
+            ) {
+                setReassigned(true);
+                if (reassignTimerRef.current) clearTimeout(reassignTimerRef.current);
+                reassignTimerRef.current = setTimeout(() => {
+                    if (!cancelledRef.current) setReassigned(false);
+                }, REASSIGN_BANNER_MS);
+            }
+            previousDriverIdRef.current = nextDriverId;
             setOrder(next);
             setError(undefined);
             if (next.status === 'COMPLETED' || next.status === 'CANCELED') {
@@ -75,6 +95,10 @@ const BookingWaitingBody = () => {
             if (timerRef.current) {
                 clearTimeout(timerRef.current);
                 timerRef.current = null;
+            }
+            if (reassignTimerRef.current) {
+                clearTimeout(reassignTimerRef.current);
+                reassignTimerRef.current = null;
             }
         };
     }, [poll]);
@@ -144,6 +168,15 @@ const BookingWaitingBody = () => {
                     </Text>
                 )}
             </View>
+
+            {reassigned && (
+                <View style={styles.reassignBanner} testID="waiting-reassigned">
+                    <MaterialIcons name="info" size={20} color="#92400E" />
+                    <Text style={styles.reassignBannerText}>
+                        {t('booking-waiting-reassigned')}
+                    </Text>
+                </View>
+            )}
 
             {showDriver && order?.driver && (
                 <View style={styles.driverCard} testID="waiting-driver">
