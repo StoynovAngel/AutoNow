@@ -236,6 +236,38 @@ class OrderControllerIT {
 	}
 
 	@Test
+	void getActiveOrderByUserId_returnsActive() throws Exception {
+		var completed = TestData.createOrderEntity(user);
+		orderRepository.save(completed);
+
+		var active = TestData.createOrderEntity(user);
+		active.setStatus(OrderStatus.CREATED);
+		orderRepository.save(active);
+
+		mockMvc.perform(get("/api/orders/user/{userId}/active", user.getId())
+						.with(TestData.customerJwt()))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.status").value("CREATED"));
+	}
+
+	@Test
+	void getActiveOrderByUserId_noActive_returnsNotFound() throws Exception {
+		var completed = TestData.createOrderEntity(user);
+		orderRepository.save(completed);
+
+		mockMvc.perform(get("/api/orders/user/{userId}/active", user.getId())
+						.with(TestData.customerJwt()))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void getActiveOrderByUserId_noOrders_returnsNotFound() throws Exception {
+		mockMvc.perform(get("/api/orders/user/{userId}/active", user.getId())
+						.with(TestData.customerJwt()))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
 	void getAllOrders_asAdmin() throws Exception {
 		var order = TestData.createOrderEntity(user);
 		orderRepository.save(order);

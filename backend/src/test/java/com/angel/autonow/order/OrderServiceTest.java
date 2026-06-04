@@ -26,6 +26,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anySet;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -197,6 +198,32 @@ class OrderServiceTest {
 		var result = orderService.getOrdersByUserId(1L);
 
 		assertEquals(1, result.size());
+	}
+
+	@Test
+	void getOrdersByUserIdAndStatus_returnFiltered() {
+		UserEntity user = UserEntity.builder().id(1L).build();
+		OrderEntity orderEntity = OrderEntity.builder().id(1L).user(user).status(OrderStatus.CREATED).createdAt(NOW).build();
+		OrderResponseDTO orderResponse = TestData.createOrderResponse(1L, 1L, OrderStatus.CREATED, NOW);
+
+		when(orderRepository.findFirstByUserIdAndStatusInOrderByCreatedAtDesc(eq(1L), anySet()))
+				.thenReturn(Optional.of(orderEntity));
+		when(orderMapper.toDTO(orderEntity)).thenReturn(orderResponse);
+
+		var result = orderService.getActiveOrderByUserId(1L);
+
+		assertTrue(result.isPresent());
+		assertEquals(OrderStatus.CREATED, result.get().status());
+	}
+
+	@Test
+	void getOrdersByUserIdAndStatus_noMatch_returnEmpty() {
+		when(orderRepository.findFirstByUserIdAndStatusInOrderByCreatedAtDesc(eq(1L), anySet()))
+				.thenReturn(Optional.empty());
+
+		var result = orderService.getActiveOrderByUserId(1L);
+
+		assertTrue(result.isEmpty());
 	}
 
 	@Test

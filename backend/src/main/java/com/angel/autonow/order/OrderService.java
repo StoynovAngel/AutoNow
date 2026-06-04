@@ -90,6 +90,11 @@ public class OrderService {
 				.toList();
 	}
 
+	public Optional<OrderResponseDTO> getActiveOrderByUserId(Long userId) {
+		return orderRepository.findFirstByUserIdAndStatusInOrderByCreatedAtDesc(userId, ACTIVE_STATUSES)
+				.map(orderMapper::toDTO);
+	}
+
 	public List<OrderResponseDTO> getAllOrders() {
 		return orderRepository.findAll().stream()
 				.map(orderMapper::toDTO)

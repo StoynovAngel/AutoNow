@@ -51,6 +51,14 @@ public class OrderController {
 		return orderService.getOrdersByUserId(userId);
 	}
 
+	@GetMapping("/user/{userId}/active")
+	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
+	public ResponseEntity<OrderResponseDTO> getActiveOrderByUserId(@PathVariable Long userId) {
+		return orderService.getActiveOrderByUserId(userId)
+				.map(ResponseEntity::ok)
+				.orElse(ResponseEntity.notFound().build());
+	}
+
 	@GetMapping
 	@PreAuthorize("hasRole('ADMIN')")
 	public List<OrderResponseDTO> getAllOrders() {
