@@ -1,9 +1,13 @@
 package com.angel.autonow.order;
 
 import com.angel.autonow.data.TestData;
+import com.angel.autonow.driver.DriverEntity;
+import com.angel.autonow.driver.DriverRepository;
 import com.angel.autonow.user.UserEntity;
 import com.angel.autonow.user.UserRepository;
 import com.angel.autonow.vehicle.VehicleClass;
+import com.angel.autonow.vehicle.VehicleEntity;
+import com.angel.autonow.vehicle.VehicleRepository;
 import com.angel.autonow.vehicle.VehicleType;
 import tools.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static com.angel.autonow.data.TestData.NON_EXISTENT_ID;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -42,6 +47,12 @@ class OrderControllerIT {
 
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private DriverRepository driverRepository;
+
+	@Autowired
+	private VehicleRepository vehicleRepository;
 
 	private UserEntity user;
 
@@ -348,5 +359,97 @@ class OrderControllerIT {
 	@Test
 	void deleteOrder_withoutAuth_returnsUnauthorized() throws Exception {
 		mockMvc.perform(delete("/api/orders/{id}", 1L)).andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	void assignOrder_asAdmin_setsDriverVehicleAndStatusAccepted() throws Exception {
+		var order = TestData.createOrderEntity(user);
+		orderRepository.save(order);
+		var driver = driverRepository.save(TestData.createDriverEntity());
+		var vehicle = vehicleRepository.save(TestData.createVehicleEntity());
+
+		var request = OrderAssignmentRequestDTO.builder()
+				.driverId(driver.getId())
+				.vehicleId(vehicle.getId())
+				.build();
+
+		mockMvc.perform(patch("/api/orders/{id}/assign", order.getId())
+						.with(TestData.adminJwt())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(request)))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.status").value("ACCEPTED"))
+				.andExpect(jsonPath("$.driver.id").value(driver.getId()))
+				.andExpect(jsonPath("$.vehicle.id").value(vehicle.getId()));
+	}
+
+	@Test
+	void assignOrder_orderNotFound_returnsNotFound() throws Exception {
+		var driver = driverRepository.save(TestData.createDriverEntity());
+		var vehicle = vehicleRepository.save(TestData.createVehicleEntity());
+
+		var request = OrderAssignmentRequestDTO.builder()
+				.driverId(driver.getId())
+				.vehicleId(vehicle.getId())
+				.build();
+
+		mockMvc.perform(patch("/api/orders/{id}/assign", NON_EXISTENT_ID)
+						.with(TestData.adminJwt())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(request)))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void assignOrder_driverNotFound_returnsNotFound() throws Exception {
+		var order = TestData.createOrderEntity(user);
+		orderRepository.save(order);
+		var vehicle = vehicleRepository.save(TestData.createVehicleEntity());
+
+		var request = OrderAssignmentRequestDTO.builder()
+				.driverId(NON_EXISTENT_ID)
+				.vehicleId(vehicle.getId())
+				.build();
+
+		mockMvc.perform(patch("/api/orders/{id}/assign", order.getId())
+						.with(TestData.adminJwt())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(request)))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void assignOrder_invalidInput_returnsBadRequest() throws Exception {
+		var order = TestData.createOrderEntity(user);
+		orderRepository.save(order);
+
+		var invalidRequest = OrderAssignmentRequestDTO.builder().build();
+
+		mockMvc.perform(patch("/api/orders/{id}/assign", order.getId())
+						.with(TestData.adminJwt())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(invalidRequest)))
+				.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void assignOrder_asCustomer_returnsForbidden() throws Exception {
+		var request = OrderAssignmentRequestDTO.builder().driverId(1L).vehicleId(1L).build();
+
+		mockMvc.perform(patch("/api/orders/{id}/assign", 1L)
+						.with(TestData.customerJwt())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(request)))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	void assignOrder_withoutAuth_returnsUnauthorized() throws Exception {
+		var request = OrderAssignmentRequestDTO.builder().driverId(1L).vehicleId(1L).build();
+
+		mockMvc.perform(patch("/api/orders/{id}/assign", 1L)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(request)))
+				.andExpect(status().isUnauthorized());
 	}
 }

@@ -2,6 +2,7 @@ package com.angel.autonow.order;
 
 import com.angel.autonow.driver.DriverEntity;
 import com.angel.autonow.driver.DriverRepository;
+import com.angel.autonow.pricing.PricingService;
 import com.angel.autonow.user.UserEntity;
 import com.angel.autonow.user.UserRepository;
 import com.angel.autonow.vehicle.VehicleEntity;
@@ -22,6 +23,7 @@ public class OrderService {
 	private final UserRepository userRepository;
 	private final DriverRepository driverRepository;
 	private final VehicleRepository vehicleRepository;
+	private final PricingService pricingService;
 
 	@Transactional
 	public Optional<OrderResponseDTO> createOrder(OrderRequestDTO request) {
@@ -54,9 +56,17 @@ public class OrderService {
 			order.setVehicle(vehicle.get());
 		}
 
+		if (request.distanceKm() != null) {
+			order.setEstimatedPrice(pricingService.calculatePrice(request.distanceKm(), request.vehicleClass()));
+		}
+
 		OrderEntity saved = orderRepository.save(order);
 
 		return Optional.of(orderMapper.toDTO(saved));
+	}
+
+	public OrderEstimateResponseDTO estimate(OrderEstimateRequestDTO request) {
+		return pricingService.estimate(request);
 	}
 
 	public Optional<OrderResponseDTO> getOrderById(Long id) {
@@ -136,5 +146,31 @@ public class OrderService {
 					order.setStatus(status);
 					return orderMapper.toDTO(orderRepository.save(order));
 				});
+	}
+
+	@Transactional
+	public Optional<OrderResponseDTO> assignOrder(Long id, OrderAssignmentRequestDTO request) {
+		Optional<OrderEntity> existing = orderRepository.findById(id);
+
+		if (existing.isEmpty()) {
+			return Optional.empty();
+		}
+
+		Optional<DriverEntity> driver = driverRepository.findById(request.driverId());
+		if (driver.isEmpty()) {
+			return Optional.empty();
+		}
+
+		Optional<VehicleEntity> vehicle = vehicleRepository.findById(request.vehicleId());
+		if (vehicle.isEmpty()) {
+			return Optional.empty();
+		}
+
+		OrderEntity order = existing.get();
+		order.setDriver(driver.get());
+		order.setVehicle(vehicle.get());
+		order.setStatus(OrderStatus.ACCEPTED);
+
+		return Optional.of(orderMapper.toDTO(orderRepository.save(order)));
 	}
 }

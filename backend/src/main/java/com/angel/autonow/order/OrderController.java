@@ -32,6 +32,12 @@ public class OrderController {
 				.orElse(ResponseEntity.badRequest().build());
 	}
 
+	@PostMapping("/estimate")
+	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
+	public OrderEstimateResponseDTO estimate(@Valid @RequestBody OrderEstimateRequestDTO request) {
+		return orderService.estimate(request);
+	}
+
 	@GetMapping("/{id}")
 	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'DRIVER')")
 	public OrderResponseDTO getOrderById(@PathVariable Long id) {
@@ -62,6 +68,14 @@ public class OrderController {
 	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'DRIVER')")
 	public ResponseEntity<OrderResponseDTO> updateOrderStatus(@PathVariable Long id, @Valid @RequestBody OrderStatusUpdateDTO request) {
 		return orderService.updateOrderStatus(id, request.status())
+				.map(ResponseEntity::ok)
+				.orElse(ResponseEntity.notFound().build());
+	}
+
+	@PatchMapping("/{id}/assign")
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<OrderResponseDTO> assignOrder(@PathVariable Long id, @Valid @RequestBody OrderAssignmentRequestDTO request) {
+		return orderService.assignOrder(id, request)
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());
 	}

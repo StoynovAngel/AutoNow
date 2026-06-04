@@ -3,8 +3,10 @@ package com.angel.autonow.order;
 import com.angel.autonow.data.TestData;
 import com.angel.autonow.driver.DriverEntity;
 import com.angel.autonow.driver.DriverRepository;
+import com.angel.autonow.pricing.PricingService;
 import com.angel.autonow.user.UserEntity;
 import com.angel.autonow.user.UserRepository;
+import com.angel.autonow.vehicle.VehicleClass;
 import com.angel.autonow.vehicle.VehicleEntity;
 import com.angel.autonow.vehicle.VehicleRepository;
 import com.angel.autonow.vehicle.VehicleType;
@@ -21,6 +23,7 @@ import java.util.Optional;
 import static com.angel.autonow.data.TestData.NON_EXISTENT_ID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -42,6 +45,9 @@ class OrderServiceTest {
 
 	@Mock
 	private VehicleRepository vehicleRepository;
+
+	@Mock
+	private PricingService pricingService;
 
 	@InjectMocks
 	private OrderService orderService;
@@ -321,5 +327,132 @@ class OrderServiceTest {
 		var result = orderService.deleteOrder(NON_EXISTENT_ID);
 
 		assertFalse(result);
+	}
+
+	@Test
+	void createOrder_withDistance_setsEstimatedPriceFromPricingService() {
+		OrderRequestDTO request = OrderRequestDTO.builder()
+				.userId(1L).vehicleType(VehicleType.TAXI)
+				.pickupAddress(TestData.DEFAULT_PICKUP_ADDRESS).pickupLatitude(TestData.DEFAULT_PICKUP_LAT).pickupLongitude(TestData.DEFAULT_PICKUP_LNG)
+				.dropoffAddress(TestData.DEFAULT_DROPOFF_ADDRESS).dropoffLatitude(TestData.DEFAULT_DROPOFF_LAT).dropoffLongitude(TestData.DEFAULT_DROPOFF_LNG)
+				.distanceKm(10.0).vehicleClass(VehicleClass.STANDARD)
+				.build();
+		UserEntity user = UserEntity.builder().id(1L).build();
+		OrderEntity entity = OrderEntity.builder().vehicleType(VehicleType.TAXI).build();
+		OrderEntity saved = OrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).estimatedPrice(14.50).createdAt(NOW).build();
+		OrderResponseDTO response = TestData.createOrderResponse(1L, 1L, OrderStatus.CREATED, NOW);
+
+		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+		when(orderMapper.toEntity(request)).thenReturn(entity);
+		when(pricingService.calculatePrice(10.0, VehicleClass.STANDARD)).thenReturn(14.50);
+		when(orderRepository.save(entity)).thenReturn(saved);
+		when(orderMapper.toDTO(saved)).thenReturn(response);
+
+		orderService.createOrder(request);
+
+		verify(pricingService).calculatePrice(10.0, VehicleClass.STANDARD);
+		assertEquals(14.50, entity.getEstimatedPrice());
+	}
+
+	@Test
+	void createOrder_noDistance_doesNotCallPricingService() {
+		OrderRequestDTO request = OrderRequestDTO.builder()
+				.userId(1L).vehicleType(VehicleType.TAXI)
+				.pickupAddress(TestData.DEFAULT_PICKUP_ADDRESS).pickupLatitude(TestData.DEFAULT_PICKUP_LAT).pickupLongitude(TestData.DEFAULT_PICKUP_LNG)
+				.dropoffAddress(TestData.DEFAULT_DROPOFF_ADDRESS).dropoffLatitude(TestData.DEFAULT_DROPOFF_LAT).dropoffLongitude(TestData.DEFAULT_DROPOFF_LNG)
+				.build();
+		UserEntity user = UserEntity.builder().id(1L).build();
+		OrderEntity entity = OrderEntity.builder().vehicleType(VehicleType.TAXI).build();
+		OrderEntity saved = OrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).createdAt(NOW).build();
+		OrderResponseDTO response = TestData.createOrderResponse(1L, 1L, OrderStatus.CREATED, NOW);
+
+		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+		when(orderMapper.toEntity(request)).thenReturn(entity);
+		when(orderRepository.save(entity)).thenReturn(saved);
+		when(orderMapper.toDTO(saved)).thenReturn(response);
+
+		orderService.createOrder(request);
+
+		verify(pricingService, never()).calculatePrice(anyDouble(), any());
+	}
+
+	@Test
+	void estimate_delegatesToPricingService() {
+		OrderEstimateRequestDTO request = OrderEstimateRequestDTO.builder()
+				.vehicleType(VehicleType.TAXI).distanceKm(10.0).vehicleClass(VehicleClass.STANDARD)
+				.build();
+		OrderEstimateResponseDTO response = OrderEstimateResponseDTO.builder()
+				.estimatedPrice(14.50).currency("EUR").distanceKm(10.0).build();
+
+		when(pricingService.estimate(request)).thenReturn(response);
+
+		var result = orderService.estimate(request);
+
+		assertEquals(14.50, result.estimatedPrice());
+		assertEquals("EUR", result.currency());
+		verify(pricingService).estimate(request);
+	}
+
+	@Test
+	void assignOrder_validIds_setsDriverVehicleAndStatusAccepted() {
+		OrderAssignmentRequestDTO request = OrderAssignmentRequestDTO.builder().driverId(2L).vehicleId(3L).build();
+		OrderEntity order = OrderEntity.builder().id(1L).status(OrderStatus.CREATED).vehicleType(VehicleType.TAXI).build();
+		DriverEntity driver = DriverEntity.builder().id(2L).build();
+		VehicleEntity vehicle = VehicleEntity.builder().id(3L).build();
+		OrderResponseDTO response = TestData.createOrderResponse(1L, 1L, OrderStatus.ACCEPTED, NOW);
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+		when(driverRepository.findById(2L)).thenReturn(Optional.of(driver));
+		when(vehicleRepository.findById(3L)).thenReturn(Optional.of(vehicle));
+		when(orderRepository.save(order)).thenReturn(order);
+		when(orderMapper.toDTO(order)).thenReturn(response);
+
+		var result = orderService.assignOrder(1L, request);
+
+		assertTrue(result.isPresent());
+		assertEquals(driver, order.getDriver());
+		assertEquals(vehicle, order.getVehicle());
+		assertEquals(OrderStatus.ACCEPTED, order.getStatus());
+	}
+
+	@Test
+	void assignOrder_orderNotFound_returnsEmpty() {
+		OrderAssignmentRequestDTO request = OrderAssignmentRequestDTO.builder().driverId(2L).vehicleId(3L).build();
+		when(orderRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
+
+		var result = orderService.assignOrder(NON_EXISTENT_ID, request);
+
+		assertTrue(result.isEmpty());
+		verify(orderRepository, never()).save(any());
+	}
+
+	@Test
+	void assignOrder_driverNotFound_returnsEmpty() {
+		OrderAssignmentRequestDTO request = OrderAssignmentRequestDTO.builder().driverId(NON_EXISTENT_ID).vehicleId(3L).build();
+		OrderEntity order = OrderEntity.builder().id(1L).status(OrderStatus.CREATED).build();
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+		when(driverRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
+
+		var result = orderService.assignOrder(1L, request);
+
+		assertTrue(result.isEmpty());
+		verify(orderRepository, never()).save(any());
+	}
+
+	@Test
+	void assignOrder_vehicleNotFound_returnsEmpty() {
+		OrderAssignmentRequestDTO request = OrderAssignmentRequestDTO.builder().driverId(2L).vehicleId(NON_EXISTENT_ID).build();
+		OrderEntity order = OrderEntity.builder().id(1L).status(OrderStatus.CREATED).build();
+		DriverEntity driver = DriverEntity.builder().id(2L).build();
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+		when(driverRepository.findById(2L)).thenReturn(Optional.of(driver));
+		when(vehicleRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
+
+		var result = orderService.assignOrder(1L, request);
+
+		assertTrue(result.isEmpty());
+		verify(orderRepository, never()).save(any());
 	}
 }
