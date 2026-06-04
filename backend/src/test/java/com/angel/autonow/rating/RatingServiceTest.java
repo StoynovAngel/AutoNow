@@ -3,6 +3,8 @@ package com.angel.autonow.rating;
 import com.angel.autonow.data.TestData;
 import com.angel.autonow.order.OrderEntity;
 import com.angel.autonow.order.OrderRepository;
+import com.angel.autonow.order.OrderStatus;
+import com.angel.autonow.user.UserEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -38,7 +40,8 @@ class RatingServiceTest {
 	@Test
 	void createRating_returnRatingResponse() {
 		RatingRequestDTO request = TestData.createRatingRequest(1L);
-		OrderEntity order = OrderEntity.builder().id(1L).build();
+		UserEntity owner = UserEntity.builder().id(1L).email("owner@example.com").build();
+		OrderEntity order = OrderEntity.builder().id(1L).user(owner).status(OrderStatus.COMPLETED).build();
 		RatingEntity entity = RatingEntity.builder().rating(5).comment("Excellent service!").build();
 		RatingEntity saved = RatingEntity.builder().id(1L).order(order).rating(5).comment("Excellent service!").createdAt(NOW).build();
 		RatingResponseDTO response = TestData.createRatingResponse(1L, 1L, 5, "Excellent service!", NOW);
@@ -48,7 +51,7 @@ class RatingServiceTest {
 		when(ratingRepository.save(entity)).thenReturn(saved);
 		when(ratingMapper.toDTO(saved)).thenReturn(response);
 
-		var result = ratingService.createRating(request);
+		var result = ratingService.createRating(request, "owner@example.com");
 
 		assertTrue(result.isPresent());
 		assertEquals(1L, result.get().id());
@@ -62,9 +65,60 @@ class RatingServiceTest {
 
 		when(orderRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
 
-		var result = ratingService.createRating(request);
+		var result = ratingService.createRating(request, "owner@example.com");
 
 		assertTrue(result.isEmpty());
+		verify(ratingRepository, never()).save(any());
+	}
+
+	@Test
+	void createRating_callerNotOwner_throwsForbidden() {
+		RatingRequestDTO request = TestData.createRatingRequest(1L);
+		UserEntity owner = UserEntity.builder().id(1L).email("owner@example.com").build();
+		OrderEntity order = OrderEntity.builder().id(1L).user(owner).status(OrderStatus.COMPLETED).build();
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+
+		assertThrows(RatingForbiddenException.class,
+				() -> ratingService.createRating(request, "intruder@example.com"));
+		verify(ratingRepository, never()).save(any());
+	}
+
+	@Test
+	void createRating_orderHasNoOwner_throwsForbidden() {
+		RatingRequestDTO request = TestData.createRatingRequest(1L);
+		OrderEntity order = OrderEntity.builder().id(1L).user(null).status(OrderStatus.COMPLETED).build();
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+
+		assertThrows(RatingForbiddenException.class,
+				() -> ratingService.createRating(request, "anyone@example.com"));
+		verify(ratingRepository, never()).save(any());
+	}
+
+	@Test
+	void createRating_orderNotCompleted_throwsConflict() {
+		RatingRequestDTO request = TestData.createRatingRequest(1L);
+		UserEntity owner = UserEntity.builder().id(1L).email("owner@example.com").build();
+		OrderEntity order = OrderEntity.builder().id(1L).user(owner).status(OrderStatus.IN_PROGRESS).build();
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+
+		assertThrows(RatingConflictException.class,
+				() -> ratingService.createRating(request, "owner@example.com"));
+		verify(ratingRepository, never()).save(any());
+	}
+
+	@Test
+	void createRating_orderCanceled_throwsConflict() {
+		RatingRequestDTO request = TestData.createRatingRequest(1L);
+		UserEntity owner = UserEntity.builder().id(1L).email("owner@example.com").build();
+		OrderEntity order = OrderEntity.builder().id(1L).user(owner).status(OrderStatus.CANCELED).build();
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+
+		assertThrows(RatingConflictException.class,
+				() -> ratingService.createRating(request, "owner@example.com"));
 		verify(ratingRepository, never()).save(any());
 	}
 

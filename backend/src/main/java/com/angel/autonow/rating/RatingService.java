@@ -2,6 +2,8 @@ package com.angel.autonow.rating;
 
 import com.angel.autonow.order.OrderEntity;
 import com.angel.autonow.order.OrderRepository;
+import com.angel.autonow.order.OrderStatus;
+import com.angel.autonow.user.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,15 +20,26 @@ public class RatingService {
 	private final OrderRepository orderRepository;
 
 	@Transactional
-	public Optional<RatingResponseDTO> createRating(RatingRequestDTO request) {
-		Optional<OrderEntity> order = orderRepository.findById(request.orderId());
+	public Optional<RatingResponseDTO> createRating(RatingRequestDTO request, String callerEmail) {
+		Optional<OrderEntity> orderOpt = orderRepository.findById(request.orderId());
 
-		if (order.isEmpty()) {
+		if (orderOpt.isEmpty()) {
 			return Optional.empty();
 		}
 
+		OrderEntity order = orderOpt.get();
+
+		UserEntity owner = order.getUser();
+		if (owner == null || !owner.getEmail().equals(callerEmail)) {
+			throw new RatingForbiddenException("Only the order owner can rate this order");
+		}
+
+		if (order.getStatus() != OrderStatus.COMPLETED) {
+			throw new RatingConflictException("Order can only be rated when completed");
+		}
+
 		RatingEntity rating = ratingMapper.toEntity(request);
-		rating.setOrder(order.get());
+		rating.setOrder(order);
 		RatingEntity saved = ratingRepository.save(rating);
 
 		return Optional.of(ratingMapper.toDTO(saved));

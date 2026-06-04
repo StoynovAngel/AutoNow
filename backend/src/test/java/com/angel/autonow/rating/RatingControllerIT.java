@@ -67,7 +67,7 @@ class RatingControllerIT {
 		var request = TestData.createRatingRequest(order.getId());
 
 		mockMvc.perform(post("/api/ratings")
-						.with(TestData.customerJwt())
+						.with(TestData.customerJwt("test@example.com"))
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(request)))
 				.andExpect(status().isCreated())
@@ -80,14 +80,14 @@ class RatingControllerIT {
 	}
 
 	@Test
-	void createRating_asAdmin() throws Exception {
+	void createRating_asAdmin_returnsForbidden() throws Exception {
 		var request = TestData.createRatingRequest(order.getId());
 
 		mockMvc.perform(post("/api/ratings")
 						.with(TestData.adminJwt())
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(request)))
-				.andExpect(status().isCreated());
+				.andExpect(status().isForbidden());
 	}
 
 	@Test
@@ -113,11 +113,50 @@ class RatingControllerIT {
 	}
 
 	@Test
+	void createRating_byNonOwner_returnsForbidden() throws Exception {
+		var request = TestData.createRatingRequest(order.getId());
+
+		mockMvc.perform(post("/api/ratings")
+						.with(TestData.customerJwt("intruder@example.com"))
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(request)))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	void createRating_orderNotCompleted_returnsConflict() throws Exception {
+		order.setStatus(com.angel.autonow.order.OrderStatus.IN_PROGRESS);
+		orderRepository.save(order);
+
+		var request = TestData.createRatingRequest(order.getId());
+
+		mockMvc.perform(post("/api/ratings")
+						.with(TestData.customerJwt("test@example.com"))
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(request)))
+				.andExpect(status().isConflict());
+	}
+
+	@Test
+	void createRating_orderCanceled_returnsConflict() throws Exception {
+		order.setStatus(com.angel.autonow.order.OrderStatus.CANCELED);
+		orderRepository.save(order);
+
+		var request = TestData.createRatingRequest(order.getId());
+
+		mockMvc.perform(post("/api/ratings")
+						.with(TestData.customerJwt("test@example.com"))
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(request)))
+				.andExpect(status().isConflict());
+	}
+
+	@Test
 	void createRating_invalidInput_returnsBadRequest() throws Exception {
 		var invalidRequest = RatingRequestDTO.builder().build();
 
 		mockMvc.perform(post("/api/ratings")
-						.with(TestData.customerJwt())
+						.with(TestData.customerJwt("test@example.com"))
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(invalidRequest)))
 				.andExpect(status().isBadRequest());
@@ -128,7 +167,7 @@ class RatingControllerIT {
 		var invalidRequest = TestData.createRatingRequest(order.getId(), 6, null);
 
 		mockMvc.perform(post("/api/ratings")
-						.with(TestData.customerJwt())
+						.with(TestData.customerJwt("test@example.com"))
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(invalidRequest)))
 				.andExpect(status().isBadRequest());
@@ -139,7 +178,7 @@ class RatingControllerIT {
 		var request = TestData.createRatingRequest(NON_EXISTENT_ID);
 
 		mockMvc.perform(post("/api/ratings")
-						.with(TestData.customerJwt())
+						.with(TestData.customerJwt("test@example.com"))
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(request)))
 				.andExpect(status().isBadRequest());

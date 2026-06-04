@@ -2,6 +2,8 @@ package com.angel.autonow.exception;
 
 import com.angel.autonow.order.OrderConflictException;
 import com.angel.autonow.order.OrderForbiddenException;
+import com.angel.autonow.rating.RatingConflictException;
+import com.angel.autonow.rating.RatingForbiddenException;
 import com.angel.autonow.user.UserException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
@@ -85,6 +87,20 @@ public class GlobalControllerExceptionHandler {
 	@ResponseStatus(HttpStatus.FORBIDDEN)
 	@ExceptionHandler(OrderForbiddenException.class)
 	public ProblemDetail handleOrderForbiddenException(OrderForbiddenException e) {
+		log.warn(e.getMessage(), HttpStatus.FORBIDDEN, e);
+		return handle(e, HttpStatus.FORBIDDEN);
+	}
+
+	@ResponseStatus(HttpStatus.CONFLICT)
+	@ExceptionHandler(RatingConflictException.class)
+	public ProblemDetail handleRatingConflictException(RatingConflictException e) {
+		log.warn(e.getMessage(), HttpStatus.CONFLICT, e);
+		return handle(e, HttpStatus.CONFLICT);
+	}
+
+	@ResponseStatus(HttpStatus.FORBIDDEN)
+	@ExceptionHandler(RatingForbiddenException.class)
+	public ProblemDetail handleRatingForbiddenException(RatingForbiddenException e) {
 		log.warn(e.getMessage(), HttpStatus.FORBIDDEN, e);
 		return handle(e, HttpStatus.FORBIDDEN);
 	}
