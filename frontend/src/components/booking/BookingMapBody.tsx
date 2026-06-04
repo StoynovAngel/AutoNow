@@ -13,7 +13,8 @@ import type {
     Coordinate,
     RouteResult,
 } from '../../services/mapboxService';
-import { createOrder } from '../../services/orderService';
+import { createOrder, estimateOrder } from '../../services/orderService';
+import type { OrderEstimateResponse } from '../../services/orderService';
 import MapPreview from './MapPreview';
 import AddressSearch from './AddressSearch';
 import { createStyles } from './BookingMapBody.style';
@@ -37,6 +38,8 @@ const BookingMapBody = () => {
     const [destination, setDestination] = useState<AddressSuggestion | undefined>();
     const [routeResult, setRouteResult] = useState<RouteResult | undefined>();
     const [routeLoading, setRouteLoading] = useState(false);
+    const [estimate, setEstimate] = useState<OrderEstimateResponse | undefined>();
+    const [estimateLoading, setEstimateLoading] = useState(false);
     const [submitting, setSubmitting] = useState(false);
 
     useEffect(() => {
@@ -61,6 +64,32 @@ const BookingMapBody = () => {
         };
     }, [pickup, destination]);
 
+    useEffect(() => {
+        if (!routeResult) {
+            setEstimate(undefined);
+            return;
+        }
+        let cancelled = false;
+        setEstimateLoading(true);
+        estimateOrder({
+            vehicleType,
+            distanceKm: routeResult.distanceKm,
+            vehicleClass: preferences.vehicleClass,
+        })
+            .then((e) => {
+                if (!cancelled) setEstimate(e);
+            })
+            .catch(() => {
+                if (!cancelled) setEstimate(undefined);
+            })
+            .finally(() => {
+                if (!cancelled) setEstimateLoading(false);
+            });
+        return () => {
+            cancelled = true;
+        };
+    }, [routeResult, vehicleType, preferences.vehicleClass]);
+
     const handleConfirm = async () => {
         if (!pickup || !destination || !routeResult) return;
         if (!auth?.user) {
@@ -69,7 +98,7 @@ const BookingMapBody = () => {
         }
         setSubmitting(true);
         try {
-            await createOrder({
+            const created = await createOrder({
                 userId: auth.user.id,
                 vehicleType,
                 pickupAddress: pickup.placeName,
@@ -84,9 +113,7 @@ const BookingMapBody = () => {
                 vehicleClass: preferences.vehicleClass,
                 requiresAirConditioning: preferences.requiresAirConditioning,
             });
-            Alert.alert(t('booking-confirmed'), undefined, [
-                { text: 'OK', onPress: () => navigation.popToTop() },
-            ]);
+            navigation.replace('bookingWaiting', { orderId: created.id });
         } catch (e) {
             const msg = e instanceof Error ? e.message : 'Booking failed';
             Alert.alert(t('booking-failed'), msg);
@@ -143,9 +170,25 @@ const BookingMapBody = () => {
                         {routeLoading ? (
                             <ActivityIndicator color={theme.colors.primary} />
                         ) : routeResult ? (
-                            <Text style={styles.routeMetric} testID="route-distance">
-                                {routeResult.distanceKm.toFixed(1)} km
-                            </Text>
+                            <>
+                                <Text style={styles.routeMetric} testID="route-distance">
+                                    {routeResult.distanceKm.toFixed(1)} km
+                                </Text>
+                                {estimateLoading ? (
+                                    <ActivityIndicator
+                                        color={theme.colors.primary}
+                                        testID="estimate-loading"
+                                    />
+                                ) : estimate ? (
+                                    <Text style={styles.routeMetric} testID="estimate-price">
+                                        {estimate.estimatedPrice.toFixed(2)} {estimate.currency}
+                                    </Text>
+                                ) : (
+                                    <Text style={styles.routeError} testID="estimate-error">
+                                        {t('booking-estimate-failed')}
+                                    </Text>
+                                )}
+                            </>
                         ) : (
                             <Text style={styles.routeError}>{t('booking-no-route')}</Text>
                         )}
