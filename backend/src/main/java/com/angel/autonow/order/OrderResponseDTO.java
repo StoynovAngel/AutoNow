@@ -12,6 +12,8 @@ public record OrderResponseDTO(
 		Long userId,
 		Long driverId,
 		Long vehicleId,
+		DriverInfoDTO driver,
+		VehicleInfoDTO vehicle,
 		VehicleType vehicleType,
 		String pickupAddress,
 		Double pickupLatitude,
