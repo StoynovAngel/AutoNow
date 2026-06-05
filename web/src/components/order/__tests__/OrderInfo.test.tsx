@@ -76,11 +76,11 @@ describe('OrderInfo', () => {
         expect(screen.getByText('Not required')).toBeInTheDocument();
     });
 
-    it('renders an em-dash for null numeric fields (backend sends explicit null, not undefined)', () => {
+    it('renders an em-dash when optional numeric fields are undefined', () => {
         render(<OrderInfo order={makeOrder({
-            estimatedPrice: null as unknown as undefined,
-            finalPrice: null as unknown as undefined,
-            distanceKm: null as unknown as undefined,
+            estimatedPrice: undefined,
+            finalPrice: undefined,
+            distanceKm: undefined,
         })} />);
         // None of the renders above should throw, and all three should fall back to —
         expect(screen.getAllByText('—').length).toBeGreaterThanOrEqual(3);

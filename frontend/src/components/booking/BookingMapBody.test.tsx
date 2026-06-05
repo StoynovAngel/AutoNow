@@ -77,7 +77,7 @@ const renderWithAuth = (user: User | null = { id: 1, username: 'a@b.c', sub: 'a@
     );
 };
 
-const selectBothAddresses = (getByTestId: (id: string) => ReturnType<typeof fireEvent>) => {
+const selectBothAddresses = (getByTestId: ReturnType<typeof renderWithAuth>['getByTestId']) => {
     fireEvent.press(getByTestId('pickup-search-select'));
     fireEvent.press(getByTestId('destination-search-select'));
 };
@@ -102,7 +102,7 @@ describe('BookingMapBody — estimate display', () => {
 
         const { getByTestId } = renderWithAuth();
         await act(async () => {
-            selectBothAddresses(getByTestId as never);
+            selectBothAddresses(getByTestId);
         });
 
         await waitFor(() =>
@@ -127,7 +127,7 @@ describe('BookingMapBody — estimate display', () => {
 
         const { getByTestId } = renderWithAuth();
         await act(async () => {
-            selectBothAddresses(getByTestId as never);
+            selectBothAddresses(getByTestId);
         });
 
         await waitFor(() => expect(getByTestId('estimate-error')).toBeTruthy());
@@ -138,7 +138,7 @@ describe('BookingMapBody — estimate display', () => {
 
         const { getByTestId, queryByTestId } = renderWithAuth();
         await act(async () => {
-            selectBothAddresses(getByTestId as never);
+            selectBothAddresses(getByTestId);
         });
 
         await waitFor(() => expect(mockGetRoute).toHaveBeenCalled());
@@ -162,7 +162,7 @@ describe('BookingMapBody — estimate display', () => {
 
         const { getByTestId, queryByTestId } = renderWithAuth();
         await act(async () => {
-            selectBothAddresses(getByTestId as never);
+            selectBothAddresses(getByTestId);
         });
 
         await waitFor(() => expect(getByTestId('estimate-loading')).toBeTruthy());
