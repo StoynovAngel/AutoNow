@@ -1,10 +1,7 @@
-export type VehicleClass = 'STANDARD' | 'XL' | 'PREMIUM';
+export type VehicleClass = 'STANDARD' | 'XL';
 
-export const VEHICLE_CLASSES: VehicleClass[] = ['STANDARD', 'XL', 'PREMIUM'];
+export const VEHICLE_CLASSES: VehicleClass[] = ['STANDARD', 'XL'];
 
 export interface BookingPreferences {
-    passengerCount?: number;
-    luggageCount?: number;
     vehicleClass?: VehicleClass;
-    requiresAirConditioning?: boolean;
 }

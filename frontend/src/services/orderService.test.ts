@@ -39,7 +39,7 @@ describe('orderService', () => {
                 dropoffLatitude: 3,
                 dropoffLongitude: 4,
                 distanceKm: 5.2,
-                passengerCount: 2,
+                vehicleClass: 'STANDARD' as const,
             };
             const responseData = { id: 99, status: 'CREATED', ...payload };
             mockedPost.mockResolvedValue({ data: responseData });

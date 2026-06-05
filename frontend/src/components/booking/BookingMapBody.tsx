@@ -110,10 +110,7 @@ const BookingMapBody = () => {
                 dropoffLatitude: destination.coordinate.latitude,
                 dropoffLongitude: destination.coordinate.longitude,
                 distanceKm: routeResult.distanceKm,
-                passengerCount: preferences.passengerCount,
-                luggageCount: preferences.luggageCount,
                 vehicleClass: preferences.vehicleClass,
-                requiresAirConditioning: preferences.requiresAirConditioning,
             });
             navigation.replace('bookingWaiting', { orderId: created.id });
         } catch (e) {

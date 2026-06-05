@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { useCompanies } from '../../hooks/useCompanies';
 import { getVehicleOptions } from '../../constants/vehicleOptions';
 import { VehicleType } from '../../types/vehicle';
+import type { VehicleClass } from '../../types/booking';
 import CompanyListHeader from './CompanyListHeader';
 import CompanyCard from './CompanyCard';
 import LoadingState from './LoadingState';
@@ -43,13 +44,23 @@ const Body = () => {
         navigation.goBack();
     };
 
-    const handleBookCompany = (companyId: number) => {
-        if (vehicleType === VehicleType.TAXI) {
-            navigation.navigate('bookingPreferences', { companyId, vehicleType });
-        } else {
-            navigation.navigate('bookingMap', { companyId, vehicleType, preferences: {} });
+    const handleBookCompany = (companyId: number, vehicleClass?: VehicleClass) => {
+        if (vehicleType === VehicleType.PROM) {
+            navigation.navigate('promVehicles', { companyId });
+            return;
         }
+        navigation.navigate('bookingMap', {
+            companyId,
+            vehicleType,
+            preferences: vehicleClass ? { vehicleClass } : {},
+        });
     };
+
+    const showClassPicker = vehicleType === VehicleType.TAXI;
+    const isBookable =
+        vehicleType === VehicleType.TAXI ||
+        vehicleType === VehicleType.AMBULANCE ||
+        vehicleType === VehicleType.PROM;
 
     return (
         <View style={styles.container}>
@@ -74,7 +85,8 @@ const Body = () => {
                                 key={company.id}
                                 company={company}
                                 onCall={handleCallCompany}
-                                onBook={handleBookCompany}
+                                onBook={isBookable ? handleBookCompany : undefined}
+                                showClassPicker={showClassPicker}
                             />
                         ))}
                     </View>

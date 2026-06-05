@@ -89,4 +89,21 @@ describe('CompanyCard', () => {
         fireEvent.press(getByTestId('book-1'));
         expect(onBook).toHaveBeenCalledWith(1);
     });
+
+    it('renders STANDARD and XL buttons when showClassPicker is set', () => {
+        const onBook = jest.fn();
+        const { getByTestId, queryByTestId } = renderWithProviders(
+            <CompanyCard
+                company={baseCompany}
+                onCall={jest.fn()}
+                onBook={onBook}
+                showClassPicker
+            />,
+        );
+        expect(queryByTestId('book-1')).toBeNull();
+        fireEvent.press(getByTestId('book-1-STANDARD'));
+        expect(onBook).toHaveBeenCalledWith(1, 'STANDARD');
+        fireEvent.press(getByTestId('book-1-XL'));
+        expect(onBook).toHaveBeenCalledWith(1, 'XL');
+    });
 });
