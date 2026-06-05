@@ -6,19 +6,11 @@ import com.angel.autonow.company.CompanyType;
 import com.angel.autonow.driver.DriverEntity;
 import com.angel.autonow.driver.DriverRepository;
 import com.angel.autonow.expertise.ExpertiseType;
-import com.angel.autonow.order.OrderEntity;
-import com.angel.autonow.order.OrderRepository;
-import com.angel.autonow.order.OrderStatus;
-import com.angel.autonow.payment.PaymentEntity;
-import com.angel.autonow.payment.PaymentMethod;
-import com.angel.autonow.payment.PaymentRepository;
-import com.angel.autonow.payment.PaymentStatus;
-import com.angel.autonow.rating.RatingEntity;
-import com.angel.autonow.rating.RatingRepository;
 import com.angel.autonow.user.UserEntity;
 import com.angel.autonow.user.UserRepository;
 import com.angel.autonow.vehicle.VehicleEntity;
 import com.angel.autonow.vehicle.VehicleRepository;
+import com.angel.autonow.vehicle.VehicleTier;
 import com.angel.autonow.vehicle.VehicleType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +21,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.Set;
 
 @Slf4j
@@ -38,13 +29,28 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class DataSeeder implements ApplicationRunner {
 
+	private static final String DRIVER_M_1 = "https://randomuser.me/api/portraits/men/32.jpg";
+	private static final String DRIVER_M_2 = "https://randomuser.me/api/portraits/men/45.jpg";
+	private static final String DRIVER_M_3 = "https://randomuser.me/api/portraits/men/12.jpg";
+	private static final String DRIVER_M_4 = "https://randomuser.me/api/portraits/men/76.jpg";
+	private static final String DRIVER_M_5 = "https://randomuser.me/api/portraits/men/22.jpg";
+	private static final String DRIVER_M_6 = "https://randomuser.me/api/portraits/men/55.jpg";
+	private static final String DRIVER_M_7 = "https://randomuser.me/api/portraits/men/8.jpg";
+	private static final String DRIVER_M_8 = "https://randomuser.me/api/portraits/men/63.jpg";
+	private static final String DRIVER_M_9 = "https://randomuser.me/api/portraits/men/91.jpg";
+	private static final String DRIVER_F_1 = "https://randomuser.me/api/portraits/women/24.jpg";
+	private static final String DRIVER_F_2 = "https://randomuser.me/api/portraits/women/65.jpg";
+	private static final String DRIVER_F_3 = "https://randomuser.me/api/portraits/women/33.jpg";
+	private static final String DRIVER_F_4 = "https://randomuser.me/api/portraits/women/48.jpg";
+	private static final String DRIVER_F_5 = "https://randomuser.me/api/portraits/women/14.jpg";
+	private static final String DRIVER_F_6 = "https://randomuser.me/api/portraits/women/72.jpg";
+	private static final String DRIVER_F_7 = "https://randomuser.me/api/portraits/women/5.jpg";
+	private static final String DRIVER_M_10 = "https://randomuser.me/api/portraits/men/40.jpg";
+
 	private final UserRepository userRepository;
 	private final CompanyRepository companyRepository;
 	private final VehicleRepository vehicleRepository;
 	private final DriverRepository driverRepository;
-	private final OrderRepository orderRepository;
-	private final PaymentRepository paymentRepository;
-	private final RatingRepository ratingRepository;
 	private final PasswordEncoder passwordEncoder;
 
 	@Override
@@ -61,194 +67,379 @@ public class DataSeeder implements ApplicationRunner {
 	}
 
 	private void seedData() {
-		// Companies
-		CompanyEntity fleetCompany = companyRepository.save(CompanyEntity.builder()
-				.name("AutoNow Fleet Services")
-				.address("100 Business Park Blvd, Sofia")
-				.phone("+3590888123456")
-				.email("fleet@autonow.com")
-				.description("Premium taxi and logistics services in Sofia")
+		String password = passwordEncoder.encode("Password123");
+
+		userRepository.save(UserEntity.builder()
+				.email("admin@autonow.com")
+				.password(password)
+				.authorities(Set.of("ROLE_ADMIN", "ROLE_CUSTOMER", "ROLE_COMPANY_ADMIN"))
+				.build());
+
+		userRepository.save(UserEntity.builder()
+				.email("john.doe@example.com")
+				.password(password)
+				.authorities(Set.of("ROLE_CUSTOMER"))
+				.build());
+
+		userRepository.save(UserEntity.builder()
+				.email("jane.smith@example.com")
+				.password(password)
+				.authorities(Set.of("ROLE_CUSTOMER"))
+				.build());
+
+		seedTaxi(password);
+		seedLogistics(password);
+		seedAmbulance(password);
+		seedRental(password);
+		seedFuneral(password);
+		seedProm(password);
+	}
+
+	private void seedTaxi(String password) {
+		CompanyEntity company = companyRepository.save(CompanyEntity.builder()
+				.name("AutoNow Taxi Sofia")
+				.address("100 Vitosha Blvd, Sofia")
+				.phone("+359888100001")
+				.email("contact@taxi-sofia.bg")
+				.description("Premium taxi service in Sofia")
 				.companyType(CompanyType.TAXI)
 				.build());
 
-		CompanyEntity medCompany = companyRepository.save(CompanyEntity.builder()
-				.name("MedTransport BG")
-				.address("25 Hospital St, Sofia")
-				.phone("+3590888654321")
-				.email("info@medtransport.bg")
-				.description("Specialized ambulance and medical transport")
-				.companyType(CompanyType.AMBULANCE)
+		userRepository.save(UserEntity.builder()
+				.email("admin@taxi-sofia.bg")
+				.password(password)
+				.authorities(Set.of("ROLE_COMPANY_ADMIN"))
+				.company(company)
 				.build());
 
-		// Users (password: 'Password123' BCrypt hashed at runtime)
-		String bcryptPassword = passwordEncoder.encode("Password123");
-
-		UserEntity admin = userRepository.save(UserEntity.builder()
-				.email("admin@autonow.com")
-				.password(bcryptPassword)
-				.authorities(Set.of("ROLE_ADMIN", "ROLE_CUSTOMER", "ROLE_COMPANY_ADMIN"))
-				.company(fleetCompany)
-				.build());
-
-		UserEntity john = userRepository.save(UserEntity.builder()
-				.email("john.doe@example.com")
-				.password(bcryptPassword)
-				.authorities(Set.of("ROLE_CUSTOMER"))
-				.build());
-
-		UserEntity jane = userRepository.save(UserEntity.builder()
-				.email("jane.smith@example.com")
-				.password(bcryptPassword)
-				.authorities(Set.of("ROLE_CUSTOMER"))
-				.build());
-
-		// Vehicles
-		VehicleEntity camry = vehicleRepository.save(VehicleEntity.builder()
-				.brand("Toyota").model("Camry").licensePlate("CB1234AA")
-				.imageUrl("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRaqTdC-vRAN7L0DOSV0gRBI0cXZNfG03svJQ&s")
+		VehicleEntity v1 = vehicleRepository.save(VehicleEntity.builder()
+				.brand("Toyota").model("Camry").licensePlate("CA1234AB")
+				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/2018_Toyota_Camry_%28ASV70R%29_Ascent_sedan_%282018-08-27%29_01.jpg/1280px-2018_Toyota_Camry_%28ASV70R%29_Ascent_sedan_%282018-08-27%29_01.jpg")
 				.airConditioning(true).numberOfSeats(5).trunkCapacity(450.0)
-				.vehicleType(VehicleType.TAXI).company(fleetCompany)
-				.build());
+				.vehicleType(VehicleType.TAXI).vehicleTier(VehicleTier.PREMIUM)
+				.company(company).build());
 
-		VehicleEntity crv = vehicleRepository.save(VehicleEntity.builder()
-				.brand("Honda").model("CR-V").licensePlate("CB2345BB")
-				.imageUrl("https://www.taxi-heute.de/sites/default/files/public/styles/_news_1050x700_/public/images-news-teaser/2017-05-11-fahrzeuge-honda-automatik-suv_0.jpg")
-				.airConditioning(true).numberOfSeats(5).trunkCapacity(600.0)
-				.vehicleType(VehicleType.TAXI).company(fleetCompany)
-				.build());
-
-		VehicleEntity sprinter = vehicleRepository.save(VehicleEntity.builder()
-				.brand("Mercedes").model("Sprinter").licensePlate("CB3456CC")
-				.imageUrl("https://www.nvsuk.com/images/sprinter/IMG-20210905-WA0020.jpg")
-				.airConditioning(true).numberOfSeats(2).trunkCapacity(1500.0)
-				.vehicleType(VehicleType.AMBULANCE).company(medCompany)
-				.build());
-
-		VehicleEntity volvo = vehicleRepository.save(VehicleEntity.builder()
-				.brand("Volvo").model("FH16").licensePlate("CB4567KH")
-				.imageUrl("https://blog.truckscout24.com/de/wp-content/uploads/2013/10/Volvo-FH16-750-19-fotoshowImageNew-58e110e5-80060.jpg")
-				.airConditioning(true).numberOfSeats(2).trunkCapacity(5000.0)
-				.vehicleType(VehicleType.SEMI)
-				.build());
-
-		VehicleEntity octavia = vehicleRepository.save(VehicleEntity.builder()
-				.brand("Skoda").model("Octavia").licensePlate("CB5678MT")
-				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/0/05/Octavia_taxi_chisinau_004.jpg?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original")
+		VehicleEntity v2 = vehicleRepository.save(VehicleEntity.builder()
+				.brand("Skoda").model("Octavia").licensePlate("CA2345BE")
+				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/0/05/Octavia_taxi_chisinau_004.jpg")
 				.airConditioning(true).numberOfSeats(5).trunkCapacity(530.0)
-				.vehicleType(VehicleType.TAXI).company(fleetCompany)
-				.build());
+				.vehicleType(VehicleType.TAXI).vehicleTier(VehicleTier.BASIC)
+				.company(company).build());
 
-		VehicleEntity passat = vehicleRepository.save(VehicleEntity.builder()
-				.brand("Volkswagen").model("Passat").licensePlate("CB6789TX")
+		VehicleEntity v3 = vehicleRepository.save(VehicleEntity.builder()
+				.brand("Volkswagen").model("Passat").licensePlate("CA3456KH")
 				.imageUrl("https://www.dalamanairporttaxi.com/en/img-page/340-volkswagen-passat.jpg")
 				.airConditioning(true).numberOfSeats(5).trunkCapacity(480.0)
-				.vehicleType(VehicleType.TAXI).company(fleetCompany)
-				.build());
+				.vehicleType(VehicleType.TAXI).vehicleTier(VehicleTier.BASIC)
+				.company(company).build());
 
-		// Drivers
-		DriverEntity michael = driverRepository.save(DriverEntity.builder()
+		driverRepository.save(DriverEntity.builder()
 				.firstName("Michael").lastName("Johnson")
 				.phoneNumber("+359888100100")
-				.expertiseType(Set.of(ExpertiseType.B, ExpertiseType.C)).available(true)
-				.imageUrl("https://i.redd.it/oufits-goku-kid-v0-8utkgtut35xg1.jpg?width=736&format=pjpg&auto=webp&s=ff7228651faae2febec4a09148e33ed62f7c20a9")
-				.company(fleetCompany).vehicles(Set.of(camry, crv))
-				.build());
-
-		DriverEntity sarah = driverRepository.save(DriverEntity.builder()
+				.expertiseType(Set.of(ExpertiseType.B)).available(true)
+				.imageUrl(DRIVER_M_1)
+				.company(company).vehicles(Set.of(v1)).build());
+		driverRepository.save(DriverEntity.builder()
 				.firstName("Sarah").lastName("Williams")
 				.phoneNumber("+359888100101")
 				.expertiseType(Set.of(ExpertiseType.B)).available(true)
-				.company(fleetCompany).vehicles(Set.of(octavia))
-				.build());
-
-		DriverEntity david = driverRepository.save(DriverEntity.builder()
-				.firstName("David").lastName("Brown")
+				.imageUrl(DRIVER_F_1)
+				.company(company).vehicles(Set.of(v2)).build());
+		driverRepository.save(DriverEntity.builder()
+				.firstName("Daniel").lastName("Taylor")
 				.phoneNumber("+359888100102")
-				.expertiseType(Set.of(ExpertiseType.C, ExpertiseType.CE)).available(true)
-				.vehicles(Set.of(volvo))
-				.build());
-
-		DriverEntity emily = driverRepository.save(DriverEntity.builder()
-				.firstName("Emily").lastName("Davis")
-				.phoneNumber("+359888100103")
-				.expertiseType(Set.of(ExpertiseType.CE)).available(false)
-				.company(medCompany).vehicles(Set.of(sprinter))
-				.build());
-
-		DriverEntity robert = driverRepository.save(DriverEntity.builder()
-				.firstName("Robert").lastName("Miller")
-				.phoneNumber("+359888100104")
 				.expertiseType(Set.of(ExpertiseType.B)).available(true)
-				.company(fleetCompany).vehicles(Set.of(passat))
+				.imageUrl(DRIVER_M_2)
+				.company(company).vehicles(Set.of(v3)).build());
+	}
+
+	private void seedLogistics(String password) {
+		CompanyEntity company = companyRepository.save(CompanyEntity.builder()
+				.name("BG Cargo Logistics")
+				.address("12 Industrial Zone, Plovdiv")
+				.phone("+359888200002")
+				.email("ops@bgcargo.bg")
+				.description("Long-haul freight across the Balkans")
+				.companyType(CompanyType.LOGISTICS)
 				.build());
 
-		// Orders
-		LocalDateTime now = LocalDateTime.now();
-
-		OrderEntity order1 = orderRepository.save(OrderEntity.builder()
-				.user(john).driver(michael).vehicle(camry).vehicleType(VehicleType.TAXI)
-				.pickupAddress("123 Main St, Sofia").pickupLatitude(42.6977).pickupLongitude(23.3219)
-				.dropoffAddress("456 Oak Ave, Sofia").dropoffLatitude(42.7105).dropoffLongitude(23.3238)
-				.status(OrderStatus.COMPLETED).estimatedPrice(15.50).finalPrice(16.00)
-				.distanceKm(5.2).estimatedDurationMinutes(15)
-				.createdAt(now.minusDays(7)).updatedAt(now.minusDays(7))
+		userRepository.save(UserEntity.builder()
+				.email("admin@bgcargo.bg")
+				.password(password)
+				.authorities(Set.of("ROLE_COMPANY_ADMIN"))
+				.company(company)
 				.build());
 
-		OrderEntity order2 = orderRepository.save(OrderEntity.builder()
-				.user(john).driver(sarah).vehicle(octavia).vehicleType(VehicleType.TAXI)
-				.pickupAddress("789 Pine Rd, Sofia").pickupLatitude(42.6850).pickupLongitude(23.3150)
-				.dropoffAddress("321 Elm St, Sofia").dropoffLatitude(42.7000).dropoffLongitude(23.3400)
-				.status(OrderStatus.COMPLETED).estimatedPrice(35.00).finalPrice(38.50)
-				.distanceKm(8.7).estimatedDurationMinutes(22)
-				.createdAt(now.minusDays(3)).updatedAt(now.minusDays(3))
+		VehicleEntity v1 = vehicleRepository.save(VehicleEntity.builder()
+				.brand("Volvo").model("FH16").licensePlate("PB1122MT")
+				.imageUrl("https://blog.truckscout24.com/de/wp-content/uploads/2013/10/Volvo-FH16-750-19-fotoshowImageNew-58e110e5-80060.jpg")
+				.airConditioning(true).numberOfSeats(2).trunkCapacity(40000.0)
+				.vehicleType(VehicleType.SEMI).vehicleTier(VehicleTier.PREMIUM)
+				.company(company).build());
+
+		VehicleEntity v2 = vehicleRepository.save(VehicleEntity.builder()
+				.brand("Scania").model("R450").licensePlate("PB2233HK")
+				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Scania_R_450_-_2017.jpg/1280px-Scania_R_450_-_2017.jpg")
+				.airConditioning(true).numberOfSeats(2).trunkCapacity(38000.0)
+				.vehicleType(VehicleType.SEMI).vehicleTier(VehicleTier.BASIC)
+				.company(company).build());
+
+		VehicleEntity v3 = vehicleRepository.save(VehicleEntity.builder()
+				.brand("MAN").model("TGX").licensePlate("PB3344TX")
+				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/MAN_TGX_18.500_4x2_BLS_Efficient_Line_3_%28cropped%29.jpg/1280px-MAN_TGX_18.500_4x2_BLS_Efficient_Line_3_%28cropped%29.jpg")
+				.airConditioning(true).numberOfSeats(2).trunkCapacity(42000.0)
+				.vehicleType(VehicleType.SEMI).vehicleTier(VehicleTier.PREMIUM)
+				.company(company).build());
+
+		driverRepository.save(DriverEntity.builder()
+				.firstName("David").lastName("Brown")
+				.phoneNumber("+359888200200")
+				.expertiseType(Set.of(ExpertiseType.C, ExpertiseType.CE)).available(true)
+				.imageUrl(DRIVER_M_3)
+				.company(company).vehicles(Set.of(v1)).build());
+		driverRepository.save(DriverEntity.builder()
+				.firstName("Peter").lastName("Anderson")
+				.phoneNumber("+359888200201")
+				.expertiseType(Set.of(ExpertiseType.CE)).available(true)
+				.imageUrl(DRIVER_M_4)
+				.company(company).vehicles(Set.of(v2)).build());
+		driverRepository.save(DriverEntity.builder()
+				.firstName("Lyudmila").lastName("Koleva")
+				.phoneNumber("+359888200202")
+				.expertiseType(Set.of(ExpertiseType.C, ExpertiseType.CE)).available(true)
+				.imageUrl(DRIVER_F_2)
+				.company(company).vehicles(Set.of(v3)).build());
+	}
+
+	private void seedAmbulance(String password) {
+		CompanyEntity company = companyRepository.save(CompanyEntity.builder()
+				.name("MedTransport BG")
+				.address("25 Hospital St, Sofia")
+				.phone("+359888300003")
+				.email("info@medtransport.bg")
+				.description("24/7 ambulance and medical transport")
+				.companyType(CompanyType.AMBULANCE)
 				.build());
 
-		OrderEntity order3 = orderRepository.save(OrderEntity.builder()
-				.user(jane).driver(michael).vehicle(crv).vehicleType(VehicleType.TAXI)
-				.pickupAddress("555 Cedar Ln, Sofia").pickupLatitude(42.7100).pickupLongitude(23.2900)
-				.dropoffAddress("777 Birch Dr, Sofia").dropoffLatitude(42.6800).dropoffLongitude(23.3500)
-				.status(OrderStatus.COMPLETED).estimatedPrice(22.00).finalPrice(22.00)
-				.distanceKm(6.8).estimatedDurationMinutes(18)
-				.createdAt(now.minusDays(1)).updatedAt(now.minusDays(1))
+		userRepository.save(UserEntity.builder()
+				.email("admin@medtransport.bg")
+				.password(password)
+				.authorities(Set.of("ROLE_COMPANY_ADMIN"))
+				.company(company)
 				.build());
 
-		orderRepository.save(OrderEntity.builder()
-				.user(jane).vehicleType(VehicleType.TAXI)
-				.pickupAddress("999 Maple Way, Sofia").pickupLatitude(42.6900).pickupLongitude(23.3100)
-				.dropoffAddress("111 Spruce Ct, Sofia").dropoffLatitude(42.7200).dropoffLongitude(23.3300)
-				.status(OrderStatus.CREATED).estimatedPrice(18.00)
-				.distanceKm(4.5).estimatedDurationMinutes(12)
-				.createdAt(now).updatedAt(now)
+		VehicleEntity v1 = vehicleRepository.save(VehicleEntity.builder()
+				.brand("Mercedes").model("Sprinter").licensePlate("CB1010AM")
+				.imageUrl("https://www.nvsuk.com/images/sprinter/IMG-20210905-WA0020.jpg")
+				.airConditioning(true).numberOfSeats(3).trunkCapacity(1500.0)
+				.vehicleType(VehicleType.AMBULANCE).vehicleTier(VehicleTier.PREMIUM)
+				.company(company).build());
+
+		VehicleEntity v2 = vehicleRepository.save(VehicleEntity.builder()
+				.brand("Volkswagen").model("Crafter").licensePlate("CB2020BO")
+				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/VW_Crafter_Ambulance_%282021%29_-_Front_view.jpg/1280px-VW_Crafter_Ambulance_%282021%29_-_Front_view.jpg")
+				.airConditioning(true).numberOfSeats(3).trunkCapacity(1400.0)
+				.vehicleType(VehicleType.AMBULANCE).vehicleTier(VehicleTier.BASIC)
+				.company(company).build());
+
+		VehicleEntity v3 = vehicleRepository.save(VehicleEntity.builder()
+				.brand("Ford").model("Transit").licensePlate("CB3030EK")
+				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Ford_Transit_Ambulance.jpg/1280px-Ford_Transit_Ambulance.jpg")
+				.airConditioning(true).numberOfSeats(3).trunkCapacity(1300.0)
+				.vehicleType(VehicleType.AMBULANCE).vehicleTier(VehicleTier.BASIC)
+				.company(company).build());
+
+		driverRepository.save(DriverEntity.builder()
+				.firstName("Emily").lastName("Davis")
+				.phoneNumber("+359888300300")
+				.expertiseType(Set.of(ExpertiseType.B, ExpertiseType.C1)).available(true)
+				.imageUrl(DRIVER_F_3)
+				.company(company).vehicles(Set.of(v1)).build());
+		driverRepository.save(DriverEntity.builder()
+				.firstName("Robert").lastName("Miller")
+				.phoneNumber("+359888300301")
+				.expertiseType(Set.of(ExpertiseType.C1)).available(true)
+				.imageUrl(DRIVER_M_5)
+				.company(company).vehicles(Set.of(v2)).build());
+		driverRepository.save(DriverEntity.builder()
+				.firstName("Stefan").lastName("Iliev")
+				.phoneNumber("+359888300302")
+				.expertiseType(Set.of(ExpertiseType.B, ExpertiseType.C1)).available(true)
+				.imageUrl(DRIVER_M_6)
+				.company(company).vehicles(Set.of(v3)).build());
+	}
+
+	private void seedRental(String password) {
+		CompanyEntity company = companyRepository.save(CompanyEntity.builder()
+				.name("Sofia Auto Rentals")
+				.address("8 Airport Rd, Sofia")
+				.phone("+359888400004")
+				.email("hello@sofia-rent.bg")
+				.description("Self-drive car rental, airport pickup")
+				.companyType(CompanyType.RENTAL)
 				.build());
 
-		paymentRepository.save(PaymentEntity.builder()
-				.order(order1).amount(16.00).paymentMethod(PaymentMethod.CREDIT_CARD)
-				.status(PaymentStatus.COMPLETED).transactionId("TXN-001-2024").currency("EUR")
+		userRepository.save(UserEntity.builder()
+				.email("admin@sofia-rent.bg")
+				.password(password)
+				.authorities(Set.of("ROLE_COMPANY_ADMIN"))
+				.company(company)
 				.build());
 
-		paymentRepository.save(PaymentEntity.builder()
-				.order(order2).amount(38.50).paymentMethod(PaymentMethod.DEBIT_CARD)
-				.status(PaymentStatus.COMPLETED).transactionId("TXN-002-2024").currency("EUR")
+		VehicleEntity v1 = vehicleRepository.save(VehicleEntity.builder()
+				.brand("Renault").model("Clio").licensePlate("CA4040HP")
+				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Renault_Clio_V_in_Aalborg.jpg/1280px-Renault_Clio_V_in_Aalborg.jpg")
+				.airConditioning(true).numberOfSeats(5).trunkCapacity(300.0)
+				.vehicleType(VehicleType.RENTAL).vehicleTier(VehicleTier.BASIC)
+				.company(company).build());
+
+		VehicleEntity v2 = vehicleRepository.save(VehicleEntity.builder()
+				.brand("Hyundai").model("Tucson").licensePlate("CA5050PT")
+				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/2021_Hyundai_Tucson_%28NX4%29_Premium_2.0.jpg/1280px-2021_Hyundai_Tucson_%28NX4%29_Premium_2.0.jpg")
+				.airConditioning(true).numberOfSeats(5).trunkCapacity(620.0)
+				.vehicleType(VehicleType.RENTAL).vehicleTier(VehicleTier.PREMIUM)
+				.company(company).build());
+
+		VehicleEntity v3 = vehicleRepository.save(VehicleEntity.builder()
+				.brand("BMW").model("3 Series").licensePlate("CA6060TY")
+				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/BMW_G20_IMG_0028.jpg/1280px-BMW_G20_IMG_0028.jpg")
+				.airConditioning(true).numberOfSeats(5).trunkCapacity(480.0)
+				.vehicleType(VehicleType.RENTAL).vehicleTier(VehicleTier.PREMIUM)
+				.company(company).build());
+
+		driverRepository.save(DriverEntity.builder()
+				.firstName("Anna").lastName("Petrova")
+				.phoneNumber("+359888400400")
+				.expertiseType(Set.of(ExpertiseType.B)).available(true)
+				.imageUrl(DRIVER_F_4)
+				.company(company).vehicles(Set.of(v1)).build());
+		driverRepository.save(DriverEntity.builder()
+				.firstName("Ivan").lastName("Dimitrov")
+				.phoneNumber("+359888400401")
+				.expertiseType(Set.of(ExpertiseType.B)).available(true)
+				.imageUrl(DRIVER_M_7)
+				.company(company).vehicles(Set.of(v2)).build());
+		driverRepository.save(DriverEntity.builder()
+				.firstName("Teodora").lastName("Mihaylova")
+				.phoneNumber("+359888400402")
+				.expertiseType(Set.of(ExpertiseType.B)).available(true)
+				.imageUrl(DRIVER_F_5)
+				.company(company).vehicles(Set.of(v3)).build());
+	}
+
+	private void seedFuneral(String password) {
+		CompanyEntity company = companyRepository.save(CompanyEntity.builder()
+				.name("Last Journey BG")
+				.address("3 Memorial Park, Varna")
+				.phone("+359888500005")
+				.email("office@lastjourney.bg")
+				.description("Respectful funeral transport services")
+				.companyType(CompanyType.FUNERAL)
 				.build());
 
-		paymentRepository.save(PaymentEntity.builder()
-				.order(order3).amount(22.00).paymentMethod(PaymentMethod.CASH)
-				.status(PaymentStatus.COMPLETED).currency("EUR")
+		userRepository.save(UserEntity.builder()
+				.email("admin@lastjourney.bg")
+				.password(password)
+				.authorities(Set.of("ROLE_COMPANY_ADMIN"))
+				.company(company)
 				.build());
 
-		ratingRepository.save(RatingEntity.builder()
-				.order(order1).rating(5)
-				.comment("Excellent service! Driver was very professional and the car was clean.")
+		VehicleEntity v1 = vehicleRepository.save(VehicleEntity.builder()
+				.brand("Cadillac").model("XTS Hearse").licensePlate("BT1010YX")
+				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Cadillac_XTS_hearse.jpg/1280px-Cadillac_XTS_hearse.jpg")
+				.airConditioning(true).numberOfSeats(2).trunkCapacity(2500.0)
+				.vehicleType(VehicleType.FUNERAL).vehicleTier(VehicleTier.PREMIUM)
+				.company(company).build());
+
+		VehicleEntity v2 = vehicleRepository.save(VehicleEntity.builder()
+				.brand("Lincoln").model("MKT Hearse").licensePlate("BT2020XA")
+				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Lincoln_MKT_Hearse.jpg/1280px-Lincoln_MKT_Hearse.jpg")
+				.airConditioning(true).numberOfSeats(2).trunkCapacity(2400.0)
+				.vehicleType(VehicleType.FUNERAL).vehicleTier(VehicleTier.PREMIUM)
+				.company(company).build());
+
+		VehicleEntity v3 = vehicleRepository.save(VehicleEntity.builder()
+				.brand("Mercedes").model("E-Class Hearse").licensePlate("BT3030AE")
+				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Mercedes_Benz_W212_hearse.jpg/1280px-Mercedes_Benz_W212_hearse.jpg")
+				.airConditioning(true).numberOfSeats(2).trunkCapacity(2300.0)
+				.vehicleType(VehicleType.FUNERAL).vehicleTier(VehicleTier.BASIC)
+				.company(company).build());
+
+		driverRepository.save(DriverEntity.builder()
+				.firstName("George").lastName("Stoyanov")
+				.phoneNumber("+359888500500")
+				.expertiseType(Set.of(ExpertiseType.B)).available(true)
+				.imageUrl(DRIVER_M_8)
+				.company(company).vehicles(Set.of(v1)).build());
+		driverRepository.save(DriverEntity.builder()
+				.firstName("Maria").lastName("Hristova")
+				.phoneNumber("+359888500501")
+				.expertiseType(Set.of(ExpertiseType.B)).available(true)
+				.imageUrl(DRIVER_F_6)
+				.company(company).vehicles(Set.of(v2)).build());
+		driverRepository.save(DriverEntity.builder()
+				.firstName("Vasil").lastName("Marinov")
+				.phoneNumber("+359888500502")
+				.expertiseType(Set.of(ExpertiseType.B)).available(true)
+				.imageUrl(DRIVER_M_9)
+				.company(company).vehicles(Set.of(v3)).build());
+	}
+
+	private void seedProm(String password) {
+		CompanyEntity company = companyRepository.save(CompanyEntity.builder()
+				.name("Royal Prom Limos")
+				.address("44 Boyana St, Sofia")
+				.phone("+359888600006")
+				.email("book@royalprom.bg")
+				.description("Luxury limousines for proms and weddings")
+				.companyType(CompanyType.PROM)
 				.build());
 
-		ratingRepository.save(RatingEntity.builder()
-				.order(order2).rating(4)
-				.comment("Great experience, arrived on time.")
+		userRepository.save(UserEntity.builder()
+				.email("admin@royalprom.bg")
+				.password(password)
+				.authorities(Set.of("ROLE_COMPANY_ADMIN"))
+				.company(company)
 				.build());
 
-		ratingRepository.save(RatingEntity.builder()
-				.order(order3).rating(5)
-				.comment("Very comfortable ride, would recommend!")
-				.build());
+		VehicleEntity v1 = vehicleRepository.save(VehicleEntity.builder()
+				.brand("Chrysler").model("300 Limousine").licensePlate("CA7070EM")
+				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Chrysler_300_limo.jpg/1280px-Chrysler_300_limo.jpg")
+				.airConditioning(true).numberOfSeats(8).trunkCapacity(400.0)
+				.vehicleType(VehicleType.PROM).vehicleTier(VehicleTier.PREMIUM)
+				.company(company).build());
+
+		VehicleEntity v2 = vehicleRepository.save(VehicleEntity.builder()
+				.brand("Lincoln").model("Stretch").licensePlate("CA8080MO")
+				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Lincoln_Town_Car_Stretch_Limo.jpg/1280px-Lincoln_Town_Car_Stretch_Limo.jpg")
+				.airConditioning(true).numberOfSeats(10).trunkCapacity(450.0)
+				.vehicleType(VehicleType.PROM).vehicleTier(VehicleTier.PREMIUM)
+				.company(company).build());
+
+		VehicleEntity v3 = vehicleRepository.save(VehicleEntity.builder()
+				.brand("Hummer").model("H2 Limo").licensePlate("CA9090OT")
+				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Hummer_H2_Limousine.jpg/1280px-Hummer_H2_Limousine.jpg")
+				.airConditioning(true).numberOfSeats(14).trunkCapacity(500.0)
+				.vehicleType(VehicleType.PROM).vehicleTier(VehicleTier.PREMIUM)
+				.company(company).build());
+
+		driverRepository.save(DriverEntity.builder()
+				.firstName("Nikolay").lastName("Georgiev")
+				.phoneNumber("+359888600600")
+				.expertiseType(Set.of(ExpertiseType.B, ExpertiseType.D1)).available(true)
+				.imageUrl(DRIVER_M_1)
+				.company(company).vehicles(Set.of(v1)).build());
+		driverRepository.save(DriverEntity.builder()
+				.firstName("Elena").lastName("Vasileva")
+				.phoneNumber("+359888600601")
+				.expertiseType(Set.of(ExpertiseType.D1)).available(true)
+				.imageUrl(DRIVER_F_7)
+				.company(company).vehicles(Set.of(v2)).build());
+		driverRepository.save(DriverEntity.builder()
+				.firstName("Boris").lastName("Tonev")
+				.phoneNumber("+359888600602")
+				.expertiseType(Set.of(ExpertiseType.B, ExpertiseType.D1)).available(true)
+				.imageUrl(DRIVER_M_10)
+				.company(company).vehicles(Set.of(v3)).build());
 	}
 }
