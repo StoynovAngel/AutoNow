@@ -1,10 +1,13 @@
 package com.angel.autonow.order;
 
 import com.angel.autonow.data.TestData;
+import com.angel.autonow.company.CompanyEntity;
 import com.angel.autonow.driver.DriverEntity;
 import com.angel.autonow.driver.DriverRepository;
+import com.angel.autonow.pricing.PricingService;
 import com.angel.autonow.user.UserEntity;
 import com.angel.autonow.user.UserRepository;
+import com.angel.autonow.vehicle.VehicleClass;
 import com.angel.autonow.vehicle.VehicleEntity;
 import com.angel.autonow.vehicle.VehicleRepository;
 import com.angel.autonow.vehicle.VehicleType;
@@ -21,6 +24,10 @@ import java.util.Optional;
 import static com.angel.autonow.data.TestData.NON_EXISTENT_ID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anySet;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -42,6 +49,9 @@ class OrderServiceTest {
 
 	@Mock
 	private VehicleRepository vehicleRepository;
+
+	@Mock
+	private PricingService pricingService;
 
 	@InjectMocks
 	private OrderService orderService;
@@ -192,6 +202,65 @@ class OrderServiceTest {
 	}
 
 	@Test
+	void getOrdersByUserIdAndStatus_returnFiltered() {
+		UserEntity user = UserEntity.builder().id(1L).build();
+		OrderEntity orderEntity = OrderEntity.builder().id(1L).user(user).status(OrderStatus.CREATED).createdAt(NOW).build();
+		OrderResponseDTO orderResponse = TestData.createOrderResponse(1L, 1L, OrderStatus.CREATED, NOW);
+
+		when(orderRepository.findFirstByUserIdAndStatusInOrderByCreatedAtDesc(eq(1L), anySet()))
+				.thenReturn(Optional.of(orderEntity));
+		when(orderMapper.toDTO(orderEntity)).thenReturn(orderResponse);
+
+		var result = orderService.getActiveOrderByUserId(1L);
+
+		assertTrue(result.isPresent());
+		assertEquals(OrderStatus.CREATED, result.get().status());
+	}
+
+	@Test
+	void getOrdersByUserIdAndStatus_noMatch_returnEmpty() {
+		when(orderRepository.findFirstByUserIdAndStatusInOrderByCreatedAtDesc(eq(1L), anySet()))
+				.thenReturn(Optional.empty());
+
+		var result = orderService.getActiveOrderByUserId(1L);
+
+		assertTrue(result.isEmpty());
+	}
+
+	@Test
+	void getActiveOrderForCaller_owner_returnsOrder() {
+		UserEntity owner = UserEntity.builder().id(1L).email("owner@example.com").build();
+		OrderEntity orderEntity = OrderEntity.builder().id(1L).user(owner).status(OrderStatus.CREATED).createdAt(NOW).build();
+		OrderResponseDTO orderResponse = TestData.createOrderResponse(1L, 1L, OrderStatus.CREATED, NOW);
+
+		when(userRepository.findById(1L)).thenReturn(Optional.of(owner));
+		when(orderRepository.findFirstByUserIdAndStatusInOrderByCreatedAtDesc(eq(1L), anySet()))
+				.thenReturn(Optional.of(orderEntity));
+		when(orderMapper.toDTO(orderEntity)).thenReturn(orderResponse);
+
+		var result = orderService.getActiveOrderForCaller(1L, "owner@example.com");
+
+		assertTrue(result.isPresent());
+	}
+
+	@Test
+	void getActiveOrderForCaller_otherUser_throwsForbidden() {
+		UserEntity owner = UserEntity.builder().id(1L).email("owner@example.com").build();
+		when(userRepository.findById(1L)).thenReturn(Optional.of(owner));
+
+		assertThrows(OrderForbiddenException.class,
+				() -> orderService.getActiveOrderForCaller(1L, "stranger@example.com"));
+	}
+
+	@Test
+	void getActiveOrderForCaller_unknownUser_throwsForbidden() {
+		when(userRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
+
+		assertThrows(OrderForbiddenException.class,
+				() -> orderService.getActiveOrderForCaller(NON_EXISTENT_ID, "owner@example.com"));
+	}
+
+	@Test
 	void getAllOrders_returnList() {
 		UserEntity user = UserEntity.builder().id(1L).build();
 		OrderEntity firstOrder = OrderEntity.builder().id(1L).user(user).createdAt(NOW).build();
@@ -321,5 +390,330 @@ class OrderServiceTest {
 		var result = orderService.deleteOrder(NON_EXISTENT_ID);
 
 		assertFalse(result);
+	}
+
+	@Test
+	void createOrder_withDistance_setsEstimatedPriceFromPricingService() {
+		OrderRequestDTO request = OrderRequestDTO.builder()
+				.userId(1L).vehicleType(VehicleType.TAXI)
+				.pickupAddress(TestData.DEFAULT_PICKUP_ADDRESS).pickupLatitude(TestData.DEFAULT_PICKUP_LAT).pickupLongitude(TestData.DEFAULT_PICKUP_LNG)
+				.dropoffAddress(TestData.DEFAULT_DROPOFF_ADDRESS).dropoffLatitude(TestData.DEFAULT_DROPOFF_LAT).dropoffLongitude(TestData.DEFAULT_DROPOFF_LNG)
+				.distanceKm(10.0).vehicleClass(VehicleClass.STANDARD)
+				.build();
+		UserEntity user = UserEntity.builder().id(1L).build();
+		OrderEntity entity = OrderEntity.builder().vehicleType(VehicleType.TAXI).build();
+		OrderEntity saved = OrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).estimatedPrice(14.50).createdAt(NOW).build();
+		OrderResponseDTO response = TestData.createOrderResponse(1L, 1L, OrderStatus.CREATED, NOW);
+
+		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+		when(orderMapper.toEntity(request)).thenReturn(entity);
+		when(pricingService.calculatePrice(10.0, VehicleClass.STANDARD)).thenReturn(14.50);
+		when(orderRepository.save(entity)).thenReturn(saved);
+		when(orderMapper.toDTO(saved)).thenReturn(response);
+
+		orderService.createOrder(request);
+
+		verify(pricingService).calculatePrice(10.0, VehicleClass.STANDARD);
+		assertEquals(14.50, entity.getEstimatedPrice());
+	}
+
+	@Test
+	void createOrder_noDistance_doesNotCallPricingService() {
+		OrderRequestDTO request = OrderRequestDTO.builder()
+				.userId(1L).vehicleType(VehicleType.TAXI)
+				.pickupAddress(TestData.DEFAULT_PICKUP_ADDRESS).pickupLatitude(TestData.DEFAULT_PICKUP_LAT).pickupLongitude(TestData.DEFAULT_PICKUP_LNG)
+				.dropoffAddress(TestData.DEFAULT_DROPOFF_ADDRESS).dropoffLatitude(TestData.DEFAULT_DROPOFF_LAT).dropoffLongitude(TestData.DEFAULT_DROPOFF_LNG)
+				.build();
+		UserEntity user = UserEntity.builder().id(1L).build();
+		OrderEntity entity = OrderEntity.builder().vehicleType(VehicleType.TAXI).build();
+		OrderEntity saved = OrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).createdAt(NOW).build();
+		OrderResponseDTO response = TestData.createOrderResponse(1L, 1L, OrderStatus.CREATED, NOW);
+
+		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+		when(orderMapper.toEntity(request)).thenReturn(entity);
+		when(orderRepository.save(entity)).thenReturn(saved);
+		when(orderMapper.toDTO(saved)).thenReturn(response);
+
+		orderService.createOrder(request);
+
+		verify(pricingService, never()).calculatePrice(anyDouble(), any());
+	}
+
+	@Test
+	void estimate_delegatesToPricingService() {
+		OrderEstimateRequestDTO request = OrderEstimateRequestDTO.builder()
+				.vehicleType(VehicleType.TAXI).distanceKm(10.0).vehicleClass(VehicleClass.STANDARD)
+				.build();
+		OrderEstimateResponseDTO response = OrderEstimateResponseDTO.builder()
+				.estimatedPrice(14.50).currency("EUR").distanceKm(10.0).build();
+
+		when(pricingService.estimate(request)).thenReturn(response);
+
+		var result = orderService.estimate(request);
+
+		assertEquals(14.50, result.estimatedPrice());
+		assertEquals("EUR", result.currency());
+		verify(pricingService).estimate(request);
+	}
+
+	@Test
+	void assignOrder_validIds_setsDriverVehicleAndStatusAccepted() {
+		OrderAssignmentRequestDTO request = OrderAssignmentRequestDTO.builder().driverId(2L).vehicleId(3L).build();
+		CompanyEntity company = CompanyEntity.builder().id(10L).build();
+		OrderEntity order = OrderEntity.builder().id(1L).status(OrderStatus.CREATED).vehicleType(VehicleType.TAXI).build();
+		DriverEntity driver = DriverEntity.builder().id(2L).company(company).available(true).build();
+		VehicleEntity vehicle = VehicleEntity.builder().id(3L).company(company).vehicleType(VehicleType.TAXI).build();
+		OrderResponseDTO response = TestData.createOrderResponse(1L, 1L, OrderStatus.ACCEPTED, NOW);
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+		when(driverRepository.findById(2L)).thenReturn(Optional.of(driver));
+		when(vehicleRepository.findById(3L)).thenReturn(Optional.of(vehicle));
+		when(orderRepository.driverHasActiveOrderExcluding(eq(2L), anySet(), eq(1L))).thenReturn(false);
+		when(orderRepository.vehicleHasActiveOrderExcluding(eq(3L), anySet(), eq(1L))).thenReturn(false);
+		when(orderRepository.save(order)).thenReturn(order);
+		when(orderMapper.toDTO(order)).thenReturn(response);
+
+		var result = orderService.assignOrder(1L, request);
+
+		assertTrue(result.isPresent());
+		assertEquals(driver, order.getDriver());
+		assertEquals(vehicle, order.getVehicle());
+		assertEquals(OrderStatus.ACCEPTED, order.getStatus());
+	}
+
+	@Test
+	void assignOrder_orderNotFound_returnsEmpty() {
+		OrderAssignmentRequestDTO request = OrderAssignmentRequestDTO.builder().driverId(2L).vehicleId(3L).build();
+		when(orderRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
+
+		var result = orderService.assignOrder(NON_EXISTENT_ID, request);
+
+		assertTrue(result.isEmpty());
+		verify(orderRepository, never()).save(any());
+	}
+
+	@Test
+	void assignOrder_driverNotFound_returnsEmpty() {
+		OrderAssignmentRequestDTO request = OrderAssignmentRequestDTO.builder().driverId(NON_EXISTENT_ID).vehicleId(3L).build();
+		OrderEntity order = OrderEntity.builder().id(1L).status(OrderStatus.CREATED).build();
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+		when(driverRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
+
+		var result = orderService.assignOrder(1L, request);
+
+		assertTrue(result.isEmpty());
+		verify(orderRepository, never()).save(any());
+	}
+
+	@Test
+	void assignOrder_vehicleNotFound_returnsEmpty() {
+		OrderAssignmentRequestDTO request = OrderAssignmentRequestDTO.builder().driverId(2L).vehicleId(NON_EXISTENT_ID).build();
+		OrderEntity order = OrderEntity.builder().id(1L).status(OrderStatus.CREATED).build();
+		DriverEntity driver = DriverEntity.builder().id(2L).build();
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+		when(driverRepository.findById(2L)).thenReturn(Optional.of(driver));
+		when(vehicleRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
+
+		var result = orderService.assignOrder(1L, request);
+
+		assertTrue(result.isEmpty());
+		verify(orderRepository, never()).save(any());
+	}
+
+	@Test
+	void assignOrder_driverAndVehicleDifferentCompanies_throwsConflict() {
+		OrderAssignmentRequestDTO request = OrderAssignmentRequestDTO.builder().driverId(2L).vehicleId(3L).build();
+		OrderEntity order = OrderEntity.builder().id(1L).status(OrderStatus.CREATED).vehicleType(VehicleType.TAXI).build();
+		DriverEntity driver = DriverEntity.builder().id(2L)
+				.company(CompanyEntity.builder().id(10L).build()).available(true).build();
+		VehicleEntity vehicle = VehicleEntity.builder().id(3L)
+				.company(CompanyEntity.builder().id(11L).build()).vehicleType(VehicleType.TAXI).build();
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+		when(driverRepository.findById(2L)).thenReturn(Optional.of(driver));
+		when(vehicleRepository.findById(3L)).thenReturn(Optional.of(vehicle));
+
+		assertThrows(OrderConflictException.class, () -> orderService.assignOrder(1L, request));
+		verify(orderRepository, never()).save(any());
+	}
+
+	@Test
+	void assignOrder_vehicleTypeMismatch_throwsConflict() {
+		OrderAssignmentRequestDTO request = OrderAssignmentRequestDTO.builder().driverId(2L).vehicleId(3L).build();
+		CompanyEntity company = CompanyEntity.builder().id(10L).build();
+		OrderEntity order = OrderEntity.builder().id(1L).status(OrderStatus.CREATED).vehicleType(VehicleType.TAXI).build();
+		DriverEntity driver = DriverEntity.builder().id(2L).company(company).available(true).build();
+		VehicleEntity vehicle = VehicleEntity.builder().id(3L).company(company).vehicleType(VehicleType.AMBULANCE).build();
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+		when(driverRepository.findById(2L)).thenReturn(Optional.of(driver));
+		when(vehicleRepository.findById(3L)).thenReturn(Optional.of(vehicle));
+
+		assertThrows(OrderConflictException.class, () -> orderService.assignOrder(1L, request));
+		verify(orderRepository, never()).save(any());
+	}
+
+	@Test
+	void assignOrder_driverNotAvailable_throwsConflict() {
+		OrderAssignmentRequestDTO request = OrderAssignmentRequestDTO.builder().driverId(2L).vehicleId(3L).build();
+		CompanyEntity company = CompanyEntity.builder().id(10L).build();
+		OrderEntity order = OrderEntity.builder().id(1L).status(OrderStatus.CREATED).vehicleType(VehicleType.TAXI).build();
+		DriverEntity driver = DriverEntity.builder().id(2L).company(company).available(false).build();
+		VehicleEntity vehicle = VehicleEntity.builder().id(3L).company(company).vehicleType(VehicleType.TAXI).build();
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+		when(driverRepository.findById(2L)).thenReturn(Optional.of(driver));
+		when(vehicleRepository.findById(3L)).thenReturn(Optional.of(vehicle));
+
+		assertThrows(OrderConflictException.class, () -> orderService.assignOrder(1L, request));
+		verify(orderRepository, never()).save(any());
+	}
+
+	@Test
+	void assignOrder_driverHasAnotherActiveOrder_throwsConflict() {
+		OrderAssignmentRequestDTO request = OrderAssignmentRequestDTO.builder().driverId(2L).vehicleId(3L).build();
+		CompanyEntity company = CompanyEntity.builder().id(10L).build();
+		OrderEntity order = OrderEntity.builder().id(1L).status(OrderStatus.CREATED).vehicleType(VehicleType.TAXI).build();
+		DriverEntity driver = DriverEntity.builder().id(2L).company(company).available(true).build();
+		VehicleEntity vehicle = VehicleEntity.builder().id(3L).company(company).vehicleType(VehicleType.TAXI).build();
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+		when(driverRepository.findById(2L)).thenReturn(Optional.of(driver));
+		when(vehicleRepository.findById(3L)).thenReturn(Optional.of(vehicle));
+		when(orderRepository.driverHasActiveOrderExcluding(eq(2L), anySet(), eq(1L))).thenReturn(true);
+
+		assertThrows(OrderConflictException.class, () -> orderService.assignOrder(1L, request));
+		verify(orderRepository, never()).save(any());
+	}
+
+	@Test
+	void assignOrder_vehicleHasAnotherActiveOrder_throwsConflict() {
+		OrderAssignmentRequestDTO request = OrderAssignmentRequestDTO.builder().driverId(2L).vehicleId(3L).build();
+		CompanyEntity company = CompanyEntity.builder().id(10L).build();
+		OrderEntity order = OrderEntity.builder().id(1L).status(OrderStatus.CREATED).vehicleType(VehicleType.TAXI).build();
+		DriverEntity driver = DriverEntity.builder().id(2L).company(company).available(true).build();
+		VehicleEntity vehicle = VehicleEntity.builder().id(3L).company(company).vehicleType(VehicleType.TAXI).build();
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+		when(driverRepository.findById(2L)).thenReturn(Optional.of(driver));
+		when(vehicleRepository.findById(3L)).thenReturn(Optional.of(vehicle));
+		when(orderRepository.driverHasActiveOrderExcluding(eq(2L), anySet(), eq(1L))).thenReturn(false);
+		when(orderRepository.vehicleHasActiveOrderExcluding(eq(3L), anySet(), eq(1L))).thenReturn(true);
+
+		assertThrows(OrderConflictException.class, () -> orderService.assignOrder(1L, request));
+		verify(orderRepository, never()).save(any());
+	}
+
+	@Test
+	void createOrder_userHasActiveOrder_throwsConflict() {
+		OrderRequestDTO request = TestData.createOrderRequest(1L);
+		UserEntity user = UserEntity.builder().id(1L).build();
+
+		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+		when(orderRepository.existsByUserIdAndStatusIn(eq(1L), anySet())).thenReturn(true);
+
+		assertThrows(OrderConflictException.class, () -> orderService.createOrder(request));
+		verify(orderRepository, never()).save(any());
+	}
+
+	@Test
+	void cancelOrder_byOwner_setsStatusCanceled() {
+		UserEntity owner = UserEntity.builder().id(1L).email("owner@example.com").build();
+		OrderEntity order = OrderEntity.builder().id(1L).user(owner).status(OrderStatus.CREATED).build();
+		OrderResponseDTO response = TestData.createOrderResponse(1L, 1L, OrderStatus.CANCELED, NOW);
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+		when(orderRepository.save(order)).thenReturn(order);
+		when(orderMapper.toDTO(order)).thenReturn(response);
+
+		var result = orderService.cancelOrder(1L, "owner@example.com");
+
+		assertTrue(result.isPresent());
+		assertEquals(OrderStatus.CANCELED, order.getStatus());
+	}
+
+	@Test
+	void adminCancelOrder_setsStatusCanceled() {
+		UserEntity owner = UserEntity.builder().id(1L).email("owner@example.com").build();
+		OrderEntity order = OrderEntity.builder().id(1L).user(owner).status(OrderStatus.ACCEPTED).build();
+		OrderResponseDTO response = TestData.createOrderResponse(1L, 1L, OrderStatus.CANCELED, NOW);
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+		when(orderRepository.save(order)).thenReturn(order);
+		when(orderMapper.toDTO(order)).thenReturn(response);
+
+		var result = orderService.adminCancelOrder(1L);
+
+		assertTrue(result.isPresent());
+		assertEquals(OrderStatus.CANCELED, order.getStatus());
+	}
+
+	@Test
+	void cancelOrder_byNonOwner_throwsForbidden() {
+		UserEntity owner = UserEntity.builder().id(1L).email("owner@example.com").build();
+		OrderEntity order = OrderEntity.builder().id(1L).user(owner).status(OrderStatus.CREATED).build();
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+
+		assertThrows(OrderForbiddenException.class,
+				() -> orderService.cancelOrder(1L, "stranger@example.com"));
+		verify(orderRepository, never()).save(any());
+	}
+
+	@Test
+	void cancelOrder_inProgressStatus_throwsConflict() {
+		UserEntity owner = UserEntity.builder().id(1L).email("owner@example.com").build();
+		OrderEntity order = OrderEntity.builder().id(1L).user(owner).status(OrderStatus.IN_PROGRESS).build();
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+
+		assertThrows(OrderConflictException.class,
+				() -> orderService.cancelOrder(1L, "owner@example.com"));
+		verify(orderRepository, never()).save(any());
+	}
+
+	@Test
+	void cancelOrder_completedStatus_throwsConflict() {
+		UserEntity owner = UserEntity.builder().id(1L).email("owner@example.com").build();
+		OrderEntity order = OrderEntity.builder().id(1L).user(owner).status(OrderStatus.COMPLETED).build();
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+
+		assertThrows(OrderConflictException.class,
+				() -> orderService.cancelOrder(1L, "owner@example.com"));
+		verify(orderRepository, never()).save(any());
+	}
+
+	@Test
+	void adminCancelOrder_inProgressStatus_throwsConflict() {
+		UserEntity owner = UserEntity.builder().id(1L).email("owner@example.com").build();
+		OrderEntity order = OrderEntity.builder().id(1L).user(owner).status(OrderStatus.IN_PROGRESS).build();
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+
+		assertThrows(OrderConflictException.class, () -> orderService.adminCancelOrder(1L));
+		verify(orderRepository, never()).save(any());
+	}
+
+	@Test
+	void cancelOrder_orderNotFound_returnsEmpty() {
+		when(orderRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
+
+		var result = orderService.cancelOrder(NON_EXISTENT_ID, "owner@example.com");
+
+		assertTrue(result.isEmpty());
+		verify(orderRepository, never()).save(any());
+	}
+
+	@Test
+	void adminCancelOrder_orderNotFound_returnsEmpty() {
+		when(orderRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
+
+		var result = orderService.adminCancelOrder(NON_EXISTENT_ID);
+
+		assertTrue(result.isEmpty());
+		verify(orderRepository, never()).save(any());
 	}
 }

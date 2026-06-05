@@ -1,0 +1,74 @@
+import { StyleSheet } from 'react-native';
+
+export const createStyles = (theme: any) => StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: theme.colors.background,
+    },
+    mapContainer: {
+        flex: 1,
+        position: 'relative',
+    },
+    backFab: {
+        position: 'absolute',
+        top: 48,
+        left: 16,
+        width: 44,
+        height: 44,
+        borderRadius: 22,
+        backgroundColor: theme.colors.surface,
+        justifyContent: 'center',
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.15,
+        shadowRadius: 4,
+        elevation: 3,
+    },
+    sheet: {
+        backgroundColor: theme.colors.surface,
+        borderTopLeftRadius: 24,
+        borderTopRightRadius: 24,
+        padding: 16,
+        gap: 12,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: -2 },
+        shadowOpacity: 0.08,
+        shadowRadius: 6,
+        elevation: 4,
+    },
+    title: {
+        fontSize: 18,
+        fontWeight: '700',
+        color: theme.colors.textPrimary,
+    },
+    routeInfo: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+    },
+    routeMetric: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: theme.colors.textPrimary,
+    },
+    routeError: {
+        fontSize: 14,
+        color: '#EF4444',
+    },
+    confirmButton: {
+        backgroundColor: theme.colors.primary,
+        borderRadius: 16,
+        paddingVertical: 14,
+        alignItems: 'center',
+        marginTop: 4,
+    },
+    confirmButtonDisabled: {
+        opacity: 0.4,
+    },
+    confirmText: {
+        fontSize: 16,
+        fontWeight: '700',
+        color: '#FFFFFF',
+    },
+});

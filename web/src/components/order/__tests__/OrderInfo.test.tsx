@@ -57,6 +57,35 @@ describe('OrderInfo', () => {
         expect(screen.getByText('driver no-show')).toBeInTheDocument();
     });
 
+    it('renders capacity fields when set', () => {
+        render(<OrderInfo order={makeOrder({
+            passengerCount: 6,
+            luggageCount: 4,
+            vehicleClass: 'XL',
+            requiresAirConditioning: true,
+        })} />);
+
+        expect(screen.getByText('6')).toBeInTheDocument();
+        expect(screen.getByText('4')).toBeInTheDocument();
+        expect(screen.getByText('XL')).toBeInTheDocument();
+        expect(screen.getByText('Required')).toBeInTheDocument();
+    });
+
+    it('renders "Not required" when requiresAirConditioning is explicitly false', () => {
+        render(<OrderInfo order={makeOrder({ requiresAirConditioning: false })} />);
+        expect(screen.getByText('Not required')).toBeInTheDocument();
+    });
+
+    it('renders an em-dash when optional numeric fields are undefined', () => {
+        render(<OrderInfo order={makeOrder({
+            estimatedPrice: undefined,
+            finalPrice: undefined,
+            distanceKm: undefined,
+        })} />);
+        // None of the renders above should throw, and all three should fall back to —
+        expect(screen.getAllByText('—').length).toBeGreaterThanOrEqual(3);
+    });
+
     it('does not render the status select when onChangeStatus is not provided', () => {
         render(<OrderInfo order={makeOrder()} />);
         expect(screen.queryByRole('combobox')).not.toBeInTheDocument();
@@ -69,6 +98,43 @@ describe('OrderInfo', () => {
         fireEvent.change(screen.getByRole('combobox'), { target: { value: 'ACCEPTED' } });
 
         expect(onChangeStatus).toHaveBeenCalledWith('ACCEPTED');
+    });
+
+    it('shows an Assign button on CREATED orders when onOpenAssign is provided', () => {
+        const onOpenAssign = vi.fn();
+        render(<OrderInfo order={makeOrder()} onOpenAssign={onOpenAssign} />);
+
+        const btn = screen.getByTestId('order-assign-btn');
+        expect(btn).toHaveTextContent('Assign');
+        fireEvent.click(btn);
+        expect(onOpenAssign).toHaveBeenCalled();
+    });
+
+    it('shows a Reassign button on ACCEPTED orders that already have a driver', () => {
+        render(
+            <OrderInfo
+                order={makeOrder({ status: 'ACCEPTED', driverId: 5 })}
+                onOpenAssign={vi.fn()}
+            />,
+        );
+        expect(screen.getByTestId('order-assign-btn')).toHaveTextContent('Reassign');
+    });
+
+    it('hides the Assign button on terminal statuses', () => {
+        const { rerender } = render(
+            <OrderInfo order={makeOrder({ status: 'COMPLETED' })} onOpenAssign={vi.fn()} />,
+        );
+        expect(screen.queryByTestId('order-assign-btn')).not.toBeInTheDocument();
+
+        rerender(
+            <OrderInfo order={makeOrder({ status: 'CANCELED' })} onOpenAssign={vi.fn()} />,
+        );
+        expect(screen.queryByTestId('order-assign-btn')).not.toBeInTheDocument();
+    });
+
+    it('does not show the Assign button when onOpenAssign is omitted', () => {
+        render(<OrderInfo order={makeOrder()} />);
+        expect(screen.queryByTestId('order-assign-btn')).not.toBeInTheDocument();
     });
 });
 

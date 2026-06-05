@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,9 +25,9 @@ public class RatingController {
 	private final RatingService ratingService;
 
 	@PostMapping
-	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
-	public ResponseEntity<RatingResponseDTO> createRating(@Valid @RequestBody RatingRequestDTO request) {
-		return ratingService.createRating(request)
+	@PreAuthorize("hasRole('CUSTOMER')")
+	public ResponseEntity<RatingResponseDTO> createRating(@Valid @RequestBody RatingRequestDTO request, Authentication authentication) {
+		return ratingService.createRating(request, authentication.getName())
 				.map(rating -> ResponseEntity.status(HttpStatus.CREATED).body(rating))
 				.orElse(ResponseEntity.badRequest().build());
 	}

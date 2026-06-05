@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -32,6 +33,12 @@ public class OrderController {
 				.orElse(ResponseEntity.badRequest().build());
 	}
 
+	@PostMapping("/estimate")
+	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
+	public OrderEstimateResponseDTO estimate(@Valid @RequestBody OrderEstimateRequestDTO request) {
+		return orderService.estimate(request);
+	}
+
 	@GetMapping("/{id}")
 	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'DRIVER')")
 	public OrderResponseDTO getOrderById(@PathVariable Long id) {
@@ -42,6 +49,19 @@ public class OrderController {
 	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
 	public List<OrderResponseDTO> getOrdersByUserId(@PathVariable Long userId) {
 		return orderService.getOrdersByUserId(userId);
+	}
+
+	@GetMapping("/user/{userId}/active")
+	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
+	public ResponseEntity<OrderResponseDTO> getActiveOrderByUserId(@PathVariable Long userId, Authentication authentication) {
+		boolean isAdmin = authentication.getAuthorities().stream()
+				.anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()));
+		var result = isAdmin
+				? orderService.getActiveOrderByUserId(userId)
+				: orderService.getActiveOrderForCaller(userId, authentication.getName());
+		return result
+				.map(ResponseEntity::ok)
+				.orElse(ResponseEntity.notFound().build());
 	}
 
 	@GetMapping
@@ -62,6 +82,30 @@ public class OrderController {
 	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'DRIVER')")
 	public ResponseEntity<OrderResponseDTO> updateOrderStatus(@PathVariable Long id, @Valid @RequestBody OrderStatusUpdateDTO request) {
 		return orderService.updateOrderStatus(id, request.status())
+				.map(ResponseEntity::ok)
+				.orElse(ResponseEntity.notFound().build());
+	}
+
+	@PatchMapping("/{id}/assign")
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<OrderResponseDTO> assignOrder(@PathVariable Long id, @Valid @RequestBody OrderAssignmentRequestDTO request) {
+		return orderService.assignOrder(id, request)
+				.map(ResponseEntity::ok)
+				.orElse(ResponseEntity.notFound().build());
+	}
+
+	@PostMapping("/{id}/cancel")
+	@PreAuthorize("hasRole('CUSTOMER')")
+	public ResponseEntity<OrderResponseDTO> cancelOrder(@PathVariable Long id, Authentication authentication) {
+		return orderService.cancelOrder(id, authentication.getName())
+				.map(ResponseEntity::ok)
+				.orElse(ResponseEntity.notFound().build());
+	}
+
+	@PostMapping("/{id}/admin-cancel")
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<OrderResponseDTO> adminCancelOrder(@PathVariable Long id) {
+		return orderService.adminCancelOrder(id)
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());
 	}

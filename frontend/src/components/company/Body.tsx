@@ -8,6 +8,7 @@ import { useTheme } from '../../hooks/useTheme';
 import { useTranslation } from 'react-i18next';
 import { useCompanies } from '../../hooks/useCompanies';
 import { getVehicleOptions } from '../../constants/vehicleOptions';
+import { VehicleType } from '../../types/vehicle';
 import CompanyListHeader from './CompanyListHeader';
 import CompanyCard from './CompanyCard';
 import LoadingState from './LoadingState';
@@ -42,6 +43,14 @@ const Body = () => {
         navigation.goBack();
     };
 
+    const handleBookCompany = (companyId: number) => {
+        if (vehicleType === VehicleType.TAXI) {
+            navigation.navigate('bookingPreferences', { companyId, vehicleType });
+        } else {
+            navigation.navigate('bookingMap', { companyId, vehicleType, preferences: {} });
+        }
+    };
+
     return (
         <View style={styles.container}>
             <CompanyListHeader
@@ -65,6 +74,7 @@ const Body = () => {
                                 key={company.id}
                                 company={company}
                                 onCall={handleCallCompany}
+                                onBook={handleBookCompany}
                             />
                         ))}
                     </View>

@@ -1,5 +1,6 @@
 package com.angel.autonow.order;
 
+import com.angel.autonow.vehicle.VehicleClass;
 import com.angel.autonow.vehicle.VehicleType;
 import lombok.Builder;
 
@@ -11,6 +12,8 @@ public record OrderResponseDTO(
 		Long userId,
 		Long driverId,
 		Long vehicleId,
+		DriverInfoDTO driver,
+		VehicleInfoDTO vehicle,
 		VehicleType vehicleType,
 		String pickupAddress,
 		Double pickupLatitude,
@@ -24,6 +27,10 @@ public record OrderResponseDTO(
 		Double distanceKm,
 		Integer estimatedDurationMinutes,
 		String specialRequirements,
+		Integer passengerCount,
+		Integer luggageCount,
+		VehicleClass vehicleClass,
+		Boolean requiresAirConditioning,
 		String cancellationReason,
 		LocalDateTime createdAt,
 		LocalDateTime updatedAt

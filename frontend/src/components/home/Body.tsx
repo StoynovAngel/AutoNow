@@ -8,6 +8,7 @@ import {getVehicleOptions} from "../../constants/vehicleOptions";
 import {VehicleType} from "../../types/vehicle";
 import {MaterialIcons} from "@expo/vector-icons";
 import {useTranslation} from "react-i18next";
+import {useResumeActiveOrder} from "../../hooks/useResumeActiveOrder";
 
 const Body = () => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -15,6 +16,8 @@ const Body = () => {
     const {t} = useTranslation();
     const styles = createStyles(theme);
     const vehicleOptions = getVehicleOptions(t);
+
+    useResumeActiveOrder();
 
     const handleVehicleSelect = (type: VehicleType) => {
         navigation.navigate('companyList', { vehicleType: type });

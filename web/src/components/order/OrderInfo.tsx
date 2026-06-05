@@ -1,4 +1,5 @@
-import { Badge, Select } from 'flowbite-react';
+import { Badge, Button, Select } from 'flowbite-react';
+import type {VehicleClass} from '../../services/vehicle/vehicleService';
 
 export type OrderStatus =
     | 'CREATED'
@@ -33,6 +34,10 @@ export interface Order {
     distanceKm?: number;
     estimatedDurationMinutes?: number;
     specialRequirements?: string;
+    passengerCount?: number;
+    luggageCount?: number;
+    vehicleClass?: VehicleClass;
+    requiresAirConditioning?: boolean;
     cancellationReason?: string;
     createdAt: string;
     updatedAt: string;
@@ -77,9 +82,12 @@ const formatDateTime = (iso: string): string => {
 interface OrderInfoProps {
     order: Order | null;
     onChangeStatus?: (status: OrderStatus) => void;
+    onOpenAssign?: () => void;
 }
 
-const OrderInfo = ({order, onChangeStatus}: OrderInfoProps) => {
+const ASSIGNABLE_STATUSES: OrderStatus[] = ['CREATED', 'ACCEPTED', 'IN_PROGRESS'];
+
+const OrderInfo = ({order, onChangeStatus, onOpenAssign}: OrderInfoProps) => {
     if (!order) {
         return (
             <div className="flex-1 bg-white rounded-xl shadow-md p-4 border border-gray-100">
@@ -106,6 +114,16 @@ const OrderInfo = ({order, onChangeStatus}: OrderInfoProps) => {
                     <Badge color={statusBadgeColor(order.status)}>
                         {order.status}
                     </Badge>
+                    {onOpenAssign && ASSIGNABLE_STATUSES.includes(order.status) && (
+                        <Button
+                            size="xs"
+                            color="blue"
+                            onClick={onOpenAssign}
+                            data-testid="order-assign-btn"
+                        >
+                            {order.driverId ? 'Reassign' : 'Assign'}
+                        </Button>
+                    )}
                     {onChangeStatus && (
                         <label className="sr-only" htmlFor={`order-${order.id}-status`}>Change status</label>
                     )}
@@ -167,26 +185,44 @@ const OrderInfo = ({order, onChangeStatus}: OrderInfoProps) => {
                 <div>
                     <label className="block text-xs font-semibold text-gray-500 mb-1">Estimated Price</label>
                     <p className="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
-                        {order.estimatedPrice !== undefined ? order.estimatedPrice.toFixed(2) : '—'}
+                        {order.estimatedPrice != null ? order.estimatedPrice.toFixed(2) : '—'}
                     </p>
                 </div>
-                <div>
-                    <label className="block text-xs font-semibold text-gray-500 mb-1">Final Price</label>
-                    <p className="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
-                        {order.finalPrice !== undefined ? order.finalPrice.toFixed(2) : '—'}
-                    </p>
-                </div>
-
                 <div>
                     <label className="block text-xs font-semibold text-gray-500 mb-1">Distance (km)</label>
                     <p className="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
-                        {order.distanceKm !== undefined ? order.distanceKm.toFixed(2) : '—'}
+                        {order.distanceKm != null ? order.distanceKm.toFixed(2) : '—'}
                     </p>
                 </div>
                 <div>
                     <label className="block text-xs font-semibold text-gray-500 mb-1">Est. Duration (min)</label>
                     <p className="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
                         {order.estimatedDurationMinutes ?? '—'}
+                    </p>
+                </div>
+
+                <div>
+                    <label className="block text-xs font-semibold text-gray-500 mb-1">Passengers</label>
+                    <p className="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
+                        {order.passengerCount ?? '—'}
+                    </p>
+                </div>
+                <div>
+                    <label className="block text-xs font-semibold text-gray-500 mb-1">Luggage</label>
+                    <p className="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
+                        {order.luggageCount ?? '—'}
+                    </p>
+                </div>
+                <div>
+                    <label className="block text-xs font-semibold text-gray-500 mb-1">Vehicle Class</label>
+                    <p className="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
+                        {order.vehicleClass ?? '—'}
+                    </p>
+                </div>
+                <div>
+                    <label className="block text-xs font-semibold text-gray-500 mb-1">Air Conditioning</label>
+                    <p className="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
+                        {order.requiresAirConditioning === undefined ? '—' : order.requiresAirConditioning ? 'Required' : 'Not required'}
                     </p>
                 </div>
 

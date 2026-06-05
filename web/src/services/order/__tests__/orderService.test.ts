@@ -76,6 +76,14 @@ describe('orderService', () => {
         expect(apiClient.patch).toHaveBeenCalledWith('/orders/5/status', { status: 'ACCEPTED' });
     });
 
+    it('assignOrder PATCHes /orders/{id}/assign with driverId and vehicleId', async () => {
+        vi.mocked(apiClient.patch).mockResolvedValue({ data: { id: 5, driverId: 11, vehicleId: 22 } });
+
+        await orderService.assignOrder('5', 11, 22);
+
+        expect(apiClient.patch).toHaveBeenCalledWith('/orders/5/assign', { driverId: 11, vehicleId: 22 });
+    });
+
     it('deleteOrder DELETEs /orders/{id}', async () => {
         vi.mocked(apiClient.delete).mockResolvedValue({});
 

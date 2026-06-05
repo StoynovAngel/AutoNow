@@ -20,17 +20,48 @@ const order: Order = {
 
 describe('OrderManagementContent', () => {
     it('renders the empty placeholder when no order is selected', () => {
-        render(<OrderManagementContent selectedOrder={null} onChangeStatus={vi.fn()} />);
+        render(
+            <OrderManagementContent
+                selectedOrder={null}
+                drivers={[]}
+                vehicles={[]}
+                onChangeStatus={vi.fn()}
+                onAssign={vi.fn()}
+            />,
+        );
         expect(screen.getByText('Select an order to view details')).toBeInTheDocument();
     });
 
     it('renders the selected order and forwards status changes', () => {
         const onChangeStatus = vi.fn();
-        render(<OrderManagementContent selectedOrder={order} onChangeStatus={onChangeStatus} />);
+        render(
+            <OrderManagementContent
+                selectedOrder={order}
+                drivers={[]}
+                vehicles={[]}
+                onChangeStatus={onChangeStatus}
+                onAssign={vi.fn()}
+            />,
+        );
 
         expect(screen.getByText('Order #42')).toBeInTheDocument();
 
         fireEvent.change(screen.getByRole('combobox'), { target: { value: 'ACCEPTED' } });
         expect(onChangeStatus).toHaveBeenCalledWith('ACCEPTED');
+    });
+
+    it('opens the assignment modal when the Assign button is clicked', () => {
+        render(
+            <OrderManagementContent
+                selectedOrder={order}
+                drivers={[]}
+                vehicles={[]}
+                onChangeStatus={vi.fn()}
+                onAssign={vi.fn()}
+            />,
+        );
+
+        fireEvent.click(screen.getByTestId('order-assign-btn'));
+        expect(screen.getByText('Assign Order — #42')).toBeInTheDocument();
     });
 });

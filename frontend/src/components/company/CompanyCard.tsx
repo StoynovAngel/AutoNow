@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { Company } from '../../types/company';
 import { useTheme } from '../../hooks/useTheme';
 import { createStyles } from './Body.style';
@@ -8,10 +9,12 @@ import { createStyles } from './Body.style';
 interface CompanyCardProps {
     company: Company;
     onCall: (phoneNumber: string) => void;
+    onBook?: (companyId: number) => void;
 }
 
-const CompanyCard = ({ company, onCall }: CompanyCardProps) => {
+const CompanyCard = ({ company, onCall, onBook }: CompanyCardProps) => {
     const { theme } = useTheme();
+    const { t } = useTranslation();
     const styles = createStyles(theme);
 
     return (
@@ -47,6 +50,16 @@ const CompanyCard = ({ company, onCall }: CompanyCardProps) => {
                         </View>
                     )}
                 </View>
+
+                {onBook && (
+                    <Pressable
+                        style={styles.bookButton}
+                        onPress={() => onBook(company.id)}
+                        testID={`book-${company.id}`}
+                    >
+                        <Text style={styles.bookButtonText}>{t('booking-book')}</Text>
+                    </Pressable>
+                )}
             </View>
 
             <Pressable

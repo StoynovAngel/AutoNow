@@ -1,6 +1,8 @@
 package com.angel.autonow.order;
 
+import com.angel.autonow.vehicle.VehicleClass;
 import com.angel.autonow.vehicle.VehicleType;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -46,7 +48,17 @@ public record OrderRequestDTO(
 		@Positive(message = "Estimated duration must be positive")
 		Integer estimatedDurationMinutes,
 
-		String specialRequirements
+		String specialRequirements,
+
+		@Positive(message = "Passenger count must be positive")
+		Integer passengerCount,
+
+		@Min(value = 0, message = "Luggage count cannot be negative")
+		Integer luggageCount,
+
+		VehicleClass vehicleClass,
+
+		Boolean requiresAirConditioning
 ) {
 
 }
