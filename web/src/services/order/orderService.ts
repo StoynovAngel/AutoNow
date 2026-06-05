@@ -54,6 +54,11 @@ export const orderService = {
         return data;
     },
 
+    assignOrder: async (id: string, driverId: number, vehicleId: number): Promise<Order> => {
+        const {data} = await apiClient.patch(`/orders/${id}/assign`, {driverId, vehicleId});
+        return data;
+    },
+
     deleteOrder: async (id: string): Promise<void> => {
         await apiClient.delete(`/orders/${id}`);
     }

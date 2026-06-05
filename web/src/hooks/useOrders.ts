@@ -52,6 +52,14 @@ export const useOrders = () => {
         }
     };
 
+    const assignOrder = async (driverId: number, vehicleId: number) => {
+        if (!selectedOrderId) return;
+        const updated = await orderService.assignOrder(String(selectedOrderId), driverId, vehicleId);
+        setSelectedOrder(updated);
+        setOrders((prev) => prev.map((o) => (o.id === updated.id ? updated : o)));
+        return updated;
+    };
+
     return {
         orders,
         selectedOrderId,
@@ -60,6 +68,7 @@ export const useOrders = () => {
         error,
         selectOrder,
         changeOrderStatus,
+        assignOrder,
         refreshOrders: fetchOrders,
     };
 };

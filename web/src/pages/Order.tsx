@@ -1,10 +1,13 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import Navigation from '../components/ui/Navigation.tsx';
 import PageStatus from '../components/ui/PageStatus.tsx';
 import OrderManagementSidebar from '../components/order/OrderManagementSidebar';
 import type {StatusFilter} from '../components/order/OrderManagementSidebar';
 import OrderManagementContent from '../components/order/OrderManagementContent';
 import {useOrders} from '../hooks/useOrders';
+import {useAllDrivers} from '../hooks/useAllDrivers';
+import {vehicleService} from '../services/vehicle/vehicleService';
+import type {Vehicle} from '../components/company/VehicleInfo';
 
 const Order = () => {
     const {
@@ -15,7 +18,27 @@ const Order = () => {
         error,
         selectOrder,
         changeOrderStatus,
+        assignOrder,
+        refreshOrders,
     } = useOrders();
+
+    const {drivers} = useAllDrivers();
+    const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+
+    useEffect(() => {
+        let cancelled = false;
+        vehicleService
+            .getAllVehicles()
+            .then((data) => {
+                if (!cancelled) setVehicles(data);
+            })
+            .catch(() => {
+                if (!cancelled) setVehicles([]);
+            });
+        return () => {
+            cancelled = true;
+        };
+    }, []);
 
     const [statusFilter, setStatusFilter] = useState<StatusFilter>('ALL');
 
@@ -26,6 +49,11 @@ const Order = () => {
     if (error) {
         return <PageStatus state="error" message={error} />;
     }
+
+    const handleAssign = async (driverId: number, vehicleId: number) => {
+        await assignOrder(driverId, vehicleId);
+        await refreshOrders();
+    };
 
     return (
         <>
@@ -46,7 +74,10 @@ const Order = () => {
                         />
                         <OrderManagementContent
                             selectedOrder={selectedOrder}
+                            drivers={drivers}
+                            vehicles={vehicles}
                             onChangeStatus={changeOrderStatus}
+                            onAssign={handleAssign}
                         />
                     </div>
                 </div>

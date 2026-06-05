@@ -116,4 +116,60 @@ describe('useOrders', () => {
 
         expect(result.current.orders).toHaveLength(2);
     });
+
+    it('assignOrder is a no-op when no order is selected', async () => {
+        vi.mocked(orderService.getAllOrders).mockResolvedValue([]);
+
+        const { result } = renderHook(() => useOrders());
+        await waitFor(() => expect(result.current.loading).toBe(false));
+
+        await act(async () => {
+            await result.current.assignOrder(11, 22);
+        });
+
+        expect(orderService.assignOrder).not.toHaveBeenCalled();
+    });
+
+    it('assignOrder calls the service and updates state', async () => {
+        vi.mocked(orderService.getAllOrders).mockResolvedValue([order(1), order(2)]);
+        vi.mocked(orderService.getOrderById).mockResolvedValue(order(1));
+        vi.mocked(orderService.assignOrder).mockResolvedValue(
+            order(1, { driverId: 11, vehicleId: 22, status: 'ACCEPTED' }),
+        );
+
+        const { result } = renderHook(() => useOrders());
+        await waitFor(() => expect(result.current.orders).toHaveLength(2));
+
+        await act(async () => {
+            await result.current.selectOrder(1);
+        });
+
+        await act(async () => {
+            await result.current.assignOrder(11, 22);
+        });
+
+        expect(orderService.assignOrder).toHaveBeenCalledWith('1', 11, 22);
+        expect(result.current.selectedOrder?.driverId).toBe(11);
+        expect(result.current.selectedOrder?.vehicleId).toBe(22);
+        expect(result.current.orders.find((o) => o.id === 1)?.status).toBe('ACCEPTED');
+    });
+
+    it('assignOrder propagates the service error so callers can handle it', async () => {
+        vi.mocked(orderService.getAllOrders).mockResolvedValue([order(1)]);
+        vi.mocked(orderService.getOrderById).mockResolvedValue(order(1));
+        vi.mocked(orderService.assignOrder).mockRejectedValue(new Error('boom'));
+
+        const { result } = renderHook(() => useOrders());
+        await waitFor(() => expect(result.current.orders).toHaveLength(1));
+
+        await act(async () => {
+            await result.current.selectOrder(1);
+        });
+
+        await expect(
+            act(async () => {
+                await result.current.assignOrder(11, 22);
+            }),
+        ).rejects.toThrow('boom');
+    });
 });
