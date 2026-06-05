@@ -145,4 +145,37 @@ describe('BookingMapBody — estimate display', () => {
         expect(mockEstimate).not.toHaveBeenCalled();
         expect(queryByTestId('estimate-price')).toBeNull();
     });
+
+    it('clears stale estimate and disables confirm while a new estimate is loading', async () => {
+        mockGetRoute.mockResolvedValue({
+            distanceKm: 5.2,
+            durationMinutes: 12,
+            geometry: { type: 'LineString', coordinates: [] },
+        });
+
+        let resolveEstimate: (v: unknown) => void = () => {};
+        mockEstimate.mockImplementationOnce(
+            () => new Promise((resolve) => {
+                resolveEstimate = resolve;
+            }),
+        );
+
+        const { getByTestId, queryByTestId } = renderWithAuth();
+        await act(async () => {
+            selectBothAddresses(getByTestId as never);
+        });
+
+        await waitFor(() => expect(getByTestId('estimate-loading')).toBeTruthy());
+        expect(queryByTestId('estimate-price')).toBeNull();
+        expect(getByTestId('booking-confirm').props.accessibilityState?.disabled).toBe(true);
+
+        await act(async () => {
+            resolveEstimate({ estimatedPrice: 14.5, currency: 'EUR', distanceKm: 5.2 });
+        });
+
+        await waitFor(() => {
+            expect(getByTestId('estimate-price').props.children.join('')).toContain('14.50');
+        });
+        expect(getByTestId('booking-confirm').props.accessibilityState?.disabled).toBeFalsy();
+    });
 });

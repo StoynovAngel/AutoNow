@@ -67,9 +67,11 @@ const BookingMapBody = () => {
     useEffect(() => {
         if (!routeResult) {
             setEstimate(undefined);
+            setEstimateLoading(false);
             return;
         }
         let cancelled = false;
+        setEstimate(undefined);
         setEstimateLoading(true);
         estimateOrder({
             vehicleType,
@@ -122,7 +124,9 @@ const BookingMapBody = () => {
         }
     };
 
-    const canConfirm = Boolean(pickup && destination && routeResult && !submitting);
+    const canConfirm = Boolean(
+        pickup && destination && routeResult && estimate && !estimateLoading && !submitting,
+    );
     void companyId;
 
     const proximity = pickup?.coordinate ?? SOFIA_CENTER;
