@@ -16,7 +16,7 @@ import java.time.ZoneId;
 public class PricingService {
 
 	private final PricingProperties pricingProperties;
-	private final Clock clock;
+	private final Clock zonedClock;
 
 	@Autowired
 	public PricingService(PricingProperties pricingProperties) {
@@ -25,7 +25,7 @@ public class PricingService {
 
 	PricingService(PricingProperties pricingProperties, Clock clock) {
 		this.pricingProperties = pricingProperties;
-		this.clock = clock;
+		this.zonedClock = clock.withZone(ZoneId.of(pricingProperties.timezone()));
 	}
 
 	public OrderEstimateResponseDTO estimate(OrderEstimateRequestDTO request) {
@@ -64,7 +64,7 @@ public class PricingService {
 	}
 
 	private boolean isNight() {
-		int hour = LocalTime.now(clock.withZone(ZoneId.of(pricingProperties.timezone()))).getHour();
+		int hour = LocalTime.now(zonedClock).getHour();
 		int start = pricingProperties.nightStartHour();
 		int end = pricingProperties.nightEndHour();
 
