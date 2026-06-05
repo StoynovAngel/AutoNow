@@ -1,11 +1,10 @@
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { View, Text, Pressable, ActivityIndicator, Linking, Alert } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../hooks/useTheme';
-import { AuthContext } from '../../services/AuthContext';
 import type { RootStackParamList } from '../../navigation/Navigation';
 import {
     cancelOrder,
@@ -29,7 +28,6 @@ const BookingWaitingBody = () => {
     const route = useRoute<BookingWaitingRouteProp>();
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const { orderId } = route.params;
-    const auth = useContext(AuthContext);
 
     const [order, setOrder] = useState<OrderResponse | undefined>();
     const [error, setError] = useState<string | undefined>();
@@ -149,11 +147,8 @@ const BookingWaitingBody = () => {
         }
     };
 
-    void auth;
-
     const status = order?.status;
-    const canCancel =
-        order != null && (status === 'CREATED' || status === 'ACCEPTED') && !cancelling;
+    const canCancel = order != null && (status === 'CREATED' || status === 'ACCEPTED') && !cancelling;
     const showDriver = status === 'ACCEPTED' || status === 'IN_PROGRESS';
     const canSimulate = showDriver && !simulating && !cancelling;
 
