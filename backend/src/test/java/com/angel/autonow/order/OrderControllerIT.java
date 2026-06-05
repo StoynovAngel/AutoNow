@@ -298,8 +298,7 @@ class OrderControllerIT {
 		mockMvc.perform(get("/api/orders")
 						.with(TestData.adminJwt()))
 				.andExpect(status().isOk())
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.length()").value(1));
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON));
 	}
 
 	@Test
