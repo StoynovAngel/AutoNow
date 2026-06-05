@@ -227,6 +227,39 @@ class OrderServiceTest {
 	}
 
 	@Test
+	void getActiveOrderForCaller_owner_returnsOrder() {
+		UserEntity owner = UserEntity.builder().id(1L).email("owner@example.com").build();
+		OrderEntity orderEntity = OrderEntity.builder().id(1L).user(owner).status(OrderStatus.CREATED).createdAt(NOW).build();
+		OrderResponseDTO orderResponse = TestData.createOrderResponse(1L, 1L, OrderStatus.CREATED, NOW);
+
+		when(userRepository.findById(1L)).thenReturn(Optional.of(owner));
+		when(orderRepository.findFirstByUserIdAndStatusInOrderByCreatedAtDesc(eq(1L), anySet()))
+				.thenReturn(Optional.of(orderEntity));
+		when(orderMapper.toDTO(orderEntity)).thenReturn(orderResponse);
+
+		var result = orderService.getActiveOrderForCaller(1L, "owner@example.com");
+
+		assertTrue(result.isPresent());
+	}
+
+	@Test
+	void getActiveOrderForCaller_otherUser_throwsForbidden() {
+		UserEntity owner = UserEntity.builder().id(1L).email("owner@example.com").build();
+		when(userRepository.findById(1L)).thenReturn(Optional.of(owner));
+
+		assertThrows(OrderForbiddenException.class,
+				() -> orderService.getActiveOrderForCaller(1L, "stranger@example.com"));
+	}
+
+	@Test
+	void getActiveOrderForCaller_unknownUser_throwsForbidden() {
+		when(userRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
+
+		assertThrows(OrderForbiddenException.class,
+				() -> orderService.getActiveOrderForCaller(NON_EXISTENT_ID, "owner@example.com"));
+	}
+
+	@Test
 	void getAllOrders_returnList() {
 		UserEntity user = UserEntity.builder().id(1L).build();
 		OrderEntity firstOrder = OrderEntity.builder().id(1L).user(user).createdAt(NOW).build();

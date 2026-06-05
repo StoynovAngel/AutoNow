@@ -95,6 +95,17 @@ public class OrderService {
 				.map(orderMapper::toDTO);
 	}
 
+	public Optional<OrderResponseDTO> getActiveOrderForCaller(Long userId, String callerEmail) {
+		UserEntity owner = userRepository.findById(userId)
+				.orElseThrow(() -> new OrderForbiddenException("Cannot read another user's active order"));
+
+		if (callerEmail == null || !callerEmail.equals(owner.getEmail())) {
+			throw new OrderForbiddenException("Cannot read another user's active order");
+		}
+
+		return getActiveOrderByUserId(userId);
+	}
+
 	public List<OrderResponseDTO> getAllOrders() {
 		return orderRepository.findAll().stream()
 				.map(orderMapper::toDTO)

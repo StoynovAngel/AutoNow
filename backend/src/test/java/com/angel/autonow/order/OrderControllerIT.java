@@ -245,7 +245,7 @@ class OrderControllerIT {
 		orderRepository.save(active);
 
 		mockMvc.perform(get("/api/orders/user/{userId}/active", user.getId())
-						.with(TestData.customerJwt()))
+						.with(TestData.customerJwt(user.getEmail())))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.status").value("CREATED"));
 	}
@@ -256,15 +256,38 @@ class OrderControllerIT {
 		orderRepository.save(completed);
 
 		mockMvc.perform(get("/api/orders/user/{userId}/active", user.getId())
-						.with(TestData.customerJwt()))
+						.with(TestData.customerJwt(user.getEmail())))
 				.andExpect(status().isNotFound());
 	}
 
 	@Test
 	void getActiveOrderByUserId_noOrders_returnsNotFound() throws Exception {
 		mockMvc.perform(get("/api/orders/user/{userId}/active", user.getId())
-						.with(TestData.customerJwt()))
+						.with(TestData.customerJwt(user.getEmail())))
 				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void getActiveOrderByUserId_otherCustomer_isForbidden() throws Exception {
+		var active = TestData.createOrderEntity(user);
+		active.setStatus(OrderStatus.CREATED);
+		orderRepository.save(active);
+
+		mockMvc.perform(get("/api/orders/user/{userId}/active", user.getId())
+						.with(TestData.customerJwt("stranger@example.com")))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	void getActiveOrderByUserId_admin_canReadAnyUser() throws Exception {
+		var active = TestData.createOrderEntity(user);
+		active.setStatus(OrderStatus.CREATED);
+		orderRepository.save(active);
+
+		mockMvc.perform(get("/api/orders/user/{userId}/active", user.getId())
+						.with(TestData.adminJwt()))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.status").value("CREATED"));
 	}
 
 	@Test

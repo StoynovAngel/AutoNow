@@ -53,8 +53,13 @@ public class OrderController {
 
 	@GetMapping("/user/{userId}/active")
 	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
-	public ResponseEntity<OrderResponseDTO> getActiveOrderByUserId(@PathVariable Long userId) {
-		return orderService.getActiveOrderByUserId(userId)
+	public ResponseEntity<OrderResponseDTO> getActiveOrderByUserId(@PathVariable Long userId, Authentication authentication) {
+		boolean isAdmin = authentication.getAuthorities().stream()
+				.anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()));
+		var result = isAdmin
+				? orderService.getActiveOrderByUserId(userId)
+				: orderService.getActiveOrderForCaller(userId, authentication.getName());
+		return result
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());
 	}
