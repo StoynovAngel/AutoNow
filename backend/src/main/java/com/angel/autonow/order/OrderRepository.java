@@ -1,6 +1,8 @@
 package com.angel.autonow.order;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
@@ -12,4 +14,16 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
 	List<OrderEntity> findByUserId(Long userId);
 	Optional<OrderEntity> findFirstByUserIdAndStatusInOrderByCreatedAtDesc(Long userId, Collection<OrderStatus> statuses);
 	boolean existsByUserIdAndStatusIn(Long userId, Collection<OrderStatus> statuses);
+
+	@Query("select count(o) > 0 from OrderEntity o " +
+			"where o.driver.id = :driverId and o.status in :statuses and o.id <> :excludeOrderId")
+	boolean driverHasActiveOrderExcluding(@Param("driverId") Long driverId,
+										  @Param("statuses") Collection<OrderStatus> statuses,
+										  @Param("excludeOrderId") Long excludeOrderId);
+
+	@Query("select count(o) > 0 from OrderEntity o " +
+			"where o.vehicle.id = :vehicleId and o.status in :statuses and o.id <> :excludeOrderId")
+	boolean vehicleHasActiveOrderExcluding(@Param("vehicleId") Long vehicleId,
+										   @Param("statuses") Collection<OrderStatus> statuses,
+										   @Param("excludeOrderId") Long excludeOrderId);
 }

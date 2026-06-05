@@ -1,5 +1,7 @@
 package com.angel.autonow.order;
 
+import com.angel.autonow.company.CompanyEntity;
+import com.angel.autonow.company.CompanyRepository;
 import com.angel.autonow.data.TestData;
 import com.angel.autonow.driver.DriverEntity;
 import com.angel.autonow.driver.DriverRepository;
@@ -53,6 +55,9 @@ class OrderControllerIT {
 
 	@Autowired
 	private VehicleRepository vehicleRepository;
+
+	@Autowired
+	private CompanyRepository companyRepository;
 
 	private UserEntity user;
 
@@ -419,8 +424,13 @@ class OrderControllerIT {
 	void assignOrder_asAdmin_setsDriverVehicleAndStatusAccepted() throws Exception {
 		var order = TestData.createOrderEntity(user);
 		orderRepository.save(order);
-		var driver = driverRepository.save(TestData.createDriverEntity());
-		var vehicle = vehicleRepository.save(TestData.createVehicleEntity());
+		CompanyEntity company = companyRepository.save(TestData.createCompanyEntity());
+		var driverFixture = TestData.createDriverEntity();
+		driverFixture.setCompany(company);
+		var driver = driverRepository.save(driverFixture);
+		var vehicleFixture = TestData.createVehicleEntity();
+		vehicleFixture.setCompany(company);
+		var vehicle = vehicleRepository.save(vehicleFixture);
 
 		var request = OrderAssignmentRequestDTO.builder()
 				.driverId(driver.getId())
@@ -435,6 +445,31 @@ class OrderControllerIT {
 				.andExpect(jsonPath("$.status").value("ACCEPTED"))
 				.andExpect(jsonPath("$.driver.id").value(driver.getId()))
 				.andExpect(jsonPath("$.vehicle.id").value(vehicle.getId()));
+	}
+
+	@Test
+	void assignOrder_driverAndVehicleDifferentCompanies_returnsConflict() throws Exception {
+		var order = TestData.createOrderEntity(user);
+		orderRepository.save(order);
+		CompanyEntity companyA = companyRepository.save(TestData.createCompanyEntity());
+		CompanyEntity companyB = companyRepository.save(TestData.createAnotherCompanyEntity());
+		var driverFixture = TestData.createDriverEntity();
+		driverFixture.setCompany(companyA);
+		var driver = driverRepository.save(driverFixture);
+		var vehicleFixture = TestData.createVehicleEntity();
+		vehicleFixture.setCompany(companyB);
+		var vehicle = vehicleRepository.save(vehicleFixture);
+
+		var request = OrderAssignmentRequestDTO.builder()
+				.driverId(driver.getId())
+				.vehicleId(vehicle.getId())
+				.build();
+
+		mockMvc.perform(patch("/api/orders/{id}/assign", order.getId())
+						.with(TestData.adminJwt())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(request)))
+				.andExpect(status().isConflict());
 	}
 
 	@Test

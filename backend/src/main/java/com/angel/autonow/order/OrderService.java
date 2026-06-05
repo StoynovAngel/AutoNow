@@ -194,11 +194,58 @@ public class OrderService {
 		}
 
 		OrderEntity order = existing.get();
-		order.setDriver(driver.get());
-		order.setVehicle(vehicle.get());
+		DriverEntity driverEntity = driver.get();
+		VehicleEntity vehicleEntity = vehicle.get();
+
+		validateAssignment(order, driverEntity, vehicleEntity);
+
+		order.setDriver(driverEntity);
+		order.setVehicle(vehicleEntity);
 		order.setStatus(OrderStatus.ACCEPTED);
 
 		return Optional.of(orderMapper.toDTO(orderRepository.save(order)));
+	}
+
+	private void validateAssignment(OrderEntity order, DriverEntity driver, VehicleEntity vehicle) {
+		ensureSameCompany(driver, vehicle);
+		ensureVehicleTypeMatches(order, vehicle);
+		ensureDriverAvailable(driver);
+		ensureDriverFree(driver, order.getId());
+		ensureVehicleFree(vehicle, order.getId());
+	}
+
+	private void ensureSameCompany(DriverEntity driver, VehicleEntity vehicle) {
+		var driverCompany = driver.getCompany();
+		var vehicleCompany = vehicle.getCompany();
+
+		if (driverCompany == null || vehicleCompany == null
+				|| !driverCompany.getId().equals(vehicleCompany.getId())) {
+			throw new OrderConflictException("Driver and vehicle must belong to the same company");
+		}
+	}
+
+	private void ensureVehicleTypeMatches(OrderEntity order, VehicleEntity vehicle) {
+		if (vehicle.getVehicleType() != order.getVehicleType()) {
+			throw new OrderConflictException("Vehicle type does not match the order");
+		}
+	}
+
+	private void ensureDriverAvailable(DriverEntity driver) {
+		if (!driver.isAvailable()) {
+			throw new OrderConflictException("Driver is not available");
+		}
+	}
+
+	private void ensureDriverFree(DriverEntity driver, Long currentOrderId) {
+		if (orderRepository.driverHasActiveOrderExcluding(driver.getId(), ACTIVE_STATUSES, currentOrderId)) {
+			throw new OrderConflictException("Driver already has an active order");
+		}
+	}
+
+	private void ensureVehicleFree(VehicleEntity vehicle, Long currentOrderId) {
+		if (orderRepository.vehicleHasActiveOrderExcluding(vehicle.getId(), ACTIVE_STATUSES, currentOrderId)) {
+			throw new OrderConflictException("Vehicle already has an active order");
+		}
 	}
 
 	@Transactional

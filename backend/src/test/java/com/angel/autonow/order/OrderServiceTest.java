@@ -1,6 +1,7 @@
 package com.angel.autonow.order;
 
 import com.angel.autonow.data.TestData;
+import com.angel.autonow.company.CompanyEntity;
 import com.angel.autonow.driver.DriverEntity;
 import com.angel.autonow.driver.DriverRepository;
 import com.angel.autonow.pricing.PricingService;
@@ -458,14 +459,17 @@ class OrderServiceTest {
 	@Test
 	void assignOrder_validIds_setsDriverVehicleAndStatusAccepted() {
 		OrderAssignmentRequestDTO request = OrderAssignmentRequestDTO.builder().driverId(2L).vehicleId(3L).build();
+		CompanyEntity company = CompanyEntity.builder().id(10L).build();
 		OrderEntity order = OrderEntity.builder().id(1L).status(OrderStatus.CREATED).vehicleType(VehicleType.TAXI).build();
-		DriverEntity driver = DriverEntity.builder().id(2L).build();
-		VehicleEntity vehicle = VehicleEntity.builder().id(3L).build();
+		DriverEntity driver = DriverEntity.builder().id(2L).company(company).available(true).build();
+		VehicleEntity vehicle = VehicleEntity.builder().id(3L).company(company).vehicleType(VehicleType.TAXI).build();
 		OrderResponseDTO response = TestData.createOrderResponse(1L, 1L, OrderStatus.ACCEPTED, NOW);
 
 		when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
 		when(driverRepository.findById(2L)).thenReturn(Optional.of(driver));
 		when(vehicleRepository.findById(3L)).thenReturn(Optional.of(vehicle));
+		when(orderRepository.driverHasActiveOrderExcluding(eq(2L), anySet(), eq(1L))).thenReturn(false);
+		when(orderRepository.vehicleHasActiveOrderExcluding(eq(3L), anySet(), eq(1L))).thenReturn(false);
 		when(orderRepository.save(order)).thenReturn(order);
 		when(orderMapper.toDTO(order)).thenReturn(response);
 
@@ -515,6 +519,90 @@ class OrderServiceTest {
 		var result = orderService.assignOrder(1L, request);
 
 		assertTrue(result.isEmpty());
+		verify(orderRepository, never()).save(any());
+	}
+
+	@Test
+	void assignOrder_driverAndVehicleDifferentCompanies_throwsConflict() {
+		OrderAssignmentRequestDTO request = OrderAssignmentRequestDTO.builder().driverId(2L).vehicleId(3L).build();
+		OrderEntity order = OrderEntity.builder().id(1L).status(OrderStatus.CREATED).vehicleType(VehicleType.TAXI).build();
+		DriverEntity driver = DriverEntity.builder().id(2L)
+				.company(CompanyEntity.builder().id(10L).build()).available(true).build();
+		VehicleEntity vehicle = VehicleEntity.builder().id(3L)
+				.company(CompanyEntity.builder().id(11L).build()).vehicleType(VehicleType.TAXI).build();
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+		when(driverRepository.findById(2L)).thenReturn(Optional.of(driver));
+		when(vehicleRepository.findById(3L)).thenReturn(Optional.of(vehicle));
+
+		assertThrows(OrderConflictException.class, () -> orderService.assignOrder(1L, request));
+		verify(orderRepository, never()).save(any());
+	}
+
+	@Test
+	void assignOrder_vehicleTypeMismatch_throwsConflict() {
+		OrderAssignmentRequestDTO request = OrderAssignmentRequestDTO.builder().driverId(2L).vehicleId(3L).build();
+		CompanyEntity company = CompanyEntity.builder().id(10L).build();
+		OrderEntity order = OrderEntity.builder().id(1L).status(OrderStatus.CREATED).vehicleType(VehicleType.TAXI).build();
+		DriverEntity driver = DriverEntity.builder().id(2L).company(company).available(true).build();
+		VehicleEntity vehicle = VehicleEntity.builder().id(3L).company(company).vehicleType(VehicleType.AMBULANCE).build();
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+		when(driverRepository.findById(2L)).thenReturn(Optional.of(driver));
+		when(vehicleRepository.findById(3L)).thenReturn(Optional.of(vehicle));
+
+		assertThrows(OrderConflictException.class, () -> orderService.assignOrder(1L, request));
+		verify(orderRepository, never()).save(any());
+	}
+
+	@Test
+	void assignOrder_driverNotAvailable_throwsConflict() {
+		OrderAssignmentRequestDTO request = OrderAssignmentRequestDTO.builder().driverId(2L).vehicleId(3L).build();
+		CompanyEntity company = CompanyEntity.builder().id(10L).build();
+		OrderEntity order = OrderEntity.builder().id(1L).status(OrderStatus.CREATED).vehicleType(VehicleType.TAXI).build();
+		DriverEntity driver = DriverEntity.builder().id(2L).company(company).available(false).build();
+		VehicleEntity vehicle = VehicleEntity.builder().id(3L).company(company).vehicleType(VehicleType.TAXI).build();
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+		when(driverRepository.findById(2L)).thenReturn(Optional.of(driver));
+		when(vehicleRepository.findById(3L)).thenReturn(Optional.of(vehicle));
+
+		assertThrows(OrderConflictException.class, () -> orderService.assignOrder(1L, request));
+		verify(orderRepository, never()).save(any());
+	}
+
+	@Test
+	void assignOrder_driverHasAnotherActiveOrder_throwsConflict() {
+		OrderAssignmentRequestDTO request = OrderAssignmentRequestDTO.builder().driverId(2L).vehicleId(3L).build();
+		CompanyEntity company = CompanyEntity.builder().id(10L).build();
+		OrderEntity order = OrderEntity.builder().id(1L).status(OrderStatus.CREATED).vehicleType(VehicleType.TAXI).build();
+		DriverEntity driver = DriverEntity.builder().id(2L).company(company).available(true).build();
+		VehicleEntity vehicle = VehicleEntity.builder().id(3L).company(company).vehicleType(VehicleType.TAXI).build();
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+		when(driverRepository.findById(2L)).thenReturn(Optional.of(driver));
+		when(vehicleRepository.findById(3L)).thenReturn(Optional.of(vehicle));
+		when(orderRepository.driverHasActiveOrderExcluding(eq(2L), anySet(), eq(1L))).thenReturn(true);
+
+		assertThrows(OrderConflictException.class, () -> orderService.assignOrder(1L, request));
+		verify(orderRepository, never()).save(any());
+	}
+
+	@Test
+	void assignOrder_vehicleHasAnotherActiveOrder_throwsConflict() {
+		OrderAssignmentRequestDTO request = OrderAssignmentRequestDTO.builder().driverId(2L).vehicleId(3L).build();
+		CompanyEntity company = CompanyEntity.builder().id(10L).build();
+		OrderEntity order = OrderEntity.builder().id(1L).status(OrderStatus.CREATED).vehicleType(VehicleType.TAXI).build();
+		DriverEntity driver = DriverEntity.builder().id(2L).company(company).available(true).build();
+		VehicleEntity vehicle = VehicleEntity.builder().id(3L).company(company).vehicleType(VehicleType.TAXI).build();
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+		when(driverRepository.findById(2L)).thenReturn(Optional.of(driver));
+		when(vehicleRepository.findById(3L)).thenReturn(Optional.of(vehicle));
+		when(orderRepository.driverHasActiveOrderExcluding(eq(2L), anySet(), eq(1L))).thenReturn(false);
+		when(orderRepository.vehicleHasActiveOrderExcluding(eq(3L), anySet(), eq(1L))).thenReturn(true);
+
+		assertThrows(OrderConflictException.class, () -> orderService.assignOrder(1L, request));
 		verify(orderRepository, never()).save(any());
 	}
 
