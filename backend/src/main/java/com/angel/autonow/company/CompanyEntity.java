@@ -18,7 +18,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.URL;
 
 import java.time.LocalDateTime;
 
@@ -51,10 +50,6 @@ public class CompanyEntity {
 	@Email(message = "Email must be valid")
 	@Column(name = "email", unique = true, nullable = false)
 	private String email;
-
-	@URL(message = "Logo URL must be valid")
-	@Column(name = "logo_url")
-	private String logoUrl;
 
 	@Column(name = "description", length = 1000)
 	private String description;

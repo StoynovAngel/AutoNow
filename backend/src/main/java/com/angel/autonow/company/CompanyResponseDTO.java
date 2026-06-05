@@ -11,7 +11,6 @@ public record CompanyResponseDTO(
 		String address,
 		String phone,
 		String email,
-		String logoUrl,
 		String description,
 		CompanyType companyType,
 		LocalDateTime createdAt,
