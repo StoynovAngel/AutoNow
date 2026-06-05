@@ -56,13 +56,12 @@ class VehicleControllerIT {
 				.andExpect(jsonPath("$.model").value("Camry"))
 				.andExpect(jsonPath("$.licensePlate").value("CB1234AB"))
 				.andExpect(jsonPath("$.vehicleType").value("TAXI"))
-				.andExpect(jsonPath("$.vehicleTier").value("BASIC"))
 				.andExpect(jsonPath("$.vehicleClasses").isArray())
 				.andExpect(jsonPath("$.vehicleClasses[0]").value("STANDARD"));
 	}
 
 	@Test
-	void createVehicle_premiumXl_returnsBothClasses() throws Exception {
+	void createVehicle_xlSeating_returnsXlAndStandard() throws Exception {
 		var request = VehicleRequestDTO.builder()
 				.brand("Mercedes")
 				.model("V-Class")
@@ -71,7 +70,6 @@ class VehicleControllerIT {
 				.numberOfSeats(7)
 				.trunkCapacity(900.0)
 				.vehicleType(VehicleType.TAXI)
-				.vehicleTier(VehicleTier.PREMIUM)
 				.build();
 
 		mockMvc.perform(post("/api/vehicles")
@@ -79,8 +77,7 @@ class VehicleControllerIT {
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(request)))
 				.andExpect(status().isCreated())
-				.andExpect(jsonPath("$.vehicleTier").value("PREMIUM"))
-				.andExpect(jsonPath("$.vehicleClasses", org.hamcrest.Matchers.containsInAnyOrder("XL", "PREMIUM")));
+				.andExpect(jsonPath("$.vehicleClasses", org.hamcrest.Matchers.containsInAnyOrder("XL", "STANDARD")));
 	}
 
 	@Test

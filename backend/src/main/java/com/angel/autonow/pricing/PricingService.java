@@ -58,7 +58,6 @@ public class PricingService {
 
 		return switch (vehicleClass) {
 			case XL -> pricingProperties.xlMultiplier();
-			case PREMIUM -> pricingProperties.premiumMultiplier();
 			case STANDARD -> 1.0;
 		};
 	}

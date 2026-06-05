@@ -32,8 +32,6 @@ public record VehicleRequestDTO(
 		@NotNull(message = "Vehicle type is required")
 		VehicleType vehicleType,
 
-		VehicleTier vehicleTier,
-
 		Long companyId
 ) {
 

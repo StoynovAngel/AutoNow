@@ -55,10 +55,6 @@ public class VehicleEntity {
 	@Column(name = "vehicle_type")
 	private VehicleType vehicleType;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "vehicle_tier")
-	private VehicleTier vehicleTier;
-
 	@ManyToOne
 	@JoinColumn(name = "company_id")
 	private CompanyEntity company;

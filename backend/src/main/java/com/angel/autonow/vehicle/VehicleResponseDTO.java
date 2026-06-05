@@ -15,7 +15,6 @@ public record VehicleResponseDTO(
 		Integer numberOfSeats,
 		Double trunkCapacity,
 		VehicleType vehicleType,
-		VehicleTier vehicleTier,
 		Set<VehicleClass> vehicleClasses,
 		Long companyId
 ) {

@@ -50,13 +50,6 @@ class PricingServiceTest {
 	}
 
 	@Test
-	void calculatePrice_premiumDayTime() {
-		PricingService service = serviceAt(14);
-		double price = service.calculatePrice(10.0, VehicleClass.PREMIUM);
-		assertEquals(2.50 + 10.0 * 1.20 * 1.60, price, 0.001);
-	}
-
-	@Test
 	void calculatePrice_nullClass_treatedAsStandard() {
 		PricingService service = serviceAt(14);
 		double price = service.calculatePrice(10.0, null);
