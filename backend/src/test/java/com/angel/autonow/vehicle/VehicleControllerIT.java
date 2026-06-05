@@ -4,6 +4,9 @@ import com.angel.autonow.company.CompanyEntity;
 import com.angel.autonow.company.CompanyRepository;
 import com.angel.autonow.company.CompanyType;
 import com.angel.autonow.data.TestData;
+import com.angel.autonow.driver.DriverEntity;
+import com.angel.autonow.driver.DriverRepository;
+import com.angel.autonow.expertise.ExpertiseType;
 import tools.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +43,9 @@ class VehicleControllerIT {
 
 	@Autowired
 	private CompanyRepository companyRepository;
+
+	@Autowired
+	private DriverRepository driverRepository;
 
 	@Test
 	void createVehicle_asAdmin() throws Exception {
@@ -290,5 +296,84 @@ class VehicleControllerIT {
 	@Test
 	void deleteVehicle_withoutAuth_returnsUnauthorized() throws Exception {
 		mockMvc.perform(delete("/api/vehicles/{id}", 1L)).andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	void getPublicVehiclesByCompanyId_asGuest_filtersByPromAndIncludesDriverPhone() throws Exception {
+		var company = companyRepository.save(CompanyEntity.builder()
+				.name("Prom Co").address("1 Ball St").phone("+359888500200")
+				.email("prom@co.com").companyType(CompanyType.PROM).build());
+
+		var promVehicle = VehicleEntity.builder()
+				.brand("Mercedes").model("E-Class")
+				.licensePlate("CB1234AA").airConditioning(true).numberOfSeats(4)
+				.trunkCapacity(450.0).vehicleType(VehicleType.PROM).company(company).build();
+		vehicleRepository.save(promVehicle);
+
+		var taxiVehicle = VehicleEntity.builder()
+				.brand("Toyota").model("Camry")
+				.licensePlate("CB9999BB").airConditioning(true).numberOfSeats(5)
+				.trunkCapacity(450.0).vehicleType(VehicleType.TAXI).company(company).build();
+		vehicleRepository.save(taxiVehicle);
+
+		var driver = DriverEntity.builder()
+				.firstName("Ivan").lastName("Petrov")
+				.phoneNumber("+359888111222")
+				.expertiseType(java.util.Set.of(ExpertiseType.B))
+				.available(true).company(company)
+				.vehicles(new java.util.HashSet<>(java.util.Set.of(promVehicle)))
+				.build();
+		driverRepository.save(driver);
+
+		mockMvc.perform(get("/api/vehicles/public/company/{companyId}", company.getId())
+						.param("vehicleType", "PROM")
+						.with(TestData.guestJwt()))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.length()").value(1))
+				.andExpect(jsonPath("$[0].brand").value("Mercedes"))
+				.andExpect(jsonPath("$[0].vehicleType").value("PROM"))
+				.andExpect(jsonPath("$[0].driverPhoneNumber").value("+359888111222"));
+	}
+
+	@Test
+	void getPublicVehiclesByCompanyId_asCustomer_returnsOk() throws Exception {
+		var company = companyRepository.save(CompanyEntity.builder()
+				.name("Prom Co 2").address("2 Ball St").phone("+359888500201")
+				.email("prom2@co.com").companyType(CompanyType.PROM).build());
+
+		mockMvc.perform(get("/api/vehicles/public/company/{companyId}", company.getId())
+						.param("vehicleType", "PROM")
+						.with(TestData.customerJwt()))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$").isArray())
+				.andExpect(jsonPath("$").isEmpty());
+	}
+
+	@Test
+	void getPublicVehiclesByCompanyId_withoutAuth_returnsUnauthorized() throws Exception {
+		mockMvc.perform(get("/api/vehicles/public/company/{companyId}", 1L))
+				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	void getPublicVehiclesByCompanyId_noTypeFilter_returnsAllForCompany() throws Exception {
+		var company = companyRepository.save(CompanyEntity.builder()
+				.name("Mixed Co").address("3 Mix St").phone("+359888500202")
+				.email("mix@co.com").companyType(CompanyType.TAXI).build());
+
+		var prom = VehicleEntity.builder()
+				.brand("BMW").model("7").licensePlate("CB2222CC")
+				.numberOfSeats(4).vehicleType(VehicleType.PROM).company(company).build();
+		var taxi = VehicleEntity.builder()
+				.brand("Honda").model("Civic").licensePlate("CB3333DD")
+				.numberOfSeats(4).vehicleType(VehicleType.TAXI).company(company).build();
+		vehicleRepository.save(prom);
+		vehicleRepository.save(taxi);
+
+		mockMvc.perform(get("/api/vehicles/public/company/{companyId}", company.getId())
+						.with(TestData.guestJwt()))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.length()").value(2));
 	}
 }

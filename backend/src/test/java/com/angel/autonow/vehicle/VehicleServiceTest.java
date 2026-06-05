@@ -1,7 +1,10 @@
 package com.angel.autonow.vehicle;
 
+import com.angel.autonow.company.CompanyEntity;
 import com.angel.autonow.company.CompanyRepository;
 import com.angel.autonow.data.TestData;
+import com.angel.autonow.driver.DriverEntity;
+import com.angel.autonow.driver.DriverRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,6 +29,9 @@ class VehicleServiceTest {
 
 	@Mock
 	private CompanyRepository companyRepository;
+
+	@Mock
+	private DriverRepository driverRepository;
 
 	@InjectMocks
 	private VehicleService vehicleService;
@@ -157,6 +163,63 @@ class VehicleServiceTest {
 		when(vehicleRepository.findByCompanyId(NON_EXISTENT_ID)).thenReturn(List.of());
 		var result = vehicleService.getVehiclesByCompanyId(NON_EXISTENT_ID);
 		assertTrue(result.isEmpty());
+	}
+
+	@Test
+	void getPublicVehiclesByCompanyAndType_filtersByTypeAndIncludesDriverPhone() {
+		CompanyEntity company = CompanyEntity.builder().id(10L).build();
+		VehicleEntity prom = VehicleEntity.builder()
+				.id(1L).brand("Mercedes").model("E-Class")
+				.licensePlate("CB1234AB").numberOfSeats(4)
+				.vehicleType(VehicleType.PROM).company(company).build();
+		DriverEntity driver = DriverEntity.builder()
+				.id(7L).firstName("Ivan").lastName("Petrov")
+				.phoneNumber("+359888111222").build();
+
+		when(vehicleRepository.findByCompanyIdAndVehicleType(10L, VehicleType.PROM))
+				.thenReturn(List.of(prom));
+		when(driverRepository.findByVehicles_Id(1L)).thenReturn(List.of(driver));
+
+		var result = vehicleService.getPublicVehiclesByCompanyAndType(10L, VehicleType.PROM);
+
+		assertEquals(1, result.size());
+		assertEquals("Mercedes", result.get(0).brand());
+		assertEquals("+359888111222", result.get(0).driverPhoneNumber());
+		assertEquals(VehicleType.PROM, result.get(0).vehicleType());
+		assertEquals(10L, result.get(0).companyId());
+	}
+
+	@Test
+	void getPublicVehiclesByCompanyAndType_noDriverAssigned_returnsNullPhone() {
+		VehicleEntity vehicle = VehicleEntity.builder()
+				.id(2L).brand("BMW").model("7")
+				.licensePlate("CB5555KM").numberOfSeats(4)
+				.vehicleType(VehicleType.PROM).build();
+
+		when(vehicleRepository.findByCompanyIdAndVehicleType(10L, VehicleType.PROM))
+				.thenReturn(List.of(vehicle));
+		when(driverRepository.findByVehicles_Id(2L)).thenReturn(List.of());
+
+		var result = vehicleService.getPublicVehiclesByCompanyAndType(10L, VehicleType.PROM);
+
+		assertEquals(1, result.size());
+		assertNull(result.get(0).driverPhoneNumber());
+	}
+
+	@Test
+	void getPublicVehiclesByCompanyAndType_nullType_returnsAllForCompany() {
+		VehicleEntity vehicle = VehicleEntity.builder()
+				.id(3L).brand("Audi").model("A8")
+				.licensePlate("CB7777OK").numberOfSeats(4)
+				.vehicleType(VehicleType.TAXI).build();
+
+		when(vehicleRepository.findByCompanyId(10L)).thenReturn(List.of(vehicle));
+		when(driverRepository.findByVehicles_Id(3L)).thenReturn(List.of());
+
+		var result = vehicleService.getPublicVehiclesByCompanyAndType(10L, null);
+
+		assertEquals(1, result.size());
+		verify(vehicleRepository, never()).findByCompanyIdAndVehicleType(anyLong(), any());
 	}
 
 	@Test
