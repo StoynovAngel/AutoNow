@@ -10,6 +10,7 @@ import type { RootStackParamList } from '../../navigation/Navigation';
 import {
     cancelOrder,
     getOrderById,
+    updateOrderStatus,
     type OrderResponse,
     type OrderStatus,
 } from '../../services/orderService';
@@ -33,6 +34,7 @@ const BookingWaitingBody = () => {
     const [order, setOrder] = useState<OrderResponse | undefined>();
     const [error, setError] = useState<string | undefined>();
     const [cancelling, setCancelling] = useState(false);
+    const [simulating, setSimulating] = useState(false);
     const [reassigned, setReassigned] = useState(false);
 
     const cancelledRef = useRef(false);
@@ -128,12 +130,32 @@ const BookingWaitingBody = () => {
         }
     };
 
+    const handleSimulate = async () => {
+        if (!order || simulating) return;
+        setSimulating(true);
+        try {
+            const updated = await updateOrderStatus(order.id, 'COMPLETED');
+            cancelledRef.current = true;
+            if (timerRef.current) {
+                clearTimeout(timerRef.current);
+                timerRef.current = null;
+            }
+            setOrder(updated);
+            navigationRef.current.replace('bookingComplete', { orderId: order.id });
+        } catch (e) {
+            const msg = e instanceof Error ? e.message : t('booking-simulate-failed');
+            Alert.alert(t('booking-simulate-failed'), msg);
+            setSimulating(false);
+        }
+    };
+
     void auth;
 
     const status = order?.status;
     const canCancel =
         order != null && (status === 'CREATED' || status === 'ACCEPTED') && !cancelling;
     const showDriver = status === 'ACCEPTED' || status === 'IN_PROGRESS';
+    const canSimulate = showDriver && !simulating && !cancelling;
 
     const titleKey =
         status === 'ACCEPTED'
@@ -222,6 +244,24 @@ const BookingWaitingBody = () => {
                         <ActivityIndicator color="#EF4444" />
                     ) : (
                         <Text style={styles.cancelButtonText}>{t('booking-cancel')}</Text>
+                    )}
+                </Pressable>
+            )}
+
+            {canSimulate && (
+                <Pressable
+                    style={styles.simulateButton}
+                    onPress={handleSimulate}
+                    disabled={simulating}
+                    testID="waiting-simulate"
+                    accessibilityRole="button"
+                >
+                    {simulating ? (
+                        <ActivityIndicator color="#FFFFFF" />
+                    ) : (
+                        <Text style={styles.simulateButtonText}>
+                            {t('booking-simulate')}
+                        </Text>
                     )}
                 </Pressable>
             )}

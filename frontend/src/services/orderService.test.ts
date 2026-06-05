@@ -4,6 +4,7 @@ import {
     getOrderById,
     getActiveOrderByUserId,
     cancelOrder,
+    updateOrderStatus,
 } from './orderService';
 import customAPI from './ApiClient';
 import { VehicleType } from '../types/vehicle';
@@ -13,11 +14,13 @@ jest.mock('./ApiClient', () => ({
     default: {
         post: jest.fn(),
         get: jest.fn(),
+        patch: jest.fn(),
     },
 }));
 
 const mockedPost = customAPI.post as jest.Mock;
 const mockedGet = customAPI.get as jest.Mock;
+const mockedPatch = customAPI.patch as jest.Mock;
 
 describe('orderService', () => {
     beforeEach(() => {
@@ -117,6 +120,18 @@ describe('orderService', () => {
             const result = await cancelOrder(42);
 
             expect(mockedPost).toHaveBeenCalledWith('api/orders/42/cancel');
+            expect(result).toEqual(responseData);
+        });
+    });
+
+    describe('updateOrderStatus', () => {
+        it('PATCHes api/orders/:id/status with the new status', async () => {
+            const responseData = { id: 42, status: 'COMPLETED' };
+            mockedPatch.mockResolvedValue({ data: responseData });
+
+            const result = await updateOrderStatus(42, 'COMPLETED');
+
+            expect(mockedPatch).toHaveBeenCalledWith('api/orders/42/status', { status: 'COMPLETED' });
             expect(result).toEqual(responseData);
         });
     });

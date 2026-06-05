@@ -81,6 +81,19 @@ export const createStyles = (theme: any) => StyleSheet.create({
         fontWeight: '700',
         fontSize: 15,
     },
+    simulateButton: {
+        backgroundColor: theme.colors.primary,
+        borderRadius: 12,
+        paddingVertical: 14,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 8,
+    },
+    simulateButtonText: {
+        color: '#FFFFFF',
+        fontWeight: '700',
+        fontSize: 15,
+    },
     errorText: {
         color: '#EF4444',
         fontSize: 14,

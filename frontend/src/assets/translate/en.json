@@ -124,5 +124,7 @@
   "rating-comment-placeholder": "Leave a comment (optional)",
   "rating-submit": "Submit",
   "rating-skip": "Skip",
-  "rating-failed": "Could not submit rating"
+  "rating-failed": "Could not submit rating",
+  "booking-simulate": "Simulate ride",
+  "booking-simulate-failed": "Could not simulate the ride"
 }

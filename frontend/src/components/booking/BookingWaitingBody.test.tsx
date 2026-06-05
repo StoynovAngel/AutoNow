@@ -16,12 +16,14 @@ jest.mock('@react-navigation/native', () => ({
 jest.mock('../../services/orderService', () => ({
     getOrderById: jest.fn(),
     cancelOrder: jest.fn(),
+    updateOrderStatus: jest.fn(),
 }));
 
-import { getOrderById, cancelOrder } from '../../services/orderService';
+import { getOrderById, cancelOrder, updateOrderStatus } from '../../services/orderService';
 
 const mockGetOrder = getOrderById as jest.Mock;
 const mockCancel = cancelOrder as jest.Mock;
+const mockUpdateStatus = updateOrderStatus as jest.Mock;
 
 const baseOrder = {
     id: 42,
@@ -178,5 +180,53 @@ describe('BookingWaitingBody', () => {
 
         await findByTestId('waiting-driver');
         expect(queryByTestId('waiting-reassigned')).toBeNull();
+    });
+
+    it('shows the simulate button when a driver is assigned', async () => {
+        mockGetOrder.mockResolvedValue({
+            ...baseOrder,
+            status: 'ACCEPTED',
+            driver: driverInfo,
+            vehicle: vehicleInfo,
+        });
+
+        const { findByTestId } = renderWithProviders(<BookingWaitingBody />);
+
+        await findByTestId('waiting-simulate');
+    });
+
+    it('does not show the simulate button while still searching', async () => {
+        mockGetOrder.mockResolvedValue({ ...baseOrder, status: 'CREATED' });
+
+        const { findByTestId, queryByTestId } = renderWithProviders(<BookingWaitingBody />);
+
+        await findByTestId('waiting-status-title');
+        expect(queryByTestId('waiting-simulate')).toBeNull();
+    });
+
+    it('completes the order and navigates to bookingComplete when simulate is pressed', async () => {
+        mockGetOrder.mockResolvedValue({
+            ...baseOrder,
+            status: 'ACCEPTED',
+            driver: driverInfo,
+            vehicle: vehicleInfo,
+        });
+        mockUpdateStatus.mockResolvedValue({
+            ...baseOrder,
+            status: 'COMPLETED',
+            driver: driverInfo,
+        });
+
+        const { findByTestId } = renderWithProviders(<BookingWaitingBody />);
+
+        const simulateBtn = await findByTestId('waiting-simulate');
+        await act(async () => {
+            fireEvent.press(simulateBtn);
+        });
+
+        expect(mockUpdateStatus).toHaveBeenCalledWith(42, 'COMPLETED');
+        await waitFor(() =>
+            expect(mockReplace).toHaveBeenCalledWith('bookingComplete', { orderId: 42 }),
+        );
     });
 });

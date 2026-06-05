@@ -116,6 +116,14 @@ export const cancelOrder = async (id: number): Promise<OrderResponse> => {
     return response.data;
 };
 
+export const updateOrderStatus = async (
+    id: number,
+    status: OrderStatus,
+): Promise<OrderResponse> => {
+    const response = await customAPI.patch<OrderResponse>(`api/orders/${id}/status`, { status });
+    return response.data;
+};
+
 const isNotFoundError = (error: unknown): boolean => {
     if (typeof error !== 'object' || error === null) {
         return false;

@@ -124,5 +124,7 @@
   "rating-comment-placeholder": "Оставете коментар (по желание)",
   "rating-submit": "Изпрати",
   "rating-skip": "Пропусни",
-  "rating-failed": "Оценката не може да бъде изпратена"
+  "rating-failed": "Оценката не може да бъде изпратена",
+  "booking-simulate": "Симулирай пътуване",
+  "booking-simulate-failed": "Симулацията не успя"
 }
