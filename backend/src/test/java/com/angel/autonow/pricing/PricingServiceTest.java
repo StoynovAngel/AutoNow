@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class PricingServiceTest {
 
@@ -31,6 +32,14 @@ class PricingServiceTest {
 		PricingService service = serviceAt(14);
 		double price = service.calculatePrice(10.0, VehicleClass.STANDARD);
 		assertEquals(2.50 + 10.0 * 1.20, price, 0.001);
+	}
+
+	@Test
+	void calculatePrice_negativeDistance_throwsIllegalArgument() {
+		PricingService service = serviceAt(14);
+		IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+				() -> service.calculatePrice(-1.0, VehicleClass.STANDARD));
+		assertEquals(true, ex.getMessage().contains("-1.0"));
 	}
 
 	@Test

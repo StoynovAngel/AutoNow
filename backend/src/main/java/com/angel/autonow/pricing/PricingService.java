@@ -39,6 +39,10 @@ public class PricingService {
 	}
 
 	public double calculatePrice(double distanceKm, VehicleClass vehicleClass) {
+		if (distanceKm < 0) {
+			throw new IllegalArgumentException("distanceKm must not be negative: " + distanceKm);
+		}
+
 		double base = pricingProperties.baseFare();
 		double rate = pricingProperties.ratePerKm();
 		double classMultiplier = multiplierFor(vehicleClass);
