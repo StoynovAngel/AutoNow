@@ -118,13 +118,15 @@ const BookingWaitingBody = () => {
         setCancelling(true);
         try {
             const updated = await cancelOrder(order.id);
+            if (cancelledRef.current) return;
             setOrder(updated);
             handleTerminal(updated.status);
         } catch (e) {
+            if (cancelledRef.current) return;
             const msg = e instanceof Error ? e.message : t('booking-cancel-failed');
             Alert.alert(t('booking-cancel-failed'), msg);
         } finally {
-            setCancelling(false);
+            if (!cancelledRef.current) setCancelling(false);
         }
     };
 
