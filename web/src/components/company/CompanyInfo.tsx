@@ -1,21 +1,24 @@
+import type { CompanyType } from '../../services/company/companyService';
+
 export interface Company {
     id: number;
     name: string;
     address: string;
     phone: string;
     email: string;
-    logoUrl?: string;
     description?: string;
-    companyType: string;
+    companyType: CompanyType;
     createdAt: string;
     updatedAt: string;
 }
 
 interface CompanyInfoProps {
     company: Company | null;
+    canEdit?: boolean;
+    onEdit?: () => void;
 }
 
-const CompanyInfo = ({company}: CompanyInfoProps) => {
+const CompanyInfo = ({company, canEdit = false, onEdit}: CompanyInfoProps) => {
     if (!company) {
         return (
             <div className="bg-white rounded-xl shadow-md p-4 border border-gray-100 flex-1 min-h-0 flex flex-col">
@@ -36,11 +39,28 @@ const CompanyInfo = ({company}: CompanyInfoProps) => {
         <div className="bg-white rounded-xl shadow-md p-4 border border-gray-100 flex-1 min-h-0 flex flex-col">
             <div className="flex items-center justify-between mb-3">
                 <h2 className="text-lg font-bold text-gray-800">Company Information</h2>
-                <span className="px-2 py-1 bg-brand-100 text-brand-700 rounded-full text-xs font-semibold">
-                    {company.companyType}
-                </span>
+                <div className="flex items-center gap-2">
+                    <span className="px-2 py-1 bg-brand-100 text-brand-700 rounded-full text-xs font-semibold">
+                        {company.companyType}
+                    </span>
+                    {canEdit && onEdit && (
+                        <button
+                            type="button"
+                            onClick={onEdit}
+                            className="px-2 py-1 text-xs font-semibold text-brand-700 bg-brand-50 hover:bg-brand-100 rounded-md transition-colors"
+                        >
+                            Edit
+                        </button>
+                    )}
+                </div>
             </div>
             <div className="flex flex-col gap-3 flex-1 overflow-hidden min-h-0">
+                <div>
+                    <label className="block text-xs font-semibold text-gray-500 mb-1">Company ID</label>
+                    <p className="text-sm font-mono text-gray-900 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200 truncate">
+                        #{company.id}
+                    </p>
+                </div>
                 <div>
                     <label className="block text-xs font-semibold text-gray-500 mb-1">Company Name</label>
                     <p className="text-sm font-semibold text-gray-900 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200 truncate">

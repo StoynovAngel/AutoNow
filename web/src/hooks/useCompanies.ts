@@ -1,5 +1,5 @@
 import {useState, useEffect} from 'react';
-import {companyService} from '../services/company/companyService';
+import {companyService, type CompanyPayload} from '../services/company/companyService';
 import type {Company} from '../components/company/CompanyInfo';
 import {getErrorMessage} from '../utils/errors';
 
@@ -41,6 +41,24 @@ export const useCompanies = () => {
         }
     };
 
+    const createCompany = async (payload: CompanyPayload): Promise<Company> => {
+        const created: Company = await companyService.createCompany(payload);
+        const refreshed: Company[] = await companyService.getAllCompanies();
+        setCompanies(refreshed);
+        setSelectedCompanyId(created.id);
+        setSelectedCompany(created);
+        return created;
+    };
+
+    const updateCompany = async (id: number, payload: CompanyPayload): Promise<Company> => {
+        const updated: Company = await companyService.updateCompany(String(id), payload);
+        setCompanies((prev) => prev.map((c) => (c.id === updated.id ? updated : c)));
+        if (selectedCompanyId === updated.id) {
+            setSelectedCompany(updated);
+        }
+        return updated;
+    };
+
     return {
         companies,
         selectedCompanyId,
@@ -48,6 +66,8 @@ export const useCompanies = () => {
         loading,
         error,
         selectCompany,
+        createCompany,
+        updateCompany,
         refreshCompanies: fetchCompanies
     };
 };

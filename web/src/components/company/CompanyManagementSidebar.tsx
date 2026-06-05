@@ -1,3 +1,4 @@
+import { Button } from 'flowbite-react';
 import type { Company } from './CompanyInfo';
 import type { Driver } from './DriverInfo';
 
@@ -8,6 +9,8 @@ interface CompanyManagementSidebarProps {
     selectedDriverId: number | null;
     onSelectCompany: (companyId: number) => void;
     onSelectDriver: (driverId: number) => void;
+    canCreateCompany?: boolean;
+    onAddCompany?: () => void;
 }
 
 const CompanyManagementSidebar = ({
@@ -17,6 +20,8 @@ const CompanyManagementSidebar = ({
     selectedDriverId,
     onSelectCompany,
     onSelectDriver,
+    canCreateCompany = false,
+    onAddCompany,
 }: CompanyManagementSidebarProps) => {
     return (
         <div className="flex flex-col gap-3 w-72 h-full">
@@ -53,6 +58,11 @@ const CompanyManagementSidebar = ({
                         ))
                     )}
                 </div>
+                {canCreateCompany && onAddCompany && (
+                    <Button onClick={onAddCompany} size="sm" className="w-full">
+                        + Add Company
+                    </Button>
+                )}
             </div>
 
             <div className="bg-white rounded-xl shadow-md p-4 flex flex-col border border-gray-100 min-h-0 flex-1">

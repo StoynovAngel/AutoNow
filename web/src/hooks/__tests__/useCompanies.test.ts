@@ -84,4 +84,79 @@ describe('useCompanies', () => {
         expect(result.current.companies).toHaveLength(2);
         expect(companyService.getAllCompanies).toHaveBeenCalledTimes(2);
     });
+
+    it('createCompany refreshes the list and auto-selects the new company', async () => {
+        const created = company(99, { name: 'New Co' });
+        vi.mocked(companyService.getAllCompanies)
+            .mockResolvedValueOnce([company(1)])
+            .mockResolvedValueOnce([company(1), created]);
+        vi.mocked(companyService.createCompany).mockResolvedValue(created);
+
+        const { result } = renderHook(() => useCompanies());
+        await waitFor(() => expect(result.current.loading).toBe(false));
+
+        await act(async () => {
+            await result.current.createCompany({
+                name: 'New Co',
+                address: '1 Main St',
+                phone: '+359888123456',
+                email: 'new@example.com',
+                companyType: 'TAXI',
+            });
+        });
+
+        expect(companyService.createCompany).toHaveBeenCalled();
+        expect(result.current.companies).toHaveLength(2);
+        expect(result.current.selectedCompanyId).toBe(99);
+        expect(result.current.selectedCompany).toEqual(created);
+    });
+
+    it('updateCompany updates the list entry and refreshes selectedCompany', async () => {
+        const original = company(1, { name: 'Old Name' });
+        const updated = company(1, { name: 'New Name' });
+        vi.mocked(companyService.getAllCompanies).mockResolvedValue([original]);
+        vi.mocked(companyService.getCompanyById).mockResolvedValue(original);
+        vi.mocked(companyService.updateCompany).mockResolvedValue(updated);
+
+        const { result } = renderHook(() => useCompanies());
+        await waitFor(() => expect(result.current.loading).toBe(false));
+
+        await act(async () => {
+            await result.current.selectCompany(1);
+        });
+
+        await act(async () => {
+            await result.current.updateCompany(1, {
+                name: 'New Name',
+                address: original.address,
+                phone: original.phone,
+                email: original.email,
+                companyType: 'TAXI',
+            });
+        });
+
+        expect(companyService.updateCompany).toHaveBeenCalledWith('1', expect.objectContaining({ name: 'New Name' }));
+        expect(result.current.companies[0]).toEqual(updated);
+        expect(result.current.selectedCompany).toEqual(updated);
+    });
+
+    it('createCompany propagates errors from the service', async () => {
+        vi.mocked(companyService.getAllCompanies).mockResolvedValue([]);
+        vi.mocked(companyService.createCompany).mockRejectedValue(new Error('boom'));
+
+        const { result } = renderHook(() => useCompanies());
+        await waitFor(() => expect(result.current.loading).toBe(false));
+
+        await expect(
+            act(async () => {
+                await result.current.createCompany({
+                    name: 'X',
+                    address: 'X',
+                    phone: '+359888123456',
+                    email: 'x@x.com',
+                    companyType: 'TAXI',
+                });
+            })
+        ).rejects.toThrow('boom');
+    });
 });
