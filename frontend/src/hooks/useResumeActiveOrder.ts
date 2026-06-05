@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useRef } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { AuthContext } from '../services/AuthContext';
@@ -8,13 +8,19 @@ import type { RootStackParamList } from '../navigation/Navigation';
 export const useResumeActiveOrder = () => {
     const auth = useContext(AuthContext);
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+    const resumedRef = useRef(false);
 
     useEffect(() => {
-        if (!auth?.user || auth.loading) return;
+        if (!auth?.user) {
+            resumedRef.current = false;
+            return;
+        }
+        if (auth.loading || resumedRef.current) return;
         let cancelled = false;
         getActiveOrderByUserId(auth.user.id)
             .then((order) => {
                 if (cancelled || !order) return;
+                resumedRef.current = true;
                 navigation.navigate('bookingWaiting', { orderId: order.id });
             })
             .catch(() => {
