@@ -26,7 +26,7 @@ class JwtServiceTest {
 
 	@Test
 	void generateToken_containsSubjectAndAuthorities() {
-		String token = jwtService.generateToken(7L, "user@test.com", List.of("ROLE_CUSTOMER"));
+		String token = jwtService.generateToken(7L, "user@test.com", List.of("ROLE_CUSTOMER"), null);
 
 		DecodedJWT decoded = JWT.require(Algorithm.HMAC256(secret)).build().verify(token);
 
@@ -42,7 +42,7 @@ class JwtServiceTest {
 
 	@Test
 	void generateToken_multipleAuthorities() {
-		String token = jwtService.generateToken(1L, "admin@test.com", List.of("ROLE_ADMIN", "ROLE_CUSTOMER"));
+		String token = jwtService.generateToken(1L, "admin@test.com", List.of("ROLE_ADMIN", "ROLE_CUSTOMER"), null);
 
 		DecodedJWT decoded = JWT.require(Algorithm.HMAC256(secret)).build().verify(token);
 
@@ -52,28 +52,42 @@ class JwtServiceTest {
 
 	@Test
 	void generateToken_emptyAuthorities_noAuthoritiesClaim() {
-		String token = jwtService.generateToken(1L, "user@test.com", Collections.emptyList());
+		String token = jwtService.generateToken(1L, "user@test.com", Collections.emptyList(), null);
 		DecodedJWT decoded = JWT.require(Algorithm.HMAC256(secret)).build().verify(token);
 		assertTrue(decoded.getClaim("authorities").isMissing() || decoded.getClaim("authorities").isNull());
 	}
 
 	@Test
 	void generateToken_nullAuthorities_noAuthoritiesClaim() {
-		String token = jwtService.generateToken(1L, "user@test.com", null);
+		String token = jwtService.generateToken(1L, "user@test.com", null, null);
 		DecodedJWT decoded = JWT.require(Algorithm.HMAC256(secret)).build().verify(token);
 		assertTrue(decoded.getClaim("authorities").isMissing() || decoded.getClaim("authorities").isNull());
 	}
 
 	@Test
 	void generateToken_isVerifiable() {
-		String token = jwtService.generateToken(1L, "user@test.com", List.of("ROLE_CUSTOMER"));
+		String token = jwtService.generateToken(1L, "user@test.com", List.of("ROLE_CUSTOMER"), null);
 		assertDoesNotThrow(() -> JWT.require(Algorithm.HMAC256(secret)).build().verify(token));
 	}
 
 	@Test
 	void generateToken_invalidSecret_failsVerification() {
-		String token = jwtService.generateToken(1L, "user@test.com", List.of("ROLE_CUSTOMER"));
+		String token = jwtService.generateToken(1L, "user@test.com", List.of("ROLE_CUSTOMER"), null);
 		var verifier = JWT.require(Algorithm.HMAC256("wrong-secret")).build();
 		assertThrows(Exception.class, () -> verifier.verify(token));
+	}
+
+	@Test
+	void generateToken_withCompanyId_containsCompanyIdClaim() {
+		String token = jwtService.generateToken(1L, "user@test.com", List.of("ROLE_COMPANY_ADMIN"), 42L);
+		DecodedJWT decoded = JWT.require(Algorithm.HMAC256(secret)).build().verify(token);
+		assertEquals(42L, decoded.getClaim("companyId").asLong());
+	}
+
+	@Test
+	void generateToken_nullCompanyId_noCompanyIdClaim() {
+		String token = jwtService.generateToken(1L, "user@test.com", List.of("ROLE_CUSTOMER"), null);
+		DecodedJWT decoded = JWT.require(Algorithm.HMAC256(secret)).build().verify(token);
+		assertTrue(decoded.getClaim("companyId").isMissing() || decoded.getClaim("companyId").isNull());
 	}
 }

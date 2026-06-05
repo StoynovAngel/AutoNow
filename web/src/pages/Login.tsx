@@ -44,6 +44,7 @@ const Login = () => {
                     id: decodedToken.sub,
                     email: formData.email,
                     authorities: decodedToken.authorities,
+                    companyId: decodedToken.companyId ?? null,
                 },
                 token
             );

@@ -1,6 +1,7 @@
 export interface JwtPayload {
     sub: string;
     authorities: string[];
+    companyId?: number | null;
     [claim: string]: unknown;
 }
 
@@ -26,6 +27,13 @@ export const decodeJWT = (token: string): JwtPayload | null => {
         const candidate = parsed as Record<string, unknown>;
         if (typeof candidate.sub !== 'string' || candidate.sub.length === 0) return null;
         if (!isStringArray(candidate.authorities)) return null;
+        if (
+            candidate.companyId !== undefined &&
+            candidate.companyId !== null &&
+            typeof candidate.companyId !== 'number'
+        ) {
+            return null;
+        }
 
         return candidate as unknown as JwtPayload;
     } catch {

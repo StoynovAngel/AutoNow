@@ -43,7 +43,7 @@ class UserServiceTest {
 
 		when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.empty());
 		when(passwordEncoder.encode(TEST_PASSWORD)).thenReturn(ENCODED_PASSWORD);
-		when(jwtService.generateToken(any(), eq(TEST_EMAIL), any())).thenReturn(TEST_TOKEN);
+		when(jwtService.generateToken(any(), eq(TEST_EMAIL), any(), any())).thenReturn(TEST_TOKEN);
 
 		var result = userService.register(request);
 
@@ -74,7 +74,7 @@ class UserServiceTest {
 
 		when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(user));
 		when(passwordEncoder.matches(TEST_PASSWORD, ENCODED_PASSWORD)).thenReturn(true);
-		when(jwtService.generateToken(any(), eq(TEST_EMAIL), eq(authorities))).thenReturn(TEST_TOKEN);
+		when(jwtService.generateToken(any(), eq(TEST_EMAIL), eq(authorities), any())).thenReturn(TEST_TOKEN);
 
 		var result = userService.login(request);
 

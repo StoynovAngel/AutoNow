@@ -15,6 +15,7 @@ public class JwtService {
 
 	private static final String AUTHORITIES = "authorities";
 	private static final String USER_ID = "id";
+	private static final String COMPANY_ID = "companyId";
 
 	@Value("${jwt.secret}")
 	private String secret;
@@ -22,7 +23,7 @@ public class JwtService {
 	@Value("${jwt.expiration}")
 	private long expiration;
 
-	public String generateToken(Long userId, String email, Collection<String> authorities) {
+	public String generateToken(Long userId, String email, Collection<String> authorities, Long companyId) {
 		Algorithm signHMAC256 = Algorithm.HMAC256(secret);
 
 		Date issuedAt = new Date();
@@ -36,6 +37,10 @@ public class JwtService {
 
 		if (authorities != null && !authorities.isEmpty()) {
 			builder.withArrayClaim(AUTHORITIES, authorities.toArray(String[]::new));
+		}
+
+		if (companyId != null) {
+			builder.withClaim(COMPANY_ID, companyId);
 		}
 
 		return builder.sign(signHMAC256);
