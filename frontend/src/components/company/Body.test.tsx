@@ -67,4 +67,30 @@ describe('company Body', () => {
             preferences: {},
         });
     });
+
+    it('routes PROM bookings to the prom vehicles screen', () => {
+        mockRouteVehicleType = VehicleType.PROM;
+        const { getByTestId } = renderWithProviders(<Body />);
+
+        fireEvent.press(getByTestId('book-7'));
+
+        expect(mockNavigate).toHaveBeenCalledWith('promVehicles', {
+            companyId: 7,
+        });
+    });
+
+    it('does not render a Book button for FUNERAL companies', () => {
+        mockRouteVehicleType = VehicleType.FUNERAL;
+        const { queryByTestId } = renderWithProviders(<Body />);
+
+        expect(queryByTestId('book-7')).toBeNull();
+        expect(queryByTestId('book-7-STANDARD')).toBeNull();
+    });
+
+    it('does not render a Book button for RENTAL companies', () => {
+        mockRouteVehicleType = VehicleType.RENTAL;
+        const { queryByTestId } = renderWithProviders(<Body />);
+
+        expect(queryByTestId('book-7')).toBeNull();
+    });
 });
