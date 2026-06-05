@@ -37,7 +37,11 @@ public class DriverService {
 			if (!canManageCompany(user, request.companyId())) {
 				return Optional.empty();
 			}
-			companyRepository.findById(request.companyId()).ifPresent(driver::setCompany);
+			Optional<CompanyEntity> companyOpt = companyRepository.findById(request.companyId());
+			if (companyOpt.isEmpty()) {
+				return Optional.empty();
+			}
+			driver.setCompany(companyOpt.get());
 		}
 
 		DriverEntity saved = driverRepository.save(driver);
@@ -87,8 +91,15 @@ public class DriverService {
 			company = companyOpt.get();
 		}
 
+		Long newCompanyId = company != null ? company.getId() : null;
+		boolean companyChanged = !java.util.Objects.equals(driverCompanyId, newCompanyId);
+
 		driverMapper.updateEntity(request, driver);
 		driver.setCompany(company);
+
+		if (companyChanged && driver.getVehicles() != null) {
+			driver.getVehicles().clear();
+		}
 
 		return Optional.of(driverMapper.toDTO(driverRepository.save(driver)));
 	}
@@ -130,7 +141,17 @@ public class DriverService {
 		}
 
 		DriverEntity entity = driver.get();
-		entity.getVehicles().add(vehicle.get());
+		VehicleEntity vehicleEntity = vehicle.get();
+
+		Long driverCompanyId = entity.getCompany() != null ? entity.getCompany().getId() : null;
+		Long vehicleCompanyId = vehicleEntity.getCompany() != null ? vehicleEntity.getCompany().getId() : null;
+
+		if (driverCompanyId == null || vehicleCompanyId == null
+				|| !driverCompanyId.equals(vehicleCompanyId)) {
+			return Optional.empty();
+		}
+
+		entity.getVehicles().add(vehicleEntity);
 
 		return Optional.of(driverMapper.toDTO(driverRepository.save(entity)));
 	}

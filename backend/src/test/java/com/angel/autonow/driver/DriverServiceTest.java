@@ -1,10 +1,14 @@
 package com.angel.autonow.driver;
 
+import com.angel.autonow.company.CompanyEntity;
+import com.angel.autonow.company.CompanyRepository;
 import com.angel.autonow.data.TestData;
 import com.angel.autonow.expertise.ExpertiseType;
 import com.angel.autonow.user.UserEntity;
 import com.angel.autonow.user.UserRepository;
 import com.angel.autonow.user.role.Role;
+import com.angel.autonow.vehicle.VehicleEntity;
+import com.angel.autonow.vehicle.VehicleRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,6 +24,7 @@ import static com.angel.autonow.data.TestData.NON_EXISTENT_ID;
 import static java.util.Collections.emptySet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.never;
@@ -39,6 +44,12 @@ class DriverServiceTest {
 
 	@Mock
 	private UserRepository userRepository;
+
+	@Mock
+	private CompanyRepository companyRepository;
+
+	@Mock
+	private VehicleRepository vehicleRepository;
 
 	@InjectMocks
 	private DriverService driverService;
@@ -218,5 +229,230 @@ class DriverServiceTest {
 
 		assertFalse(result);
 		verify(driverRepository, never()).deleteById(any());
+	}
+
+	@Test
+	void createDriver_unknownCompanyId_returnsEmpty() {
+		DriverRequestDTO request = DriverRequestDTO.builder()
+				.firstName("Michael")
+				.lastName("Johnson")
+				.phoneNumber("+359888100200")
+				.expertiseType(Set.of(ExpertiseType.B))
+				.available(true)
+				.companyId(NON_EXISTENT_ID)
+				.build();
+
+		DriverEntity entity = DriverEntity.builder().firstName("Michael").build();
+
+		when(userRepository.findByEmail(ADMIN_EMAIL)).thenReturn(Optional.of(adminUser()));
+		when(driverMapper.toEntity(request)).thenReturn(entity);
+		when(companyRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
+
+		var result = driverService.createDriver(request, ADMIN_EMAIL);
+
+		assertTrue(result.isEmpty());
+		verify(driverRepository, never()).save(any());
+	}
+
+	@Test
+	void updateDriver_companyChanged_clearsVehicles() {
+		CompanyEntity originalCompany = CompanyEntity.builder().id(10L).build();
+		CompanyEntity newCompany = CompanyEntity.builder().id(20L).build();
+		VehicleEntity vehicle = VehicleEntity.builder().id(100L).company(originalCompany).build();
+
+		Set<VehicleEntity> vehicles = new HashSet<>();
+		vehicles.add(vehicle);
+
+		DriverEntity existing = DriverEntity.builder()
+				.id(1L)
+				.firstName("Michael")
+				.company(originalCompany)
+				.vehicles(vehicles)
+				.build();
+
+		DriverRequestDTO request = DriverRequestDTO.builder()
+				.firstName("Michael")
+				.lastName("Johnson")
+				.phoneNumber("+359888100200")
+				.expertiseType(Set.of(ExpertiseType.B))
+				.available(true)
+				.companyId(20L)
+				.build();
+
+		DriverResponseDTO response = TestData.createDriverResponse(1L);
+
+		when(userRepository.findByEmail(ADMIN_EMAIL)).thenReturn(Optional.of(adminUser()));
+		when(driverRepository.findById(1L)).thenReturn(Optional.of(existing));
+		when(companyRepository.findById(20L)).thenReturn(Optional.of(newCompany));
+		when(driverRepository.save(existing)).thenReturn(existing);
+		when(driverMapper.toDTO(existing)).thenReturn(response);
+
+		var result = driverService.updateDriver(1L, request, ADMIN_EMAIL);
+
+		assertTrue(result.isPresent());
+		assertTrue(existing.getVehicles().isEmpty());
+		assertEquals(newCompany, existing.getCompany());
+	}
+
+	@Test
+	void updateDriver_sameCompany_keepsVehicles() {
+		CompanyEntity company = CompanyEntity.builder().id(10L).build();
+		VehicleEntity vehicle = VehicleEntity.builder().id(100L).company(company).build();
+
+		Set<VehicleEntity> vehicles = new HashSet<>();
+		vehicles.add(vehicle);
+
+		DriverEntity existing = DriverEntity.builder()
+				.id(1L)
+				.firstName("Michael")
+				.company(company)
+				.vehicles(vehicles)
+				.build();
+
+		DriverRequestDTO request = DriverRequestDTO.builder()
+				.firstName("Michael")
+				.lastName("Johnson")
+				.phoneNumber("+359888100200")
+				.expertiseType(Set.of(ExpertiseType.B))
+				.available(true)
+				.companyId(10L)
+				.build();
+
+		DriverResponseDTO response = TestData.createDriverResponse(1L);
+
+		when(userRepository.findByEmail(ADMIN_EMAIL)).thenReturn(Optional.of(adminUser()));
+		when(driverRepository.findById(1L)).thenReturn(Optional.of(existing));
+		when(companyRepository.findById(10L)).thenReturn(Optional.of(company));
+		when(driverRepository.save(existing)).thenReturn(existing);
+		when(driverMapper.toDTO(existing)).thenReturn(response);
+
+		var result = driverService.updateDriver(1L, request, ADMIN_EMAIL);
+
+		assertTrue(result.isPresent());
+		assertEquals(1, existing.getVehicles().size());
+		assertTrue(existing.getVehicles().contains(vehicle));
+	}
+
+	@Test
+	void updateDriver_companyClearedToNull_clearsVehicles() {
+		CompanyEntity originalCompany = CompanyEntity.builder().id(10L).build();
+		VehicleEntity vehicle = VehicleEntity.builder().id(100L).company(originalCompany).build();
+
+		Set<VehicleEntity> vehicles = new HashSet<>();
+		vehicles.add(vehicle);
+
+		DriverEntity existing = DriverEntity.builder()
+				.id(1L)
+				.firstName("Michael")
+				.company(originalCompany)
+				.vehicles(vehicles)
+				.build();
+
+		DriverRequestDTO request = DriverRequestDTO.builder()
+				.firstName("Michael")
+				.lastName("Johnson")
+				.phoneNumber("+359888100200")
+				.expertiseType(Set.of(ExpertiseType.B))
+				.available(true)
+				.companyId(null)
+				.build();
+
+		DriverResponseDTO response = TestData.createDriverResponse(1L);
+
+		when(userRepository.findByEmail(ADMIN_EMAIL)).thenReturn(Optional.of(adminUser()));
+		when(driverRepository.findById(1L)).thenReturn(Optional.of(existing));
+		when(driverRepository.save(existing)).thenReturn(existing);
+		when(driverMapper.toDTO(existing)).thenReturn(response);
+
+		var result = driverService.updateDriver(1L, request, ADMIN_EMAIL);
+
+		assertTrue(result.isPresent());
+		assertTrue(existing.getVehicles().isEmpty());
+		assertNull(existing.getCompany());
+	}
+
+	@Test
+	void assignVehicle_differentCompanies_returnsEmpty() {
+		CompanyEntity companyA = CompanyEntity.builder().id(10L).build();
+		CompanyEntity companyB = CompanyEntity.builder().id(20L).build();
+
+		DriverEntity driver = DriverEntity.builder()
+				.id(1L)
+				.company(companyA)
+				.vehicles(new HashSet<>())
+				.build();
+		VehicleEntity vehicle = VehicleEntity.builder().id(100L).company(companyB).build();
+
+		when(driverRepository.findById(1L)).thenReturn(Optional.of(driver));
+		when(vehicleRepository.findById(100L)).thenReturn(Optional.of(vehicle));
+
+		var result = driverService.assignVehicle(1L, 100L);
+
+		assertTrue(result.isEmpty());
+		assertTrue(driver.getVehicles().isEmpty());
+		verify(driverRepository, never()).save(any());
+	}
+
+	@Test
+	void assignVehicle_driverHasNoCompany_returnsEmpty() {
+		CompanyEntity company = CompanyEntity.builder().id(10L).build();
+
+		DriverEntity driver = DriverEntity.builder()
+				.id(1L)
+				.company(null)
+				.vehicles(new HashSet<>())
+				.build();
+		VehicleEntity vehicle = VehicleEntity.builder().id(100L).company(company).build();
+
+		when(driverRepository.findById(1L)).thenReturn(Optional.of(driver));
+		when(vehicleRepository.findById(100L)).thenReturn(Optional.of(vehicle));
+
+		var result = driverService.assignVehicle(1L, 100L);
+
+		assertTrue(result.isEmpty());
+		verify(driverRepository, never()).save(any());
+	}
+
+	@Test
+	void assignVehicle_vehicleHasNoCompany_returnsEmpty() {
+		CompanyEntity company = CompanyEntity.builder().id(10L).build();
+
+		DriverEntity driver = DriverEntity.builder()
+				.id(1L)
+				.company(company)
+				.vehicles(new HashSet<>())
+				.build();
+		VehicleEntity vehicle = VehicleEntity.builder().id(100L).company(null).build();
+
+		when(driverRepository.findById(1L)).thenReturn(Optional.of(driver));
+		when(vehicleRepository.findById(100L)).thenReturn(Optional.of(vehicle));
+
+		var result = driverService.assignVehicle(1L, 100L);
+
+		assertTrue(result.isEmpty());
+		verify(driverRepository, never()).save(any());
+	}
+
+	@Test
+	void assignVehicle_sameCompany_succeeds() {
+		CompanyEntity company = CompanyEntity.builder().id(10L).build();
+
+		DriverEntity driver = DriverEntity.builder()
+				.id(1L)
+				.company(company)
+				.vehicles(new HashSet<>())
+				.build();
+		VehicleEntity vehicle = VehicleEntity.builder().id(100L).company(company).build();
+		DriverResponseDTO response = TestData.createDriverResponse(1L);
+
+		when(driverRepository.findById(1L)).thenReturn(Optional.of(driver));
+		when(vehicleRepository.findById(100L)).thenReturn(Optional.of(vehicle));
+		when(driverRepository.save(driver)).thenReturn(driver);
+		when(driverMapper.toDTO(driver)).thenReturn(response);
+
+		var result = driverService.assignVehicle(1L, 100L);
+
+		assertTrue(result.isPresent());
+		assertTrue(driver.getVehicles().contains(vehicle));
 	}
 }
