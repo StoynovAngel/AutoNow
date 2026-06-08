@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.3](https://github.com/StoynovAngel/AutoNow/compare/v0.1.2...v0.1.3) (2026-06-08)
+
+
+### Bug Fixes
+
+* upload-doc ([#87](https://github.com/StoynovAngel/AutoNow/issues/87)) ([fe1fcc4](https://github.com/StoynovAngel/AutoNow/commit/fe1fcc466c8fd71f5bbca22c8a10db5103391c98))
+
 ## [0.1.2](https://github.com/StoynovAngel/AutoNow/compare/v0.1.1...v0.1.2) (2026-06-08)
 
 
