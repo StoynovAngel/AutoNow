@@ -321,9 +321,10 @@ class VehicleControllerIT {
 				.phoneNumber("+359888111222")
 				.expertiseType(java.util.Set.of(ExpertiseType.B))
 				.available(true).company(company)
-				.vehicles(new java.util.HashSet<>(java.util.Set.of(promVehicle)))
 				.build();
 		driverRepository.save(driver);
+		promVehicle.setDriver(driver);
+		vehicleRepository.save(promVehicle);
 
 		mockMvc.perform(get("/api/vehicles/public/company/{companyId}", company.getId())
 						.param("vehicleType", "PROM")
