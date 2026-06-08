@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.angel</groupId>
 	<artifactId>autonow</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.1.0</version>
 	<name>autonow</name>
 	<description>Backend to a diploma</description>
 	<url/>
