@@ -11,6 +11,4 @@ public interface DriverRepository extends JpaRepository<DriverEntity, Long> {
 	List<DriverEntity> findByCompanyId(Long companyId);
 
 	boolean existsByCompanyId(Long companyId);
-
-	List<DriverEntity> findByVehicles_Id(Long vehicleId);
 }

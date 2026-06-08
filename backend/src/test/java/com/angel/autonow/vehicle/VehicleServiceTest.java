@@ -4,7 +4,6 @@ import com.angel.autonow.company.CompanyEntity;
 import com.angel.autonow.company.CompanyRepository;
 import com.angel.autonow.data.TestData;
 import com.angel.autonow.driver.DriverEntity;
-import com.angel.autonow.driver.DriverRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -29,9 +28,6 @@ class VehicleServiceTest {
 
 	@Mock
 	private CompanyRepository companyRepository;
-
-	@Mock
-	private DriverRepository driverRepository;
 
 	@InjectMocks
 	private VehicleService vehicleService;
@@ -168,17 +164,16 @@ class VehicleServiceTest {
 	@Test
 	void getPublicVehiclesByCompanyAndType_filtersByTypeAndIncludesDriverPhone() {
 		CompanyEntity company = CompanyEntity.builder().id(10L).build();
-		VehicleEntity prom = VehicleEntity.builder()
-				.id(1L).brand("Mercedes").model("E-Class")
-				.licensePlate("CB1234AB").numberOfSeats(4)
-				.vehicleType(VehicleType.PROM).company(company).build();
 		DriverEntity driver = DriverEntity.builder()
 				.id(7L).firstName("Ivan").lastName("Petrov")
 				.phoneNumber("+359888111222").build();
+		VehicleEntity prom = VehicleEntity.builder()
+				.id(1L).brand("Mercedes").model("E-Class")
+				.licensePlate("CB1234AB").numberOfSeats(4)
+				.vehicleType(VehicleType.PROM).company(company).driver(driver).build();
 
 		when(vehicleRepository.findByCompanyIdAndVehicleType(10L, VehicleType.PROM))
 				.thenReturn(List.of(prom));
-		when(driverRepository.findByVehicles_Id(1L)).thenReturn(List.of(driver));
 
 		var result = vehicleService.getPublicVehiclesByCompanyAndType(10L, VehicleType.PROM);
 
@@ -198,7 +193,6 @@ class VehicleServiceTest {
 
 		when(vehicleRepository.findByCompanyIdAndVehicleType(10L, VehicleType.PROM))
 				.thenReturn(List.of(vehicle));
-		when(driverRepository.findByVehicles_Id(2L)).thenReturn(List.of());
 
 		var result = vehicleService.getPublicVehiclesByCompanyAndType(10L, VehicleType.PROM);
 
@@ -214,7 +208,6 @@ class VehicleServiceTest {
 				.vehicleType(VehicleType.TAXI).build();
 
 		when(vehicleRepository.findByCompanyId(10L)).thenReturn(List.of(vehicle));
-		when(driverRepository.findByVehicles_Id(3L)).thenReturn(List.of());
 
 		var result = vehicleService.getPublicVehiclesByCompanyAndType(10L, null);
 

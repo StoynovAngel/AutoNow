@@ -447,12 +447,40 @@ class DriverServiceTest {
 
 		when(driverRepository.findById(1L)).thenReturn(Optional.of(driver));
 		when(vehicleRepository.findById(100L)).thenReturn(Optional.of(vehicle));
-		when(driverRepository.save(driver)).thenReturn(driver);
+		when(vehicleRepository.save(vehicle)).thenReturn(vehicle);
 		when(driverMapper.toDTO(driver)).thenReturn(response);
 
 		var result = driverService.assignVehicle(1L, 100L);
 
 		assertTrue(result.isPresent());
+		assertEquals(driver, vehicle.getDriver());
 		assertTrue(driver.getVehicles().contains(vehicle));
+	}
+
+	@Test
+	void assignVehicle_alreadyAssignedToAnotherDriver_returnsEmpty() {
+		CompanyEntity company = CompanyEntity.builder().id(10L).build();
+
+		DriverEntity otherDriver = DriverEntity.builder().id(2L).company(company).build();
+		DriverEntity driver = DriverEntity.builder()
+				.id(1L)
+				.company(company)
+				.vehicles(new HashSet<>())
+				.build();
+		VehicleEntity vehicle = VehicleEntity.builder()
+				.id(100L)
+				.company(company)
+				.driver(otherDriver)
+				.build();
+
+		when(driverRepository.findById(1L)).thenReturn(Optional.of(driver));
+		when(vehicleRepository.findById(100L)).thenReturn(Optional.of(vehicle));
+
+		var result = driverService.assignVehicle(1L, 100L);
+
+		assertTrue(result.isEmpty());
+		assertEquals(otherDriver, vehicle.getDriver());
+		assertFalse(driver.getVehicles().contains(vehicle));
+		verify(vehicleRepository, never()).save(any(VehicleEntity.class));
 	}
 }

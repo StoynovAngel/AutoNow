@@ -2,8 +2,6 @@ package com.angel.autonow.vehicle;
 
 import com.angel.autonow.company.CompanyEntity;
 import com.angel.autonow.company.CompanyRepository;
-import com.angel.autonow.driver.DriverEntity;
-import com.angel.autonow.driver.DriverRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +16,6 @@ public class VehicleService {
 	private final VehicleRepository vehicleRepository;
 	private final VehicleMapper vehicleMapper;
 	private final CompanyRepository companyRepository;
-	private final DriverRepository driverRepository;
 
 	public Optional<VehicleResponseDTO> createVehicle(VehicleRequestDTO request) {
 		VehicleEntity vehicle = vehicleMapper.toEntity(request);
@@ -88,10 +85,7 @@ public class VehicleService {
 	}
 
 	private PublicVehicleResponseDTO toPublicDto(VehicleEntity vehicle) {
-		String driverPhone = driverRepository.findByVehicles_Id(vehicle.getId()).stream()
-				.map(DriverEntity::getPhoneNumber)
-				.findFirst()
-				.orElse(null);
+		String driverPhone = vehicle.getDriver() != null ? vehicle.getDriver().getPhoneNumber() : null;
 
 		return PublicVehicleResponseDTO.builder()
 				.id(vehicle.getId())
