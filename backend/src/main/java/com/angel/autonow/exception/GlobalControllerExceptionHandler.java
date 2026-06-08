@@ -1,5 +1,6 @@
 package com.angel.autonow.exception;
 
+import com.angel.autonow.driver.VehicleAlreadyAssignedException;
 import com.angel.autonow.order.OrderConflictException;
 import com.angel.autonow.order.OrderForbiddenException;
 import com.angel.autonow.rating.RatingConflictException;
@@ -94,6 +95,13 @@ public class GlobalControllerExceptionHandler {
 	@ResponseStatus(HttpStatus.CONFLICT)
 	@ExceptionHandler(RatingConflictException.class)
 	public ProblemDetail handleRatingConflictException(RatingConflictException e) {
+		log.warn(e.getMessage(), HttpStatus.CONFLICT, e);
+		return handle(e, HttpStatus.CONFLICT);
+	}
+
+	@ResponseStatus(HttpStatus.CONFLICT)
+	@ExceptionHandler(VehicleAlreadyAssignedException.class)
+	public ProblemDetail handleVehicleAlreadyAssignedException(VehicleAlreadyAssignedException e) {
 		log.warn(e.getMessage(), HttpStatus.CONFLICT, e);
 		return handle(e, HttpStatus.CONFLICT);
 	}

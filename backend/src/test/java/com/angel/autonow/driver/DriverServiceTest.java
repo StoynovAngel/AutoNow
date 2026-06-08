@@ -25,6 +25,7 @@ import static java.util.Collections.emptySet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.never;
@@ -458,7 +459,7 @@ class DriverServiceTest {
 	}
 
 	@Test
-	void assignVehicle_alreadyAssignedToAnotherDriver_returnsEmpty() {
+	void assignVehicle_alreadyAssignedToAnotherDriver_throwsConflict() {
 		CompanyEntity company = CompanyEntity.builder().id(10L).build();
 
 		DriverEntity otherDriver = DriverEntity.builder().id(2L).company(company).build();
@@ -476,9 +477,8 @@ class DriverServiceTest {
 		when(driverRepository.findById(1L)).thenReturn(Optional.of(driver));
 		when(vehicleRepository.findById(100L)).thenReturn(Optional.of(vehicle));
 
-		var result = driverService.assignVehicle(1L, 100L);
+		assertThrows(VehicleAlreadyAssignedException.class, () -> driverService.assignVehicle(1L, 100L));
 
-		assertTrue(result.isEmpty());
 		assertEquals(otherDriver, vehicle.getDriver());
 		assertFalse(driver.getVehicles().contains(vehicle));
 		verify(vehicleRepository, never()).save(any(VehicleEntity.class));

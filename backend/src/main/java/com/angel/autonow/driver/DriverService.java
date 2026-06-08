@@ -153,7 +153,8 @@ public class DriverService {
 
 		DriverEntity currentDriver = vehicleEntity.getDriver();
 		if (currentDriver != null && !currentDriver.getId().equals(driverId)) {
-			return Optional.empty();
+			String message = "Vehicle " + vehicleId + " is already assigned to driver " + currentDriver.getId();
+			throw new VehicleAlreadyAssignedException(message);
 		}
 
 		vehicleEntity.setDriver(entity);
