@@ -119,5 +119,14 @@
   "rating-skip": "Skip",
   "rating-failed": "Could not submit rating",
   "booking-simulate": "Simulate ride",
-  "booking-simulate-failed": "Could not simulate the ride"
+  "booking-simulate-failed": "Could not simulate the ride",
+  "chatbot-open": "Open assistant",
+  "chatbot-close": "Close assistant",
+  "chatbot-title": "Service assistant",
+  "chatbot-greeting": "Hi! Tell me what you need and I'll help you find the right service.",
+  "chatbot-placeholder": "Type your message…",
+  "chatbot-send": "Send",
+  "chatbot-typing": "Assistant is typing…",
+  "chatbot-error": "Sorry, something went wrong. Please try again.",
+  "chatbot-go-to": "Open {{service}}"
 }

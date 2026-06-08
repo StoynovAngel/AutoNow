@@ -44,6 +44,7 @@ public class SecurityConfig {
 						.requestMatchers(
 								"/api/auth/**",
 								"/api/test/**",
+								"/api/chatbot/**",
 								"/v3/api-docs",
 								"/v3/api-docs/**",
 								"/v3/api-docs.yaml",

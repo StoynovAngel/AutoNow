@@ -14,3 +14,7 @@ springdoc.servers=
 jwt.secret=${JWT_SECRET}
 jwt.algorithm=${JWT_ALGORITHM}
 jwt.expiration=${JWT_EXPIRATION}
+
+spring.ai.anthropic.api-key=${ANTHROPIC_API_KEY:}
+spring.ai.anthropic.chat.options.model=claude-haiku-4-5-20251001
+spring.ai.anthropic.chat.options.max-tokens=256

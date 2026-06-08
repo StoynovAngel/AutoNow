@@ -119,5 +119,14 @@
   "rating-skip": "Пропусни",
   "rating-failed": "Оценката не може да бъде изпратена",
   "booking-simulate": "Симулирай пътуване",
-  "booking-simulate-failed": "Симулацията не успя"
+  "booking-simulate-failed": "Симулацията не успя",
+  "chatbot-open": "Отвори помощник",
+  "chatbot-close": "Затвори помощник",
+  "chatbot-title": "Помощник за услуги",
+  "chatbot-greeting": "Здравейте! Кажете ми от какво имате нужда и ще ви помогна да намерите подходящата услуга.",
+  "chatbot-placeholder": "Напишете съобщение…",
+  "chatbot-send": "Изпрати",
+  "chatbot-typing": "Помощникът пише…",
+  "chatbot-error": "Възникна грешка. Моля, опитайте отново.",
+  "chatbot-go-to": "Отвори {{service}}"
 }
