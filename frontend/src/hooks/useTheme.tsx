@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { lightTheme, darkTheme } from '../constants/theme';
 
 type Theme = typeof lightTheme;
+export type { Theme };
 type ThemeMode = 'light' | 'dark';
 
 interface ThemeContextType {
