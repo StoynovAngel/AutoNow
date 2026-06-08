@@ -89,4 +89,31 @@ class ChatbotControllerIT {
 						.content(body))
 				.andExpect(status().isBadRequest());
 	}
+
+	@Test
+	void recommendEndpointRejectsOversizedHistory() throws Exception {
+		List<ChatbotMessage> oversized = java.util.stream.IntStream.range(0, 51)
+				.mapToObj(i -> new ChatbotMessage(ChatRole.USER, "msg " + i))
+				.toList();
+		String body = objectMapper.writeValueAsString(
+				new ChatbotRequestDTO("hi", oversized)
+		);
+
+		mockMvc.perform(post("/api/chatbots/recommend")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(body))
+				.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void recommendEndpointValidatesNestedHistoryMessages() throws Exception {
+		String body = objectMapper.writeValueAsString(
+				new ChatbotRequestDTO("hi", List.of(new ChatbotMessage("", "content")))
+		);
+
+		mockMvc.perform(post("/api/chatbots/recommend")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(body))
+				.andExpect(status().isBadRequest());
+	}
 }

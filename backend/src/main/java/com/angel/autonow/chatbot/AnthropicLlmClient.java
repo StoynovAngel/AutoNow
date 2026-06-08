@@ -31,7 +31,7 @@ public class AnthropicLlmClient implements LlmClient {
 		}
 
 		for (var message : history) {
-			if ("user".equalsIgnoreCase(message.role())) {
+			if (message.role() == ChatRole.USER) {
 				messages.add(new UserMessage(message.content()));
 			} else {
 				messages.add(new AssistantMessage(message.content()));
