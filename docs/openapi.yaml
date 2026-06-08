@@ -43,6 +43,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '500':
           description: Internal Server Error
           content:
@@ -91,6 +97,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '500':
           description: Internal Server Error
           content:
@@ -125,6 +137,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
           content:
             application/problem+json:
               schema:
@@ -168,6 +186,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
           content:
             application/problem+json:
               schema:
@@ -220,6 +244,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '500':
           description: Internal Server Error
           content:
@@ -254,6 +284,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
           content:
             application/problem+json:
               schema:
@@ -297,6 +333,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
           content:
             application/problem+json:
               schema:
@@ -349,6 +391,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '500':
           description: Internal Server Error
           content:
@@ -383,6 +431,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
           content:
             application/problem+json:
               schema:
@@ -426,6 +480,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
           content:
             application/problem+json:
               schema:
@@ -478,6 +538,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '500':
           description: Internal Server Error
           content:
@@ -512,6 +578,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
           content:
             application/problem+json:
               schema:
@@ -555,6 +627,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
           content:
             application/problem+json:
               schema:
@@ -607,6 +685,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '500':
           description: Internal Server Error
           content:
@@ -641,6 +725,121 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: Internal Server Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+  '/api/drivers/{id}/vehicles/{vehicleId}':
+    put:
+      tags:
+        - driver-controller
+      operationId: assignVehicle
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: vehicleId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/DriverResponseDTO'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: Internal Server Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+    delete:
+      tags:
+        - driver-controller
+      operationId: unassignVehicle
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: vehicleId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/DriverResponseDTO'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
           content:
             application/problem+json:
               schema:
@@ -684,6 +883,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
           content:
             application/problem+json:
               schema:
@@ -736,6 +941,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '500':
           description: Internal Server Error
           content:
@@ -774,6 +985,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '500':
           description: Internal Server Error
           content:
@@ -808,6 +1025,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
           content:
             application/problem+json:
               schema:
@@ -853,6 +1076,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '500':
           description: Internal Server Error
           content:
@@ -887,6 +1116,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
           content:
             application/problem+json:
               schema:
@@ -932,6 +1167,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '500':
           description: Internal Server Error
           content:
@@ -966,6 +1207,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
           content:
             application/problem+json:
               schema:
@@ -1011,6 +1258,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '500':
           description: Internal Server Error
           content:
@@ -1045,6 +1298,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
           content:
             application/problem+json:
               schema:
@@ -1090,6 +1349,158 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: Internal Server Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+  '/api/orders/{id}/cancel':
+    post:
+      tags:
+        - order-controller
+      operationId: cancelOrder
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OrderResponseDTO'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: Internal Server Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+  '/api/orders/{id}/admin-cancel':
+    post:
+      tags:
+        - order-controller
+      operationId: adminCancelOrder
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OrderResponseDTO'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: Internal Server Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+  /api/orders/estimate:
+    post:
+      tags:
+        - order-controller
+      operationId: estimate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderEstimateRequestDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OrderEstimateResponseDTO'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '500':
           description: Internal Server Error
           content:
@@ -1124,6 +1535,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
           content:
             application/problem+json:
               schema:
@@ -1169,6 +1586,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '500':
           description: Internal Server Error
           content:
@@ -1203,6 +1626,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
           content:
             application/problem+json:
               schema:
@@ -1244,6 +1673,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
           content:
             application/problem+json:
               schema:
@@ -1291,6 +1726,60 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: Internal Server Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+  /api/chatbots/recommend:
+    post:
+      tags:
+        - chatbot-controller
+      operationId: recommend
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatbotRequestDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ChatbotResponseDTO'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '500':
           description: Internal Server Error
           content:
@@ -1333,6 +1822,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '500':
           description: Internal Server Error
           content:
@@ -1371,6 +1866,185 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: Internal Server Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+  '/api/orders/{id}/status':
+    patch:
+      tags:
+        - order-controller
+      operationId: updateOrderStatus
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderStatusUpdateDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OrderResponseDTO'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: Internal Server Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+  '/api/orders/{id}/assign':
+    patch:
+      tags:
+        - order-controller
+      operationId: assignOrder
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderAssignmentRequestDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OrderResponseDTO'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: Internal Server Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+  '/api/vehicles/public/company/{companyId}':
+    get:
+      tags:
+        - vehicle-controller
+      operationId: getPublicVehiclesByCompanyId
+      parameters:
+        - name: companyId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: vehicleType
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - TAXI
+              - SEMI
+              - AMBULANCE
+              - RENTAL
+              - PROM
+              - FUNERAL
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PublicVehicleResponseDTO'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
           content:
             application/problem+json:
               schema:
@@ -1420,38 +2094,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
-        '500':
-          description: Internal Server Error
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetail'
-  /api/test:
-    get:
-      tags:
-        - example-controller
-      operationId: exampleEndpoint
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: string
-        '400':
-          description: Bad Request
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetail'
-        '401':
-          description: Unauthorized
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetail'
-        '403':
-          description: Forbidden
+        '409':
+          description: Conflict
           content:
             application/problem+json:
               schema:
@@ -1499,6 +2143,63 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: Internal Server Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+  '/api/ratings/driver/{driverId}':
+    get:
+      tags:
+        - rating-controller
+      operationId: getRatingsByDriverId
+      parameters:
+        - name: driverId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RatingResponseDTO'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '500':
           description: Internal Server Error
           content:
@@ -1538,6 +2239,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
           content:
             application/problem+json:
               schema:
@@ -1587,30 +2294,37 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '500':
           description: Internal Server Error
           content:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
-  '/api/drivers/license/{licenseNumber}':
+  '/api/orders/user/{userId}/active':
     get:
       tags:
-        - driver-controller
-      operationId: getDriverByLicenseNumber
+        - order-controller
+      operationId: getActiveOrderByUserId
       parameters:
-        - name: licenseNumber
+        - name: userId
           in: path
           required: true
           schema:
-            type: string
+            type: integer
+            format: int64
       responses:
         '200':
           description: OK
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/DriverResponseDTO'
+                $ref: '#/components/schemas/OrderResponseDTO'
         '400':
           description: Bad Request
           content:
@@ -1625,6 +2339,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
           content:
             application/problem+json:
               schema:
@@ -1674,6 +2394,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '500':
           description: Internal Server Error
           content:
@@ -1718,6 +2444,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '500':
           description: Internal Server Error
           content:
@@ -1754,7 +2486,10 @@ components:
         model:
           type: string
           minLength: 1
-        imageURL:
+        licensePlate:
+          type: string
+          minLength: 1
+        imageUrl:
           type: string
         airConditioning:
           type: boolean
@@ -1770,11 +2505,15 @@ components:
             - TAXI
             - SEMI
             - AMBULANCE
+            - RENTAL
+            - PROM
+            - FUNERAL
         companyId:
           type: integer
           format: int64
       required:
         - brand
+        - licensePlate
         - model
         - vehicleType
     VehicleResponseDTO:
@@ -1787,7 +2526,9 @@ components:
           type: string
         model:
           type: string
-        imageURL:
+        licensePlate:
+          type: string
+        imageUrl:
           type: string
         airConditioning:
           type: boolean
@@ -1803,6 +2544,17 @@ components:
             - TAXI
             - SEMI
             - AMBULANCE
+            - RENTAL
+            - PROM
+            - FUNERAL
+        vehicleClasses:
+          type: array
+          items:
+            type: string
+            enum:
+              - STANDARD
+              - XL
+          uniqueItems: true
         companyId:
           type: integer
           format: int64
@@ -1923,6 +2675,9 @@ components:
             - TAXI
             - SEMI
             - AMBULANCE
+            - RENTAL
+            - PROM
+            - FUNERAL
         pickupAddress:
           type: string
           minLength: 1
@@ -1952,6 +2707,20 @@ components:
           format: int32
         specialRequirements:
           type: string
+        passengerCount:
+          type: integer
+          format: int32
+        luggageCount:
+          type: integer
+          format: int32
+          minimum: 0
+        vehicleClass:
+          type: string
+          enum:
+            - STANDARD
+            - XL
+        requiresAirConditioning:
+          type: boolean
       required:
         - dropoffAddress
         - dropoffLatitude
@@ -1961,6 +2730,20 @@ components:
         - pickupLongitude
         - userId
         - vehicleType
+    DriverInfoDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        firstName:
+          type: string
+        lastName:
+          type: string
+        phoneNumber:
+          type: string
+        imageUrl:
+          type: string
     OrderResponseDTO:
       type: object
       properties:
@@ -1976,12 +2759,19 @@ components:
         vehicleId:
           type: integer
           format: int64
+        driver:
+          $ref: '#/components/schemas/DriverInfoDTO'
+        vehicle:
+          $ref: '#/components/schemas/VehicleInfoDTO'
         vehicleType:
           type: string
           enum:
             - TAXI
             - SEMI
             - AMBULANCE
+            - RENTAL
+            - PROM
+            - FUNERAL
         pickupAddress:
           type: string
         pickupLatitude:
@@ -2020,6 +2810,19 @@ components:
           format: int32
         specialRequirements:
           type: string
+        passengerCount:
+          type: integer
+          format: int32
+        luggageCount:
+          type: integer
+          format: int32
+        vehicleClass:
+          type: string
+          enum:
+            - STANDARD
+            - XL
+        requiresAirConditioning:
+          type: boolean
         cancellationReason:
           type: string
         createdAt:
@@ -2028,6 +2831,20 @@ components:
         updatedAt:
           type: string
           format: date-time
+    VehicleInfoDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        licensePlate:
+          type: string
+        brand:
+          type: string
+        model:
+          type: string
+        imageUrl:
+          type: string
     DriverRequestDTO:
       type: object
       properties:
@@ -2041,15 +2858,29 @@ components:
           type: string
           minLength: 1
           pattern: '^\+?[0-9]{10,15}$'
-        licenseNumber:
-          type: string
-          minLength: 1
         expertiseType:
-          type: string
-          enum:
-            - B
-            - C
-            - CE
+          type: array
+          items:
+            type: string
+            enum:
+              - AM
+              - A1
+              - A2
+              - A
+              - B1
+              - B
+              - BE
+              - C1
+              - C1E
+              - C
+              - CE
+              - D1
+              - D1E
+              - D
+              - DE
+              - Tkt
+          minItems: 1
+          uniqueItems: true
         available:
           type: boolean
         imageUrl:
@@ -2061,7 +2892,6 @@ components:
         - expertiseType
         - firstName
         - lastName
-        - licenseNumber
         - phoneNumber
     DriverResponseDTO:
       type: object
@@ -2075,14 +2905,28 @@ components:
           type: string
         phoneNumber:
           type: string
-        licenseNumber:
-          type: string
         expertiseType:
-          type: string
-          enum:
-            - B
-            - C
-            - CE
+          type: array
+          items:
+            type: string
+            enum:
+              - AM
+              - A1
+              - A2
+              - A
+              - B1
+              - B
+              - BE
+              - C1
+              - C1E
+              - C
+              - CE
+              - D1
+              - D1E
+              - D
+              - DE
+              - Tkt
+          uniqueItems: true
         available:
           type: boolean
         imageUrl:
@@ -2113,8 +2957,6 @@ components:
           type: string
           format: email
           minLength: 1
-        logoUrl:
-          type: string
         description:
           type: string
           maxLength: 1000
@@ -2148,8 +2990,6 @@ components:
           type: string
         email:
           type: string
-        logoUrl:
-          type: string
         description:
           type: string
         companyType:
@@ -2167,11 +3007,88 @@ components:
         updatedAt:
           type: string
           format: date-time
+    OrderEstimateRequestDTO:
+      type: object
+      properties:
+        vehicleType:
+          type: string
+          enum:
+            - TAXI
+            - SEMI
+            - AMBULANCE
+            - RENTAL
+            - PROM
+            - FUNERAL
+        distanceKm:
+          type: number
+          format: double
+        vehicleClass:
+          type: string
+          enum:
+            - STANDARD
+            - XL
+      required:
+        - distanceKm
+        - vehicleType
+    OrderEstimateResponseDTO:
+      type: object
+      properties:
+        estimatedPrice:
+          type: number
+          format: double
+        currency:
+          type: string
+        distanceKm:
+          type: number
+          format: double
     JwtResponse:
       type: object
       properties:
         token:
           type: string
+    ChatbotMessage:
+      type: object
+      properties:
+        role:
+          type: string
+          enum:
+            - user
+            - assistant
+        content:
+          type: string
+          minLength: 1
+      required:
+        - content
+        - role
+    ChatbotRequestDTO:
+      type: object
+      properties:
+        message:
+          type: string
+          maxLength: 500
+          minLength: 0
+        history:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChatbotMessage'
+          maxItems: 50
+          minItems: 0
+      required:
+        - message
+    ChatbotResponseDTO:
+      type: object
+      properties:
+        reply:
+          type: string
+        recommendedService:
+          type: string
+          enum:
+            - TAXI
+            - SEMI
+            - AMBULANCE
+            - RENTAL
+            - PROM
+            - FUNERAL
     UserRequestDTO:
       type: object
       properties:
@@ -2181,3 +3098,59 @@ components:
         password:
           type: string
           pattern: '^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$'
+    OrderStatusUpdateDTO:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - CREATED
+            - ACCEPTED
+            - IN_PROGRESS
+            - COMPLETED
+            - CANCELED
+      required:
+        - status
+    OrderAssignmentRequestDTO:
+      type: object
+      properties:
+        driverId:
+          type: integer
+          format: int64
+        vehicleId:
+          type: integer
+          format: int64
+      required:
+        - driverId
+        - vehicleId
+    PublicVehicleResponseDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        brand:
+          type: string
+        model:
+          type: string
+        licensePlate:
+          type: string
+        imageUrl:
+          type: string
+        numberOfSeats:
+          type: integer
+          format: int32
+        vehicleType:
+          type: string
+          enum:
+            - TAXI
+            - SEMI
+            - AMBULANCE
+            - RENTAL
+            - PROM
+            - FUNERAL
+        companyId:
+          type: integer
+          format: int64
+        driverPhoneNumber:
+          type: string
