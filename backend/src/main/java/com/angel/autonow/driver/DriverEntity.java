@@ -13,6 +13,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -64,5 +65,7 @@ public class DriverEntity {
 		joinColumns = @JoinColumn(name = "driver_id"),
 		inverseJoinColumns = @JoinColumn(name = "vehicle_id")
 	)
-	private Set<VehicleEntity> vehicles;
+
+	@Builder.Default
+	private Set<VehicleEntity> vehicles = new HashSet<>();
 }
