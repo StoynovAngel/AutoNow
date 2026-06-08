@@ -30,7 +30,7 @@ export const decodeJWT = (token: string): JwtPayload | null => {
         if (
             candidate.companyId !== undefined &&
             candidate.companyId !== null &&
-            typeof candidate.companyId !== 'number'
+            (typeof candidate.companyId !== 'number' || !Number.isInteger(candidate.companyId))
         ) {
             return null;
         }

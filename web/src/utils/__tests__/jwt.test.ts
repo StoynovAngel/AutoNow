@@ -96,4 +96,9 @@ describe('decodeJWT', () => {
         expect(decodeJWT(buildToken({ sub: '1', authorities: ['A'], companyId: 'abc' }))).toBeNull();
         expect(decodeJWT(buildToken({ sub: '1', authorities: ['A'], companyId: true }))).toBeNull();
     });
+
+    it('returns null when companyId is a non-integer number', () => {
+        expect(decodeJWT(buildToken({ sub: '1', authorities: ['A'], companyId: 1.5 }))).toBeNull();
+        expect(decodeJWT(buildToken({ sub: '1', authorities: ['A'], companyId: -2.7 }))).toBeNull();
+    });
 });
