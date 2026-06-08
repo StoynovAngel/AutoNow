@@ -1,6 +1,7 @@
 import { StyleSheet } from 'react-native';
+import type { Theme } from '../../hooks/useTheme';
 
-export const createStyles = (theme: any) => StyleSheet.create({
+export const createStyles = (theme: Theme) => StyleSheet.create({
     fab: {
         position: 'absolute',
         right: 20,
