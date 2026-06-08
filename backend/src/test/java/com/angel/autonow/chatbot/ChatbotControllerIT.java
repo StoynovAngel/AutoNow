@@ -108,7 +108,7 @@ class ChatbotControllerIT {
 	@Test
 	void recommendEndpointValidatesNestedHistoryMessages() throws Exception {
 		String body = objectMapper.writeValueAsString(
-				new ChatbotRequestDTO("hi", List.of(new ChatbotMessage("", "content")))
+				new ChatbotRequestDTO("hi", List.of(new ChatbotMessage(ChatRole.USER, "")))
 		);
 
 		mockMvc.perform(post("/api/chatbots/recommend")
