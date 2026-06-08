@@ -1,0 +1,39 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "release-type": "simple",
+  "include-component-in-tag": false,
+  "include-v-in-tag": true,
+  "skip-github-release": false,
+  "draft": false,
+  "prerelease": false,
+  "bump-minor-pre-major": true,
+  "bump-patch-for-minor-pre-major": true,
+  "packages": {
+    ".": {
+      "package-name": "autonow",
+      "changelog-path": "CHANGELOG.md",
+      "extra-files": [
+        {
+          "type": "xml",
+          "path": "backend/pom.xml",
+          "xpath": "/project/version"
+        },
+        {
+          "type": "json",
+          "path": "web/package.json",
+          "jsonpath": "$.version"
+        },
+        {
+          "type": "json",
+          "path": "frontend/package.json",
+          "jsonpath": "$.version"
+        },
+        {
+          "type": "json",
+          "path": "frontend/app.json",
+          "jsonpath": "$.expo.version"
+        }
+      ]
+    }
+  }
+}

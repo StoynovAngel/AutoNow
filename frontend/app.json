@@ -2,7 +2,7 @@
   "expo": {
     "name": "frontend-temp",
     "slug": "frontend-temp",
-    "version": "1.0.0",
+    "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -18,6 +18,8 @@
       "orientation": "portrait"
     },
     "android": {
+      "package": "com.autonow.app",
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
