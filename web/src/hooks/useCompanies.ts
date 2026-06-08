@@ -31,7 +31,7 @@ export const useCompanies = () => {
         setSelectedCompanyId(companyId);
         if (companyId) {
             try {
-                const data = await companyService.getCompanyById(String(companyId));
+                const data = await companyService.getCompanyById(companyId);
                 setSelectedCompany(data);
             } catch {
                 setSelectedCompany(null);
@@ -51,7 +51,7 @@ export const useCompanies = () => {
     };
 
     const updateCompany = async (id: number, payload: CompanyPayload): Promise<Company> => {
-        const updated: Company = await companyService.updateCompany(String(id), payload);
+        const updated: Company = await companyService.updateCompany(id, payload);
         setCompanies((prev) => prev.map((c) => (c.id === updated.id ? updated : c)));
         if (selectedCompanyId === updated.id) {
             setSelectedCompany(updated);

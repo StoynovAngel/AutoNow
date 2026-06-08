@@ -64,7 +64,7 @@ describe('useCompanies', () => {
             await result.current.selectCompany(1);
         });
 
-        expect(companyService.getCompanyById).toHaveBeenCalledWith('1');
+        expect(companyService.getCompanyById).toHaveBeenCalledWith(1);
         expect(result.current.selectedCompanyId).toBe(1);
         expect(result.current.selectedCompany).toEqual(c);
     });
@@ -135,7 +135,7 @@ describe('useCompanies', () => {
             });
         });
 
-        expect(companyService.updateCompany).toHaveBeenCalledWith('1', expect.objectContaining({ name: 'New Name' }));
+        expect(companyService.updateCompany).toHaveBeenCalledWith(1, expect.objectContaining({ name: 'New Name' }));
         expect(result.current.companies[0]).toEqual(updated);
         expect(result.current.selectedCompany).toEqual(updated);
     });
