@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.2](https://github.com/StoynovAngel/AutoNow/compare/v0.1.1...v0.1.2) (2026-06-08)
+
+
+### Bug Fixes
+
+* **deps:** update dependency com.auth0:java-jwt to v4.5.2 ([#60](https://github.com/StoynovAngel/AutoNow/issues/60)) ([3ba567e](https://github.com/StoynovAngel/AutoNow/commit/3ba567e3bee214ff33ed1e65173a39ef3decf257))
+* **deps:** update spring boot to v4.0.6 ([#57](https://github.com/StoynovAngel/AutoNow/issues/57)) ([12846c0](https://github.com/StoynovAngel/AutoNow/commit/12846c0e7e9f9ddffb183c2354d9f06d98eb6595))
+
 ## [0.1.1](https://github.com/StoynovAngel/AutoNow/compare/v0.1.0...v0.1.1) (2026-06-08)
 
 
