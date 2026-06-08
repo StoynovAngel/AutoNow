@@ -35,15 +35,23 @@ describe('company Body', () => {
         mockGoBack.mockClear();
     });
 
-    it('routes TAXI bookings to the preferences screen', () => {
+    it('TAXI bookings show STANDARD/XL buttons that navigate to map with the chosen class', () => {
         mockRouteVehicleType = VehicleType.TAXI;
         const { getByTestId } = renderWithProviders(<Body />);
 
-        fireEvent.press(getByTestId('book-7'));
-
-        expect(mockNavigate).toHaveBeenCalledWith('bookingPreferences', {
+        fireEvent.press(getByTestId('book-7-STANDARD'));
+        expect(mockNavigate).toHaveBeenCalledWith('bookingMap', {
             companyId: 7,
             vehicleType: VehicleType.TAXI,
+            preferences: { vehicleClass: 'STANDARD' },
+        });
+
+        mockNavigate.mockClear();
+        fireEvent.press(getByTestId('book-7-XL'));
+        expect(mockNavigate).toHaveBeenCalledWith('bookingMap', {
+            companyId: 7,
+            vehicleType: VehicleType.TAXI,
+            preferences: { vehicleClass: 'XL' },
         });
     });
 
@@ -58,5 +66,31 @@ describe('company Body', () => {
             vehicleType: VehicleType.AMBULANCE,
             preferences: {},
         });
+    });
+
+    it('routes PROM bookings to the prom vehicles screen', () => {
+        mockRouteVehicleType = VehicleType.PROM;
+        const { getByTestId } = renderWithProviders(<Body />);
+
+        fireEvent.press(getByTestId('book-7'));
+
+        expect(mockNavigate).toHaveBeenCalledWith('promVehicles', {
+            companyId: 7,
+        });
+    });
+
+    it('does not render a Book button for FUNERAL companies', () => {
+        mockRouteVehicleType = VehicleType.FUNERAL;
+        const { queryByTestId } = renderWithProviders(<Body />);
+
+        expect(queryByTestId('book-7')).toBeNull();
+        expect(queryByTestId('book-7-STANDARD')).toBeNull();
+    });
+
+    it('does not render a Book button for RENTAL companies', () => {
+        mockRouteVehicleType = VehicleType.RENTAL;
+        const { queryByTestId } = renderWithProviders(<Body />);
+
+        expect(queryByTestId('book-7')).toBeNull();
     });
 });

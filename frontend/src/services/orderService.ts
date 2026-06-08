@@ -37,10 +37,7 @@ export interface OrderRequest {
     dropoffLatitude: number;
     dropoffLongitude: number;
     distanceKm?: number;
-    passengerCount?: number;
-    luggageCount?: number;
     vehicleClass?: VehicleClass;
-    requiresAirConditioning?: boolean;
 }
 
 export interface OrderResponse {

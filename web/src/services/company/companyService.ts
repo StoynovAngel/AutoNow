@@ -1,13 +1,15 @@
 import apiClient from '../apiClient';
 
+export const COMPANY_TYPES = ['TAXI', 'LOGISTICS', 'AMBULANCE', 'RENTAL', 'FUNERAL', 'PROM'] as const;
+export type CompanyType = typeof COMPANY_TYPES[number];
+
 export interface CompanyPayload {
     name: string;
     address: string;
     phone: string;
     email: string;
-    logoUrl?: string;
     description?: string;
-    companyType: string;
+    companyType: CompanyType;
 }
 
 export const companyService = {
@@ -16,7 +18,7 @@ export const companyService = {
         return data;
     },
 
-    getCompanyById: async (id: string) => {
+    getCompanyById: async (id: number) => {
         const {data} = await apiClient.get(`/companies/${id}`);
         return data;
     },
@@ -26,12 +28,12 @@ export const companyService = {
         return data;
     },
 
-    updateCompany: async (id: string, companyData: CompanyPayload) => {
+    updateCompany: async (id: number, companyData: CompanyPayload) => {
         const {data} = await apiClient.put(`/companies/${id}`, companyData);
         return data;
     },
 
-    deleteCompany: async (id: string) => {
+    deleteCompany: async (id: number) => {
         await apiClient.delete(`/companies/${id}`);
     }
 };

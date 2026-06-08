@@ -1,18 +1,31 @@
+import { useState } from 'react';
 import Navigation from '../components/ui/Navigation.tsx';
 import PageStatus from '../components/ui/PageStatus.tsx';
 import CompanyManagementSidebar from '../components/company/CompanyManagementSidebar';
 import CompanyManagementContent from '../components/company/CompanyManagementContent';
+import AddCompanyModal from '../components/company/AddCompanyModal';
+import EditCompanyModal from '../components/company/EditCompanyModal';
 import {useCompanies} from '../hooks/useCompanies';
 import {useDrivers} from '../hooks/useDrivers';
+import {useAuth} from '../contexts/AuthContext';
 
 const Company = () => {
+    const {user} = useAuth();
+    const authorities = user?.authorities ?? [];
+    const isAdmin = authorities.includes('ROLE_ADMIN');
+    const isCompanyAdmin = authorities.includes('ROLE_COMPANY_ADMIN');
+    const isCustomer = authorities.includes('ROLE_CUSTOMER');
+    const canCreateCompany = isAdmin || isCompanyAdmin || isCustomer;
+
     const {
         companies,
         selectedCompanyId,
         selectedCompany,
         loading: companiesLoading,
         error: companiesError,
-        selectCompany
+        selectCompany,
+        createCompany,
+        updateCompany,
     } = useCompanies();
 
     const {
@@ -25,6 +38,13 @@ const Company = () => {
         error: driversError,
         selectDriver
     } = useDrivers(selectedCompanyId);
+
+    const [showAddModal, setShowAddModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
+
+    const canEditSelectedCompany =
+        !!selectedCompany &&
+        (isAdmin || (isCompanyAdmin && user?.companyId === selectedCompany.id));
 
     const loading = companiesLoading || driversLoading;
     const error = companiesError || driversError;
@@ -54,16 +74,35 @@ const Company = () => {
                             selectedDriverId={selectedDriverId}
                             onSelectCompany={selectCompany}
                             onSelectDriver={selectDriver}
+                            canCreateCompany={canCreateCompany}
+                            onAddCompany={() => setShowAddModal(true)}
                         />
                         <CompanyManagementContent
                             selectedCompany={selectedCompany}
                             selectedDriver={selectedDriver}
                             driverVehicles={driverVehicles}
                             driverRatings={driverRatings}
+                            canEditCompany={canEditSelectedCompany}
+                            onEditCompany={() => setShowEditModal(true)}
                         />
                     </div>
                 </div>
             </div>
+
+            <AddCompanyModal
+                show={showAddModal}
+                onClose={() => setShowAddModal(false)}
+                onSubmit={async (payload) => { await createCompany(payload); }}
+            />
+
+            {selectedCompany && (
+                <EditCompanyModal
+                    show={showEditModal}
+                    company={selectedCompany}
+                    onClose={() => setShowEditModal(false)}
+                    onSubmit={async (payload) => { await updateCompany(selectedCompany.id, payload); }}
+                />
+            )}
         </>
     );
 }

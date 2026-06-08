@@ -76,4 +76,29 @@ describe('decodeJWT', () => {
         const token = `header.${encodeSegment(null)}.sig`;
         expect(decodeJWT(token)).toBeNull();
     });
+
+    it('preserves companyId when present as a number', () => {
+        const token = buildToken({ sub: '1', authorities: ['ROLE_COMPANY_ADMIN'], companyId: 42 });
+        expect(decodeJWT(token)?.companyId).toBe(42);
+    });
+
+    it('accepts companyId as null', () => {
+        const token = buildToken({ sub: '1', authorities: ['ROLE_CUSTOMER'], companyId: null });
+        expect(decodeJWT(token)?.companyId).toBeNull();
+    });
+
+    it('treats absent companyId as undefined', () => {
+        const token = buildToken({ sub: '1', authorities: ['ROLE_CUSTOMER'] });
+        expect(decodeJWT(token)?.companyId).toBeUndefined();
+    });
+
+    it('returns null when companyId is not a number', () => {
+        expect(decodeJWT(buildToken({ sub: '1', authorities: ['A'], companyId: 'abc' }))).toBeNull();
+        expect(decodeJWT(buildToken({ sub: '1', authorities: ['A'], companyId: true }))).toBeNull();
+    });
+
+    it('returns null when companyId is a non-integer number', () => {
+        expect(decodeJWT(buildToken({ sub: '1', authorities: ['A'], companyId: 1.5 }))).toBeNull();
+        expect(decodeJWT(buildToken({ sub: '1', authorities: ['A'], companyId: -2.7 }))).toBeNull();
+    });
 });

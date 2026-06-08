@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -47,6 +48,14 @@ public class VehicleController {
 	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN')")
 	public List<VehicleResponseDTO> getVehiclesByCompanyId(@PathVariable Long companyId) {
 		return vehicleService.getVehiclesByCompanyId(companyId);
+	}
+
+	@GetMapping("/public/company/{companyId}")
+	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'DRIVER', 'GUEST')")
+	public List<PublicVehicleResponseDTO> getPublicVehiclesByCompanyId(
+			@PathVariable Long companyId,
+			@RequestParam(name = "vehicleType", required = false) VehicleType vehicleType) {
+		return vehicleService.getPublicVehiclesByCompanyAndType(companyId, vehicleType);
 	}
 
 	@PutMapping("/{id}")

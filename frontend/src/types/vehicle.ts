@@ -14,3 +14,15 @@ export interface VehicleOption {
     color: string;
     description: string;
 }
+
+export interface PublicVehicle {
+    id: number;
+    brand: string;
+    model: string;
+    licensePlate: string;
+    imageUrl?: string;
+    numberOfSeats?: number;
+    vehicleType: VehicleType;
+    companyId?: number;
+    driverPhoneNumber?: string;
+}

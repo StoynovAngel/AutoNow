@@ -98,19 +98,17 @@ describe('VehicleInfo', () => {
         expect(screen.getByText('BMW - Camry')).toBeInTheDocument();
     });
 
-    it('renders tier and class badges when present', () => {
+    it('renders class badges when present', () => {
         render(<VehicleInfo vehicles={[makeVehicle({
-            vehicleTier: 'PREMIUM',
-            vehicleClasses: ['XL', 'PREMIUM'],
+            vehicleClasses: ['XL', 'STANDARD'],
         })]} />);
 
-        expect(screen.getAllByText('PREMIUM').length).toBe(2);
         expect(screen.getByText('XL')).toBeInTheDocument();
+        expect(screen.getByText('STANDARD')).toBeInTheDocument();
     });
 
-    it('omits tier and class badges when not provided', () => {
+    it('omits class badges when not provided', () => {
         render(<VehicleInfo vehicles={[makeVehicle()]} />);
-        expect(screen.queryByText('PREMIUM')).not.toBeInTheDocument();
         expect(screen.queryByText('STANDARD')).not.toBeInTheDocument();
         expect(screen.queryByText('XL')).not.toBeInTheDocument();
     });

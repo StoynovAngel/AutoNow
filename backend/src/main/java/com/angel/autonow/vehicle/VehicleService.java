@@ -73,6 +73,33 @@ public class VehicleService {
 				.toList();
 	}
 
+	@Transactional(readOnly = true)
+	public List<PublicVehicleResponseDTO> getPublicVehiclesByCompanyAndType(Long companyId, VehicleType vehicleType) {
+		List<VehicleEntity> vehicles = vehicleType != null
+				? vehicleRepository.findByCompanyIdAndVehicleType(companyId, vehicleType)
+				: vehicleRepository.findByCompanyId(companyId);
+
+		return vehicles.stream()
+				.map(this::toPublicDto)
+				.toList();
+	}
+
+	private PublicVehicleResponseDTO toPublicDto(VehicleEntity vehicle) {
+		String driverPhone = vehicle.getDriver() != null ? vehicle.getDriver().getPhoneNumber() : null;
+
+		return PublicVehicleResponseDTO.builder()
+				.id(vehicle.getId())
+				.brand(vehicle.getBrand())
+				.model(vehicle.getModel())
+				.licensePlate(vehicle.getLicensePlate())
+				.imageUrl(vehicle.getImageUrl())
+				.numberOfSeats(vehicle.getNumberOfSeats())
+				.vehicleType(vehicle.getVehicleType())
+				.companyId(vehicle.getCompany() != null ? vehicle.getCompany().getId() : null)
+				.driverPhoneNumber(driverPhone)
+				.build();
+	}
+
 	public boolean deleteVehicle(Long id) {
 		if (!vehicleRepository.existsById(id)) {
 			return false;

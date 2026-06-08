@@ -37,7 +37,11 @@ public class DriverService {
 			if (!canManageCompany(user, request.companyId())) {
 				return Optional.empty();
 			}
-			companyRepository.findById(request.companyId()).ifPresent(driver::setCompany);
+			Optional<CompanyEntity> companyOpt = companyRepository.findById(request.companyId());
+			if (companyOpt.isEmpty()) {
+				return Optional.empty();
+			}
+			driver.setCompany(companyOpt.get());
 		}
 
 		DriverEntity saved = driverRepository.save(driver);
@@ -87,8 +91,16 @@ public class DriverService {
 			company = companyOpt.get();
 		}
 
+		Long newCompanyId = company != null ? company.getId() : null;
+		boolean companyChanged = !java.util.Objects.equals(driverCompanyId, newCompanyId);
+
 		driverMapper.updateEntity(request, driver);
 		driver.setCompany(company);
+
+		if (companyChanged && driver.getVehicles() != null) {
+			driver.getVehicles().forEach(v -> v.setDriver(null));
+			driver.getVehicles().clear();
+		}
 
 		return Optional.of(driverMapper.toDTO(driverRepository.save(driver)));
 	}
@@ -130,9 +142,26 @@ public class DriverService {
 		}
 
 		DriverEntity entity = driver.get();
-		entity.getVehicles().add(vehicle.get());
+		VehicleEntity vehicleEntity = vehicle.get();
 
-		return Optional.of(driverMapper.toDTO(driverRepository.save(entity)));
+		Long driverCompanyId = entity.getCompany() != null ? entity.getCompany().getId() : null;
+		Long vehicleCompanyId = vehicleEntity.getCompany() != null ? vehicleEntity.getCompany().getId() : null;
+
+		if (driverCompanyId == null || !driverCompanyId.equals(vehicleCompanyId)) {
+			return Optional.empty();
+		}
+
+		DriverEntity currentDriver = vehicleEntity.getDriver();
+		if (currentDriver != null && !currentDriver.getId().equals(driverId)) {
+			String message = "Vehicle " + vehicleId + " is already assigned to driver " + currentDriver.getId();
+			throw new VehicleAlreadyAssignedException(message);
+		}
+
+		vehicleEntity.setDriver(entity);
+		vehicleRepository.save(vehicleEntity);
+		entity.getVehicles().add(vehicleEntity);
+
+		return Optional.of(driverMapper.toDTO(entity));
 	}
 
 	@Transactional
@@ -145,9 +174,15 @@ public class DriverService {
 		}
 
 		DriverEntity driver = driverOpt.get();
-		driver.getVehicles().removeIf(v -> v.getId().equals(vehicleId));
+		VehicleEntity vehicle = vehicleOpt.get();
 
-		return Optional.of(driverMapper.toDTO(driverRepository.save(driver)));
+		if (vehicle.getDriver() != null && vehicle.getDriver().getId().equals(driverId)) {
+			vehicle.setDriver(null);
+			vehicleRepository.save(vehicle);
+			driver.getVehicles().removeIf(v -> v.getId().equals(vehicleId));
+		}
+
+		return Optional.of(driverMapper.toDTO(driver));
 	}
 
 	private boolean canManageCompany(UserEntity user, Long companyId) {

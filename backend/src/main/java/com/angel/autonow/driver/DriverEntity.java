@@ -11,8 +11,11 @@ import lombok.AllArgsConstructor;
 import org.hibernate.validator.constraints.URL;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -58,11 +61,9 @@ public class DriverEntity {
 	@JoinColumn(name = "company_id")
 	private CompanyEntity company;
 
-	@ManyToMany
-	@JoinTable(
-		name = "driver_vehicles",
-		joinColumns = @JoinColumn(name = "driver_id"),
-		inverseJoinColumns = @JoinColumn(name = "vehicle_id")
-	)
-	private Set<VehicleEntity> vehicles;
+	@OneToMany(mappedBy = "driver")
+	@Builder.Default
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
+	private Set<VehicleEntity> vehicles = new HashSet<>();
 }

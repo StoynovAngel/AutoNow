@@ -37,7 +37,7 @@ describe('companyService', () => {
     it('getCompanyById GETs /companies/{id}', async () => {
         vi.mocked(apiClient.get).mockResolvedValue({ data: { id: 5 } });
 
-        await companyService.getCompanyById('5');
+        await companyService.getCompanyById(5);
 
         expect(apiClient.get).toHaveBeenCalledWith('/companies/5');
     });
@@ -53,7 +53,7 @@ describe('companyService', () => {
     it('updateCompany PUTs to /companies/{id} with payload', async () => {
         vi.mocked(apiClient.put).mockResolvedValue({ data: { id: 5, ...payload } });
 
-        await companyService.updateCompany('5', payload);
+        await companyService.updateCompany(5, payload);
 
         expect(apiClient.put).toHaveBeenCalledWith('/companies/5', payload);
     });
@@ -61,7 +61,7 @@ describe('companyService', () => {
     it('deleteCompany DELETEs /companies/{id}', async () => {
         vi.mocked(apiClient.delete).mockResolvedValue({});
 
-        await companyService.deleteCompany('5');
+        await companyService.deleteCompany(5);
 
         expect(apiClient.delete).toHaveBeenCalledWith('/companies/5');
     });

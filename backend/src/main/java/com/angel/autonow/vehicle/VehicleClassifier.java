@@ -15,17 +15,15 @@ public class VehicleClassifier {
 		EnumSet<VehicleClass> classes = EnumSet.noneOf(VehicleClass.class);
 
 		Integer seats = vehicle.getNumberOfSeats();
-		VehicleTier tier = vehicle.getVehicleTier() == null ? VehicleTier.BASIC : vehicle.getVehicleTier();
+		if (seats == null) {
+			return classes;
+		}
 
-		if (seats != null && seats >= XL_MIN_SEATS) {
+		if (seats >= XL_MIN_SEATS) {
 			classes.add(VehicleClass.XL);
 		}
 
-		if (tier == VehicleTier.PREMIUM) {
-			classes.add(VehicleClass.PREMIUM);
-		}
-
-		if (seats != null && seats >= STANDARD_MIN_SEATS && tier == VehicleTier.BASIC) {
+		if (seats >= STANDARD_MIN_SEATS) {
 			classes.add(VehicleClass.STANDARD);
 		}
 

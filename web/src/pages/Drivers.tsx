@@ -15,12 +15,13 @@ const EXPERTISE_TYPES = ['AM', 'A1', 'A2', 'A', 'B1', 'B', 'BE', 'C1', 'C1E', 'C
 
 const Drivers = () => {
     const { drivers, loading, error, addDriver, updateDriver, removeDriver, assignVehicle, unassignVehicle, refreshDrivers } = useAllDrivers();
-    const { vehicles } = useVehicles();
 
     const [showForm, setShowForm] = useState(false);
     const [editingDriver, setEditingDriver] = useState<Driver | null>(null);
     const [deletingId, setDeletingId] = useState<number | null>(null);
     const [assigningDriver, setAssigningDriver] = useState<Driver | null>(null);
+
+    const { vehicles } = useVehicles(assigningDriver?.companyId ?? null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [filterType, setFilterType] = useState('');
     const [filterCompanyId, setFilterCompanyId] = useState<number | null>(null);

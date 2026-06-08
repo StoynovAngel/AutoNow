@@ -145,6 +145,19 @@ export const createStyles = (theme: any) => StyleSheet.create({
         paddingHorizontal: 16,
         alignSelf: 'flex-start',
     },
+    bookButtonRow: {
+        marginTop: 12,
+        flexDirection: 'row',
+        gap: 8,
+    },
+    bookButtonHalf: {
+        flex: 1,
+        backgroundColor: theme.colors.primary,
+        borderRadius: 12,
+        paddingVertical: 10,
+        paddingHorizontal: 12,
+        alignItems: 'center',
+    },
     bookButtonText: {
         fontSize: 14,
         fontWeight: '700',

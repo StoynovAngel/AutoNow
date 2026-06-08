@@ -12,13 +12,15 @@ interface CompanyManagementContentProps {
     selectedDriver: Driver | null;
     driverVehicles: Vehicle[];
     driverRatings: Rating[];
+    canEditCompany?: boolean;
+    onEditCompany?: () => void;
 }
 
-const CompanyManagementContent = ({selectedCompany, selectedDriver, driverVehicles, driverRatings}: CompanyManagementContentProps) => {
+const CompanyManagementContent = ({selectedCompany, selectedDriver, driverVehicles, driverRatings, canEditCompany, onEditCompany}: CompanyManagementContentProps) => {
     return (
         <div className="flex-1 flex gap-4 items-stretch min-w-0 h-full">
             <div className="flex-1 flex min-h-0 min-w-0">
-                <CompanyInfo company={selectedCompany}/>
+                <CompanyInfo company={selectedCompany} canEdit={canEditCompany} onEdit={onEditCompany}/>
             </div>
             <div className="flex-1 flex min-h-0 min-w-0">
                 <DriverInfo driver={selectedDriver}/>

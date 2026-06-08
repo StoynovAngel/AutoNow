@@ -1,4 +1,4 @@
-import type {VehicleClass, VehicleTier} from '../../services/vehicle/vehicleService';
+import type {VehicleClass} from '../../services/vehicle/vehicleService';
 
 export interface Vehicle {
     id: number;
@@ -10,7 +10,6 @@ export interface Vehicle {
     numberOfSeats: number;
     trunkCapacity: number;
     vehicleType: string;
-    vehicleTier?: VehicleTier;
     vehicleClasses?: VehicleClass[];
     companyId: number;
 }
@@ -71,11 +70,6 @@ const VehicleInfo = ({vehicles, onEdit, onDelete, layout = 'grid'}: VehicleInfoP
                                         <span className="text-brand-700 text-xs font-bold bg-brand-100 px-2.5 py-1 rounded-full">
                                             {vehicle.vehicleType}
                                         </span>
-                                        {vehicle.vehicleTier && (
-                                            <span className="text-gray-700 text-xs font-bold bg-gray-100 px-2.5 py-1 rounded-full">
-                                                {vehicle.vehicleTier}
-                                            </span>
-                                        )}
                                         {vehicle.vehicleClasses?.map((cls) => (
                                             <span key={cls} className="text-emerald-700 text-xs font-bold bg-emerald-100 px-2.5 py-1 rounded-full">
                                                 {cls}

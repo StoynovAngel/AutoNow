@@ -45,7 +45,8 @@ public class CompanyService {
 		user.getAuthorities().add(Role.COMPANY_ADMIN.getAuthority());
 		userRepository.save(user);
 
-		String token = jwtService.generateToken(user.getId(), user.getEmail(), user.getAuthorities());
+		String token = jwtService.generateToken(user.getId(), user.getEmail(), user.getAuthorities(), companyOpt.get().getId());
+
 		return Optional.of(token);
 	}
 
