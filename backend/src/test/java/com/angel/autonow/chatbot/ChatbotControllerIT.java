@@ -54,7 +54,7 @@ class ChatbotControllerIT {
 				new ChatbotRequestDTO("I need to get to the airport", List.of())
 		);
 
-		mockMvc.perform(post("/api/chatbot/recommend")
+		mockMvc.perform(post("/api/chatbots/recommend")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(body))
 				.andExpect(status().isOk())
@@ -71,7 +71,7 @@ class ChatbotControllerIT {
 				new ChatbotRequestDTO("hello", List.of())
 		);
 
-		mockMvc.perform(post("/api/chatbot/recommend")
+		mockMvc.perform(post("/api/chatbots/recommend")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(body))
 				.andExpect(status().isOk())
@@ -84,7 +84,7 @@ class ChatbotControllerIT {
 				new ChatbotRequestDTO("", List.of())
 		);
 
-		mockMvc.perform(post("/api/chatbot/recommend")
+		mockMvc.perform(post("/api/chatbots/recommend")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(body))
 				.andExpect(status().isBadRequest());

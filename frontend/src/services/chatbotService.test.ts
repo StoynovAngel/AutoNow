@@ -14,7 +14,7 @@ describe('chatbotService', () => {
         jest.clearAllMocks();
     });
 
-    it('POSTs to api/chatbot/recommend with the request body', async () => {
+    it('POSTs to api/chatbots/recommend with the request body', async () => {
         const responseData = { reply: 'Try a taxi.', recommendedService: VehicleType.TAXI };
         mockedPost.mockResolvedValue({ data: responseData });
 
@@ -23,7 +23,7 @@ describe('chatbotService', () => {
             history: [],
         });
 
-        expect(mockedPost).toHaveBeenCalledWith('api/chatbot/recommend', {
+        expect(mockedPost).toHaveBeenCalledWith('api/chatbots/recommend', {
             message: 'I need a ride to the airport',
             history: [],
         });
@@ -42,7 +42,7 @@ describe('chatbotService', () => {
 
         await sendChatbotMessage({ message: 'thanks', history });
 
-        expect(mockedPost).toHaveBeenCalledWith('api/chatbot/recommend', {
+        expect(mockedPost).toHaveBeenCalledWith('api/chatbots/recommend', {
             message: 'thanks',
             history,
         });

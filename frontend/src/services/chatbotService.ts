@@ -5,7 +5,7 @@ export const sendChatbotMessage = async (
     payload: ChatbotRequest
 ): Promise<ChatbotResponse> => {
     const response = await customAPI.post<ChatbotResponse>(
-        'api/chatbot/recommend',
+        'api/chatbots/recommend',
         payload
     );
     return response.data;
