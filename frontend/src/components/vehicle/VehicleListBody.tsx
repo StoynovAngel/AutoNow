@@ -43,6 +43,9 @@ const VehicleListBody = () => {
                     style={styles.backButton}
                     onPress={handleBack}
                     testID="vehicle-list-back"
+                    accessible={true}
+                    accessibilityRole="button"
+                    accessibilityLabel={t('back')}
                 >
                     <MaterialIcons name="arrow-back" size={24} color={theme.colors.textPrimary} />
                 </Pressable>
@@ -56,7 +59,11 @@ const VehicleListBody = () => {
                     <Text style={styles.emptyText}>{t('vehicle-list-loading')}</Text>
                 </View>
             ) : error ? (
-                <View style={styles.centered}>
+                <View
+                    style={styles.centered}
+                    accessibilityRole="alert"
+                    accessibilityLiveRegion="assertive"
+                >
                     <MaterialIcons name="error-outline" size={64} color="#EF4444" />
                     <Text style={styles.emptyTitle}>{t('error-loading')}</Text>
                     <Text style={styles.errorText}>{error}</Text>
@@ -129,6 +136,9 @@ const VehicleListBody = () => {
                                         onPress={() => handleCall(vehicle.driverPhoneNumber)}
                                         disabled={!vehicle.driverPhoneNumber}
                                         testID={`vehicle-call-${vehicle.id}`}
+                                        accessible={true}
+                                        accessibilityRole="button"
+                                        accessibilityLabel={t('vehicle-list-call-driver')}
                                     >
                                         <MaterialIcons name="phone" size={24} color="#FFFFFF" />
                                     </Pressable>

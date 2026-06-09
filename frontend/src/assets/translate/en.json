@@ -41,6 +41,8 @@
   "email": "Email",
   "password": "Password",
   "back-to-login": "Back",
+  "back": "Back",
+  "vehicle-list-call-driver": "Call driver",
   "profile": "Profile",
   "admin-page": "Admin Page",
   "coffee-button": "Cafes",
