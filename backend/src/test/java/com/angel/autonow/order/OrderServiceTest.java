@@ -60,13 +60,11 @@ class OrderServiceTest {
 	void createOrder_returnOrderResponse() {
 		OrderRequestDTO request = TestData.createOrderRequest(1L);
 		UserEntity user = UserEntity.builder().id(1L).build();
-		OrderEntity entity = OrderEntity.builder().vehicleType(VehicleType.TAXI).build();
-		OrderEntity saved = OrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).createdAt(NOW).build();
+		TaxiOrderEntity saved = TaxiOrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).createdAt(NOW).build();
 		OrderResponseDTO response = TestData.createOrderResponse(1L, 1L, OrderStatus.CREATED, NOW);
 
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-		when(orderMapper.toEntity(request)).thenReturn(entity);
-		when(orderRepository.save(entity)).thenReturn(saved);
+		when(orderRepository.save(any(OrderEntity.class))).thenReturn(saved);
 		when(orderMapper.toDTO(saved)).thenReturn(response);
 
 		var result = orderService.createOrder(request);
@@ -74,7 +72,7 @@ class OrderServiceTest {
 		assertTrue(result.isPresent());
 		assertEquals(1L, result.get().id());
 		assertEquals(OrderStatus.CREATED, result.get().status());
-		verify(orderRepository).save(entity);
+		verify(orderRepository).save(any(OrderEntity.class));
 	}
 
 	@Test
@@ -100,8 +98,7 @@ class OrderServiceTest {
 		UserEntity user = UserEntity.builder().id(1L).build();
 		DriverEntity driver = DriverEntity.builder().id(2L).build();
 		VehicleEntity vehicle = VehicleEntity.builder().id(3L).build();
-		OrderEntity entity = OrderEntity.builder().vehicleType(VehicleType.TAXI).build();
-		OrderEntity saved = OrderEntity.builder().id(1L).user(user).driver(driver).vehicle(vehicle)
+		TaxiOrderEntity saved = TaxiOrderEntity.builder().id(1L).user(user).driver(driver).vehicle(vehicle)
 				.vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).createdAt(NOW).build();
 		OrderResponseDTO response = OrderResponseDTO.builder()
 				.id(1L).userId(1L).driverId(2L).vehicleId(3L)
@@ -112,8 +109,7 @@ class OrderServiceTest {
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 		when(driverRepository.findById(2L)).thenReturn(Optional.of(driver));
 		when(vehicleRepository.findById(3L)).thenReturn(Optional.of(vehicle));
-		when(orderMapper.toEntity(request)).thenReturn(entity);
-		when(orderRepository.save(entity)).thenReturn(saved);
+		when(orderRepository.save(any(OrderEntity.class))).thenReturn(saved);
 		when(orderMapper.toDTO(saved)).thenReturn(response);
 
 		var result = orderService.createOrder(request);
@@ -134,7 +130,6 @@ class OrderServiceTest {
 		UserEntity user = UserEntity.builder().id(1L).build();
 
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-		when(orderMapper.toEntity(request)).thenReturn(OrderEntity.builder().vehicleType(VehicleType.TAXI).build());
 		when(driverRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
 
 		var result = orderService.createOrder(request);
@@ -154,7 +149,6 @@ class OrderServiceTest {
 		UserEntity user = UserEntity.builder().id(1L).build();
 
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-		when(orderMapper.toEntity(request)).thenReturn(OrderEntity.builder().vehicleType(VehicleType.TAXI).build());
 		when(vehicleRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
 
 		var result = orderService.createOrder(request);
@@ -290,8 +284,8 @@ class OrderServiceTest {
 	void updateOrder_returnUpdatedResponse() {
 		OrderRequestDTO request = TestData.createOrderRequest(1L);
 		UserEntity user = UserEntity.builder().id(1L).build();
-		OrderEntity existing = OrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).createdAt(NOW).build();
-		OrderEntity saved = OrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).createdAt(NOW).build();
+		TaxiOrderEntity existing = TaxiOrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).createdAt(NOW).build();
+		TaxiOrderEntity saved = TaxiOrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).createdAt(NOW).build();
 		OrderResponseDTO response = TestData.createOrderResponse(1L, 1L, OrderStatus.CREATED, NOW);
 
 		when(orderRepository.findById(1L)).thenReturn(Optional.of(existing));
@@ -303,7 +297,7 @@ class OrderServiceTest {
 
 		assertTrue(result.isPresent());
 		assertEquals(1L, result.get().id());
-		verify(orderMapper).updateEntity(request, existing);
+		verify(orderMapper).updateBaseFields(request, existing);
 		verify(orderRepository).save(existing);
 	}
 
@@ -401,20 +395,39 @@ class OrderServiceTest {
 				.distanceKm(10.0).vehicleClass(VehicleClass.STANDARD)
 				.build();
 		UserEntity user = UserEntity.builder().id(1L).build();
-		OrderEntity entity = OrderEntity.builder().vehicleType(VehicleType.TAXI).build();
-		OrderEntity saved = OrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).estimatedPrice(14.50).createdAt(NOW).build();
+		TaxiOrderEntity saved = TaxiOrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).estimatedPrice(14.50).createdAt(NOW).build();
 		OrderResponseDTO response = TestData.createOrderResponse(1L, 1L, OrderStatus.CREATED, NOW);
 
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-		when(orderMapper.toEntity(request)).thenReturn(entity);
 		when(pricingService.calculatePrice(10.0, VehicleClass.STANDARD)).thenReturn(14.50);
-		when(orderRepository.save(entity)).thenReturn(saved);
+		when(orderRepository.save(any(OrderEntity.class))).thenReturn(saved);
 		when(orderMapper.toDTO(saved)).thenReturn(response);
 
 		orderService.createOrder(request);
 
 		verify(pricingService).calculatePrice(10.0, VehicleClass.STANDARD);
-		assertEquals(14.50, entity.getEstimatedPrice());
+	}
+
+	@Test
+	void createOrder_logistics_withDistance_usesLogisticsPricing() {
+		OrderRequestDTO request = OrderRequestDTO.builder()
+				.userId(1L).vehicleType(VehicleType.LOGISTICS)
+				.pickupAddress(TestData.DEFAULT_PICKUP_ADDRESS).pickupLatitude(TestData.DEFAULT_PICKUP_LAT).pickupLongitude(TestData.DEFAULT_PICKUP_LNG)
+				.dropoffAddress(TestData.DEFAULT_DROPOFF_ADDRESS).dropoffLatitude(TestData.DEFAULT_DROPOFF_LAT).dropoffLongitude(TestData.DEFAULT_DROPOFF_LNG)
+				.distanceKm(10.0).weightKg(50.0)
+				.build();
+		UserEntity user = UserEntity.builder().id(1L).build();
+		LogisticsOrderEntity saved = LogisticsOrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.LOGISTICS).status(OrderStatus.CREATED).estimatedPrice(12.00).createdAt(NOW).build();
+		OrderResponseDTO response = TestData.createOrderResponse(1L, 1L, OrderStatus.CREATED, NOW);
+
+		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+		when(pricingService.calculateForLogistics(10.0, 50.0)).thenReturn(12.00);
+		when(orderRepository.save(any(OrderEntity.class))).thenReturn(saved);
+		when(orderMapper.toDTO(saved)).thenReturn(response);
+
+		orderService.createOrder(request);
+
+		verify(pricingService).calculateForLogistics(10.0, 50.0);
 	}
 
 	@Test
@@ -425,18 +438,17 @@ class OrderServiceTest {
 				.dropoffAddress(TestData.DEFAULT_DROPOFF_ADDRESS).dropoffLatitude(TestData.DEFAULT_DROPOFF_LAT).dropoffLongitude(TestData.DEFAULT_DROPOFF_LNG)
 				.build();
 		UserEntity user = UserEntity.builder().id(1L).build();
-		OrderEntity entity = OrderEntity.builder().vehicleType(VehicleType.TAXI).build();
-		OrderEntity saved = OrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).createdAt(NOW).build();
+		TaxiOrderEntity saved = TaxiOrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).createdAt(NOW).build();
 		OrderResponseDTO response = TestData.createOrderResponse(1L, 1L, OrderStatus.CREATED, NOW);
 
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-		when(orderMapper.toEntity(request)).thenReturn(entity);
-		when(orderRepository.save(entity)).thenReturn(saved);
+		when(orderRepository.save(any(OrderEntity.class))).thenReturn(saved);
 		when(orderMapper.toDTO(saved)).thenReturn(response);
 
 		orderService.createOrder(request);
 
 		verify(pricingService, never()).calculatePrice(anyDouble(), any());
+		verify(pricingService, never()).calculateForLogistics(anyDouble(), anyDouble());
 	}
 
 	@Test

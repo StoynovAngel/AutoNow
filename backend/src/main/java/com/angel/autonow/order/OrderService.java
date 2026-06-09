@@ -7,6 +7,7 @@ import com.angel.autonow.user.UserEntity;
 import com.angel.autonow.user.UserRepository;
 import com.angel.autonow.vehicle.VehicleEntity;
 import com.angel.autonow.vehicle.VehicleRepository;
+import com.angel.autonow.vehicle.VehicleType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +36,6 @@ public class OrderService {
 	@Transactional
 	public Optional<OrderResponseDTO> createOrder(OrderRequestDTO request) {
 		Optional<UserEntity> user = userRepository.findById(request.userId());
-
 		if (user.isEmpty()) {
 			return Optional.empty();
 		}
@@ -44,36 +44,26 @@ public class OrderService {
 			throw new OrderConflictException("User already has an active order");
 		}
 
-		OrderEntity order = orderMapper.toEntity(request);
+		OrderEntity order = buildEntity(request);
 		order.setUser(user.get());
 
 		if (request.driverId() != null) {
 			var driver = driverRepository.findById(request.driverId());
-
-			if (driver.isEmpty()) {
-				return Optional.empty();
-			}
-
+			if (driver.isEmpty()) return Optional.empty();
 			order.setDriver(driver.get());
 		}
 
 		if (request.vehicleId() != null) {
 			var vehicle = vehicleRepository.findById(request.vehicleId());
-
-			if (vehicle.isEmpty()) {
-				return Optional.empty();
-			}
-
+			if (vehicle.isEmpty()) return Optional.empty();
 			order.setVehicle(vehicle.get());
 		}
 
 		if (request.distanceKm() != null) {
-			order.setEstimatedPrice(pricingService.calculatePrice(request.distanceKm(), request.vehicleClass()));
+			order.setEstimatedPrice(calculatePrice(request));
 		}
 
-		OrderEntity saved = orderRepository.save(order);
-
-		return Optional.of(orderMapper.toDTO(saved));
+		return Optional.of(orderMapper.toDTO(orderRepository.save(order)));
 	}
 
 	public OrderEstimateResponseDTO estimate(OrderEstimateRequestDTO request) {
@@ -115,43 +105,31 @@ public class OrderService {
 	@Transactional
 	public Optional<OrderResponseDTO> updateOrder(Long id, OrderRequestDTO request) {
 		Optional<OrderEntity> existing = orderRepository.findById(id);
-
-		if (existing.isEmpty()) {
-			return Optional.empty();
-		}
+		if (existing.isEmpty()) return Optional.empty();
 
 		Optional<UserEntity> user = userRepository.findById(request.userId());
-		if (user.isEmpty()) {
-			return Optional.empty();
-		}
+		if (user.isEmpty()) return Optional.empty();
 
 		DriverEntity driver = null;
 		if (request.driverId() != null) {
 			var driverOpt = driverRepository.findById(request.driverId());
-
-			if (driverOpt.isEmpty()) {
-				return Optional.empty();
-			}
-
+			if (driverOpt.isEmpty()) return Optional.empty();
 			driver = driverOpt.get();
 		}
 
 		VehicleEntity vehicle = null;
 		if (request.vehicleId() != null) {
 			var vehicleOpt = vehicleRepository.findById(request.vehicleId());
-
-			if (vehicleOpt.isEmpty()) {
-				return Optional.empty();
-			}
-
+			if (vehicleOpt.isEmpty()) return Optional.empty();
 			vehicle = vehicleOpt.get();
 		}
 
 		OrderEntity order = existing.get();
-		orderMapper.updateEntity(request, order);
+		orderMapper.updateBaseFields(request, order);
 		order.setUser(user.get());
 		order.setDriver(driver);
 		order.setVehicle(vehicle);
+		applySubtypeFields(request, order);
 
 		return Optional.of(orderMapper.toDTO(orderRepository.save(order)));
 	}
@@ -160,9 +138,7 @@ public class OrderService {
 		if (!orderRepository.existsById(id)) {
 			return false;
 		}
-
 		orderRepository.deleteById(id);
-
 		return true;
 	}
 
@@ -178,20 +154,13 @@ public class OrderService {
 	@Transactional
 	public Optional<OrderResponseDTO> assignOrder(Long id, OrderAssignmentRequestDTO request) {
 		Optional<OrderEntity> existing = orderRepository.findById(id);
-
-		if (existing.isEmpty()) {
-			return Optional.empty();
-		}
+		if (existing.isEmpty()) return Optional.empty();
 
 		Optional<DriverEntity> driver = driverRepository.findById(request.driverId());
-		if (driver.isEmpty()) {
-			return Optional.empty();
-		}
+		if (driver.isEmpty()) return Optional.empty();
 
 		Optional<VehicleEntity> vehicle = vehicleRepository.findById(request.vehicleId());
-		if (vehicle.isEmpty()) {
-			return Optional.empty();
-		}
+		if (vehicle.isEmpty()) return Optional.empty();
 
 		OrderEntity order = existing.get();
 		DriverEntity driverEntity = driver.get();
@@ -206,6 +175,95 @@ public class OrderService {
 		return Optional.of(orderMapper.toDTO(orderRepository.save(order)));
 	}
 
+	@Transactional
+	public Optional<OrderResponseDTO> cancelOrder(Long id, String callerEmail) {
+		Optional<OrderEntity> existing = orderRepository.findById(id);
+		if (existing.isEmpty()) return Optional.empty();
+
+		OrderEntity order = existing.get();
+		UserEntity owner = order.getUser();
+		if (owner == null || !owner.getEmail().equals(callerEmail)) {
+			throw new OrderForbiddenException("Only the order owner can cancel this order");
+		}
+
+		return Optional.of(transitionToCanceled(order));
+	}
+
+	@Transactional
+	public Optional<OrderResponseDTO> adminCancelOrder(Long id) {
+		Optional<OrderEntity> existing = orderRepository.findById(id);
+		if (existing.isEmpty()) return Optional.empty();
+		return Optional.of(transitionToCanceled(existing.get()));
+	}
+
+	// --- private helpers ---
+
+	private OrderEntity buildEntity(OrderRequestDTO request) {
+		if (request.vehicleType() == VehicleType.TAXI) {
+			return TaxiOrderEntity.builder()
+					.vehicleType(request.vehicleType())
+					.pickupAddress(request.pickupAddress())
+					.pickupLatitude(request.pickupLatitude())
+					.pickupLongitude(request.pickupLongitude())
+					.dropoffAddress(request.dropoffAddress())
+					.dropoffLatitude(request.dropoffLatitude())
+					.dropoffLongitude(request.dropoffLongitude())
+					.distanceKm(request.distanceKm())
+					.estimatedDurationMinutes(request.estimatedDurationMinutes())
+					.specialRequirements(request.specialRequirements())
+					.vehicleClass(request.vehicleClass())
+					.passengerCount(request.passengerCount())
+					.luggageCount(request.luggageCount())
+					.requiresAirConditioning(request.requiresAirConditioning())
+					.build();
+		}
+		if (request.vehicleType() == VehicleType.LOGISTICS) {
+			return LogisticsOrderEntity.builder()
+					.vehicleType(request.vehicleType())
+					.pickupAddress(request.pickupAddress())
+					.pickupLatitude(request.pickupLatitude())
+					.pickupLongitude(request.pickupLongitude())
+					.dropoffAddress(request.dropoffAddress())
+					.dropoffLatitude(request.dropoffLatitude())
+					.dropoffLongitude(request.dropoffLongitude())
+					.distanceKm(request.distanceKm())
+					.estimatedDurationMinutes(request.estimatedDurationMinutes())
+					.specialRequirements(request.specialRequirements())
+					.weightKg(request.weightKg())
+					.build();
+		}
+		return OrderEntity.builder()
+				.vehicleType(request.vehicleType())
+				.pickupAddress(request.pickupAddress())
+				.pickupLatitude(request.pickupLatitude())
+				.pickupLongitude(request.pickupLongitude())
+				.dropoffAddress(request.dropoffAddress())
+				.dropoffLatitude(request.dropoffLatitude())
+				.dropoffLongitude(request.dropoffLongitude())
+				.distanceKm(request.distanceKm())
+				.estimatedDurationMinutes(request.estimatedDurationMinutes())
+				.specialRequirements(request.specialRequirements())
+				.build();
+	}
+
+	private void applySubtypeFields(OrderRequestDTO request, OrderEntity order) {
+		if (order instanceof TaxiOrderEntity taxi) {
+			taxi.setVehicleClass(request.vehicleClass());
+			taxi.setPassengerCount(request.passengerCount());
+			taxi.setLuggageCount(request.luggageCount());
+			taxi.setRequiresAirConditioning(request.requiresAirConditioning());
+		} else if (order instanceof LogisticsOrderEntity logistics) {
+			logistics.setWeightKg(request.weightKg());
+		}
+	}
+
+	private double calculatePrice(OrderRequestDTO request) {
+		if (request.vehicleType() == VehicleType.LOGISTICS) {
+			return pricingService.calculateForLogistics(request.distanceKm(), request.weightKg());
+		}
+		return pricingService.calculatePrice(request.distanceKm(), request.vehicleClass());
+	}
+
 	private void validateAssignment(OrderEntity order, DriverEntity driver, VehicleEntity vehicle) {
 		ensureSameCompany(driver, vehicle);
 		ensureVehicleTypeMatches(order, vehicle);
@@ -217,7 +275,6 @@ public class OrderService {
 	private void ensureSameCompany(DriverEntity driver, VehicleEntity vehicle) {
 		var driverCompany = driver.getCompany();
 		var vehicleCompany = vehicle.getCompany();
-
 		if (driverCompany == null || vehicleCompany == null
 				|| !driverCompany.getId().equals(vehicleCompany.getId())) {
 			throw new OrderConflictException("Driver and vehicle must belong to the same company");
@@ -248,40 +305,10 @@ public class OrderService {
 		}
 	}
 
-	@Transactional
-	public Optional<OrderResponseDTO> cancelOrder(Long id, String callerEmail) {
-		Optional<OrderEntity> existing = orderRepository.findById(id);
-
-		if (existing.isEmpty()) {
-			return Optional.empty();
-		}
-
-		OrderEntity order = existing.get();
-
-		UserEntity owner = order.getUser();
-		if (owner == null || !owner.getEmail().equals(callerEmail)) {
-			throw new OrderForbiddenException("Only the order owner can cancel this order");
-		}
-
-		return Optional.of(transitionToCanceled(order));
-	}
-
-	@Transactional
-	public Optional<OrderResponseDTO> adminCancelOrder(Long id) {
-		Optional<OrderEntity> existing = orderRepository.findById(id);
-
-		if (existing.isEmpty()) {
-			return Optional.empty();
-		}
-
-		return Optional.of(transitionToCanceled(existing.get()));
-	}
-
 	private OrderResponseDTO transitionToCanceled(OrderEntity order) {
 		if (!CANCELLABLE_STATUSES.contains(order.getStatus())) {
 			throw new OrderConflictException("Order cannot be cancelled in status " + order.getStatus());
 		}
-
 		order.setStatus(OrderStatus.CANCELED);
 		return orderMapper.toDTO(orderRepository.save(order));
 	}
