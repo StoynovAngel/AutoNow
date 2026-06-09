@@ -3,7 +3,7 @@ import { driverService } from '../services/driver/driverService';
 import type { DriverPayload } from '../services/driver/driverService';
 import type { Driver } from '../components/company/DriverInfo';
 
-export const useAllDrivers = () => {
+export const useAllDrivers = (companyTypeFilter: string | null = null) => {
     const [drivers, setDrivers] = useState<Driver[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -12,14 +12,16 @@ export const useAllDrivers = () => {
         setLoading(true);
         setError(null);
         try {
-            const data = await driverService.getAllDrivers();
+            const data = companyTypeFilter
+                ? await driverService.getDriversByCompanyType(companyTypeFilter)
+                : await driverService.getAllDrivers();
             setDrivers(data);
         } catch {
             setError('Failed to load drivers.');
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [companyTypeFilter]);
 
     useEffect(() => { fetchDrivers(); }, [fetchDrivers]);
 

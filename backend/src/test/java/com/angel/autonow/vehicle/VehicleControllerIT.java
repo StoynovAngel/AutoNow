@@ -67,7 +67,7 @@ class VehicleControllerIT {
 	}
 
 	@Test
-	void createVehicle_xlSeating_returnsXlAndStandard() throws Exception {
+	void createVehicle_xlSeating_returnsXlOnly() throws Exception {
 		var request = VehicleRequestDTO.builder()
 				.brand("Mercedes")
 				.model("V-Class")
@@ -83,7 +83,7 @@ class VehicleControllerIT {
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(request)))
 				.andExpect(status().isCreated())
-				.andExpect(jsonPath("$.vehicleClasses", org.hamcrest.Matchers.containsInAnyOrder("XL", "STANDARD")));
+				.andExpect(jsonPath("$.vehicleClasses", org.hamcrest.Matchers.contains("XL")));
 	}
 
 	@Test

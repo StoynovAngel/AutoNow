@@ -1,5 +1,6 @@
 package com.angel.autonow.driver;
 
+import com.angel.autonow.company.CompanyType;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -48,6 +49,12 @@ public class DriverController {
 	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN')")
 	public List<DriverResponseDTO> getDriversByCompanyId(@PathVariable Long companyId) {
 		return driverService.getDriversByCompanyId(companyId);
+	}
+
+	@GetMapping("/company/types/{companyType}")
+	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN')")
+	public List<DriverResponseDTO> getDriversByCompanyType(@PathVariable CompanyType companyType) {
+		return driverService.getDriversByCompanyType(companyType);
 	}
 
 	@PutMapping("/{id}")

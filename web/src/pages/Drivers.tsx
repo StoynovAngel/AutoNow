@@ -10,11 +10,13 @@ import { useAllDrivers } from '../hooks/useAllDrivers';
 import { useVehicles } from '../hooks/useVehicles';
 import type { Driver } from '../components/company/DriverInfo';
 import type { DriverPayload } from '../services/driver/driverService';
+import { COMPANY_TYPES } from '../services/company/companyService';
 
 const EXPERTISE_TYPES = ['AM', 'A1', 'A2', 'A', 'B1', 'B', 'BE', 'C1', 'C1E', 'C', 'CE', 'D1', 'D1E', 'D', 'DE', 'Tkt'] as const;
 
 const Drivers = () => {
-    const { drivers, loading, error, addDriver, updateDriver, removeDriver, assignVehicle, unassignVehicle, refreshDrivers } = useAllDrivers();
+    const [filterCompanyType, setFilterCompanyType] = useState<string>('');
+    const { drivers, loading, error, addDriver, updateDriver, removeDriver, assignVehicle, unassignVehicle, refreshDrivers } = useAllDrivers(filterCompanyType || null);
 
     const [showForm, setShowForm] = useState(false);
     const [editingDriver, setEditingDriver] = useState<Driver | null>(null);
@@ -110,6 +112,17 @@ const Drivers = () => {
 
                     <div className="flex gap-3 mb-6">
                         <Select
+                            value={filterCompanyType}
+                            onChange={e => setFilterCompanyType(e.target.value)}
+                            aria-label="Filter by company type"
+                            className="w-48"
+                        >
+                            <option value="">Company Types</option>
+                            {COMPANY_TYPES.map(t => (
+                                <option key={t} value={t}>{t.charAt(0) + t.slice(1).toLowerCase()}</option>
+                            ))}
+                        </Select>
+                        <Select
                             value={filterType}
                             onChange={e => setFilterType(e.target.value)}
                             aria-label="Filter by license type"
@@ -140,12 +153,12 @@ const Drivers = () => {
                             className="flex-1"
                             aria-label="Search drivers by name"
                         />
-                        {(filterType || filterCompanyId !== null || searchName.trim()) && (
+                        {(filterCompanyType || filterType || filterCompanyId !== null || searchName.trim()) && (
                             <Button
                                 type="button"
                                 color="light"
                                 size="sm"
-                                onClick={() => { setFilterType(''); setFilterCompanyId(null); setSearchName(''); }}
+                                onClick={() => { setFilterCompanyType(''); setFilterType(''); setFilterCompanyId(null); setSearchName(''); }}
                             >
                                 Clear
                             </Button>

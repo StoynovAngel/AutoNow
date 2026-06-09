@@ -31,14 +31,14 @@ class VehicleClassifierTest {
 	}
 
 	@Test
-	void classesFor_sixSeats_returnsXlAndStandard() {
+	void classesFor_sixSeats_returnsXlOnly() {
 		VehicleEntity vehicle = VehicleEntity.builder().numberOfSeats(6).build();
 
 		var classes = classifier.classesFor(vehicle);
 
-		assertEquals(2, classes.size());
+		assertEquals(1, classes.size());
 		assertTrue(classes.contains(VehicleClass.XL));
-		assertTrue(classes.contains(VehicleClass.STANDARD));
+		assertFalse(classes.contains(VehicleClass.STANDARD));
 	}
 
 	@Test
@@ -64,7 +64,7 @@ class VehicleClassifierTest {
 		VehicleEntity vehicle = VehicleEntity.builder().numberOfSeats(8).build();
 
 		assertTrue(classifier.matches(vehicle, VehicleClass.XL));
-		assertTrue(classifier.matches(vehicle, VehicleClass.STANDARD));
+		assertFalse(classifier.matches(vehicle, VehicleClass.STANDARD));
 	}
 
 	@Test

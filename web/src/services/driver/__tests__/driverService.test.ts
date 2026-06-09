@@ -66,6 +66,14 @@ describe('driverService', () => {
         expect(apiClient.put).toHaveBeenCalledWith('/drivers/5', payload);
     });
 
+    it('getDriversByCompanyType GETs /drivers/company/types/{companyType}', async () => {
+        vi.mocked(apiClient.get).mockResolvedValue({ data: [] });
+
+        await driverService.getDriversByCompanyType('TAXI');
+
+        expect(apiClient.get).toHaveBeenCalledWith('/drivers/company/types/TAXI');
+    });
+
     it('deleteDriver DELETEs /drivers/{id}', async () => {
         vi.mocked(apiClient.delete).mockResolvedValue({});
 
