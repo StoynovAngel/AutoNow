@@ -49,11 +49,14 @@ const Body = () => {
             navigation.navigate('promVehicles', { companyId });
             return;
         }
-        navigation.navigate('bookingMap', {
-            companyId,
-            vehicleType,
-            preferences: vehicleClass ? { vehicleClass } : {},
-        });
+        const company = companies.find(c => c.id === companyId);
+        const preferences: import('../../types/booking').BookingPreferences = {
+            ...(vehicleClass ? { vehicleClass } : {}),
+            ...(vehicleType === VehicleType.LOGISTICS && company?.address
+                ? { companyAddress: company.address }
+                : {}),
+        };
+        navigation.navigate('bookingMap', { companyId, vehicleType, preferences });
     };
 
     const showClassPicker = vehicleType === VehicleType.TAXI;
