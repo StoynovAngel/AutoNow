@@ -31,10 +31,6 @@ const Body = () => {
         setLoading(true);
         try {
             await login(email, password);
-            navigation.reset({
-                index: 0,
-                routes: [{ name: 'home' }],
-            });
         } catch (err: any) {
             setApiError(parseApiError(err));
         } finally {

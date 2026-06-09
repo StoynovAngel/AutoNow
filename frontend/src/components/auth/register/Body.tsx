@@ -31,10 +31,6 @@ const Body = () => {
         setLoading(true);
         try {
             await register(email, password);
-            navigation.reset({
-                index: 0,
-                routes: [{ name: 'home' }],
-            });
         } catch (err: any) {
             setApiError(parseApiError(err));
         } finally {
