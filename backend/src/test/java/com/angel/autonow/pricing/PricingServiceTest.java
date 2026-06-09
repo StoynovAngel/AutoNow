@@ -19,7 +19,7 @@ class PricingServiceTest {
 	private static final ZoneId SOFIA = ZoneId.of("Europe/Sofia");
 
 	private static final PricingProperties PROPERTIES = new PricingProperties(
-			2.50, 1.20, 1.30, 1.60, 1.20, 22, 6, "Europe/Sofia", "EUR"
+			2.50, 60.00, 1.20, 1.30, 1.60, 1.20, 22, 6, "Europe/Sofia", "EUR"
 	);
 
 	private PricingService serviceAt(int hour) {
@@ -105,6 +105,48 @@ class PricingServiceTest {
 		assertEquals(round(2.50 + 7.3 * 1.20), result.estimatedPrice(), 0.001);
 		assertEquals("EUR", result.currency());
 		assertEquals(7.3, result.distanceKm(), 0.001);
+	}
+
+	@Test
+	void calculatePrice_taxiDayTime_usesBaseFareAndDistance() {
+		PricingService service = serviceAt(14);
+		double price = service.calculatePrice(10.0, VehicleType.TAXI, VehicleClass.STANDARD);
+		assertEquals(2.50 + 10.0 * 1.20, price, 0.001);
+	}
+
+	@Test
+	void calculatePrice_taxiNight_appliesNightMultiplier() {
+		PricingService service = serviceAt(23);
+		double price = service.calculatePrice(10.0, VehicleType.TAXI, VehicleClass.STANDARD);
+		assertEquals(2.50 + 10.0 * 1.20 * 1.20, price, 0.001);
+	}
+
+	@Test
+	void calculatePrice_taxiXlDayTime_appliesXlMultiplier() {
+		PricingService service = serviceAt(14);
+		double price = service.calculatePrice(10.0, VehicleType.TAXI, VehicleClass.XL);
+		assertEquals(2.50 + 10.0 * 1.20 * 1.30, price, 0.001);
+	}
+
+	@Test
+	void calculatePrice_ambulanceDayTime_usesAmbulanceBaseFareAndDoubleDistance() {
+		PricingService service = serviceAt(14);
+		double price = service.calculatePrice(10.0, VehicleType.AMBULANCE, null);
+		assertEquals(60.00 + 20.0 * 1.20, price, 0.001);
+	}
+
+	@Test
+	void calculatePrice_ambulanceNight_appliesNightMultiplierOnDoubleDistance() {
+		PricingService service = serviceAt(23);
+		double price = service.calculatePrice(10.0, VehicleType.AMBULANCE, null);
+		assertEquals(60.00 + 20.0 * 1.20 * 1.20, price, 0.001);
+	}
+
+	@Test
+	void calculatePrice_ambulanceZeroDistance_returnsBaseFareOnly() {
+		PricingService service = serviceAt(14);
+		double price = service.calculatePrice(0.0, VehicleType.AMBULANCE, null);
+		assertEquals(60.00, price, 0.001);
 	}
 
 	private static double round(double value) {

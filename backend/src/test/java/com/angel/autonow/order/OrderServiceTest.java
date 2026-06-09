@@ -407,13 +407,13 @@ class OrderServiceTest {
 
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 		when(orderMapper.toEntity(request)).thenReturn(entity);
-		when(pricingService.calculatePrice(10.0, VehicleClass.STANDARD)).thenReturn(14.50);
+		when(pricingService.calculatePrice(10.0, VehicleType.TAXI, VehicleClass.STANDARD)).thenReturn(14.50);
 		when(orderRepository.save(entity)).thenReturn(saved);
 		when(orderMapper.toDTO(saved)).thenReturn(response);
 
 		orderService.createOrder(request);
 
-		verify(pricingService).calculatePrice(10.0, VehicleClass.STANDARD);
+		verify(pricingService).calculatePrice(10.0, VehicleType.TAXI, VehicleClass.STANDARD);
 		assertEquals(14.50, entity.getEstimatedPrice());
 	}
 
@@ -436,7 +436,7 @@ class OrderServiceTest {
 
 		orderService.createOrder(request);
 
-		verify(pricingService, never()).calculatePrice(anyDouble(), any());
+		verify(pricingService, never()).calculatePrice(anyDouble(), any(), any());
 	}
 
 	@Test

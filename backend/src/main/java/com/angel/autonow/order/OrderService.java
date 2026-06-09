@@ -68,7 +68,7 @@ public class OrderService {
 		}
 
 		if (request.distanceKm() != null) {
-			order.setEstimatedPrice(pricingService.calculatePrice(request.distanceKm(), request.vehicleClass()));
+			order.setEstimatedPrice(pricingService.calculatePrice(request.distanceKm(), request.vehicleType(), request.vehicleClass()));
 		}
 
 		OrderEntity saved = orderRepository.save(order);

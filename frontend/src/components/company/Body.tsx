@@ -49,8 +49,10 @@ const Body = () => {
             navigation.navigate('promVehicles', { companyId });
             return;
         }
+        const company = companies.find(c => c.id === companyId);
         navigation.navigate('bookingMap', {
             companyId,
+            companyAddress: company?.address,
             vehicleType,
             preferences: vehicleClass ? { vehicleClass } : {},
         });

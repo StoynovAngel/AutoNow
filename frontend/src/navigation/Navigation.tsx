@@ -22,6 +22,7 @@ export type RootStackParamList = {
     companyList: { vehicleType: VehicleType };
     bookingMap: {
         companyId: number;
+        companyAddress?: string;
         vehicleType: VehicleType;
         preferences: BookingPreferencesData;
     };
