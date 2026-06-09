@@ -188,7 +188,7 @@ const BookingMapBody = () => {
     };
 
     const canConfirm = isAmbulance
-        ? Boolean(pickup && destination && !routeLoading && !estimateLoading && !submitting)
+        ? Boolean(pickup && destination && estimate && !routeLoading && !estimateLoading && !submitting)
         : Boolean(pickup && destination && routeResult && estimate && !estimateLoading && !submitting);
 
     void companyId;
