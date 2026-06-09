@@ -24,11 +24,8 @@ const Body = () => {
     };
 
     return (
-        <ScrollView style={styles.container}>
+        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
             <View style={styles.content}>
-                <Text style={styles.title}>{t("choose-service-title")}</Text>
-                <Text style={styles.subtitle}>{t("select-service")}</Text>
-
                 <View style={styles.vehicleGrid}>
                     {vehicleOptions.map((option) => (
                         <Pressable

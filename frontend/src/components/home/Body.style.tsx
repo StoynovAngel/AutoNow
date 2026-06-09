@@ -5,9 +5,12 @@ export const createStyles = (theme: any) => StyleSheet.create({
         flex: 1,
         backgroundColor: theme.colors.background,
     },
-    content: {
+    contentContainer: {
+        flexGrow: 1,
+        justifyContent: 'center',
         padding: 20,
-        flex: 1,
+    },
+    content: {
     },
     title: {
         fontSize: 28,
@@ -28,14 +31,17 @@ export const createStyles = (theme: any) => StyleSheet.create({
     vehicleGrid: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        gap: 16,
-        justifyContent: 'space-between',
+        gap: 10,
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+        alignSelf: 'center',
+        width: '100%',
     },
     vehicleCard: {
-        width: '47%',
+        width: '44%',
         backgroundColor: theme.colors.surface,
         borderRadius: 16,
-        padding: 20,
+        padding: 16,
         alignItems: 'center',
         borderWidth: 2,
         shadowColor: theme.colors.shadow,
