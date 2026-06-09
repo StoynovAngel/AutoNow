@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, Pressable, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, Pressable, Alert, ActivityIndicator } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -15,6 +15,7 @@ import type {
 } from '../../services/mapboxService';
 import { createOrder, estimateOrder } from '../../services/orderService';
 import type { OrderEstimateResponse } from '../../services/orderService';
+import { VehicleType } from '../../types/vehicle';
 import MapPreview from './MapPreview';
 import AddressSearch from './AddressSearch';
 import { createStyles } from './BookingMapBody.style';
@@ -34,6 +35,8 @@ const BookingMapBody = () => {
 
     const auth = useContext(AuthContext);
 
+    const isLogistics = vehicleType === VehicleType.LOGISTICS;
+
     const [pickup, setPickup] = useState<AddressSuggestion | undefined>();
     const [destination, setDestination] = useState<AddressSuggestion | undefined>();
     const [routeResult, setRouteResult] = useState<RouteResult | undefined>();
@@ -41,6 +44,9 @@ const BookingMapBody = () => {
     const [estimate, setEstimate] = useState<OrderEstimateResponse | undefined>();
     const [estimateLoading, setEstimateLoading] = useState(false);
     const [submitting, setSubmitting] = useState(false);
+    const [weightKgInput, setWeightKgInput] = useState('');
+
+    const weightKg = isLogistics ? parseFloat(weightKgInput) || undefined : undefined;
 
     useEffect(() => {
         if (!pickup || !destination) {
@@ -70,6 +76,10 @@ const BookingMapBody = () => {
             setEstimateLoading(false);
             return;
         }
+        if (isLogistics && !weightKg) {
+            setEstimate(undefined);
+            return;
+        }
         let cancelled = false;
         setEstimate(undefined);
         setEstimateLoading(true);
@@ -77,6 +87,7 @@ const BookingMapBody = () => {
             vehicleType,
             distanceKm: routeResult.distanceKm,
             vehicleClass: preferences.vehicleClass,
+            weightKg,
         })
             .then((e) => {
                 if (!cancelled) setEstimate(e);
@@ -90,7 +101,7 @@ const BookingMapBody = () => {
         return () => {
             cancelled = true;
         };
-    }, [routeResult, vehicleType, preferences.vehicleClass]);
+    }, [routeResult, vehicleType, preferences.vehicleClass, weightKg, isLogistics]);
 
     const handleConfirm = async () => {
         if (!pickup || !destination || !routeResult) return;
@@ -111,6 +122,7 @@ const BookingMapBody = () => {
                 dropoffLongitude: destination.coordinate.longitude,
                 distanceKm: routeResult.distanceKm,
                 vehicleClass: preferences.vehicleClass,
+                weightKg,
             });
             navigation.replace('bookingWaiting', { orderId: created.id });
         } catch (e) {
@@ -122,7 +134,8 @@ const BookingMapBody = () => {
     };
 
     const canConfirm = Boolean(
-        pickup && destination && routeResult && estimate && !estimateLoading && !submitting,
+        pickup && destination && routeResult && estimate && !estimateLoading && !submitting &&
+        (!isLogistics || weightKg),
     );
     void companyId;
 
@@ -165,6 +178,22 @@ const BookingMapBody = () => {
                     placeholder={t('booking-destination-placeholder')}
                     testID="destination-search"
                 />
+
+                {isLogistics && (
+                    <View style={styles.weightInputRow}>
+                        <TextInput
+                            style={styles.weightInput}
+                            value={weightKgInput}
+                            onChangeText={setWeightKgInput}
+                            placeholder={t('booking-logistics-weight-placeholder')}
+                            placeholderTextColor={theme.colors.textSecondary}
+                            keyboardType="numeric"
+                            accessibilityLabel={t('booking-logistics-weight-placeholder')}
+                            testID="weight-input"
+                        />
+                        <Text style={styles.weightUnit}>kg</Text>
+                    </View>
+                )}
 
                 {pickup && destination && (
                     <View style={styles.routeInfo} testID="route-info">

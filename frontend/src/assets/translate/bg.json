@@ -88,6 +88,7 @@
   "booking-where-to": "Накъде?",
   "booking-pickup-placeholder": "Адрес за вземане",
   "booking-destination-placeholder": "Адрес на дестинация",
+  "booking-logistics-weight-placeholder": "Тегло на товара (кг)",
   "booking-no-route": "Няма маршрут между тези точки",
   "booking-estimate-failed": "Цената е недостъпна",
   "booking-confirm": "Потвърди поръчката",

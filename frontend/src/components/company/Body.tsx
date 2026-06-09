@@ -60,6 +60,7 @@ const Body = () => {
     const isBookable =
         vehicleType === VehicleType.TAXI ||
         vehicleType === VehicleType.AMBULANCE ||
+        vehicleType === VehicleType.LOGISTICS ||
         vehicleType === VehicleType.PROM;
 
     return (

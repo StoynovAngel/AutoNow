@@ -56,6 +56,27 @@ export const createStyles = (theme: any) => StyleSheet.create({
         fontSize: 14,
         color: '#EF4444',
     },
+    weightInputRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+    },
+    weightInput: {
+        flex: 1,
+        borderWidth: 1,
+        borderColor: theme.colors.border ?? '#E5E7EB',
+        borderRadius: 12,
+        paddingHorizontal: 12,
+        paddingVertical: 10,
+        fontSize: 15,
+        color: theme.colors.textPrimary,
+        backgroundColor: theme.colors.background,
+    },
+    weightUnit: {
+        fontSize: 14,
+        color: theme.colors.textSecondary,
+        minWidth: 24,
+    },
     confirmButton: {
         backgroundColor: theme.colors.primary,
         borderRadius: 16,
