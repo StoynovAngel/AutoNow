@@ -53,7 +53,7 @@ public class DriverController {
 
 	@GetMapping("/company/types/{companyType}")
 	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN')")
-	public List<DriverResponseDTO> getDriversByCompanyId(@PathVariable CompanyType companyType) {
+	public List<DriverResponseDTO> getDriversByCompanyType(@PathVariable CompanyType companyType) {
 		return driverService.getDriversByCompanyType(companyType);
 	}
 
