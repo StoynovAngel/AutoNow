@@ -2406,6 +2406,63 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+  '/api/drivers/company/types/{companyType}':
+    get:
+      tags:
+        - driver-controller
+      operationId: getDriversByCompanyType
+      parameters:
+        - name: companyType
+          in: path
+          required: true
+          schema:
+            type: string
+            enum:
+              - TAXI
+              - LOGISTICS
+              - AMBULANCE
+              - RENTAL
+              - FUNERAL
+              - PROM
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DriverResponseDTO'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: Internal Server Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
   '/api/companies/type/{companyType}':
     get:
       tags:
