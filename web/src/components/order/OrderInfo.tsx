@@ -16,6 +16,10 @@ export const ORDER_STATUSES: OrderStatus[] = [
     'CANCELED',
 ];
 
+export const VEHICLE_TYPES = ['TAXI', 'LOGISTICS', 'AMBULANCE', 'RENTAL', 'PROM', 'SEMI'] as const;
+export type VehicleType = typeof VEHICLE_TYPES[number];
+export type VehicleTypeFilter = 'ALL' | VehicleType;
+
 export interface Order {
     id: number;
     userId: number;
@@ -38,6 +42,7 @@ export interface Order {
     luggageCount?: number;
     vehicleClass?: VehicleClass;
     requiresAirConditioning?: boolean;
+    weightKg?: number;
     cancellationReason?: string;
     createdAt: string;
     updatedAt: string;
@@ -225,6 +230,15 @@ const OrderInfo = ({order, onChangeStatus, onOpenAssign}: OrderInfoProps) => {
                         {order.requiresAirConditioning === undefined ? '—' : order.requiresAirConditioning ? 'Required' : 'Not required'}
                     </p>
                 </div>
+
+                {order.weightKg != null && (
+                    <div>
+                        <label className="block text-xs font-semibold text-gray-500 mb-1">Weight (kg)</label>
+                        <p className="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
+                            {order.weightKg.toFixed(2)}
+                        </p>
+                    </div>
+                )}
 
                 {order.specialRequirements && (
                     <div className="col-span-2">

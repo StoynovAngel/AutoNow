@@ -1,5 +1,5 @@
-import type {Order, OrderStatus} from './OrderInfo';
-import {ORDER_STATUSES, statusBadgeClass} from './OrderInfo';
+import type {Order, OrderStatus, VehicleTypeFilter} from './OrderInfo';
+import {ORDER_STATUSES, VEHICLE_TYPES, statusBadgeClass} from './OrderInfo';
 
 type StatusFilter = 'ALL' | OrderStatus;
 
@@ -7,22 +7,29 @@ interface OrderManagementSidebarProps {
     orders: Order[];
     selectedOrderId: number | null;
     statusFilter: StatusFilter;
+    vehicleTypeFilter: VehicleTypeFilter;
     onSelectOrder: (orderId: number) => void;
     onChangeFilter: (filter: StatusFilter) => void;
+    onChangeVehicleType: (type: VehicleTypeFilter) => void;
 }
 
 const OrderManagementSidebar = ({
     orders,
     selectedOrderId,
     statusFilter,
+    vehicleTypeFilter,
     onSelectOrder,
     onChangeFilter,
+    onChangeVehicleType,
 }: OrderManagementSidebarProps) => {
-    const filteredOrders = statusFilter === 'ALL'
-        ? orders
-        : orders.filter((o) => o.status === statusFilter);
+    const filteredOrders = orders.filter((o) => {
+        const statusMatch = statusFilter === 'ALL' || o.status === statusFilter;
+        const typeMatch = vehicleTypeFilter === 'ALL' || o.vehicleType === vehicleTypeFilter;
+        return statusMatch && typeMatch;
+    });
 
-    const filters: StatusFilter[] = ['ALL', ...ORDER_STATUSES];
+    const statusFilters: StatusFilter[] = ['ALL', ...ORDER_STATUSES];
+    const typeFilters: VehicleTypeFilter[] = ['ALL', ...VEHICLE_TYPES];
 
     return (
         <div className="flex flex-col gap-3 w-72">
@@ -34,8 +41,8 @@ const OrderManagementSidebar = ({
                     </span>
                 </div>
 
-                <div className="flex flex-wrap gap-1.5 mb-3">
-                    {filters.map((f) => (
+                <div className="flex flex-wrap gap-1.5 mb-2">
+                    {statusFilters.map((f) => (
                         <button
                             key={f}
                             type="button"
@@ -52,10 +59,30 @@ const OrderManagementSidebar = ({
                     ))}
                 </div>
 
+                <div className="flex flex-wrap gap-1.5 mb-3">
+                    {typeFilters.map((t) => (
+                        <button
+                            key={t}
+                            type="button"
+                            onClick={() => onChangeVehicleType(t)}
+                            aria-pressed={vehicleTypeFilter === t}
+                            className={`text-xs font-semibold px-2 py-1 rounded-full border transition-all ${
+                                vehicleTypeFilter === t
+                                    ? 'bg-gray-700 text-white border-gray-700'
+                                    : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                            }`}
+                        >
+                            {t}
+                        </button>
+                    ))}
+                </div>
+
                 <div className="flex-1 space-y-2 overflow-y-auto max-h-[28rem] scrollbar-hide">
                     {filteredOrders.length === 0 ? (
                         <p className="text-xs text-gray-400 text-center py-6">
-                            {statusFilter === 'ALL' ? 'No orders yet' : `No ${statusFilter} orders`}
+                            {statusFilter === 'ALL' && vehicleTypeFilter === 'ALL'
+                                ? 'No orders yet'
+                                : 'No matching orders'}
                         </p>
                     ) : (
                         filteredOrders.map((order) => (
