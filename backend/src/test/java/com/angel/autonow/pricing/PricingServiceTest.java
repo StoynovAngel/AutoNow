@@ -108,17 +108,38 @@ class PricingServiceTest {
 	}
 
 	@Test
-	void calculatePrice_ambulanceDayTime_usesAmbulanceBaseFare() {
+	void calculatePrice_taxiDayTime_usesBaseFareAndDistance() {
 		PricingService service = serviceAt(14);
-		double price = service.calculatePrice(10.0, VehicleType.AMBULANCE, null);
-		assertEquals(60.00 + 10.0 * 1.20, price, 0.001);
+		double price = service.calculatePrice(10.0, VehicleType.TAXI, VehicleClass.STANDARD);
+		assertEquals(2.50 + 10.0 * 1.20, price, 0.001);
 	}
 
 	@Test
-	void calculatePrice_ambulanceNight_appliesNightMultiplier() {
+	void calculatePrice_taxiNight_appliesNightMultiplier() {
+		PricingService service = serviceAt(23);
+		double price = service.calculatePrice(10.0, VehicleType.TAXI, VehicleClass.STANDARD);
+		assertEquals(2.50 + 10.0 * 1.20 * 1.20, price, 0.001);
+	}
+
+	@Test
+	void calculatePrice_taxiXlDayTime_appliesXlMultiplier() {
+		PricingService service = serviceAt(14);
+		double price = service.calculatePrice(10.0, VehicleType.TAXI, VehicleClass.XL);
+		assertEquals(2.50 + 10.0 * 1.20 * 1.30, price, 0.001);
+	}
+
+	@Test
+	void calculatePrice_ambulanceDayTime_usesAmbulanceBaseFareAndDoubleDistance() {
+		PricingService service = serviceAt(14);
+		double price = service.calculatePrice(10.0, VehicleType.AMBULANCE, null);
+		assertEquals(60.00 + 20.0 * 1.20, price, 0.001);
+	}
+
+	@Test
+	void calculatePrice_ambulanceNight_appliesNightMultiplierOnDoubleDistance() {
 		PricingService service = serviceAt(23);
 		double price = service.calculatePrice(10.0, VehicleType.AMBULANCE, null);
-		assertEquals(60.00 + 10.0 * 1.20 * 1.20, price, 0.001);
+		assertEquals(60.00 + 20.0 * 1.20 * 1.20, price, 0.001);
 	}
 
 	@Test
