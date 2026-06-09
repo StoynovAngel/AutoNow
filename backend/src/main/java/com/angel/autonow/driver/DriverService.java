@@ -2,6 +2,7 @@ package com.angel.autonow.driver;
 
 import com.angel.autonow.company.CompanyEntity;
 import com.angel.autonow.company.CompanyRepository;
+import com.angel.autonow.company.CompanyType;
 import com.angel.autonow.vehicle.VehicleEntity;
 import com.angel.autonow.vehicle.VehicleRepository;
 import com.angel.autonow.user.UserEntity;
@@ -108,6 +109,13 @@ public class DriverService {
 	@Transactional(readOnly = true)
 	public List<DriverResponseDTO> getDriversByCompanyId(Long companyId) {
 		return driverRepository.findByCompanyId(companyId).stream()
+				.map(driverMapper::toDTO)
+				.toList();
+	}
+
+	@Transactional(readOnly = true)
+	public List<DriverResponseDTO> getDriversByCompanyType(CompanyType companyType) {
+		return driverRepository.findAllByCompanyCompanyType(companyType).stream()
 				.map(driverMapper::toDTO)
 				.toList();
 	}

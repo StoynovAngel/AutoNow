@@ -26,6 +26,11 @@ export const driverService = {
         return data;
     },
 
+    getDriversByCompanyType: async (companyType: string) => {
+        const {data} = await apiClient.get(`/drivers/company/types/${companyType}`);
+        return data;
+    },
+
     createDriver: async (driverData: DriverPayload) => {
         const {data} = await apiClient.post('/drivers', driverData);
         return data;
