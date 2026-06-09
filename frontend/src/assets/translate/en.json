@@ -93,6 +93,7 @@
   "booking-destination-placeholder": "Destination address",
   "booking-no-route": "No route available between these points",
   "booking-estimate-failed": "Estimate unavailable",
+  "booking-pickup-geocode-failed": "Could not locate pickup address",
   "booking-confirm": "Confirm booking",
   "booking-confirmed": "Booking confirmed",
   "booking-failed": "Booking failed",

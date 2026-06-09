@@ -45,13 +45,20 @@ const BookingMapBody = () => {
     const [estimateLoading, setEstimateLoading] = useState(false);
     const [submitting, setSubmitting] = useState(false);
 
+    const [pickupGeocodeError, setPickupGeocodeError] = useState(false);
+
     useEffect(() => {
         if (!isAmbulance || !companyAddress) return;
+        setPickupGeocodeError(false);
         searchAddress(companyAddress)
             .then((results) => {
-                if (results[0]) setPickup(results[0]);
+                if (results[0]) {
+                    setPickup(results[0]);
+                } else {
+                    setPickupGeocodeError(true);
+                }
             })
-            .catch(() => {});
+            .catch(() => setPickupGeocodeError(true));
     }, [isAmbulance, companyAddress]);
 
     useEffect(() => {
@@ -131,15 +138,15 @@ const BookingMapBody = () => {
         }
 
         if (isAmbulance) {
-            if (!destination) return;
+            if (!destination || !pickup) return;
             setSubmitting(true);
             try {
                 const created = await createOrder({
                     userId: auth.user.id,
                     vehicleType,
-                    pickupAddress: pickup?.placeName ?? companyAddress ?? destination.placeName,
-                    pickupLatitude: pickup?.coordinate.latitude ?? destination.coordinate.latitude,
-                    pickupLongitude: pickup?.coordinate.longitude ?? destination.coordinate.longitude,
+                    pickupAddress: pickup.placeName,
+                    pickupLatitude: pickup.coordinate.latitude,
+                    pickupLongitude: pickup.coordinate.longitude,
                     dropoffAddress: destination.placeName,
                     dropoffLatitude: destination.coordinate.latitude,
                     dropoffLongitude: destination.coordinate.longitude,
@@ -181,7 +188,7 @@ const BookingMapBody = () => {
     };
 
     const canConfirm = isAmbulance
-        ? Boolean(destination && !routeLoading && !estimateLoading && !submitting)
+        ? Boolean(pickup && destination && !routeLoading && !estimateLoading && !submitting)
         : Boolean(pickup && destination && routeResult && estimate && !estimateLoading && !submitting);
 
     void companyId;
@@ -213,9 +220,15 @@ const BookingMapBody = () => {
                 {isAmbulance && (
                     <View style={styles.ambulanceOrigin} testID="ambulance-origin">
                         <MaterialIcons name="local-hospital" size={16} color={theme.colors.primary} />
-                        <Text style={styles.ambulanceOriginText} numberOfLines={1}>
-                            {pickup?.placeName ?? companyAddress ?? '…'}
-                        </Text>
+                        {pickupGeocodeError ? (
+                            <Text style={styles.routeError} testID="pickup-geocode-error">
+                                {t('booking-pickup-geocode-failed')}
+                            </Text>
+                        ) : (
+                            <Text style={styles.ambulanceOriginText} numberOfLines={1}>
+                                {pickup?.placeName ?? companyAddress ?? '…'}
+                            </Text>
+                        )}
                     </View>
                 )}
 

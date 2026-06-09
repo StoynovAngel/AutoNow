@@ -93,6 +93,7 @@
   "booking-destination-placeholder": "Адрес на дестинация",
   "booking-no-route": "Няма маршрут между тези точки",
   "booking-estimate-failed": "Цената е недостъпна",
+  "booking-pickup-geocode-failed": "Неуспешно намиране на адреса за вземане",
   "booking-confirm": "Потвърди поръчката",
   "booking-confirmed": "Поръчката е потвърдена",
   "booking-failed": "Грешка при поръчката",
