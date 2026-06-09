@@ -3,7 +3,6 @@ package com.angel.autonow.pricing;
 import com.angel.autonow.order.OrderEstimateRequestDTO;
 import com.angel.autonow.order.OrderEstimateResponseDTO;
 import com.angel.autonow.vehicle.VehicleClass;
-import com.angel.autonow.vehicle.VehicleType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,9 +29,11 @@ public class PricingService {
 	}
 
 	public OrderEstimateResponseDTO estimate(OrderEstimateRequestDTO request) {
-		double price = request.vehicleType() == VehicleType.LOGISTICS
-				? calculateForLogistics(request.distanceKm(), request.weightKg())
-				: calculatePrice(request.distanceKm(), request.vehicleClass());
+		double price = switch (request.vehicleType()) {
+			case LOGISTICS -> calculateForLogistics(request.distanceKm(), request.weightKg());
+			case AMBULANCE -> calculatePrice(request.distanceKm() * 2, request.vehicleClass());
+			default -> calculatePrice(request.distanceKm(), request.vehicleClass());
+		};
 
 		return OrderEstimateResponseDTO.builder()
 				.estimatedPrice(round(price))

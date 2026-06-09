@@ -148,6 +148,29 @@ class PricingServiceTest {
 		assertEquals(round(5.00 + 10.0 * 1.20 + 100.0 * 0.05), result.estimatedPrice(), 0.001);
 	}
 
+	@Test
+	void estimate_ambulance_doublesDistanceForReturnLeg() {
+		PricingService service = serviceAt(14);
+		OrderEstimateRequestDTO request = OrderEstimateRequestDTO.builder()
+				.vehicleType(VehicleType.AMBULANCE)
+				.distanceKm(10.0)
+				.build();
+		OrderEstimateResponseDTO result = service.estimate(request);
+		// distance is doubled: hospital→patient + patient→hospital
+		assertEquals(round(2.50 + 20.0 * 1.20), result.estimatedPrice(), 0.001);
+	}
+
+	@Test
+	void estimate_ambulanceAtNight_doublesDistanceAndAppliesNightMultiplier() {
+		PricingService service = serviceAt(23);
+		OrderEstimateRequestDTO request = OrderEstimateRequestDTO.builder()
+				.vehicleType(VehicleType.AMBULANCE)
+				.distanceKm(10.0)
+				.build();
+		OrderEstimateResponseDTO result = service.estimate(request);
+		assertEquals(round(2.50 + 20.0 * 1.20 * 1.20), result.estimatedPrice(), 0.001);
+	}
+
 	private static double round(double value) {
 		return Math.round(value * 100.0) / 100.0;
 	}
