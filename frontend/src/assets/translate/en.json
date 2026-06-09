@@ -89,6 +89,7 @@
   "booking-pickup-placeholder": "Pickup address",
   "booking-destination-placeholder": "Destination address",
   "booking-logistics-weight-placeholder": "Cargo weight (kg)",
+  "booking-logistics-weight-error": "Weight must be between 0.1 and 5000 kg",
   "booking-no-route": "No route available between these points",
   "booking-estimate-failed": "Estimate unavailable",
   "booking-confirm": "Confirm booking",

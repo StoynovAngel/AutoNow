@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../hooks/useTheme';
 import { AuthContext } from '../../services/AuthContext';
 import type { RootStackParamList } from '../../navigation/Navigation';
-import { getRoute } from '../../services/mapboxService';
+import { getRoute, searchAddress } from '../../services/mapboxService';
 import type {
     AddressSuggestion,
     Coordinate,
@@ -47,6 +47,19 @@ const BookingMapBody = () => {
     const [weightKgInput, setWeightKgInput] = useState('');
 
     const weightKg = isLogistics ? parseFloat(weightKgInput) || undefined : undefined;
+    const weightError = weightKg !== undefined && (weightKg < 0.1 || weightKg > 5000);
+
+    // For logistics, geocode the company address once on mount and use it as pickup
+    useEffect(() => {
+        if (!isLogistics || !preferences.companyAddress) return;
+        let cancelled = false;
+        searchAddress(preferences.companyAddress)
+            .then((results) => {
+                if (!cancelled && results[0]) setPickup(results[0]);
+            })
+            .catch(() => {});
+        return () => { cancelled = true; };
+    }, [isLogistics, preferences.companyAddress]);
 
     useEffect(() => {
         if (!pickup || !destination) {
@@ -135,7 +148,7 @@ const BookingMapBody = () => {
 
     const canConfirm = Boolean(
         pickup && destination && routeResult && estimate && !estimateLoading && !submitting &&
-        (!isLogistics || weightKg),
+        (!isLogistics || (weightKg && !weightError)),
     );
     void companyId;
 
@@ -161,14 +174,23 @@ const BookingMapBody = () => {
             <View style={styles.sheet}>
                 <Text style={styles.title}>{t('booking-map-title')}</Text>
 
-                <AddressSearch
-                    proximity={proximity}
-                    selected={pickup}
-                    onSelect={setPickup}
-                    onClear={() => setPickup(undefined)}
-                    placeholder={t('booking-pickup-placeholder')}
-                    testID="pickup-search"
-                />
+                {isLogistics ? (
+                    <View style={styles.pickupFixed} testID="pickup-fixed">
+                        <MaterialIcons name="store" size={16} color={theme.colors.textSecondary} />
+                        <Text style={styles.pickupFixedText} numberOfLines={1}>
+                            {pickup ? pickup.placeName : (preferences.companyAddress ?? '…')}
+                        </Text>
+                    </View>
+                ) : (
+                    <AddressSearch
+                        proximity={proximity}
+                        selected={pickup}
+                        onSelect={setPickup}
+                        onClear={() => setPickup(undefined)}
+                        placeholder={t('booking-pickup-placeholder')}
+                        testID="pickup-search"
+                    />
+                )}
 
                 <AddressSearch
                     proximity={proximity}
@@ -182,7 +204,7 @@ const BookingMapBody = () => {
                 {isLogistics && (
                     <View style={styles.weightInputRow}>
                         <TextInput
-                            style={styles.weightInput}
+                            style={[styles.weightInput, weightError && styles.weightInputError]}
                             value={weightKgInput}
                             onChangeText={setWeightKgInput}
                             placeholder={t('booking-logistics-weight-placeholder')}
@@ -193,6 +215,11 @@ const BookingMapBody = () => {
                         />
                         <Text style={styles.weightUnit}>kg</Text>
                     </View>
+                )}
+                {isLogistics && weightError && (
+                    <Text style={styles.weightError} testID="weight-error">
+                        {t('booking-logistics-weight-error')}
+                    </Text>
                 )}
 
                 {pickup && destination && (
