@@ -196,7 +196,7 @@ public class DataSeeder implements ApplicationRunner {
 	private void seedAmbulance(String password) {
 		CompanyEntity company = companyRepository.save(CompanyEntity.builder()
 				.name("MedTransport BG")
-				.address("25 Hospital St, Sofia")
+				.address("\"Nikola Y. Vaptsarov\" 51Б, 1407 Sofia")
 				.phone("+359888300003")
 				.email("info@medtransport.bg")
 				.description("24/7 ambulance and medical transport")
@@ -251,7 +251,7 @@ public class DataSeeder implements ApplicationRunner {
 	private void seedRental(String password) {
 		CompanyEntity company = companyRepository.save(CompanyEntity.builder()
 				.name("Sofia Auto Rentals")
-				.address("8 Airport Rd, Sofia")
+				.address("Christopher Columbus Blvd. 1, Sofia 1540, Bulgaria")
 				.phone("+359888400004")
 				.email("hello@sofia-rent.bg")
 				.description("Self-drive car rental, airport pickup")

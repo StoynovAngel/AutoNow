@@ -19,7 +19,7 @@ class PricingServiceTest {
 	private static final ZoneId SOFIA = ZoneId.of("Europe/Sofia");
 
 	private static final PricingProperties PROPERTIES = new PricingProperties(
-			2.50, 1.20, 1.30, 1.60, 1.20, 22, 6, "Europe/Sofia", "EUR", 5.00, 0.05
+			2.50, 60.00, 1.20, 1.30, 1.60, 1.20, 22, 6, "Europe/Sofia", "EUR", 5.00, 0.05
 	);
 
 	private PricingService serviceAt(int hour) {
@@ -157,7 +157,7 @@ class PricingServiceTest {
 				.build();
 		OrderEstimateResponseDTO result = service.estimate(request);
 		// distance is doubled: hospital→patient + patient→hospital
-		assertEquals(round(2.50 + 20.0 * 1.20), result.estimatedPrice(), 0.001);
+		assertEquals(round(60.00 + 20.0 * 1.20), result.estimatedPrice(), 0.001);
 	}
 
 	@Test
@@ -168,7 +168,7 @@ class PricingServiceTest {
 				.distanceKm(10.0)
 				.build();
 		OrderEstimateResponseDTO result = service.estimate(request);
-		assertEquals(round(2.50 + 20.0 * 1.20 * 1.20), result.estimatedPrice(), 0.001);
+		assertEquals(round(60.00 + 20.0 * 1.20 * 1.20), result.estimatedPrice(), 0.001);
 	}
 
 	private static double round(double value) {

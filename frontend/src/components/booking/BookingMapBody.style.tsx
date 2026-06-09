@@ -116,4 +116,20 @@ export const createStyles = (theme: any) => StyleSheet.create({
         fontWeight: '700',
         color: '#FFFFFF',
     },
+    ambulanceOrigin: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 6,
+        backgroundColor: theme.colors.background,
+        borderRadius: 10,
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        borderWidth: 1,
+        borderColor: theme.colors.primary,
+    },
+    ambulanceOriginText: {
+        flex: 1,
+        fontSize: 14,
+        color: theme.colors.textPrimary,
+    },
 });

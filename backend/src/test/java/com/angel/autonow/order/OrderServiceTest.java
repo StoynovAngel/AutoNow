@@ -399,13 +399,13 @@ class OrderServiceTest {
 		OrderResponseDTO response = TestData.createOrderResponse(1L, 1L, OrderStatus.CREATED, NOW);
 
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-		when(pricingService.calculatePrice(10.0, VehicleClass.STANDARD)).thenReturn(14.50);
+		when(pricingService.calculatePrice(10.0, VehicleType.TAXI, VehicleClass.STANDARD)).thenReturn(14.50);
 		when(orderRepository.save(any(OrderEntity.class))).thenReturn(saved);
 		when(orderMapper.toDTO(saved)).thenReturn(response);
 
 		orderService.createOrder(request);
 
-		verify(pricingService).calculatePrice(10.0, VehicleClass.STANDARD);
+		verify(pricingService).calculatePrice(10.0, VehicleType.TAXI, VehicleClass.STANDARD);
 	}
 
 	@Test

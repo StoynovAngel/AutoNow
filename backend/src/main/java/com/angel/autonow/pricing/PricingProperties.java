@@ -5,6 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "pricing")
 public record PricingProperties(
 		Double baseFare,
+		Double ambulanceBaseFare,
 		Double ratePerKm,
 		Double xlMultiplier,
 		Double premiumMultiplier,

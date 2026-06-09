@@ -10,7 +10,7 @@ import CompanyList from '../screens/company/CompanyList';
 import BookingMap from '../screens/booking/BookingMap';
 import BookingWaiting from '../screens/booking/BookingWaiting';
 import BookingComplete from '../screens/booking/BookingComplete';
-import PromVehicles from '../screens/vehicle/PromVehicles';
+import VehicleList from '../screens/vehicle/VehicleList';
 import { VehicleType } from '../types/vehicle';
 import type { BookingPreferences as BookingPreferencesData } from '../types/booking';
 
@@ -22,12 +22,13 @@ export type RootStackParamList = {
     companyList: { vehicleType: VehicleType };
     bookingMap: {
         companyId: number;
+        companyAddress?: string;
         vehicleType: VehicleType;
         preferences: BookingPreferencesData;
     };
     bookingWaiting: { orderId: number };
     bookingComplete: { orderId: number };
-    promVehicles: { companyId: number };
+    vehicleList: { companyId: number; vehicleType: VehicleType };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -59,7 +60,7 @@ const Navigation = () => {
             <Stack.Screen name="bookingMap" component={BookingMap} />
             <Stack.Screen name="bookingWaiting" component={BookingWaiting} />
             <Stack.Screen name="bookingComplete" component={BookingComplete} />
-            <Stack.Screen name="promVehicles" component={PromVehicles} />
+            <Stack.Screen name="vehicleList" component={VehicleList} />
         </Stack.Navigator>
     );
 };

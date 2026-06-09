@@ -3,6 +3,7 @@ package com.angel.autonow.pricing;
 import com.angel.autonow.order.OrderEstimateRequestDTO;
 import com.angel.autonow.order.OrderEstimateResponseDTO;
 import com.angel.autonow.vehicle.VehicleClass;
+import com.angel.autonow.vehicle.VehicleType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,11 +30,9 @@ public class PricingService {
 	}
 
 	public OrderEstimateResponseDTO estimate(OrderEstimateRequestDTO request) {
-		double price = switch (request.vehicleType()) {
-			case LOGISTICS -> calculateForLogistics(request.distanceKm(), request.weightKg());
-			case AMBULANCE -> calculatePrice(request.distanceKm() * 2, request.vehicleClass());
-			default -> calculatePrice(request.distanceKm(), request.vehicleClass());
-		};
+		double price = request.vehicleType() == VehicleType.LOGISTICS
+				? calculateForLogistics(request.distanceKm(), request.weightKg())
+				: calculatePrice(request.distanceKm(), request.vehicleType(), request.vehicleClass());
 
 		return OrderEstimateResponseDTO.builder()
 				.estimatedPrice(round(price))
@@ -43,16 +42,32 @@ public class PricingService {
 	}
 
 	public double calculatePrice(double distanceKm, VehicleClass vehicleClass) {
+		return calculatePrice(distanceKm, null, vehicleClass);
+	}
+
+	public double calculatePrice(double distanceKm, VehicleType vehicleType, VehicleClass vehicleClass) {
 		if (distanceKm < 0) {
 			throw new IllegalArgumentException("distanceKm must not be negative: " + distanceKm);
 		}
 
-		double base = pricingProperties.baseFare();
-		double rate = pricingProperties.ratePerKm();
-		double classMultiplier = multiplierFor(vehicleClass);
-		double timeMultiplier = isNight() ? pricingProperties.nightMultiplier() : 1.0;
+		if (vehicleType == VehicleType.AMBULANCE) {
+			return calculateForAmbulance(distanceKm, vehicleClass);
+		}
 
-		return base + distanceKm * rate * classMultiplier * timeMultiplier;
+		return calculateForTaxi(distanceKm, vehicleClass);
+	}
+
+	private double calculateForTaxi(double distanceKm, VehicleClass vehicleClass) {
+		return pricingProperties.baseFare() + distanceKm * effectiveRatePerKm(vehicleClass);
+	}
+
+	private double calculateForAmbulance(double distanceKm, VehicleClass vehicleClass) {
+		return pricingProperties.ambulanceBaseFare() + distanceKm * 2 * effectiveRatePerKm(vehicleClass);
+	}
+
+	private double effectiveRatePerKm(VehicleClass vehicleClass) {
+		double timeMultiplier = isNight() ? pricingProperties.nightMultiplier() : 1.0;
+		return pricingProperties.ratePerKm() * multiplierFor(vehicleClass) * timeMultiplier;
 	}
 
 	public double calculateForLogistics(double distanceKm, Double weightKg) {

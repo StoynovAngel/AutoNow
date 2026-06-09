@@ -261,7 +261,7 @@ public class OrderService {
 		if (request.vehicleType() == VehicleType.LOGISTICS) {
 			return pricingService.calculateForLogistics(request.distanceKm(), request.weightKg());
 		}
-		return pricingService.calculatePrice(request.distanceKm(), request.vehicleClass());
+		return pricingService.calculatePrice(request.distanceKm(), request.vehicleType(), request.vehicleClass());
 	}
 
 	private void validateAssignment(OrderEntity order, DriverEntity driver, VehicleEntity vehicle) {

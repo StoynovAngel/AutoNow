@@ -74,8 +74,21 @@ describe('company Body', () => {
 
         fireEvent.press(getByTestId('book-7'));
 
-        expect(mockNavigate).toHaveBeenCalledWith('promVehicles', {
+        expect(mockNavigate).toHaveBeenCalledWith('vehicleList', {
             companyId: 7,
+            vehicleType: VehicleType.PROM,
+        });
+    });
+
+    it('routes RENTAL bookings to the vehicle list screen', () => {
+        mockRouteVehicleType = VehicleType.RENTAL;
+        const { getByTestId } = renderWithProviders(<Body />);
+
+        fireEvent.press(getByTestId('book-7'));
+
+        expect(mockNavigate).toHaveBeenCalledWith('vehicleList', {
+            companyId: 7,
+            vehicleType: VehicleType.RENTAL,
         });
     });
 
@@ -85,12 +98,5 @@ describe('company Body', () => {
 
         expect(queryByTestId('book-7')).toBeNull();
         expect(queryByTestId('book-7-STANDARD')).toBeNull();
-    });
-
-    it('does not render a Book button for RENTAL companies', () => {
-        mockRouteVehicleType = VehicleType.RENTAL;
-        const { queryByTestId } = renderWithProviders(<Body />);
-
-        expect(queryByTestId('book-7')).toBeNull();
     });
 });
