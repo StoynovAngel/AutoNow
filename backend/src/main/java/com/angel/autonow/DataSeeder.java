@@ -141,7 +141,7 @@ public class DataSeeder implements ApplicationRunner {
 	private void seedLogistics(String password) {
 		CompanyEntity company = companyRepository.save(CompanyEntity.builder()
 				.name("BG Cargo Logistics")
-				.address("12 Industrial Zone, Plovdiv")
+				.address("Prof. Georgi Bradistilov 11, Sofia 1700, Bulgaria")
 				.phone("+359888200002")
 				.email("ops@bgcargo.bg")
 				.description("Long-haul freight across the Balkans")

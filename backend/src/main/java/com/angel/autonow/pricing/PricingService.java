@@ -3,6 +3,7 @@ package com.angel.autonow.pricing;
 import com.angel.autonow.order.OrderEstimateRequestDTO;
 import com.angel.autonow.order.OrderEstimateResponseDTO;
 import com.angel.autonow.vehicle.VehicleClass;
+import com.angel.autonow.vehicle.VehicleType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +30,9 @@ public class PricingService {
 	}
 
 	public OrderEstimateResponseDTO estimate(OrderEstimateRequestDTO request) {
-		double price = calculatePrice(request.distanceKm(), request.vehicleClass());
+		double price = request.vehicleType() == VehicleType.LOGISTICS
+				? calculateForLogistics(request.distanceKm(), request.weightKg())
+				: calculatePrice(request.distanceKm(), request.vehicleClass());
 
 		return OrderEstimateResponseDTO.builder()
 				.estimatedPrice(round(price))
@@ -49,6 +52,18 @@ public class PricingService {
 		double timeMultiplier = isNight() ? pricingProperties.nightMultiplier() : 1.0;
 
 		return base + distanceKm * rate * classMultiplier * timeMultiplier;
+	}
+
+	public double calculateForLogistics(double distanceKm, Double weightKg) {
+		if (distanceKm < 0) {
+			throw new IllegalArgumentException("distanceKm must not be negative: " + distanceKm);
+		}
+
+		double base = pricingProperties.logisticsBaseFare();
+		double distanceCost = distanceKm * pricingProperties.ratePerKm();
+		double weightCost = weightKg != null ? weightKg * pricingProperties.logisticsRatePerKg() : 0.0;
+
+		return base + distanceCost + weightCost;
 	}
 
 	private double multiplierFor(VehicleClass vehicleClass) {

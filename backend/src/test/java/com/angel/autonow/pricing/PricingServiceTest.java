@@ -19,7 +19,7 @@ class PricingServiceTest {
 	private static final ZoneId SOFIA = ZoneId.of("Europe/Sofia");
 
 	private static final PricingProperties PROPERTIES = new PricingProperties(
-			2.50, 1.20, 1.30, 1.60, 1.20, 22, 6, "Europe/Sofia", "EUR"
+			2.50, 1.20, 1.30, 1.60, 1.20, 22, 6, "Europe/Sofia", "EUR", 5.00, 0.05
 	);
 
 	private PricingService serviceAt(int hour) {
@@ -105,6 +105,47 @@ class PricingServiceTest {
 		assertEquals(round(2.50 + 7.3 * 1.20), result.estimatedPrice(), 0.001);
 		assertEquals("EUR", result.currency());
 		assertEquals(7.3, result.distanceKm(), 0.001);
+	}
+
+	@Test
+	void calculateForLogistics_withWeight() {
+		PricingService service = serviceAt(14);
+		double price = service.calculateForLogistics(10.0, 100.0);
+		// base=5.00 + distance=10*1.20 + weight=100*0.05
+		assertEquals(5.00 + 10.0 * 1.20 + 100.0 * 0.05, price, 0.001);
+	}
+
+	@Test
+	void calculateForLogistics_noWeight_omitsWeightCost() {
+		PricingService service = serviceAt(14);
+		double price = service.calculateForLogistics(10.0, null);
+		assertEquals(5.00 + 10.0 * 1.20, price, 0.001);
+	}
+
+	@Test
+	void calculateForLogistics_zeroDistance_chargesBaseAndWeightOnly() {
+		PricingService service = serviceAt(14);
+		double price = service.calculateForLogistics(0.0, 50.0);
+		assertEquals(5.00 + 50.0 * 0.05, price, 0.001);
+	}
+
+	@Test
+	void calculateForLogistics_negativeDistance_throwsIllegalArgument() {
+		PricingService service = serviceAt(14);
+		assertThrows(IllegalArgumentException.class,
+				() -> service.calculateForLogistics(-1.0, 10.0));
+	}
+
+	@Test
+	void estimate_logistics_routesToLogisticsCalculation() {
+		PricingService service = serviceAt(14);
+		OrderEstimateRequestDTO request = OrderEstimateRequestDTO.builder()
+				.vehicleType(VehicleType.LOGISTICS)
+				.distanceKm(10.0)
+				.weightKg(100.0)
+				.build();
+		OrderEstimateResponseDTO result = service.estimate(request);
+		assertEquals(round(5.00 + 10.0 * 1.20 + 100.0 * 0.05), result.estimatedPrice(), 0.001);
 	}
 
 	private static double round(double value) {
