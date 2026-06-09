@@ -6,7 +6,7 @@ import lombok.Builder;
 
 import java.time.LocalDateTime;
 
-@Builder
+@Builder(toBuilder = true)
 public record OrderResponseDTO(
 		Long id,
 		Long userId,
@@ -31,6 +31,7 @@ public record OrderResponseDTO(
 		Integer luggageCount,
 		VehicleClass vehicleClass,
 		Boolean requiresAirConditioning,
+		Double weightKg,
 		String cancellationReason,
 		LocalDateTime createdAt,
 		LocalDateTime updatedAt

@@ -58,7 +58,10 @@ public record OrderRequestDTO(
 
 		VehicleClass vehicleClass,
 
-		Boolean requiresAirConditioning
+		Boolean requiresAirConditioning,
+
+		@Positive(message = "Weight must be positive")
+		Double weightKg
 ) {
 
 }

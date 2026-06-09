@@ -16,6 +16,9 @@ public record OrderEstimateRequestDTO(
 		@Positive(message = "Distance must be positive")
 		Double distanceKm,
 
-		VehicleClass vehicleClass
+		VehicleClass vehicleClass,
+
+		@Positive(message = "Weight must be positive")
+		Double weightKg
 ) {
 }
