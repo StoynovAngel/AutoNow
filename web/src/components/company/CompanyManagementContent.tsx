@@ -22,11 +22,13 @@ const CompanyManagementContent = ({selectedCompany, selectedDriver, driverVehicl
             <div className="flex-1 flex min-h-0 min-w-0">
                 <CompanyInfo company={selectedCompany} canEdit={canEditCompany} onEdit={onEditCompany}/>
             </div>
-            <div className="flex-1 flex min-h-0 min-w-0">
-                <DriverInfo driver={selectedDriver}/>
-            </div>
-            <div className="flex-1 flex min-h-0 min-w-0">
-                <DriverRatingsInfo ratings={driverRatings} hasDriver={!!selectedDriver}/>
+            <div className="flex-1 flex flex-col gap-4 min-h-0 min-w-0">
+                <div className="flex-1 flex min-h-0">
+                    <DriverInfo driver={selectedDriver}/>
+                </div>
+                <div className="flex-1 flex min-h-0">
+                    <DriverRatingsInfo ratings={driverRatings} hasDriver={!!selectedDriver}/>
+                </div>
             </div>
             <VehicleInfo vehicles={driverVehicles} layout="sidebar"/>
         </div>
