@@ -19,11 +19,11 @@ public class VehicleClassifier {
             return classes;
         }
 
-        switch (seats) {
-            case XL_MIN_SEATS -> classes.add(VehicleClass.XL);
-            case STANDARD_MIN_SEATS -> classes.add(VehicleClass.STANDARD);
+        if (seats >= XL_MIN_SEATS) {
+            classes.add(VehicleClass.XL);
+        } else if (seats >= STANDARD_MIN_SEATS) {
+            classes.add(VehicleClass.STANDARD);
         }
-        ;
 
         return classes;
     }
