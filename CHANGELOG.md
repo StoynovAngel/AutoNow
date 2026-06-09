@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.4](https://github.com/StoynovAngel/AutoNow/compare/v0.1.3...v0.1.4) (2026-06-09)
+
+
+### Features
+
+* Add filter by company ([#97](https://github.com/StoynovAngel/AutoNow/issues/97)) ([ae06eb1](https://github.com/StoynovAngel/AutoNow/commit/ae06eb1d8ddc02a70fa64d2b1ec30ca96e5818f6))
+
 ## [0.1.3](https://github.com/StoynovAngel/AutoNow/compare/v0.1.2...v0.1.3) (2026-06-08)
 
 
