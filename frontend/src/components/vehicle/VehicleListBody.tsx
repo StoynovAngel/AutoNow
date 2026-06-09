@@ -8,20 +8,22 @@ import type { RootStackParamList } from '../../navigation/Navigation';
 import { useTheme } from '../../hooks/useTheme';
 import { usePublicVehicles } from '../../hooks/usePublicVehicles';
 import { VehicleType, PublicVehicle } from '../../types/vehicle';
-import { createStyles } from './PromVehiclesBody.style';
+import { createStyles } from './VehicleListBody.style';
 
-type PromVehiclesRouteProp = RouteProp<RootStackParamList, 'promVehicles'>;
+type VehicleListRouteProp = RouteProp<RootStackParamList, 'vehicleList'>;
 
-const PromVehiclesBody = () => {
-    const route = useRoute<PromVehiclesRouteProp>();
+const VehicleListBody = () => {
+    const route = useRoute<VehicleListRouteProp>();
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-    const { companyId } = route.params;
+    const { companyId, vehicleType } = route.params;
 
     const { theme } = useTheme();
     const styles = createStyles(theme);
     const { t } = useTranslation();
 
-    const { vehicles, loading, error, reload } = usePublicVehicles(companyId, VehicleType.PROM);
+    const { vehicles, loading, error, reload } = usePublicVehicles(companyId, vehicleType);
+
+    const vehicleIcon = vehicleType === VehicleType.RENTAL ? 'car-rental' : 'directions-car';
 
     const handleBack = () => navigation.goBack();
 
@@ -40,33 +42,33 @@ const PromVehiclesBody = () => {
                 <Pressable
                     style={styles.backButton}
                     onPress={handleBack}
-                    testID="prom-vehicles-back"
+                    testID="vehicle-list-back"
                 >
                     <MaterialIcons name="arrow-back" size={24} color={theme.colors.textPrimary} />
                 </Pressable>
-                <Text style={styles.headerTitle}>{t('prom-vehicles-title')}</Text>
-                <Text style={styles.headerSubtitle}>{t('prom-vehicles-subtitle')}</Text>
+                <Text style={styles.headerTitle}>{t('vehicle-list-title')}</Text>
+                <Text style={styles.headerSubtitle}>{t('vehicle-list-subtitle')}</Text>
             </View>
 
             {loading ? (
                 <View style={styles.centered}>
                     <ActivityIndicator size="large" color={theme.colors.primary} />
-                    <Text style={styles.emptyText}>{t('prom-vehicles-loading')}</Text>
+                    <Text style={styles.emptyText}>{t('vehicle-list-loading')}</Text>
                 </View>
             ) : error ? (
                 <View style={styles.centered}>
                     <MaterialIcons name="error-outline" size={64} color="#EF4444" />
                     <Text style={styles.emptyTitle}>{t('error-loading')}</Text>
                     <Text style={styles.errorText}>{error}</Text>
-                    <Pressable style={styles.retryButton} onPress={reload} testID="prom-vehicles-retry">
+                    <Pressable style={styles.retryButton} onPress={reload} testID="vehicle-list-retry">
                         <Text style={styles.retryButtonText}>{t('retry')}</Text>
                     </Pressable>
                 </View>
             ) : vehicles.length === 0 ? (
                 <View style={styles.centered}>
                     <MaterialIcons name="search-off" size={64} color={theme.colors.textSecondary} />
-                    <Text style={styles.emptyTitle}>{t('prom-vehicles-empty-title')}</Text>
-                    <Text style={styles.emptyText}>{t('prom-vehicles-empty-description')}</Text>
+                    <Text style={styles.emptyTitle}>{t('vehicle-list-empty-title')}</Text>
+                    <Text style={styles.emptyText}>{t('vehicle-list-empty-description')}</Text>
                 </View>
             ) : (
                 <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
@@ -78,15 +80,15 @@ const PromVehiclesBody = () => {
                                         source={{ uri: vehicle.imageUrl }}
                                         style={styles.cardImage}
                                         resizeMode="cover"
-                                        testID={`prom-image-${vehicle.id}`}
+                                        testID={`vehicle-image-${vehicle.id}`}
                                     />
                                 ) : (
                                     <View
                                         style={[styles.cardImage, styles.cardImagePlaceholder]}
-                                        testID={`prom-image-placeholder-${vehicle.id}`}
+                                        testID={`vehicle-image-placeholder-${vehicle.id}`}
                                     >
                                         <MaterialIcons
-                                            name="directions-car"
+                                            name={vehicleIcon}
                                             size={48}
                                             color={theme.colors.textSecondary}
                                         />
@@ -113,7 +115,7 @@ const PromVehiclesBody = () => {
                                                     color={theme.colors.textSecondary}
                                                 />
                                                 <Text style={styles.detailText}>
-                                                    {t('prom-vehicles-seats', { count: vehicle.numberOfSeats })}
+                                                    {t('vehicle-list-seats', { count: vehicle.numberOfSeats })}
                                                 </Text>
                                             </View>
                                         )}
@@ -126,7 +128,7 @@ const PromVehiclesBody = () => {
                                         ]}
                                         onPress={() => handleCall(vehicle.driverPhoneNumber)}
                                         disabled={!vehicle.driverPhoneNumber}
-                                        testID={`prom-call-${vehicle.id}`}
+                                        testID={`vehicle-call-${vehicle.id}`}
                                     >
                                         <MaterialIcons name="phone" size={24} color="#FFFFFF" />
                                     </Pressable>
@@ -140,4 +142,4 @@ const PromVehiclesBody = () => {
     );
 };
 
-export default PromVehiclesBody;
+export default VehicleListBody;

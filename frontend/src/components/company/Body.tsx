@@ -45,12 +45,14 @@ const Body = () => {
     };
 
     const handleBookCompany = (companyId: number, vehicleClass?: VehicleClass) => {
-        if (vehicleType === VehicleType.PROM) {
-            navigation.navigate('promVehicles', { companyId });
+        if (vehicleType === VehicleType.PROM || vehicleType === VehicleType.RENTAL) {
+            navigation.navigate('vehicleList', { companyId, vehicleType });
             return;
         }
+        const company = companies.find(c => c.id === companyId);
         navigation.navigate('bookingMap', {
             companyId,
+            companyAddress: company?.address,
             vehicleType,
             preferences: vehicleClass ? { vehicleClass } : {},
         });
@@ -60,7 +62,8 @@ const Body = () => {
     const isBookable =
         vehicleType === VehicleType.TAXI ||
         vehicleType === VehicleType.AMBULANCE ||
-        vehicleType === VehicleType.PROM;
+        vehicleType === VehicleType.PROM ||
+        vehicleType === VehicleType.RENTAL;
 
     return (
         <View style={styles.container}>
