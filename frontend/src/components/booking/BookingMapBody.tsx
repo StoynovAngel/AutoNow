@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { View, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
@@ -7,9 +7,11 @@ import { useTranslation } from 'react-i18next';
 import { theme } from '../../constants/theme';
 import { AuthContext } from '../../services/AuthContext';
 import type { RootStackParamList } from '../../navigation/Navigation';
-import type { Coordinate } from '../../services/mapboxService';
-import { createOrder } from '../../services/orderService';
-import { useBookingFlow } from '../../hooks/useBookingFlow';
+import { getRoute, searchAddress } from '../../services/mapboxService';
+import type { Coordinate, AddressSuggestion, RouteResult } from '../../services/mapboxService';
+import { createOrder, estimateOrder } from '../../services/orderService';
+import type { OrderEstimateResponse } from '../../services/orderService';
+import { VehicleType } from '../../types/vehicle';
 import AddressSearch from './AddressSearch';
 import MapHeader from './MapHeader';
 import PickupRow from './PickupRow';
@@ -32,35 +34,79 @@ const BookingMapBody = () => {
     const { companyAddress, vehicleType, preferences } = route.params;
 
     const auth = useContext(AuthContext);
+    const isAmbulance = vehicleType === VehicleType.AMBULANCE;
+    const isLogistics = vehicleType === VehicleType.LOGISTICS;
+
+    const [pickup, setPickup] = useState<AddressSuggestion | undefined>();
+    const [destination, setDestination] = useState<AddressSuggestion | undefined>();
+    const [routeResult, setRouteResult] = useState<RouteResult | undefined>();
+    const [routeLoading, setRouteLoading] = useState(false);
+    const [estimate, setEstimate] = useState<OrderEstimateResponse | undefined>();
+    const [estimateLoading, setEstimateLoading] = useState(false);
+    const [pickupGeocodeError, setPickupGeocodeError] = useState(false);
+    const [weightKgInput, setWeightKgInput] = useState('');
     const [submitting, setSubmitting] = useState(false);
 
-    const flow = useBookingFlow({ vehicleType, preferences, companyAddress });
-    const {
-        pickup,
-        setPickup,
-        destination,
-        setDestination,
-        routeResult,
-        routeLoading,
-        estimate,
-        estimateLoading,
-        pickupGeocodeError,
-        weightKgInput,
-        setWeightKgInput,
-        weightKg,
-        weightError,
-        isAmbulance,
-        isLogistics,
-    } = flow;
+    const parsedWeight = parseFloat(weightKgInput);
+    const weightKg = isLogistics && Number.isFinite(parsedWeight) ? parsedWeight : undefined;
+    const weightError = weightKg !== undefined && (weightKg < 0.1 || weightKg > 5000);
+
+    useEffect(() => {
+        if (!isLogistics || !preferences.companyAddress) return;
+        let cancelled = false;
+        searchAddress(preferences.companyAddress)
+            .then((results) => { if (!cancelled && results[0]) setPickup(results[0]); })
+            .catch(() => {});
+        return () => { cancelled = true; };
+    }, [isLogistics, preferences.companyAddress]);
+
+    useEffect(() => {
+        if (!isAmbulance || !companyAddress) return;
+        setPickupGeocodeError(false);
+        let cancelled = false;
+        searchAddress(companyAddress)
+            .then((results) => {
+                if (cancelled) return;
+                if (results[0]) setPickup(results[0]);
+                else setPickupGeocodeError(true);
+            })
+            .catch(() => { if (!cancelled) setPickupGeocodeError(true); });
+        return () => { cancelled = true; };
+    }, [isAmbulance, companyAddress]);
+
+    useEffect(() => {
+        if (!pickup || !destination) { setRouteResult(undefined); return; }
+        let cancelled = false;
+        setRouteLoading(true);
+        getRoute(pickup.coordinate, destination.coordinate)
+            .then((r) => { if (!cancelled) setRouteResult(r); })
+            .catch(() => { if (!cancelled) setRouteResult(undefined); })
+            .finally(() => { if (!cancelled) setRouteLoading(false); });
+        return () => { cancelled = true; };
+    }, [pickup, destination]);
+
+    useEffect(() => {
+        if (!routeResult) { setEstimate(undefined); setEstimateLoading(false); return; }
+        if (isLogistics && weightKg === undefined) { setEstimate(undefined); return; }
+        let cancelled = false;
+        setEstimate(undefined);
+        setEstimateLoading(true);
+        estimateOrder({
+            vehicleType,
+            distanceKm: routeResult.distanceKm,
+            vehicleClass: preferences.vehicleClass,
+            ...(isLogistics ? { weightKg } : {}),
+        })
+            .then((e) => { if (!cancelled) setEstimate(e); })
+            .catch(() => { if (!cancelled) setEstimate(undefined); })
+            .finally(() => { if (!cancelled) setEstimateLoading(false); });
+        return () => { cancelled = true; };
+    }, [routeResult, vehicleType, preferences.vehicleClass, weightKg, isLogistics]);
 
     const handleConfirm = async () => {
-        if (!auth?.user) {
-            Alert.alert(t('booking-must-login'));
-            return;
-        }
+        if (!auth?.user) { Alert.alert(t('booking-must-login')); return; }
         if (!pickup || !destination) return;
         if (!isAmbulance && !routeResult) return;
-
         setSubmitting(true);
         try {
             const created = await createOrder({
@@ -164,7 +210,7 @@ const BookingMapBody = () => {
                         estimate={estimate}
                         estimateLoading={estimateLoading}
                         isAmbulance={isAmbulance}
-                        pickupReady={Boolean(pickup)}
+                        pickupReady={true}
                     />
                 )}
 

@@ -4,11 +4,6 @@ import Constants from 'expo-constants';
 
 const apiUrl = Constants.expoConfig?.extra?.apiUrl || process.env.API_URL || 'http://localhost:8080';
 
-if (!apiUrl) {
-    console.error('API URL is not configured. Please set it in app.json extra.apiUrl or API_URL environment variable.');
-    throw new Error('API URL configuration missing');
-}
-
 let onUnauthorized: (() => void) | null = null;
 
 export const setUnauthorizedHandler = (handler: (() => void) | null) => {
