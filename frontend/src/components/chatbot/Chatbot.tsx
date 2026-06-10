@@ -22,7 +22,7 @@ import { sendChatbotMessage } from '../../services/chatbotService';
 import { createStyles } from './Chatbot.style';
 
 const Chatbot = () => {
-    
+
     const styles = createStyles(theme);
     const { t } = useTranslation();
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();

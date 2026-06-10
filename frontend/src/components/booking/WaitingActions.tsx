@@ -21,7 +21,7 @@ const WaitingActions = ({
     simulating,
     onSimulate,
 }: WaitingActionsProps) => {
-    
+
     const { t } = useTranslation();
     const styles = createStyles(theme);
 

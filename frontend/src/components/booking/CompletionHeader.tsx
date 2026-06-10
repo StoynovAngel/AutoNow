@@ -6,7 +6,7 @@ import { theme } from '../../constants/theme';
 import { createStyles } from './CompletionHeader.style';
 
 const CompletionHeader = () => {
-    
+
     const { t } = useTranslation();
     const styles = createStyles(theme);
 

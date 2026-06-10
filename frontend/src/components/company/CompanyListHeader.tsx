@@ -14,7 +14,7 @@ interface CompanyListHeaderProps {
 }
 
 const CompanyListHeader = ({ vehicleInfo, companiesCount, loading, onBackPress }: CompanyListHeaderProps) => {
-    
+
     const styles = createStyles(theme);
     const { t } = useTranslation();
 

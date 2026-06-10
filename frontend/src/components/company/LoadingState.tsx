@@ -5,7 +5,7 @@ import { createStyles } from './Body.style';
 import { useTranslation } from 'react-i18next';
 
 const LoadingState = () => {
-    
+
     const styles = createStyles(theme);
     const { t } = useTranslation();
 

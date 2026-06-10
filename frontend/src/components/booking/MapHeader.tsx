@@ -17,7 +17,7 @@ interface MapHeaderProps {
 }
 
 const MapHeader = ({ pickup, destination, route }: MapHeaderProps) => {
-    
+
     const { t } = useTranslation();
     const styles = createStyles(theme);
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();

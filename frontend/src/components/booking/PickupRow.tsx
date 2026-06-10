@@ -15,7 +15,7 @@ interface PickupRowProps {
 }
 
 const PickupRow = ({ variant, placeName, fallbackAddress, geocodeError }: PickupRowProps) => {
-    
+
     const { t } = useTranslation();
     const styles = createStyles(theme);
 

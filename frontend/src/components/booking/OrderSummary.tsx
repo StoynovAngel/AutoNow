@@ -10,7 +10,7 @@ interface OrderSummaryProps {
 }
 
 const OrderSummary = ({ order }: OrderSummaryProps) => {
-    
+
     const { t } = useTranslation();
     const styles = createStyles(theme);
 

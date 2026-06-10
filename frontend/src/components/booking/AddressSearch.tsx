@@ -25,7 +25,7 @@ const AddressSearch = ({
     placeholder,
     testID,
 }: AddressSearchProps) => {
-    
+
     const { t } = useTranslation();
     const styles = createStyles(theme);
 

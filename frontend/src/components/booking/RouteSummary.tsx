@@ -23,7 +23,7 @@ const RouteSummary = ({
     isAmbulance,
     pickupReady,
 }: RouteSummaryProps) => {
-    
+
     const { t } = useTranslation();
     const styles = createStyles(theme);
 

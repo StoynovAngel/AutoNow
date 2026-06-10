@@ -12,7 +12,7 @@ import {useResumeActiveOrder} from "../../hooks/useResumeActiveOrder";
 
 const Body = () => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-    
+
     const {t} = useTranslation();
     const styles = createStyles(theme);
     const vehicleOptions = getVehicleOptions(t);

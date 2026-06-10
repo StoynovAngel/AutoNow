@@ -11,7 +11,7 @@ interface ErrorStateProps {
 }
 
 const ErrorState = ({ error, onRetry }: ErrorStateProps) => {
-    
+
     const styles = createStyles(theme);
     const { t } = useTranslation();
 

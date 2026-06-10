@@ -23,7 +23,7 @@ const Body = () => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const { vehicleType } = route.params;
 
-    
+
     const styles = createStyles(theme);
 
     const { t } = useTranslation();

@@ -23,7 +23,7 @@ type BookingMapRouteProp = RouteProp<RootStackParamList, 'bookingMap'>;
 const SOFIA_CENTER: Coordinate = { latitude: 42.6977, longitude: 23.3219 };
 
 const BookingMapBody = () => {
-    
+
     const { t } = useTranslation();
     const styles = createStyles(theme);
 

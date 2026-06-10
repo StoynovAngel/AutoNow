@@ -11,7 +11,7 @@ interface WeightInputProps {
 }
 
 const WeightInput = ({ value, onChange, error }: WeightInputProps) => {
-    
+
     const { t } = useTranslation();
     const styles = createStyles(theme);
 

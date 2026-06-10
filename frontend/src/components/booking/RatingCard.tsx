@@ -22,7 +22,7 @@ const RatingCard = ({
     onCommentChange,
     error,
 }: RatingCardProps) => {
-    
+
     const { t } = useTranslation();
     const styles = createStyles(theme);
 

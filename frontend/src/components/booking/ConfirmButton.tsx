@@ -11,7 +11,7 @@ interface ConfirmButtonProps {
 }
 
 const ConfirmButton = ({ enabled, submitting, onPress }: ConfirmButtonProps) => {
-    
+
     const { t } = useTranslation();
     const styles = createStyles(theme);
 

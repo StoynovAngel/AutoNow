@@ -11,21 +11,17 @@ export const useResumeActiveOrder = () => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const resumedRef = useRef(false);
 
-    const check = useCallback(() => {
+    const check = useCallback((cancelled: { current: boolean }) => {
         if (!auth?.user || auth.loading || resumedRef.current) return;
-        let cancelled = false;
         getActiveOrderByUserId(auth.user.id)
             .then((order) => {
-                if (cancelled || !order) return;
+                if (cancelled.current || !order) return;
                 resumedRef.current = true;
                 navigation.navigate('bookingWaiting', { orderId: order.id });
             })
             .catch(() => {
                 // silently ignore — user can still book a new ride
             });
-        return () => {
-            cancelled = true;
-        };
     }, [auth?.user, auth?.loading, navigation]);
 
     useEffect(() => {
@@ -33,11 +29,14 @@ export const useResumeActiveOrder = () => {
             resumedRef.current = false;
             return;
         }
-        return check();
+        const cancelled = { current: false };
+        check(cancelled);
+        return () => { cancelled.current = true; };
     }, [auth?.user, auth?.loading, check]);
 
     useAppForeground(() => {
         resumedRef.current = false;
-        check();
+        const cancelled = { current: false };
+        check(cancelled);
     });
 };

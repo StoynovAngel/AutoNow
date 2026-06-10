@@ -10,7 +10,7 @@ interface EmptyStateProps {
 }
 
 const EmptyState = ({ serviceName }: EmptyStateProps) => {
-    
+
     const styles = createStyles(theme);
     const { t } = useTranslation();
 

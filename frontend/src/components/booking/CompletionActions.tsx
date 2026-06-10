@@ -19,7 +19,7 @@ const CompletionActions = ({
     onSkip,
     onSubmit,
 }: CompletionActionsProps) => {
-    
+
     const { t } = useTranslation();
     const styles = createStyles(theme);
 

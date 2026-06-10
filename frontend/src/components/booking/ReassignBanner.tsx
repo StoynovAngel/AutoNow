@@ -6,7 +6,7 @@ import { theme } from '../../constants/theme';
 import { createStyles } from './ReassignBanner.style';
 
 const ReassignBanner = () => {
-    
+
     const { t } = useTranslation();
     const styles = createStyles(theme);
 

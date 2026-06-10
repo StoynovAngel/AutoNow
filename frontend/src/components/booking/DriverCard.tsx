@@ -12,7 +12,7 @@ interface DriverCardProps {
 }
 
 const DriverCard = ({ driver, vehicle }: DriverCardProps) => {
-    
+
     const { t } = useTranslation();
     const styles = createStyles(theme);
 

@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Text, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTranslation } from 'react-i18next';
 import { theme } from '../../constants/theme';
 import type { RootStackParamList } from '../../navigation/Navigation';
-import { getOrderById, type OrderResponse } from '../../services/orderService';
+import { getOrderById } from '../../services/orderService';
 import { submitRating } from '../../services/ratingService';
+import { useDataFetch } from '../../hooks/useDataFetch';
 import CompletionHeader from './CompletionHeader';
 import OrderSummary from './OrderSummary';
 import RatingCard from './RatingCard';
@@ -16,7 +17,6 @@ import { createStyles } from './BookingCompleteBody.style';
 type BookingCompleteRouteProp = RouteProp<RootStackParamList, 'bookingComplete'>;
 
 const BookingCompleteBody = () => {
-    
     const { t } = useTranslation();
     const styles = createStyles(theme);
 
@@ -24,26 +24,13 @@ const BookingCompleteBody = () => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const { orderId } = route.params;
 
-    const [order, setOrder] = useState<OrderResponse | undefined>();
-    const [loadError, setLoadError] = useState(false);
+    const loader = useCallback(() => getOrderById(orderId), [orderId]);
+    const { data: order, error: loadError } = useDataFetch(loader, undefined);
+
     const [stars, setStars] = useState(0);
     const [comment, setComment] = useState('');
     const [submitting, setSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState<string | undefined>();
-
-    useEffect(() => {
-        let cancelled = false;
-        getOrderById(orderId)
-            .then((o) => {
-                if (!cancelled) setOrder(o);
-            })
-            .catch(() => {
-                if (!cancelled) setLoadError(true);
-            });
-        return () => {
-            cancelled = true;
-        };
-    }, [orderId]);
 
     const goHome = () => {
         navigation.reset({ index: 0, routes: [{ name: 'home' }] });

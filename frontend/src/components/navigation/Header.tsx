@@ -6,7 +6,7 @@ import { theme } from '../../constants/theme';
 import {useAuth} from "../../hooks/useAuth";
 
 const Header = () => {
-    
+
     const {logout} = useAuth();
     const styles = createStyles(theme);
 

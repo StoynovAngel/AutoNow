@@ -23,7 +23,7 @@ const subtitleKeyFor = (status: OrderStatus | undefined): string => {
 };
 
 const WaitingStatus = ({ status, error }: WaitingStatusProps) => {
-    
+
     const { t } = useTranslation();
     const styles = createStyles(theme);
 

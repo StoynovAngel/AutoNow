@@ -17,7 +17,7 @@ const VehicleListBody = () => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const { companyId, vehicleType } = route.params;
 
-    
+
     const styles = createStyles(theme);
     const { t } = useTranslation();
 

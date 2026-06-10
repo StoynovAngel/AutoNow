@@ -15,7 +15,7 @@ interface CompanyCardProps {
 }
 
 const CompanyCard = ({ company, onCall, onBook, showClassPicker }: CompanyCardProps) => {
-    
+
     const { t } = useTranslation();
     const styles = createStyles(theme);
 

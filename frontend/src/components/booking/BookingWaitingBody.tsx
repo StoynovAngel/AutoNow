@@ -20,7 +20,7 @@ import { createStyles } from './BookingWaitingBody.style';
 type BookingWaitingRouteProp = RouteProp<RootStackParamList, 'bookingWaiting'>;
 
 const BookingWaitingBody = () => {
-    
+
     const { t } = useTranslation();
     const styles = createStyles(theme);
 
