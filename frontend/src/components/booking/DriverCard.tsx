@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Pressable, Linking } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '../../hooks/useTheme';
+import { theme } from '../../constants/theme';
 import type { OrderResponse } from '../../services/orderService';
 import { createStyles } from './DriverCard.style';
 
@@ -12,7 +12,7 @@ interface DriverCardProps {
 }
 
 const DriverCard = ({ driver, vehicle }: DriverCardProps) => {
-    const { theme } = useTheme();
+    
     const { t } = useTranslation();
     const styles = createStyles(theme);
 

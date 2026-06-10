@@ -1,8 +1,8 @@
 import React from 'react';
 import { renderHook, waitFor } from '@testing-library/react-native';
-import { useResumeActiveOrder } from './useResumeActiveOrder';
-import { AuthContext } from '../services/AuthContext';
-import type { AuthContextType, User } from '../types/auth';
+import { useResumeActiveOrder } from '../useResumeActiveOrder';
+import { AuthContext } from '../../services/AuthContext';
+import type { AuthContextType, User } from '../../types/auth';
 
 const mockNavigate = jest.fn();
 
@@ -10,11 +10,11 @@ jest.mock('@react-navigation/native', () => ({
     useNavigation: () => ({ navigate: mockNavigate }),
 }));
 
-jest.mock('../services/orderService', () => ({
+jest.mock('../../services/orderService', () => ({
     getActiveOrderByUserId: jest.fn(),
 }));
 
-import { getActiveOrderByUserId } from '../services/orderService';
+import { getActiveOrderByUserId } from '../../services/orderService';
 const mockGetActive = getActiveOrderByUserId as jest.Mock;
 
 const wrapWithAuth = (user: User | null, loading = false) => {

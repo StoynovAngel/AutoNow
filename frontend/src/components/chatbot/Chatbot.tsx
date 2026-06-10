@@ -14,7 +14,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useTheme } from '../../hooks/useTheme';
+import { theme } from '../../constants/theme';
 import type { RootStackParamList } from '../../navigation/Navigation';
 import { VehicleType } from '../../types/vehicle';
 import type { ChatbotMessage } from '../../types/chatbot';
@@ -22,7 +22,7 @@ import { sendChatbotMessage } from '../../services/chatbotService';
 import { createStyles } from './Chatbot.style';
 
 const Chatbot = () => {
-    const { theme } = useTheme();
+    
     const styles = createStyles(theme);
     const { t } = useTranslation();
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();

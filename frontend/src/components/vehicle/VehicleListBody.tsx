@@ -5,7 +5,7 @@ import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTranslation } from 'react-i18next';
 import type { RootStackParamList } from '../../navigation/Navigation';
-import { useTheme } from '../../hooks/useTheme';
+import { theme } from '../../constants/theme';
 import { usePublicVehicles } from '../../hooks/usePublicVehicles';
 import { VehicleType, PublicVehicle } from '../../types/vehicle';
 import { createStyles } from './VehicleListBody.style';
@@ -17,7 +17,7 @@ const VehicleListBody = () => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const { companyId, vehicleType } = route.params;
 
-    const { theme } = useTheme();
+    
     const styles = createStyles(theme);
     const { t } = useTranslation();
 

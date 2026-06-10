@@ -1,10 +1,10 @@
 import React from 'react';
 import { renderHook, act, waitFor } from '@testing-library/react-native';
-import { useAuth } from './useAuth';
-import { AuthProvider } from '../services/AuthContext';
-import * as authService from '../services/authService';
+import { useAuth } from '../useAuth';
+import { AuthProvider } from '../../services/AuthContext';
+import * as authService from '../../services/authService';
 
-jest.mock('../services/authService');
+jest.mock('../../services/authService');
 
 const mockedAuth = authService as jest.Mocked<typeof authService>;
 

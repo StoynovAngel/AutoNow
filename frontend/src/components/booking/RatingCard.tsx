@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Pressable, TextInput } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '../../hooks/useTheme';
+import { theme } from '../../constants/theme';
 import { createStyles } from './RatingCard.style';
 
 interface RatingCardProps {
@@ -22,7 +22,7 @@ const RatingCard = ({
     onCommentChange,
     error,
 }: RatingCardProps) => {
-    const { theme } = useTheme();
+    
     const { t } = useTranslation();
     const styles = createStyles(theme);
 

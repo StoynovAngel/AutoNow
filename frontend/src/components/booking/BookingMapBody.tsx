@@ -4,7 +4,7 @@ import { useRoute, RouteProp } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '../../hooks/useTheme';
+import { theme } from '../../constants/theme';
 import { AuthContext } from '../../services/AuthContext';
 import type { RootStackParamList } from '../../navigation/Navigation';
 import type { Coordinate } from '../../services/mapboxService';
@@ -23,7 +23,7 @@ type BookingMapRouteProp = RouteProp<RootStackParamList, 'bookingMap'>;
 const SOFIA_CENTER: Coordinate = { latitude: 42.6977, longitude: 23.3219 };
 
 const BookingMapBody = () => {
-    const { theme } = useTheme();
+    
     const { t } = useTranslation();
     const styles = createStyles(theme);
 

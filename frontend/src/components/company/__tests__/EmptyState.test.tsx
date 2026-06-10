@@ -1,5 +1,5 @@
-import { renderWithProviders } from '../../test-utils/renderWithProviders';
-import EmptyState from './EmptyState';
+import { renderWithProviders } from '../../../test-utils/renderWithProviders';
+import EmptyState from '../EmptyState';
 
 describe('EmptyState', () => {
     it('renders the title and the search-off icon', () => {

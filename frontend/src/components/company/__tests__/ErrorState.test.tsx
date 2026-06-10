@@ -1,6 +1,6 @@
 import { fireEvent } from '@testing-library/react-native';
-import { renderWithProviders } from '../../test-utils/renderWithProviders';
-import ErrorState from './ErrorState';
+import { renderWithProviders } from '../../../test-utils/renderWithProviders';
+import ErrorState from '../ErrorState';
 
 describe('ErrorState', () => {
     it('renders the error message and the retry button', () => {

@@ -4,12 +4,12 @@ import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../navigation/Navigation';
 import { createStyles } from './Body.style';
-import { useTheme } from '../../hooks/useTheme';
+import { theme } from '../../constants/theme';
 import { useTranslation } from 'react-i18next';
 import { useCompanies } from '../../hooks/useCompanies';
 import { getVehicleOptions } from '../../constants/vehicleOptions';
 import { VehicleType } from '../../types/vehicle';
-import type { VehicleClass } from '../../types/booking';
+import type { VehicleClass, BookingPreferences } from '../../types/booking';
 import CompanyListHeader from './CompanyListHeader';
 import CompanyCard from './CompanyCard';
 import LoadingState from './LoadingState';
@@ -23,7 +23,7 @@ const Body = () => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const { vehicleType } = route.params;
 
-    const { theme } = useTheme();
+    
     const styles = createStyles(theme);
 
     const { t } = useTranslation();
@@ -50,7 +50,7 @@ const Body = () => {
             return;
         }
         const company = companies.find(c => c.id === companyId);
-        const preferences: import('../../types/booking').BookingPreferences = {
+        const preferences: BookingPreferences = {
             ...(vehicleClass ? { vehicleClass } : {}),
             ...(vehicleType === VehicleType.LOGISTICS && company?.address
                 ? { companyAddress: company.address }
@@ -60,12 +60,7 @@ const Body = () => {
     };
 
     const showClassPicker = vehicleType === VehicleType.TAXI;
-    const isBookable =
-        vehicleType === VehicleType.TAXI ||
-        vehicleType === VehicleType.AMBULANCE ||
-        vehicleType === VehicleType.LOGISTICS ||
-        vehicleType === VehicleType.PROM ||
-        vehicleType === VehicleType.RENTAL;
+    const isBookable = vehicleType !== VehicleType.FUNERAL;
 
     return (
         <View style={styles.container}>

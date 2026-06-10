@@ -3,7 +3,7 @@ import { View, Alert } from 'react-native';
 import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '../../hooks/useTheme';
+import { theme } from '../../constants/theme';
 import type { RootStackParamList } from '../../navigation/Navigation';
 import {
     cancelOrder,
@@ -20,7 +20,7 @@ import { createStyles } from './BookingWaitingBody.style';
 type BookingWaitingRouteProp = RouteProp<RootStackParamList, 'bookingWaiting'>;
 
 const BookingWaitingBody = () => {
-    const { theme } = useTheme();
+    
     const { t } = useTranslation();
     const styles = createStyles(theme);
 

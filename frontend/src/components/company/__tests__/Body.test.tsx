@@ -1,8 +1,8 @@
 import { fireEvent } from '@testing-library/react-native';
-import { renderWithProviders } from '../../test-utils/renderWithProviders';
-import Body from './Body';
-import { VehicleType } from '../../types/vehicle';
-import type { Company } from '../../types/company';
+import { renderWithProviders } from '../../../test-utils/renderWithProviders';
+import Body from '../Body';
+import { VehicleType } from '../../../types/vehicle';
+import type { Company } from '../../../types/company';
 
 const mockNavigate = jest.fn();
 const mockGoBack = jest.fn();
@@ -20,7 +20,7 @@ const mockCompany: Company = {
     companyType: VehicleType.TAXI,
 };
 
-jest.mock('../../hooks/useCompanies', () => ({
+jest.mock('../../../hooks/useCompanies', () => ({
     useCompanies: () => ({
         companies: [mockCompany],
         loading: false,

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {ImageBackground, KeyboardAvoidingView, Platform, ScrollView, View, Pressable} from 'react-native';
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 import type {RootStackParamList} from "../../../navigation/Navigation";
@@ -31,7 +31,7 @@ const Body = () => {
         setLoading(true);
         try {
             await register(email, password);
-        } catch (err: any) {
+        } catch (err: unknown) {
             setApiError(parseApiError(err));
         } finally {
             setLoading(false);
@@ -59,9 +59,7 @@ const Body = () => {
                             <TextInput
                                 label={t('email')}
                                 value={email}
-                                onChangeText={(text: React.SetStateAction<string>) => {
-                                    setEmail(text);
-                                }}
+                                onChangeText={setEmail}
                                 keyboardType="email-address"
                                 autoCapitalize="none"
                                 style={styles.input}
@@ -74,9 +72,7 @@ const Body = () => {
                             <TextInput
                                 label={t('password')}
                                 value={password}
-                                onChangeText={(text: React.SetStateAction<string>) => {
-                                    setPassword(text);
-                                }}
+                                onChangeText={setPassword}
                                 secureTextEntry
                                 style={styles.input}
                                 mode="outlined"

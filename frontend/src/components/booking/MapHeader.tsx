@@ -4,7 +4,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '../../hooks/useTheme';
+import { theme } from '../../constants/theme';
 import type { RootStackParamList } from '../../navigation/Navigation';
 import type { Coordinate, RouteResult } from '../../services/mapboxService';
 import MapPreview from './MapPreview';
@@ -17,7 +17,7 @@ interface MapHeaderProps {
 }
 
 const MapHeader = ({ pickup, destination, route }: MapHeaderProps) => {
-    const { theme } = useTheme();
+    
     const { t } = useTranslation();
     const styles = createStyles(theme);
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();

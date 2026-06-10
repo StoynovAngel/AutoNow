@@ -1,5 +1,5 @@
 import { renderHook, waitFor, act } from '@testing-library/react-native';
-import { useDataFetch } from './useDataFetch';
+import { useDataFetch } from '../useDataFetch';
 
 describe('useDataFetch', () => {
     it('runs the loader on mount and exposes data', async () => {

@@ -1,6 +1,6 @@
 import { Text, View } from 'react-native';
 import { render } from '@testing-library/react-native';
-import { ErrorBoundary } from './ErrorBoundary';
+import { ErrorBoundary } from '../ErrorBoundary';
 
 const Boom = () => {
     throw new Error('kaboom');

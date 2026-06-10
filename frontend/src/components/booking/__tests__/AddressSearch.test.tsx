@@ -1,12 +1,12 @@
 import { fireEvent, waitFor, act } from '@testing-library/react-native';
-import { renderWithProviders } from '../../test-utils/renderWithProviders';
-import AddressSearch from './AddressSearch';
+import { renderWithProviders } from '../../../test-utils/renderWithProviders';
+import AddressSearch from '../AddressSearch';
 
-jest.mock('../../services/mapboxService', () => ({
+jest.mock('../../../services/mapboxService', () => ({
     searchAddress: jest.fn(),
 }));
 
-import { searchAddress } from '../../services/mapboxService';
+import { searchAddress } from '../../../services/mapboxService';
 const mockSearch = searchAddress as jest.Mock;
 
 const sampleSuggestion = {

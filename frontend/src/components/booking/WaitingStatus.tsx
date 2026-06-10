@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '../../hooks/useTheme';
+import { theme } from '../../constants/theme';
 import type { OrderStatus } from '../../services/orderService';
 import { createStyles } from './WaitingStatus.style';
 
@@ -23,7 +23,7 @@ const subtitleKeyFor = (status: OrderStatus | undefined): string => {
 };
 
 const WaitingStatus = ({ status, error }: WaitingStatusProps) => {
-    const { theme } = useTheme();
+    
     const { t } = useTranslation();
     const styles = createStyles(theme);
 

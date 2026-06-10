@@ -1,9 +1,9 @@
 import { renderHook, waitFor, act } from '@testing-library/react-native';
-import { useCompanies } from './useCompanies';
-import { getCompaniesByType } from '../services/companyService';
-import { VehicleType } from '../types/vehicle';
+import { useCompanies } from '../useCompanies';
+import { getCompaniesByType } from '../../services/companyService';
+import { VehicleType } from '../../types/vehicle';
 
-jest.mock('../services/companyService');
+jest.mock('../../services/companyService');
 
 const mockedFetch = getCompaniesByType as jest.Mock;
 

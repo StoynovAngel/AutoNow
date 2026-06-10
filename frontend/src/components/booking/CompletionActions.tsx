@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, Pressable, ActivityIndicator } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '../../hooks/useTheme';
+import { theme } from '../../constants/theme';
 import { createStyles } from './CompletionActions.style';
 
 interface CompletionActionsProps {
@@ -19,7 +19,7 @@ const CompletionActions = ({
     onSkip,
     onSubmit,
 }: CompletionActionsProps) => {
-    const { theme } = useTheme();
+    
     const { t } = useTranslation();
     const styles = createStyles(theme);
 

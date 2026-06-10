@@ -1,9 +1,9 @@
 import React from 'react';
 import { fireEvent, waitFor, act } from '@testing-library/react-native';
-import { renderWithProviders } from '../../test-utils/renderWithProviders';
-import BookingMapBody from './BookingMapBody';
-import { AuthContext } from '../../services/AuthContext';
-import type { AuthContextType, User } from '../../types/auth';
+import { renderWithProviders } from '../../../test-utils/renderWithProviders';
+import BookingMapBody from '../BookingMapBody';
+import { AuthContext } from '../../../services/AuthContext';
+import type { AuthContextType, User } from '../../../types/auth';
 
 const mockNavigate = jest.fn();
 const mockGoBack = jest.fn();
@@ -20,12 +20,12 @@ jest.mock('@react-navigation/native', () => ({
     }),
 }));
 
-jest.mock('../../services/mapboxService', () => ({
+jest.mock('../../../services/mapboxService', () => ({
     getRoute: jest.fn(),
     searchAddress: jest.fn(),
 }));
 
-jest.mock('../../services/orderService', () => ({
+jest.mock('../../../services/orderService', () => ({
     createOrder: jest.fn(),
     estimateOrder: jest.fn(),
 }));
@@ -41,7 +41,7 @@ const destination = {
     coordinate: { latitude: 42.71, longitude: 23.33 },
 };
 
-jest.mock('./AddressSearch', () => {
+jest.mock('../AddressSearch', () => {
     const ReactImpl = jest.requireActual('react');
     const RN = jest.requireActual('react-native');
     const Mock = ({ onSelect, testID }: { onSelect: (s: typeof pickup) => void; testID?: string }) =>
@@ -56,8 +56,8 @@ jest.mock('./AddressSearch', () => {
     return { __esModule: true, default: Mock };
 });
 
-import { getRoute } from '../../services/mapboxService';
-import { estimateOrder } from '../../services/orderService';
+import { getRoute } from '../../../services/mapboxService';
+import { estimateOrder } from '../../../services/orderService';
 
 const mockGetRoute = getRoute as jest.Mock;
 const mockEstimate = estimateOrder as jest.Mock;

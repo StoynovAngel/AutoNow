@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '../../hooks/useTheme';
+import { theme } from '../../constants/theme';
 import type { OrderEstimateResponse } from '../../services/orderService';
 import type { RouteResult } from '../../services/mapboxService';
 import { createStyles } from './RouteSummary.style';
@@ -23,7 +23,7 @@ const RouteSummary = ({
     isAmbulance,
     pickupReady,
 }: RouteSummaryProps) => {
-    const { theme } = useTheme();
+    
     const { t } = useTranslation();
     const styles = createStyles(theme);
 

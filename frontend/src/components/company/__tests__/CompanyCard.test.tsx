@@ -1,8 +1,8 @@
 import { fireEvent } from '@testing-library/react-native';
-import { renderWithProviders } from '../../test-utils/renderWithProviders';
-import CompanyCard from './CompanyCard';
-import { VehicleType } from '../../types/vehicle';
-import type { Company } from '../../types/company';
+import { renderWithProviders } from '../../../test-utils/renderWithProviders';
+import CompanyCard from '../CompanyCard';
+import { VehicleType } from '../../../types/vehicle';
+import type { Company } from '../../../types/company';
 
 const baseCompany: Company = {
     id: 1,

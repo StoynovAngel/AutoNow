@@ -1,9 +1,9 @@
 import { renderHook, waitFor, act } from '@testing-library/react-native';
-import { usePublicVehicles } from './usePublicVehicles';
-import { getPublicVehiclesByCompany } from '../services/vehicleService';
-import { VehicleType } from '../types/vehicle';
+import { usePublicVehicles } from '../usePublicVehicles';
+import { getPublicVehiclesByCompany } from '../../services/vehicleService';
+import { VehicleType } from '../../types/vehicle';
 
-jest.mock('../services/vehicleService');
+jest.mock('../../services/vehicleService');
 
 const mockedFetch = getPublicVehiclesByCompany as jest.Mock;
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '../../hooks/useTheme';
+import { theme } from '../../constants/theme';
 import { createStyles } from './PickupRow.style';
 
 type PickupRowVariant = 'ambulance' | 'logistics';
@@ -15,7 +15,7 @@ interface PickupRowProps {
 }
 
 const PickupRow = ({ variant, placeName, fallbackAddress, geocodeError }: PickupRowProps) => {
-    const { theme } = useTheme();
+    
     const { t } = useTranslation();
     const styles = createStyles(theme);
 

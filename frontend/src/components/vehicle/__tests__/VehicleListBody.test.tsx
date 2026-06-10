@@ -1,8 +1,8 @@
 import { fireEvent } from '@testing-library/react-native';
 import { Linking } from 'react-native';
-import { renderWithProviders } from '../../test-utils/renderWithProviders';
-import VehicleListBody from './VehicleListBody';
-import { VehicleType, PublicVehicle } from '../../types/vehicle';
+import { renderWithProviders } from '../../../test-utils/renderWithProviders';
+import VehicleListBody from '../VehicleListBody';
+import { VehicleType, PublicVehicle } from '../../../types/vehicle';
 
 const mockNavigate = jest.fn();
 const mockGoBack = jest.fn();
@@ -12,11 +12,11 @@ jest.mock('@react-navigation/native', () => ({
     useRoute: () => ({ params: { companyId: 42, vehicleType: 'PROM' } }),
 }));
 
-jest.mock('../../hooks/usePublicVehicles', () => ({
+jest.mock('../../../hooks/usePublicVehicles', () => ({
     usePublicVehicles: jest.fn(),
 }));
 
-import { usePublicVehicles } from '../../hooks/usePublicVehicles';
+import { usePublicVehicles } from '../../../hooks/usePublicVehicles';
 const mockUsePublicVehicles = usePublicVehicles as jest.Mock;
 
 const mockReload = jest.fn();

@@ -1,8 +1,8 @@
 import { fireEvent } from '@testing-library/react-native';
-import { renderWithProviders } from '../../test-utils/renderWithProviders';
-import CompanyListHeader from './CompanyListHeader';
-import { VehicleType } from '../../types/vehicle';
-import type { VehicleOption } from '../../types/vehicle';
+import { renderWithProviders } from '../../../test-utils/renderWithProviders';
+import CompanyListHeader from '../CompanyListHeader';
+import { VehicleType } from '../../../types/vehicle';
+import type { VehicleOption } from '../../../types/vehicle';
 
 const taxiOption: VehicleOption = {
     type: VehicleType.TAXI,

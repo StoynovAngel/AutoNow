@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, TextInput, Pressable, ActivityIndicator, ScrollView } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '../../hooks/useTheme';
+import { theme } from '../../constants/theme';
 import { searchAddress } from '../../services/mapboxService';
 import type { AddressSuggestion, Coordinate } from '../../services/mapboxService';
 import { createStyles } from './AddressSearch.style';
@@ -25,7 +25,7 @@ const AddressSearch = ({
     placeholder,
     testID,
 }: AddressSearchProps) => {
-    const { theme } = useTheme();
+    
     const { t } = useTranslation();
     const styles = createStyles(theme);
 

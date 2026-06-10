@@ -1,8 +1,8 @@
 import React from 'react';
 import { fireEvent, waitFor, act } from '@testing-library/react-native';
 import { Linking } from 'react-native';
-import { renderWithProviders } from '../../test-utils/renderWithProviders';
-import BookingWaitingBody from './BookingWaitingBody';
+import { renderWithProviders } from '../../../test-utils/renderWithProviders';
+import BookingWaitingBody from '../BookingWaitingBody';
 
 const mockReplace = jest.fn();
 const mockReset = jest.fn();
@@ -13,13 +13,13 @@ jest.mock('@react-navigation/native', () => ({
     useRoute: () => ({ params: { orderId: 42 } }),
 }));
 
-jest.mock('../../services/orderService', () => ({
+jest.mock('../../../services/orderService', () => ({
     getOrderById: jest.fn(),
     cancelOrder: jest.fn(),
     updateOrderStatus: jest.fn(),
 }));
 
-import { getOrderById, cancelOrder, updateOrderStatus } from '../../services/orderService';
+import { getOrderById, cancelOrder, updateOrderStatus } from '../../../services/orderService';
 
 const mockGetOrder = getOrderById as jest.Mock;
 const mockCancel = cancelOrder as jest.Mock;

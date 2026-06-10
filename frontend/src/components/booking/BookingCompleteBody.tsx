@@ -3,7 +3,7 @@ import { Text, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '../../hooks/useTheme';
+import { theme } from '../../constants/theme';
 import type { RootStackParamList } from '../../navigation/Navigation';
 import { getOrderById, type OrderResponse } from '../../services/orderService';
 import { submitRating } from '../../services/ratingService';
@@ -16,7 +16,7 @@ import { createStyles } from './BookingCompleteBody.style';
 type BookingCompleteRouteProp = RouteProp<RootStackParamList, 'bookingComplete'>;
 
 const BookingCompleteBody = () => {
-    const { theme } = useTheme();
+    
     const { t } = useTranslation();
     const styles = createStyles(theme);
 

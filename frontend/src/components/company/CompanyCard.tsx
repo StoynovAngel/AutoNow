@@ -3,7 +3,7 @@ import { View, Text, Pressable } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { Company } from '../../types/company';
-import { useTheme } from '../../hooks/useTheme';
+import { theme } from '../../constants/theme';
 import type { VehicleClass } from '../../types/booking';
 import { createStyles } from './Body.style';
 
@@ -15,7 +15,7 @@ interface CompanyCardProps {
 }
 
 const CompanyCard = ({ company, onCall, onBook, showClassPicker }: CompanyCardProps) => {
-    const { theme } = useTheme();
+    
     const { t } = useTranslation();
     const styles = createStyles(theme);
 

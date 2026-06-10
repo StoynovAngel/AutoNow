@@ -1,18 +1,18 @@
 import { fireEvent, waitFor } from '@testing-library/react-native';
-import { renderWithProviders } from '../../test-utils/renderWithProviders';
-import Chatbot from './Chatbot';
-import { VehicleType } from '../../types/vehicle';
+import { renderWithProviders } from '../../../test-utils/renderWithProviders';
+import Chatbot from '../Chatbot';
+import { VehicleType } from '../../../types/vehicle';
 
 const mockNavigate = jest.fn();
 jest.mock('@react-navigation/native', () => ({
     useNavigation: () => ({ navigate: mockNavigate }),
 }));
 
-jest.mock('../../services/chatbotService', () => ({
+jest.mock('../../../services/chatbotService', () => ({
     sendChatbotMessage: jest.fn(),
 }));
 
-import { sendChatbotMessage } from '../../services/chatbotService';
+import { sendChatbotMessage } from '../../../services/chatbotService';
 const mockSend = sendChatbotMessage as jest.Mock;
 
 describe('Chatbot', () => {

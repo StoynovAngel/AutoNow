@@ -1,7 +1,7 @@
 import React from 'react';
 import { fireEvent, waitFor, act } from '@testing-library/react-native';
-import { renderWithProviders } from '../../test-utils/renderWithProviders';
-import BookingCompleteBody from './BookingCompleteBody';
+import { renderWithProviders } from '../../../test-utils/renderWithProviders';
+import BookingCompleteBody from '../BookingCompleteBody';
 
 const mockReset = jest.fn();
 
@@ -10,16 +10,16 @@ jest.mock('@react-navigation/native', () => ({
     useRoute: () => ({ params: { orderId: 99 } }),
 }));
 
-jest.mock('../../services/orderService', () => ({
+jest.mock('../../../services/orderService', () => ({
     getOrderById: jest.fn(),
 }));
 
-jest.mock('../../services/ratingService', () => ({
+jest.mock('../../../services/ratingService', () => ({
     submitRating: jest.fn(),
 }));
 
-import { getOrderById } from '../../services/orderService';
-import { submitRating } from '../../services/ratingService';
+import { getOrderById } from '../../../services/orderService';
+import { submitRating } from '../../../services/ratingService';
 
 const mockGetOrder = getOrderById as jest.Mock;
 const mockSubmit = submitRating as jest.Mock;

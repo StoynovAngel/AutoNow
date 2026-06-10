@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react-native';
 import { AppState } from 'react-native';
-import { useAppForeground } from './useAppForeground';
+import { useAppForeground } from '../useAppForeground';
 
 describe('useAppForeground', () => {
     type Listener = (state: 'active' | 'background' | 'inactive') => void;

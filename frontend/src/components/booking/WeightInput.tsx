@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TextInput } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '../../hooks/useTheme';
+import { theme } from '../../constants/theme';
 import { createStyles } from './WeightInput.style';
 
 interface WeightInputProps {
@@ -11,7 +11,7 @@ interface WeightInputProps {
 }
 
 const WeightInput = ({ value, onChange, error }: WeightInputProps) => {
-    const { theme } = useTheme();
+    
     const { t } = useTranslation();
     const styles = createStyles(theme);
 

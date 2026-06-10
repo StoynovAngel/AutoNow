@@ -19,17 +19,13 @@ const decodeToken = (token: string) => {
 
     try {
         let base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
-
         while (base64.length % 4 !== 0) {
             base64 += '=';
         }
-
         const decoded = JSON.parse(atob(base64));
-
         if (decoded.exp && decoded.exp * 1000 < Date.now()) {
             throw new Error('Invalid token: token has expired');
         }
-
         return decoded;
     } catch (error) {
         if (error instanceof Error && error.message.startsWith('Invalid token:')) {
@@ -39,34 +35,27 @@ const decodeToken = (token: string) => {
     }
 };
 
-export const login = async (email: string, password: string) => {
-    const response = await customAPI.post<JwtResponse>('api/auth/login', {email, password});
-
-    const token = response.data.token;
+const storeAndDecode = async (token: string) => {
     try {
         await storage.setItem('jwt', token);
     } catch (error) {
         console.warn('Failed to store token:', error);
     }
-
     return decodeToken(token);
+};
+
+export const login = async (email: string, password: string) => {
+    const response = await customAPI.post<JwtResponse>('api/auth/login', { email, password });
+    return storeAndDecode(response.data.token);
 };
 
 export const register = async (email: string, password: string) => {
     const response = await customAPI.post<JwtResponse>('api/auth/register', {
         email,
         password,
-        roleNames: ['CUSTOMER']
+        roleNames: ['CUSTOMER'],
     });
-
-    const token = response.data.token;
-    try {
-        await storage.setItem('jwt', token);
-    } catch (error) {
-        console.warn('Failed to store token:', error);
-    }
-
-    return decodeToken(token);
+    return storeAndDecode(response.data.token);
 };
 
 export const logout = async () => {
@@ -87,3 +76,4 @@ export const getStoredToken = async () => {
 };
 
 export { decodeToken };
+

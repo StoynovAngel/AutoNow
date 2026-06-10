@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { VehicleOption } from '../../types/vehicle';
-import { useTheme } from '../../hooks/useTheme';
+import { theme } from '../../constants/theme';
 import { createStyles } from './Body.style';
 import { useTranslation } from 'react-i18next';
 
@@ -14,7 +14,7 @@ interface CompanyListHeaderProps {
 }
 
 const CompanyListHeader = ({ vehicleInfo, companiesCount, loading, onBackPress }: CompanyListHeaderProps) => {
-    const { theme } = useTheme();
+    
     const styles = createStyles(theme);
     const { t } = useTranslation();
 
