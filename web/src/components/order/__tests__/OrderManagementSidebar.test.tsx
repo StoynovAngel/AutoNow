@@ -161,6 +161,7 @@ describe('OrderManagementSidebar', () => {
         const allButtons = screen.getAllByRole('button', { name: 'ALL' });
         expect(allButtons).toHaveLength(2);
         expect(allButtons[0]).toHaveAttribute('aria-pressed', 'true');
+        expect(allButtons[1]).toHaveAttribute('aria-pressed', 'true');
         expect(screen.getByRole('button', { name: 'COMPLETED' })).toHaveAttribute('aria-pressed', 'false');
         expect(screen.getByRole('button', { name: /#2/ })).toHaveAttribute('aria-pressed', 'true');
         expect(screen.getByRole('button', { name: /#1/ })).toHaveAttribute('aria-pressed', 'false');
