@@ -2,6 +2,7 @@ package com.angel.autonow.vehicle;
 
 import com.angel.autonow.company.CompanyEntity;
 import com.angel.autonow.company.CompanyRepository;
+import com.angel.autonow.order.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +17,7 @@ public class VehicleService {
 	private final VehicleRepository vehicleRepository;
 	private final VehicleMapper vehicleMapper;
 	private final CompanyRepository companyRepository;
+	private final OrderRepository orderRepository;
 
 	public Optional<VehicleResponseDTO> createVehicle(VehicleRequestDTO request) {
 		VehicleEntity vehicle = vehicleMapper.toEntity(request);
@@ -100,13 +102,13 @@ public class VehicleService {
 				.build();
 	}
 
+	@Transactional
 	public boolean deleteVehicle(Long id) {
 		if (!vehicleRepository.existsById(id)) {
 			return false;
 		}
-
+		orderRepository.detachVehicleFromOrders(id);
 		vehicleRepository.deleteById(id);
-
 		return true;
 	}
 }
