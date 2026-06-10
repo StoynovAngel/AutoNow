@@ -138,6 +138,6 @@ describe('AddVehicleForm', () => {
         render(<AddVehicleForm onSubmit={onSubmit} onCancel={onCancel} />);
         const select = screen.getByLabelText(/vehicle type/i);
         const options = Array.from((select as HTMLSelectElement).options).map(o => o.value);
-        expect(options).toEqual(['TAXI', 'SEMI', 'AMBULANCE', 'RENTAL', 'PROM', 'FUNERAL']);
+        expect(options).toEqual(['TAXI', 'LOGISTICS', 'AMBULANCE', 'RENTAL', 'PROM', 'FUNERAL']);
     });
 });
