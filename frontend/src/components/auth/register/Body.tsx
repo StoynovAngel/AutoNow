@@ -44,7 +44,10 @@ const Body = () => {
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={styles.container}
             >
-                <ScrollView contentContainerStyle={styles.scrollContainer}>
+                <ScrollView
+                    contentContainerStyle={styles.scrollContainer}
+                    keyboardShouldPersistTaps="handled"
+                >
                     <View style={styles.registerContainer}>
                         <Text style={styles.title}>
                             <Text style={styles.highlight}>{t('create-account')}</Text>
@@ -65,6 +68,7 @@ const Body = () => {
                                 mode="outlined"
                                 outlineColor="transparent"
                                 activeOutlineColor={theme.colors.primary}
+                                theme={{ colors: { onSurfaceVariant: '#1A1A1A', onSurface: '#1A1A1A' } }}
                             />
 
                             <TextInput
@@ -78,6 +82,7 @@ const Body = () => {
                                 mode="outlined"
                                 outlineColor="transparent"
                                 activeOutlineColor={theme.colors.primary}
+                                theme={{ colors: { onSurfaceVariant: '#1A1A1A', onSurface: '#1A1A1A' } }}
                             />
                         </View>
 

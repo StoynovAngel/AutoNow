@@ -1,6 +1,8 @@
 import React, { useCallback, useRef, useState } from 'react';
 import {
+    KeyboardAvoidingView,
     Modal,
+    Platform,
     Pressable,
     ScrollView,
     Text,
@@ -91,6 +93,10 @@ const Chatbot = () => {
                 onRequestClose={close}
             >
                 <View style={styles.modalBackdrop}>
+                    <KeyboardAvoidingView
+                        style={styles.sheetWrapper}
+                        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                    >
                     <View style={styles.sheet}>
                         <View style={styles.header}>
                             <Text style={styles.headerTitle}>{t('chatbot-title')}</Text>
@@ -107,6 +113,7 @@ const Chatbot = () => {
                         <ScrollView
                             ref={scrollRef}
                             style={styles.messages}
+                            keyboardShouldPersistTaps="handled"
                             onContentSizeChange={() => scrollRef.current?.scrollToEnd({ animated: true })}
                         >
                             {messages.map((m, idx) => (
@@ -168,6 +175,7 @@ const Chatbot = () => {
                             </Pressable>
                         </View>
                     </View>
+                    </KeyboardAvoidingView>
                 </View>
             </Modal>
         </>

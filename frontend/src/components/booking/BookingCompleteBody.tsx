@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Pressable, ActivityIndicator, TextInput } from 'react-native';
+import { View, Text, Pressable, ActivityIndicator, TextInput, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -69,8 +69,16 @@ const BookingCompleteBody = () => {
     const canSubmit = stars > 0 && !submitting;
 
     return (
-        <View style={styles.container} testID="booking-complete">
-            <View style={styles.header}>
+        <KeyboardAvoidingView
+            style={styles.container}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
+            <ScrollView
+                contentContainerStyle={styles.scrollContent}
+                keyboardShouldPersistTaps="handled"
+                testID="booking-complete"
+            >
+                <View style={styles.header}>
                 <MaterialIcons
                     name="check-circle"
                     size={56}
@@ -189,7 +197,8 @@ const BookingCompleteBody = () => {
                     </Pressable>
                 )}
             </View>
-        </View>
+            </ScrollView>
+        </KeyboardAvoidingView>
     );
 };
 
