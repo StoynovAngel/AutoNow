@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 import { View, Alert } from 'react-native';
 import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -31,16 +31,13 @@ const BookingWaitingBody = () => {
     const [cancelling, setCancelling] = useState(false);
     const [simulating, setSimulating] = useState(false);
 
-    const handleTerminal = useCallback(
-        (terminalOrder: OrderResponse) => {
-            if (terminalOrder.status === 'COMPLETED') {
-                navigation.replace('bookingComplete', { orderId });
-            } else if (terminalOrder.status === 'CANCELED') {
-                navigation.reset({ index: 0, routes: [{ name: 'home' }] });
-            }
-        },
-        [navigation, orderId],
-    );
+    const handleTerminal = (terminalOrder: OrderResponse) => {
+        if (terminalOrder.status === 'COMPLETED') {
+            navigation.replace('bookingComplete', { orderId });
+        } else if (terminalOrder.status === 'CANCELED') {
+            navigation.reset({ index: 0, routes: [{ name: 'home' }] });
+        }
+    };
 
     const { order, error, reassigned, setOrder, stop } = useOrderPolling(orderId, handleTerminal);
 
