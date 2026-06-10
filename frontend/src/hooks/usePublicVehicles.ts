@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { VehicleType, PublicVehicle } from '../types/vehicle';
 import { getPublicVehiclesByCompany } from '../services/vehicleService';
 import { parseApiError } from '../utils/errorParser';
+import { useAppForeground } from './useAppForeground';
 
 export const usePublicVehicles = (companyId: number, vehicleType?: VehicleType) => {
     const [vehicles, setVehicles] = useState<PublicVehicle[]>([]);
@@ -11,6 +12,10 @@ export const usePublicVehicles = (companyId: number, vehicleType?: VehicleType) 
     useEffect(() => {
         loadVehicles();
     }, [companyId, vehicleType]);
+
+    useAppForeground(() => {
+        loadVehicles();
+    });
 
     const loadVehicles = async () => {
         setLoading(true);

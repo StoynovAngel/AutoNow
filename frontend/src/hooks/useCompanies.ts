@@ -3,6 +3,7 @@ import { VehicleType } from '../types/vehicle';
 import { Company } from '../types/company';
 import { getCompaniesByType } from '../services/companyService';
 import { parseApiError } from '../utils/errorParser';
+import { useAppForeground } from './useAppForeground';
 
 export const useCompanies = (vehicleType: VehicleType) => {
     const [companies, setCompanies] = useState<Company[]>([]);
@@ -12,6 +13,10 @@ export const useCompanies = (vehicleType: VehicleType) => {
     useEffect(() => {
         loadCompanies();
     }, [vehicleType]);
+
+    useAppForeground(() => {
+        loadCompanies();
+    });
 
     const loadCompanies = async () => {
         setLoading(true);

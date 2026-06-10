@@ -13,6 +13,7 @@ import {
     type OrderResponse,
     type OrderStatus,
 } from '../../services/orderService';
+import { useAppForeground } from '../../hooks/useAppForeground';
 import { createStyles } from './BookingWaitingBody.style';
 
 type BookingWaitingRouteProp = RouteProp<RootStackParamList, 'bookingWaiting'>;
@@ -102,6 +103,15 @@ const BookingWaitingBody = () => {
             }
         };
     }, [poll]);
+
+    useAppForeground(() => {
+        if (cancelledRef.current) return;
+        if (timerRef.current) {
+            clearTimeout(timerRef.current);
+            timerRef.current = null;
+        }
+        poll();
+    });
 
     const handleCall = async () => {
         const phone = order?.driver?.phoneNumber;

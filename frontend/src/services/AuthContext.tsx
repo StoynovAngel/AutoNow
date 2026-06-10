@@ -1,5 +1,6 @@
 import React, {createContext, useState, useEffect, ReactNode} from 'react';
 import * as authService from './authService';
+import {setUnauthorizedHandler} from './ApiClient';
 import type {User, AuthContextType} from '../types/auth';
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -28,6 +29,11 @@ export const AuthProvider = ({children}: { children: ReactNode }) => {
             }
         };
         loadUser();
+    }, []);
+
+    useEffect(() => {
+        setUnauthorizedHandler(() => setUser(null));
+        return () => setUnauthorizedHandler(null);
     }, []);
 
     const login = async (email: string, password: string) => {
