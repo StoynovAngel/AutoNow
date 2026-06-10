@@ -1,6 +1,6 @@
 import { Label, Select, TextInput } from 'flowbite-react';
 
-const VEHICLE_TYPES = ['TAXI', 'SEMI', 'AMBULANCE', 'RENTAL', 'PROM', 'FUNERAL'] as const;
+const VEHICLE_TYPES = ['TAXI', 'LOGISTICS', 'AMBULANCE', 'RENTAL', 'PROM', 'FUNERAL'] as const;
 
 interface VehicleBasicFieldsProps {
     licensePlate: string;
