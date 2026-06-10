@@ -326,7 +326,7 @@ class OrderControllerIT {
 
 		var updateRequest = OrderRequestDTO.builder()
 				.userId(user.getId())
-				.vehicleType(VehicleType.SEMI)
+				.vehicleType(VehicleType.LOGISTICS)
 				.pickupAddress("789 Elm St")
 				.pickupLatitude(42.70)
 				.pickupLongitude(23.33)
@@ -344,7 +344,7 @@ class OrderControllerIT {
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(updateRequest)))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.vehicleType").value("SEMI"))
+				.andExpect(jsonPath("$.vehicleType").value("LOGISTICS"))
 				.andExpect(jsonPath("$.pickupAddress").value("789 Elm St"))
 				.andExpect(jsonPath("$.specialRequirements").value("Fragile cargo"));
 	}
