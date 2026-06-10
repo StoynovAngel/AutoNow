@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getOrderById, type OrderResponse } from '../services/orderService';
-import { useAppForeground } from './useAppForeground';
 
 const POLL_INTERVAL_MS = 5000;
 const REASSIGN_BANNER_MS = 6000;
@@ -82,15 +81,6 @@ export const useOrderPolling = (
         poll();
         return stop;
     }, [poll, stop]);
-
-    useAppForeground(() => {
-        if (stoppedRef.current) return;
-        if (timerRef.current) {
-            clearTimeout(timerRef.current);
-            timerRef.current = null;
-        }
-        poll();
-    });
 
     return { order, error, reassigned, setOrder, stop };
 };

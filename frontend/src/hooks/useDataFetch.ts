@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { parseApiError } from '../utils/errorParser';
-import { useAppForeground } from './useAppForeground';
 
 export type DataFetchState<T> = {
     data: T;
@@ -39,10 +38,6 @@ export const useDataFetch = <T>(loader: () => Promise<T>, initialData: T): DataF
     useEffect(() => {
         reload();
     }, [reload, loader]);
-
-    useAppForeground(() => {
-        reload();
-    });
 
     return { data, loading, error, reload };
 };
