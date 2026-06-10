@@ -82,19 +82,6 @@ export const searchAddress = async (
     }));
 };
 
-export const reverseGeocode = async (
-    coordinate: Coordinate,
-): Promise<string | undefined> => {
-    assertMapboxConfigured();
-    const url = buildUrl(
-        `/geocoding/v5/mapbox.places/${coordinate.longitude},${coordinate.latitude}.json`,
-        { limit: 1, language: 'en' },
-    );
-    const res = await fetch(url);
-    const json = (await ensureOk(res, 'reverse-geocoding')) as GeocodingResponse;
-    return json.features[0]?.place_name;
-};
-
 interface DirectionsResponse {
     routes: Array<{
         distance: number;

@@ -9,8 +9,6 @@ export type OrderStatus =
     | 'COMPLETED'
     | 'CANCELED';
 
-export const ACTIVE_ORDER_STATUSES: OrderStatus[] = ['CREATED', 'ACCEPTED', 'IN_PROGRESS'];
-
 export interface DriverInfo {
     id: number;
     firstName: string;
