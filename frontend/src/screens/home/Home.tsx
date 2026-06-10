@@ -1,5 +1,5 @@
 import React from 'react';
-import {View} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import styles from './Home.style';
 import Header from "../../components/navigation/Header";
 import Body from "../../components/home/Body";
@@ -7,11 +7,11 @@ import Chatbot from "../../components/chatbot/Chatbot";
 
 const Home = () => {
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
             <Header/>
             <Body/>
             <Chatbot/>
-        </View>
+        </SafeAreaView>
     );
 };
 

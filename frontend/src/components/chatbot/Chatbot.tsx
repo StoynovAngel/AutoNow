@@ -9,6 +9,7 @@ import {
     TextInput,
     View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
@@ -25,6 +26,7 @@ const Chatbot = () => {
     const styles = createStyles(theme);
     const { t } = useTranslation();
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+    const insets = useSafeAreaInsets();
 
     const [open, setOpen] = useState(false);
     const [input, setInput] = useState('');
@@ -80,7 +82,7 @@ const Chatbot = () => {
             <Pressable
                 accessibilityRole="button"
                 accessibilityLabel={t('chatbot-open')}
-                style={styles.fab}
+                style={[styles.fab, { bottom: 24 + insets.bottom }]}
                 onPress={() => setOpen(true)}
             >
                 <MaterialIcons name="chat" size={28} color="#FFFFFF" />
@@ -90,6 +92,7 @@ const Chatbot = () => {
                 visible={open}
                 animationType="slide"
                 transparent
+                statusBarTranslucent
                 onRequestClose={close}
             >
                 <View style={styles.modalBackdrop}>
@@ -97,7 +100,7 @@ const Chatbot = () => {
                         style={styles.sheetWrapper}
                         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                     >
-                    <View style={styles.sheet}>
+                    <View style={[styles.sheet, { paddingBottom: 16 + insets.bottom }]}>
                         <View style={styles.header}>
                             <Text style={styles.headerTitle}>{t('chatbot-title')}</Text>
                             <Pressable

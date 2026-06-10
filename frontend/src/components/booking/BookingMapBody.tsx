@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, TextInput, Pressable, Alert, ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { View, Text, TextInput, Pressable, Alert, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -250,12 +250,7 @@ const BookingMapBody = () => {
                 </Pressable>
             </View>
 
-            <ScrollView
-                style={styles.sheet}
-                contentContainerStyle={styles.sheetContent}
-                keyboardShouldPersistTaps="handled"
-                bounces={false}
-            >
+            <View style={styles.sheet}>
                 <Text style={styles.title}>
                     {isAmbulance ? t('booking-ambulance-title') : t('booking-map-title')}
                 </Text>
@@ -369,7 +364,7 @@ const BookingMapBody = () => {
                         <Text style={styles.confirmText}>{t('booking-confirm')}</Text>
                     )}
                 </Pressable>
-            </ScrollView>
+            </View>
         </KeyboardAvoidingView>
     );
 };

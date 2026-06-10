@@ -21,7 +21,6 @@ export const createStyles = (theme: Theme) => StyleSheet.create({
     modalBackdrop: {
         flex: 1,
         backgroundColor: 'rgba(0,0,0,0.4)',
-        justifyContent: 'flex-end',
     },
     sheetWrapper: {
         flex: 1,
@@ -31,7 +30,8 @@ export const createStyles = (theme: Theme) => StyleSheet.create({
         backgroundColor: theme.colors.surface,
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
-        height: '80%',
+        flex: 1,
+        marginTop: '20%',
         paddingHorizontal: 16,
         paddingTop: 12,
         paddingBottom: 16,

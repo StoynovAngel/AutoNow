@@ -6,9 +6,6 @@
     "orientation": "portrait",
     "icon": "./assets/favicon.png",
     "userInterfaceStyle": "light",
-    "androidNavigationBar": {
-      "visible": "leanback"
-    },
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/favicon.png",
@@ -28,7 +25,7 @@
         "foregroundImage": "./assets/favicon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": false,
+      "edgeToEdgeEnabled": true,
       "softwareKeyboardLayoutMode": "resize",
       "predictiveBackGestureEnabled": false,
       "orientation": "portrait"

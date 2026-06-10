@@ -1,13 +1,13 @@
 import React from 'react';
-import { View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from './VehicleList.style';
 import VehicleListBody from '../../components/vehicle/VehicleListBody';
 
 const VehicleList = () => {
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
             <VehicleListBody />
-        </View>
+        </SafeAreaView>
     );
 };
 
