@@ -317,7 +317,7 @@ class OrderServiceTest {
 	void updateOrder_userNotFound_returnsEmpty() {
 		OrderRequestDTO request = TestData.createOrderRequest(NON_EXISTENT_ID);
 		UserEntity user = UserEntity.builder().id(1L).build();
-		OrderEntity existing = OrderEntity.builder().id(1L).user(user).build();
+		OrderEntity existing = OrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).build();
 
 		when(orderRepository.findById(1L)).thenReturn(Optional.of(existing));
 		when(userRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
@@ -336,7 +336,7 @@ class OrderServiceTest {
 				.estimatedPrice(15.50).distanceKm(5.2).estimatedDurationMinutes(15)
 				.build();
 		UserEntity user = UserEntity.builder().id(1L).build();
-		OrderEntity existing = OrderEntity.builder().id(1L).user(user).build();
+		OrderEntity existing = OrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).build();
 
 		when(orderRepository.findById(1L)).thenReturn(Optional.of(existing));
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
@@ -356,7 +356,7 @@ class OrderServiceTest {
 				.estimatedPrice(15.50).distanceKm(5.2).estimatedDurationMinutes(15)
 				.build();
 		UserEntity user = UserEntity.builder().id(1L).build();
-		OrderEntity existing = OrderEntity.builder().id(1L).user(user).build();
+		OrderEntity existing = OrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).build();
 
 		when(orderRepository.findById(1L)).thenReturn(Optional.of(existing));
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
