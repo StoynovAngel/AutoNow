@@ -48,7 +48,8 @@ const BookingMapBody = () => {
     const [submitting, setSubmitting] = useState(false);
     const [weightKgInput, setWeightKgInput] = useState('');
 
-    const weightKg = isLogistics ? parseFloat(weightKgInput) || undefined : undefined;
+    const _parsedWeight = parseFloat(weightKgInput);
+    const weightKg = isLogistics ? (Number.isFinite(_parsedWeight) ? _parsedWeight : undefined) : undefined;
     const weightError = weightKg !== undefined && (weightKg < 0.1 || weightKg > 5000);
 
     // For logistics, geocode the company address once on mount and use it as pickup
@@ -135,7 +136,7 @@ const BookingMapBody = () => {
             setEstimateLoading(false);
             return;
         }
-        if (isLogistics && !weightKg) {
+        if (isLogistics && weightKg === undefined) {
             setEstimate(undefined);
             return;
         }
@@ -223,7 +224,7 @@ const BookingMapBody = () => {
         ? Boolean(pickup && destination && estimate && !routeLoading && !estimateLoading && !submitting)
         : Boolean(
             pickup && destination && routeResult && estimate && !estimateLoading && !submitting &&
-            (!isLogistics || (weightKg && !weightError)),
+            (!isLogistics || (weightKg !== undefined && !weightError)),
         );
     void companyId;
 
