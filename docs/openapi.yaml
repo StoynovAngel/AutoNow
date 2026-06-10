@@ -2011,7 +2011,7 @@ paths:
             type: string
             enum:
               - TAXI
-              - SEMI
+              - LOGISTICS
               - AMBULANCE
               - RENTAL
               - PROM
@@ -2560,7 +2560,7 @@ components:
           type: string
           enum:
             - TAXI
-            - SEMI
+            - LOGISTICS
             - AMBULANCE
             - RENTAL
             - PROM
@@ -2599,7 +2599,7 @@ components:
           type: string
           enum:
             - TAXI
-            - SEMI
+            - LOGISTICS
             - AMBULANCE
             - RENTAL
             - PROM
@@ -2730,7 +2730,7 @@ components:
           type: string
           enum:
             - TAXI
-            - SEMI
+            - LOGISTICS
             - AMBULANCE
             - RENTAL
             - PROM
@@ -2778,6 +2778,11 @@ components:
             - XL
         requiresAirConditioning:
           type: boolean
+        weightKg:
+          type: number
+          format: double
+          maximum: 5000
+          minimum: 0.1
       required:
         - dropoffAddress
         - dropoffLatitude
@@ -2824,7 +2829,7 @@ components:
           type: string
           enum:
             - TAXI
-            - SEMI
+            - LOGISTICS
             - AMBULANCE
             - RENTAL
             - PROM
@@ -2880,6 +2885,9 @@ components:
             - XL
         requiresAirConditioning:
           type: boolean
+        weightKg:
+          type: number
+          format: double
         cancellationReason:
           type: string
         createdAt:
@@ -3071,7 +3079,7 @@ components:
           type: string
           enum:
             - TAXI
-            - SEMI
+            - LOGISTICS
             - AMBULANCE
             - RENTAL
             - PROM
@@ -3084,9 +3092,15 @@ components:
           enum:
             - STANDARD
             - XL
+        weightKg:
+          type: number
+          format: double
+          maximum: 5000
+          minimum: 0.1
       required:
         - distanceKm
         - vehicleType
+        - weightKg
     OrderEstimateResponseDTO:
       type: object
       properties:
@@ -3141,7 +3155,7 @@ components:
           type: string
           enum:
             - TAXI
-            - SEMI
+            - LOGISTICS
             - AMBULANCE
             - RENTAL
             - PROM
@@ -3201,7 +3215,7 @@ components:
           type: string
           enum:
             - TAXI
-            - SEMI
+            - LOGISTICS
             - AMBULANCE
             - RENTAL
             - PROM
