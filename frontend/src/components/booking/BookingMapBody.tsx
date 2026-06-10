@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, TextInput, Pressable, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, Pressable, Alert, ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -231,7 +231,10 @@ const BookingMapBody = () => {
     const proximity = (isAmbulance ? destination?.coordinate : pickup?.coordinate) ?? SOFIA_CENTER;
 
     return (
-        <View style={styles.container}>
+        <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={styles.container}
+        >
             <View style={styles.mapContainer}>
                 <MapPreview
                     pickup={pickup?.coordinate}
@@ -247,7 +250,12 @@ const BookingMapBody = () => {
                 </Pressable>
             </View>
 
-            <View style={styles.sheet}>
+            <ScrollView
+                style={styles.sheet}
+                contentContainerStyle={styles.sheetContent}
+                keyboardShouldPersistTaps="handled"
+                bounces={false}
+            >
                 <Text style={styles.title}>
                     {isAmbulance ? t('booking-ambulance-title') : t('booking-map-title')}
                 </Text>
@@ -361,8 +369,8 @@ const BookingMapBody = () => {
                         <Text style={styles.confirmText}>{t('booking-confirm')}</Text>
                     )}
                 </Pressable>
-            </View>
-        </View>
+            </ScrollView>
+        </KeyboardAvoidingView>
     );
 };
 

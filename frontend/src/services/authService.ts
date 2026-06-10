@@ -24,8 +24,17 @@ const decodeToken = (token: string) => {
             base64 += '=';
         }
 
-        return JSON.parse(atob(base64));
+        const decoded = JSON.parse(atob(base64));
+
+        if (decoded.exp && decoded.exp * 1000 < Date.now()) {
+            throw new Error('Invalid token: token has expired');
+        }
+
+        return decoded;
     } catch (error) {
+        if (error instanceof Error && error.message.startsWith('Invalid token:')) {
+            throw error;
+        }
         throw new Error('Invalid token: failed to decode or parse payload');
     }
 };

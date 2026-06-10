@@ -43,6 +43,18 @@ describe('authService', () => {
         it('throws when the payload is not valid base64-encoded JSON', () => {
             expect(() => decodeToken('header.@@@notb64@@@.sig')).toThrow(/failed to decode/);
         });
+
+        it('throws when the token is expired', () => {
+            const exp = Math.floor(Date.now() / 1000) - 60;
+            const token = buildToken({ sub: 'a@b.com', exp });
+            expect(() => decodeToken(token)).toThrow(/expired/);
+        });
+
+        it('accepts a token that has not yet expired', () => {
+            const exp = Math.floor(Date.now() / 1000) + 3600;
+            const token = buildToken({ sub: 'a@b.com', exp });
+            expect(decodeToken(token)).toMatchObject({ sub: 'a@b.com' });
+        });
     });
 
     describe('login', () => {

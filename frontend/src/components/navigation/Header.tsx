@@ -1,22 +1,17 @@
 import React from "react";
-import {useNavigation} from "@react-navigation/native";
-import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 import {View, Text, Pressable} from "react-native";
 import {MaterialIcons} from "@expo/vector-icons";
-import type {RootStackParamList} from "../../navigation/Navigation";
 import {createStyles} from "./Header.style";
 import {useTheme} from "../../hooks/useTheme";
 import {useAuth} from "../../hooks/useAuth";
 
 const Header = () => {
-    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const {theme, toggleTheme, themeMode} = useTheme();
     const {logout} = useAuth();
     const styles = createStyles(theme);
 
     const handleLogout = async () => {
         await logout();
-        navigation.navigate("login");
     };
 
     return (

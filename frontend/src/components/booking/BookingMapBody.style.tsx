@@ -29,13 +29,15 @@ export const createStyles = (theme: any) => StyleSheet.create({
         backgroundColor: theme.colors.surface,
         borderTopLeftRadius: 24,
         borderTopRightRadius: 24,
-        padding: 16,
-        gap: 12,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: -2 },
         shadowOpacity: 0.08,
         shadowRadius: 6,
         elevation: 4,
+    },
+    sheetContent: {
+        padding: 16,
+        gap: 12,
     },
     title: {
         fontSize: 18,
