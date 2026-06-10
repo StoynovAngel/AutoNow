@@ -1,13 +1,12 @@
-import React, { useCallback, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Text, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTranslation } from 'react-i18next';
 import { theme } from '../../constants/theme';
 import type { RootStackParamList } from '../../navigation/Navigation';
-import { getOrderById } from '../../services/orderService';
+import { getOrderById, type OrderResponse } from '../../services/orderService';
 import { submitRating } from '../../services/ratingService';
-import { useDataFetch } from '../../hooks/useDataFetch';
 import CompletionHeader from './CompletionHeader';
 import OrderSummary from './OrderSummary';
 import RatingCard from './RatingCard';
@@ -24,8 +23,14 @@ const BookingCompleteBody = () => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const { orderId } = route.params;
 
-    const loader = useCallback(() => getOrderById(orderId), [orderId]);
-    const { data: order, error: loadError } = useDataFetch(loader, undefined);
+    const [order, setOrder] = useState<OrderResponse | undefined>();
+    const [loadError, setLoadError] = useState('');
+
+    useEffect(() => {
+        getOrderById(orderId)
+            .then(setOrder)
+            .catch(() => setLoadError('failed'));
+    }, [orderId]);
 
     const [stars, setStars] = useState(0);
     const [comment, setComment] = useState('');

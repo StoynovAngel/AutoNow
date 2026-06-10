@@ -1,13 +1,29 @@
-import { useCallback } from 'react';
-import { VehicleType, PublicVehicle } from '../types/vehicle';
+import { useState, useEffect } from 'react';
+import type { VehicleType, PublicVehicle } from '../types/vehicle';
 import { getPublicVehiclesByCompany } from '../services/vehicleService';
-import { useDataFetch } from './useDataFetch';
+import { parseApiError } from '../utils/errorParser';
 
 export const usePublicVehicles = (companyId: number, vehicleType?: VehicleType) => {
-    const loader = useCallback(
-        () => getPublicVehiclesByCompany(companyId, vehicleType),
-        [companyId, vehicleType],
-    );
-    const { data: vehicles, loading, error, reload } = useDataFetch<PublicVehicle[]>(loader, []);
-    return { vehicles, loading, error, reload };
+    const [vehicles, setVehicles] = useState<PublicVehicle[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+
+    const load = async () => {
+        setLoading(true);
+        setError('');
+        try {
+            const data = await getPublicVehiclesByCompany(companyId, vehicleType);
+            setVehicles(data);
+        } catch (err) {
+            setError(parseApiError(err));
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        load();
+    }, [companyId, vehicleType]);
+
+    return { vehicles, loading, error, reload: load };
 };
