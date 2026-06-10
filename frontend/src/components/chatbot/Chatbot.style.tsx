@@ -23,6 +23,10 @@ export const createStyles = (theme: Theme) => StyleSheet.create({
         backgroundColor: 'rgba(0,0,0,0.4)',
         justifyContent: 'flex-end',
     },
+    sheetWrapper: {
+        flex: 1,
+        justifyContent: 'flex-end',
+    },
     sheet: {
         backgroundColor: theme.colors.surface,
         borderTopLeftRadius: 20,

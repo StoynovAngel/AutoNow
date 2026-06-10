@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, TextInput, Pressable, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, Pressable, ActivityIndicator, ScrollView } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../hooks/useTheme';
 import { searchAddress } from '../../services/mapboxService';
@@ -123,7 +123,12 @@ const AddressSearch = ({
                 </Text>
             )}
             {suggestions.length > 0 && (
-                <View style={styles.suggestions} testID={testID ? `${testID}-suggestions` : 'address-suggestions'}>
+                <ScrollView
+                    style={styles.suggestions}
+                    keyboardShouldPersistTaps="handled"
+                    nestedScrollEnabled
+                    testID={testID ? `${testID}-suggestions` : 'address-suggestions'}
+                >
                     {suggestions.map((s) => (
                         <Pressable
                             key={s.id}
@@ -136,7 +141,7 @@ const AddressSearch = ({
                             </Text>
                         </Pressable>
                     ))}
-                </View>
+                </ScrollView>
             )}
         </View>
     );
