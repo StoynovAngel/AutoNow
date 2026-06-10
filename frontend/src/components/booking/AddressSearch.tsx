@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, Pressable, ActivityIndicator, ScrollView } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { theme } from '../../constants/theme';
@@ -33,7 +33,6 @@ const AddressSearch = ({
     const [suggestions, setSuggestions] = useState<AddressSuggestion[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | undefined>();
-    const requestIdRef = useRef(0);
 
     useEffect(() => {
         if (selected) return;
@@ -44,22 +43,17 @@ const AddressSearch = ({
             return;
         }
 
-        const requestId = ++requestIdRef.current;
         setLoading(true);
         const handle = setTimeout(async () => {
             try {
                 const results = await searchAddress(trimmed, proximity);
-                if (requestIdRef.current === requestId) {
-                    setSuggestions(results);
-                    setError(undefined);
-                }
+                setSuggestions(results);
+                setError(undefined);
             } catch (e) {
-                if (requestIdRef.current === requestId) {
-                    setError(e instanceof Error ? e.message : 'Search failed');
-                    setSuggestions([]);
-                }
+                setError(e instanceof Error ? e.message : 'Search failed');
+                setSuggestions([]);
             } finally {
-                if (requestIdRef.current === requestId) setLoading(false);
+                setLoading(false);
             }
         }, debounceMs);
 

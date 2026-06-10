@@ -10,22 +10,17 @@ interface WaitingStatusProps {
     error: string | undefined;
 }
 
-const titleKeyFor = (status: OrderStatus | undefined): string => {
-    if (status === 'ACCEPTED') return 'booking-waiting-accepted';
-    if (status === 'IN_PROGRESS') return 'booking-waiting-in-progress';
-    return 'booking-waiting-searching';
+const STATUS_KEYS: Partial<Record<OrderStatus, { title: string; subtitle: string }>> = {
+    ACCEPTED:    { title: 'booking-waiting-accepted',    subtitle: 'booking-waiting-accepted-hint' },
+    IN_PROGRESS: { title: 'booking-waiting-in-progress', subtitle: 'booking-waiting-in-progress-hint' },
 };
-
-const subtitleKeyFor = (status: OrderStatus | undefined): string => {
-    if (status === 'ACCEPTED') return 'booking-waiting-accepted-hint';
-    if (status === 'IN_PROGRESS') return 'booking-waiting-in-progress-hint';
-    return 'booking-waiting-searching-hint';
-};
+const DEFAULT_KEYS = { title: 'booking-waiting-searching', subtitle: 'booking-waiting-searching-hint' };
 
 const WaitingStatus = ({ status, error }: WaitingStatusProps) => {
 
     const { t } = useTranslation();
     const styles = createStyles(theme);
+    const keys = (status && STATUS_KEYS[status]) ?? DEFAULT_KEYS;
 
     return (
         <View style={styles.statusBlock}>
@@ -34,9 +29,9 @@ const WaitingStatus = ({ status, error }: WaitingStatusProps) => {
             ) : (
                 <>
                     <Text style={styles.statusTitle} testID="waiting-status-title">
-                        {t(titleKeyFor(status))}
+                        {t(keys.title)}
                     </Text>
-                    <Text style={styles.statusSubtitle}>{t(subtitleKeyFor(status))}</Text>
+                    <Text style={styles.statusSubtitle}>{t(keys.subtitle)}</Text>
                 </>
             )}
             {error && (

@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
     KeyboardAvoidingView,
     Modal,
@@ -38,16 +38,14 @@ const Chatbot = () => {
     const [error, setError] = useState<string | null>(null);
     const scrollRef = useRef<ScrollView | null>(null);
 
-    const close = useCallback(() => {
+    const close = () => {
         setOpen(false);
         setError(null);
-    }, []);
+    };
 
-    const handleSend = useCallback(async () => {
+    const handleSend = async () => {
         const trimmed = input.trim();
-        if (!trimmed || loading) {
-            return;
-        }
+        if (!trimmed || loading) return;
         setError(null);
         setRecommendedService(null);
         const nextHistory: ChatbotMessage[] = [...messages, { role: 'user', content: trimmed }];
@@ -67,15 +65,13 @@ const Chatbot = () => {
             setLoading(false);
             requestAnimationFrame(() => scrollRef.current?.scrollToEnd({ animated: true }));
         }
-    }, [input, loading, messages, t]);
+    };
 
-    const goToRecommended = useCallback(() => {
-        if (!recommendedService) {
-            return;
-        }
+    const goToRecommended = () => {
+        if (!recommendedService) return;
         close();
         navigation.navigate('companyList', { vehicleType: recommendedService });
-    }, [recommendedService, close, navigation]);
+    };
 
     return (
         <>
