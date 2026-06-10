@@ -15,23 +15,17 @@ export const useDataFetch = <T>(loader: () => Promise<T>, initialData: T): DataF
 
     const loaderRef = useRef(loader);
     loaderRef.current = loader;
-    const requestIdRef = useRef(0);
 
     const reload = useCallback(async () => {
-        const requestId = ++requestIdRef.current;
         setLoading(true);
         setError('');
         try {
             const result = await loaderRef.current();
-            if (requestId !== requestIdRef.current) return;
             setData(result);
         } catch (err) {
-            if (requestId !== requestIdRef.current) return;
             setError(parseApiError(err));
         } finally {
-            if (requestId === requestIdRef.current) {
-                setLoading(false);
-            }
+            setLoading(false);
         }
     }, []);
 

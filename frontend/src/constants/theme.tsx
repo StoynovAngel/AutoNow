@@ -95,3 +95,5 @@ export const lightTheme = {
 };
 
 export const theme = lightTheme;
+
+export type Theme = typeof lightTheme;

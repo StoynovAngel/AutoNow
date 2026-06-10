@@ -7,7 +7,7 @@ import {createStyles} from "./Body.style";
 import {useAuth} from "../../../hooks/useAuth";
 import {useNavigation} from '@react-navigation/native';
 import {useTranslation} from 'react-i18next';
-import {useTheme} from "../../../hooks/useTheme";
+import { theme } from '../../../constants/theme';
 import {parseApiError} from "../../../utils/errorParser";
 
 const loginBackground = require("../../../assets/images/background.jpg");
@@ -19,7 +19,6 @@ const Body = () => {
     const [loading, setLoading] = useState(false);
     const {t} = useTranslation();
 
-    const {theme} = useTheme();
     const styles = createStyles(theme)
 
     const {login} = useAuth();
