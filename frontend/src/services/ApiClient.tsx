@@ -9,6 +9,12 @@ if (!apiUrl) {
     throw new Error('API URL configuration missing');
 }
 
+let onUnauthorized: (() => void) | null = null;
+
+export const setUnauthorizedHandler = (handler: (() => void) | null) => {
+    onUnauthorized = handler;
+};
+
 const customAPI = axios.create({
     baseURL: apiUrl
 });
@@ -38,6 +44,9 @@ customAPI.interceptors.response.use(
                 await storage.deleteItem('jwt');
             } catch (deleteError) {
                 console.warn('Failed to delete token from storage:', deleteError);
+            }
+            if (onUnauthorized) {
+                onUnauthorized();
             }
         }
         throw error;
