@@ -85,6 +85,7 @@ const Body = () => {
                             mode="contained"
                             onPress={handleRegister}
                             style={styles.registerButton}
+                            textColor="#FFFFFF"
                             loading={loading}
                             disabled={loading}
                             labelStyle={{fontSize: 16, fontWeight: '600'}}

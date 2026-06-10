@@ -84,6 +84,7 @@ const Body = () => {
                             mode="contained"
                             onPress={handleLogin}
                             style={styles.loginButton}
+                            textColor="#FFFFFF"
                             loading={loading}
                             disabled={loading}
                             labelStyle={{fontSize: 16, fontWeight: '600'}}
