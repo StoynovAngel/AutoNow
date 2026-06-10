@@ -141,7 +141,7 @@ public class DataSeeder implements ApplicationRunner {
 	private void seedLogistics(String password) {
 		CompanyEntity company = companyRepository.save(CompanyEntity.builder()
 				.name("BG Cargo Logistics")
-				.address("12 Industrial Zone, Plovdiv")
+				.address("Prof. Georgi Bradistilov 11, Sofia 1700, Bulgaria")
 				.phone("+359888200002")
 				.email("ops@bgcargo.bg")
 				.description("Long-haul freight across the Balkans")
@@ -159,21 +159,21 @@ public class DataSeeder implements ApplicationRunner {
 				.brand("Volvo").model("FH16").licensePlate("PB1122MT")
 				.imageUrl("https://blog.truckscout24.com/de/wp-content/uploads/2013/10/Volvo-FH16-750-19-fotoshowImageNew-58e110e5-80060.jpg")
 				.airConditioning(true).numberOfSeats(2).trunkCapacity(40000.0)
-				.vehicleType(VehicleType.SEMI)
+				.vehicleType(VehicleType.LOGISTICS)
 				.company(company).build());
 
 		VehicleEntity v2 = vehicleRepository.save(VehicleEntity.builder()
 				.brand("Scania").model("R450").licensePlate("PB2233HK")
 				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Scania_R_450_-_2017.jpg/1280px-Scania_R_450_-_2017.jpg")
 				.airConditioning(true).numberOfSeats(2).trunkCapacity(38000.0)
-				.vehicleType(VehicleType.SEMI)
+				.vehicleType(VehicleType.LOGISTICS)
 				.company(company).build());
 
 		VehicleEntity v3 = vehicleRepository.save(VehicleEntity.builder()
 				.brand("MAN").model("TGX").licensePlate("PB3344TX")
 				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/MAN_TGX_18.500_4x2_BLS_Efficient_Line_3_%28cropped%29.jpg/1280px-MAN_TGX_18.500_4x2_BLS_Efficient_Line_3_%28cropped%29.jpg")
 				.airConditioning(true).numberOfSeats(2).trunkCapacity(42000.0)
-				.vehicleType(VehicleType.SEMI)
+				.vehicleType(VehicleType.LOGISTICS)
 				.company(company).build());
 
 		saveDriverWithVehicle(DriverEntity.builder()

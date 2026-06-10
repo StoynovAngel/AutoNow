@@ -4,4 +4,6 @@ export const VEHICLE_CLASSES: VehicleClass[] = ['STANDARD', 'XL'];
 
 export interface BookingPreferences {
     vehicleClass?: VehicleClass;
+    weightKg?: number;
+    companyAddress?: string;
 }

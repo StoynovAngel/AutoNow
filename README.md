@@ -106,12 +106,36 @@ DB_USERNAME=postgres
 DB_PASSWORD=12345
 ```
 
-### 3. Run the application
+### Mobile app (React Native / Expo)
 
 ```bash
-cd backend
-./mvnw spring-boot:run
+cd frontend
+npm install
+npx expo start --host localhost   # see "Running on a physical Android device" below
 ```
+
+#### Running on a physical Android device
+
+The standard `npx expo start` requires the phone to reach Metro on port 8081 over Wi-Fi. On a managed Mac where the firewall blocks incoming connections and cannot be modified, use USB forwarding instead:
+
+1. Connect the Android device via USB and enable USB debugging.
+2. Forward Metro and the Expo manifest port through the USB cable:
+   ```bash
+   adb reverse tcp:8081 tcp:8081
+   adb reverse tcp:19000 tcp:19000
+   ```
+3. Start Metro advertising `localhost` (the phone resolves this through the USB tunnel):
+   ```bash
+   cd frontend && npx expo start --host localhost
+   ```
+4. Scan the QR code in Expo Go.
+
+> **Note:** Do not use `--tunnel` (ngrok not permitted on managed machines) or `--host lan` (blocked by the firewall).
+> The backend API URL in `frontend/app.json` stays as `http://192.168.1.11:8080/` — the backend is reached over Wi-Fi and is not affected by the firewall rule.
+
+---
+
+
 
 The API starts on **http://localhost:8081**.
 

@@ -13,6 +13,8 @@ public record PricingProperties(
 		Integer nightStartHour,
 		Integer nightEndHour,
 		String timezone,
-		String currency
+		String currency,
+		Double logisticsBaseFare,
+		Double logisticsRatePerKg
 ) {
 }

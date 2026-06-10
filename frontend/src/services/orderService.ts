@@ -38,6 +38,7 @@ export interface OrderRequest {
     dropoffLongitude: number;
     distanceKm?: number;
     vehicleClass?: VehicleClass;
+    weightKg?: number;
 }
 
 export interface OrderResponse {
@@ -73,6 +74,7 @@ export interface OrderEstimateRequest {
     vehicleType: VehicleType;
     distanceKm: number;
     vehicleClass?: VehicleClass;
+    weightKg?: number;
 }
 
 export interface OrderEstimateResponse {

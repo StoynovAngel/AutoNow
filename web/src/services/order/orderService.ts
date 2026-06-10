@@ -21,6 +21,7 @@ export interface OrderPayload {
     luggageCount?: number;
     vehicleClass?: VehicleClass;
     requiresAirConditioning?: boolean;
+    weightKg?: number;
 }
 
 export const orderService = {

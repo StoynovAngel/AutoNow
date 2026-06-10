@@ -2,27 +2,28 @@ package com.angel.autonow.order;
 
 import com.angel.autonow.driver.DriverEntity;
 import com.angel.autonow.user.UserEntity;
-import com.angel.autonow.vehicle.VehicleClass;
 import com.angel.autonow.vehicle.VehicleEntity;
 import com.angel.autonow.vehicle.VehicleType;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
 @Data
 @Entity
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "orders")
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "order_type", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorValue("BASE")
 public class OrderEntity {
 
 	@Id
@@ -94,21 +95,6 @@ public class OrderEntity {
 
 	@Column(name = "special_requirements")
 	private String specialRequirements;
-
-	@Positive(message = "Passenger count must be positive")
-	@Column(name = "passenger_count")
-	private Integer passengerCount;
-
-	@Min(value = 0, message = "Luggage count cannot be negative")
-	@Column(name = "luggage_count")
-	private Integer luggageCount;
-
-	@Enumerated(EnumType.STRING)
-	@Column(name = "vehicle_class")
-	private VehicleClass vehicleClass;
-
-	@Column(name = "requires_air_conditioning")
-	private Boolean requiresAirConditioning;
 
 	@Column(name = "cancellation_reason")
 	private String cancellationReason;

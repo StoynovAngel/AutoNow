@@ -136,6 +136,17 @@ describe('OrderInfo', () => {
         render(<OrderInfo order={makeOrder()} />);
         expect(screen.queryByTestId('order-assign-btn')).not.toBeInTheDocument();
     });
+
+    it('shows weightKg for logistics orders', () => {
+        render(<OrderInfo order={makeOrder({ vehicleType: 'LOGISTICS', weightKg: 75.5 })} />);
+        expect(screen.getByText('Weight (kg)')).toBeInTheDocument();
+        expect(screen.getByText('75.50')).toBeInTheDocument();
+    });
+
+    it('hides the weight field when weightKg is not set', () => {
+        render(<OrderInfo order={makeOrder()} />);
+        expect(screen.queryByText('Weight (kg)')).not.toBeInTheDocument();
+    });
 });
 
 describe('statusBadgeClass', () => {

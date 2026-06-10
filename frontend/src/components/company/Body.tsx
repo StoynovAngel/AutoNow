@@ -50,18 +50,20 @@ const Body = () => {
             return;
         }
         const company = companies.find(c => c.id === companyId);
-        navigation.navigate('bookingMap', {
-            companyId,
-            companyAddress: company?.address,
-            vehicleType,
-            preferences: vehicleClass ? { vehicleClass } : {},
-        });
+        const preferences: import('../../types/booking').BookingPreferences = {
+            ...(vehicleClass ? { vehicleClass } : {}),
+            ...(vehicleType === VehicleType.LOGISTICS && company?.address
+                ? { companyAddress: company.address }
+                : {}),
+        };
+        navigation.navigate('bookingMap', { companyId, vehicleType, preferences });
     };
 
     const showClassPicker = vehicleType === VehicleType.TAXI;
     const isBookable =
         vehicleType === VehicleType.TAXI ||
         vehicleType === VehicleType.AMBULANCE ||
+        vehicleType === VehicleType.LOGISTICS ||
         vehicleType === VehicleType.PROM ||
         vehicleType === VehicleType.RENTAL;
 

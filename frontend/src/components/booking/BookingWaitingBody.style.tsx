@@ -5,7 +5,7 @@ export const createStyles = (theme: any) => StyleSheet.create({
         flex: 1,
         backgroundColor: theme.colors.background,
         padding: 20,
-        paddingTop: 56,
+        justifyContent: 'center',
         gap: 16,
     },
     headerRow: {

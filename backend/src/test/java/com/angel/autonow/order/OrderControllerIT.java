@@ -326,7 +326,7 @@ class OrderControllerIT {
 
 		var updateRequest = OrderRequestDTO.builder()
 				.userId(user.getId())
-				.vehicleType(VehicleType.SEMI)
+				.vehicleType(VehicleType.TAXI)
 				.pickupAddress("789 Elm St")
 				.pickupLatitude(42.70)
 				.pickupLongitude(23.33)
@@ -336,7 +336,7 @@ class OrderControllerIT {
 				.estimatedPrice(25.00)
 				.distanceKm(10.5)
 				.estimatedDurationMinutes(20)
-				.specialRequirements("Fragile cargo")
+				.specialRequirements("Updated requirements")
 				.build();
 
 		mockMvc.perform(put("/api/orders/{id}", order.getId())
@@ -344,9 +344,36 @@ class OrderControllerIT {
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(updateRequest)))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.vehicleType").value("SEMI"))
+				.andExpect(jsonPath("$.vehicleType").value("TAXI"))
 				.andExpect(jsonPath("$.pickupAddress").value("789 Elm St"))
-				.andExpect(jsonPath("$.specialRequirements").value("Fragile cargo"));
+				.andExpect(jsonPath("$.specialRequirements").value("Updated requirements"));
+	}
+
+	@Test
+	void updateOrder_vehicleTypeChange_returnsConflict() throws Exception {
+		var order = TestData.createOrderEntity(user);
+		orderRepository.save(order);
+
+		var updateRequest = OrderRequestDTO.builder()
+				.userId(user.getId())
+				.vehicleType(VehicleType.LOGISTICS)
+				.pickupAddress("789 Elm St")
+				.pickupLatitude(42.70)
+				.pickupLongitude(23.33)
+				.dropoffAddress("101 Pine Rd")
+				.dropoffLatitude(42.72)
+				.dropoffLongitude(23.34)
+				.estimatedPrice(25.00)
+				.distanceKm(10.5)
+				.estimatedDurationMinutes(20)
+				.weightKg(100.0)
+				.build();
+
+		mockMvc.perform(put("/api/orders/{id}", order.getId())
+						.with(TestData.customerJwt())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(updateRequest)))
+				.andExpect(status().isConflict());
 	}
 
 	@Test

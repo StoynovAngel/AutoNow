@@ -3,6 +3,7 @@ import Navigation from '../components/ui/Navigation.tsx';
 import PageStatus from '../components/ui/PageStatus.tsx';
 import OrderManagementSidebar from '../components/order/OrderManagementSidebar';
 import type {StatusFilter} from '../components/order/OrderManagementSidebar';
+import type {VehicleTypeFilter} from '../components/order/OrderInfo';
 import OrderManagementContent from '../components/order/OrderManagementContent';
 import {useOrders} from '../hooks/useOrders';
 import {useAllDrivers} from '../hooks/useAllDrivers';
@@ -41,6 +42,7 @@ const Order = () => {
     }, []);
 
     const [statusFilter, setStatusFilter] = useState<StatusFilter>('ALL');
+    const [vehicleTypeFilter, setVehicleTypeFilter] = useState<VehicleTypeFilter>('ALL');
 
     if (loading) {
         return <PageStatus state="loading" />;
@@ -69,8 +71,10 @@ const Order = () => {
                             orders={orders}
                             selectedOrderId={selectedOrderId}
                             statusFilter={statusFilter}
+                            vehicleTypeFilter={vehicleTypeFilter}
                             onSelectOrder={selectOrder}
                             onChangeFilter={setStatusFilter}
+                            onChangeVehicleType={setVehicleTypeFilter}
                         />
                         <OrderManagementContent
                             selectedOrder={selectedOrder}

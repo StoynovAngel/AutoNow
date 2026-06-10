@@ -30,7 +30,9 @@ public class PricingService {
 	}
 
 	public OrderEstimateResponseDTO estimate(OrderEstimateRequestDTO request) {
-		double price = calculatePrice(request.distanceKm(), request.vehicleType(), request.vehicleClass());
+		double price = request.vehicleType() == VehicleType.LOGISTICS
+				? calculateForLogistics(request.distanceKm(), request.weightKg())
+				: calculatePrice(request.distanceKm(), request.vehicleType(), request.vehicleClass());
 
 		return OrderEstimateResponseDTO.builder()
 				.estimatedPrice(round(price))
@@ -66,6 +68,18 @@ public class PricingService {
 	private double effectiveRatePerKm(VehicleClass vehicleClass) {
 		double timeMultiplier = isNight() ? pricingProperties.nightMultiplier() : 1.0;
 		return pricingProperties.ratePerKm() * multiplierFor(vehicleClass) * timeMultiplier;
+	}
+
+	public double calculateForLogistics(double distanceKm, Double weightKg) {
+		if (distanceKm < 0) {
+			throw new IllegalArgumentException("distanceKm must not be negative: " + distanceKm);
+		}
+
+		double base = pricingProperties.logisticsBaseFare();
+		double distanceCost = distanceKm * pricingProperties.ratePerKm();
+		double weightCost = weightKg != null ? weightKg * pricingProperties.logisticsRatePerKg() : 0.0;
+
+		return base + distanceCost + weightCost;
 	}
 
 	private double multiplierFor(VehicleClass vehicleClass) {

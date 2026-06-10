@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, Pressable, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, Pressable, Alert, ActivityIndicator } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -37,6 +37,8 @@ const BookingMapBody = () => {
 
     const auth = useContext(AuthContext);
 
+    const isLogistics = vehicleType === VehicleType.LOGISTICS;
+
     const [pickup, setPickup] = useState<AddressSuggestion | undefined>();
     const [destination, setDestination] = useState<AddressSuggestion | undefined>();
     const [routeResult, setRouteResult] = useState<RouteResult | undefined>();
@@ -44,6 +46,23 @@ const BookingMapBody = () => {
     const [estimate, setEstimate] = useState<OrderEstimateResponse | undefined>();
     const [estimateLoading, setEstimateLoading] = useState(false);
     const [submitting, setSubmitting] = useState(false);
+    const [weightKgInput, setWeightKgInput] = useState('');
+
+    const _parsedWeight = parseFloat(weightKgInput);
+    const weightKg = isLogistics ? (Number.isFinite(_parsedWeight) ? _parsedWeight : undefined) : undefined;
+    const weightError = weightKg !== undefined && (weightKg < 0.1 || weightKg > 5000);
+
+    // For logistics, geocode the company address once on mount and use it as pickup
+    useEffect(() => {
+        if (!isLogistics || !preferences.companyAddress) return;
+        let cancelled = false;
+        searchAddress(preferences.companyAddress)
+            .then((results) => {
+                if (!cancelled && results[0]) setPickup(results[0]);
+            })
+            .catch(() => {});
+        return () => { cancelled = true; };
+    }, [isLogistics, preferences.companyAddress]);
 
     const [pickupGeocodeError, setPickupGeocodeError] = useState(false);
 
@@ -117,6 +136,10 @@ const BookingMapBody = () => {
             setEstimateLoading(false);
             return;
         }
+        if (isLogistics && weightKg === undefined) {
+            setEstimate(undefined);
+            return;
+        }
         let cancelled = false;
         setEstimate(undefined);
         setEstimateLoading(true);
@@ -124,12 +147,21 @@ const BookingMapBody = () => {
             vehicleType,
             distanceKm: routeResult.distanceKm,
             vehicleClass: preferences.vehicleClass,
+            weightKg,
         })
-            .then((e) => { if (!cancelled) setEstimate(e); })
-            .catch(() => { if (!cancelled) setEstimate(undefined); })
-            .finally(() => { if (!cancelled) setEstimateLoading(false); });
-        return () => { cancelled = true; };
-    }, [isAmbulance, routeResult, vehicleType, preferences.vehicleClass]);
+            .then((e) => {
+                if (!cancelled) setEstimate(e);
+            })
+            .catch(() => {
+                if (!cancelled) setEstimate(undefined);
+            })
+            .finally(() => {
+                if (!cancelled) setEstimateLoading(false);
+            });
+        return () => {
+            cancelled = true;
+        };
+    }, [routeResult, vehicleType, preferences.vehicleClass, weightKg, isLogistics]);
 
     const handleConfirm = async () => {
         if (!auth?.user) {
@@ -177,6 +209,7 @@ const BookingMapBody = () => {
                 dropoffLongitude: destination.coordinate.longitude,
                 distanceKm: routeResult.distanceKm,
                 vehicleClass: preferences.vehicleClass,
+                weightKg,
             });
             navigation.replace('bookingWaiting', { orderId: created.id });
         } catch (e) {
@@ -189,8 +222,10 @@ const BookingMapBody = () => {
 
     const canConfirm = isAmbulance
         ? Boolean(pickup && destination && estimate && !routeLoading && !estimateLoading && !submitting)
-        : Boolean(pickup && destination && routeResult && estimate && !estimateLoading && !submitting);
-
+        : Boolean(
+            pickup && destination && routeResult && estimate && !estimateLoading && !submitting &&
+            (!isLogistics || (weightKg !== undefined && !weightError)),
+        );
     void companyId;
 
     const proximity = (isAmbulance ? destination?.coordinate : pickup?.coordinate) ?? SOFIA_CENTER;
@@ -232,7 +267,14 @@ const BookingMapBody = () => {
                     </View>
                 )}
 
-                {!isAmbulance && (
+                {isLogistics ? (
+                    <View style={styles.pickupFixed} testID="pickup-fixed">
+                        <MaterialIcons name="store" size={16} color={theme.colors.textSecondary} />
+                        <Text style={styles.pickupFixedText} numberOfLines={1}>
+                            {pickup ? pickup.placeName : (preferences.companyAddress ?? '…')}
+                        </Text>
+                    </View>
+                ) : !isAmbulance && (
                     <AddressSearch
                         proximity={proximity}
                         selected={pickup}
@@ -256,7 +298,28 @@ const BookingMapBody = () => {
                     testID="destination-search"
                 />
 
-                {destination && (
+                {isLogistics && (
+                    <View style={styles.weightInputRow}>
+                        <TextInput
+                            style={[styles.weightInput, weightError && styles.weightInputError]}
+                            value={weightKgInput}
+                            onChangeText={setWeightKgInput}
+                            placeholder={t('booking-logistics-weight-placeholder')}
+                            placeholderTextColor={theme.colors.textSecondary}
+                            keyboardType="numeric"
+                            accessibilityLabel={t('booking-logistics-weight-placeholder')}
+                            testID="weight-input"
+                        />
+                        <Text style={styles.weightUnit}>kg</Text>
+                    </View>
+                )}
+                {isLogistics && weightError && (
+                    <Text style={styles.weightError} testID="weight-error">
+                        {t('booking-logistics-weight-error')}
+                    </Text>
+                )}
+
+                {pickup && destination && (
                     <View style={styles.routeInfo} testID="route-info">
                         {routeLoading ? (
                             <ActivityIndicator color={theme.colors.primary} />

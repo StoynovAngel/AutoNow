@@ -15,7 +15,30 @@ public interface OrderMapper {
 	@Mapping(source = "vehicle.id", target = "vehicleId")
 	@Mapping(source = "driver", target = "driver", qualifiedByName = "driverToInfo")
 	@Mapping(source = "vehicle", target = "vehicle", qualifiedByName = "vehicleToInfo")
-	OrderResponseDTO toDTO(OrderEntity order);
+	@Mapping(target = "vehicleClass", ignore = true)
+	@Mapping(target = "passengerCount", ignore = true)
+	@Mapping(target = "luggageCount", ignore = true)
+	@Mapping(target = "requiresAirConditioning", ignore = true)
+	@Mapping(target = "weightKg", ignore = true)
+	OrderResponseDTO toBaseDTO(OrderEntity order);
+
+	default OrderResponseDTO toDTO(OrderEntity order) {
+		OrderResponseDTO base = toBaseDTO(order);
+		if (order instanceof TaxiOrderEntity taxi) {
+			return base.toBuilder()
+					.vehicleClass(taxi.getVehicleClass())
+					.passengerCount(taxi.getPassengerCount())
+					.luggageCount(taxi.getLuggageCount())
+					.requiresAirConditioning(taxi.getRequiresAirConditioning())
+					.build();
+		}
+		if (order instanceof LogisticsOrderEntity logistics) {
+			return base.toBuilder()
+					.weightKg(logistics.getWeightKg())
+					.build();
+		}
+		return base;
+	}
 
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "user", ignore = true)
@@ -26,18 +49,7 @@ public interface OrderMapper {
 	@Mapping(target = "cancellationReason", ignore = true)
 	@Mapping(target = "createdAt", ignore = true)
 	@Mapping(target = "updatedAt", ignore = true)
-	OrderEntity toEntity(OrderRequestDTO request);
-
-	@Mapping(target = "id", ignore = true)
-	@Mapping(target = "user", ignore = true)
-	@Mapping(target = "driver", ignore = true)
-	@Mapping(target = "vehicle", ignore = true)
-	@Mapping(target = "status", ignore = true)
-	@Mapping(target = "finalPrice", ignore = true)
-	@Mapping(target = "cancellationReason", ignore = true)
-	@Mapping(target = "createdAt", ignore = true)
-	@Mapping(target = "updatedAt", ignore = true)
-	void updateEntity(OrderRequestDTO request, @MappingTarget OrderEntity entity);
+	void updateBaseFields(OrderRequestDTO request, @MappingTarget OrderEntity entity);
 
 	@Named("driverToInfo")
 	default DriverInfoDTO driverToInfo(DriverEntity driver) {
@@ -67,4 +79,3 @@ public interface OrderMapper {
 				.build();
 	}
 }
-
