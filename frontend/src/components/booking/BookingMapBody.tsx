@@ -31,7 +31,7 @@ const BookingMapBody = () => {
 
     const route = useRoute<BookingMapRouteProp>();
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-    const { companyId, companyAddress, vehicleType, preferences } = route.params;
+    const { companyAddress, vehicleType, preferences } = route.params;
 
     const isAmbulance = vehicleType === VehicleType.AMBULANCE;
 
@@ -226,8 +226,6 @@ const BookingMapBody = () => {
             pickup && destination && routeResult && estimate && !estimateLoading && !submitting &&
             (!isLogistics || (weightKg !== undefined && !weightError)),
         );
-    void companyId;
-
     const proximity = (isAmbulance ? destination?.coordinate : pickup?.coordinate) ?? SOFIA_CENTER;
 
     return (
