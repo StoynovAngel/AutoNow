@@ -38,13 +38,10 @@ export const lightTheme = {
         priceText: 16,
         cardPadding: 12,
         cardMargin: 8,
-        addButtonSize: 30,
-
         profileImage: 40,
         tabBarHeight: 60,
         imageHeight: 240,
         icon: 24,
-        addButton: 30,
         maxWidth: 400
     },
     iconSizes: {
@@ -94,50 +91,7 @@ export const lightTheme = {
             height: 240,
             borderRadius: 8,
         },
-        login: {
-            containerWidth: 340,
-            containerHeight: 400,
-            inputWidth: 300,
-            buttonWidth: 140,
-            logoSize: 100,
-            borderRadius: 20,
-            overlay: 'rgba(142,129,129,0.4)'
-        },
-        testButton: {
-            width: 117,
-            height: 40,
-            borderWidth: 2.5
-        },
-        cafeDetail: {
-            imageHeight: 200,
-        },
     }
-};
-
-export const darkTheme = {
-    colors: {
-        primary: '#BB86FC',
-        secondary: '#03DAC6',
-        background: '#121212',
-        surface: '#1E1E1E',
-        textPrimary: '#E1E1E1',
-        textSecondary: '#A1A1A1',
-        border: '#2C2C2C',
-        ripple: 'rgba(255,255,255,0.1)',
-        shadow: '#000',
-        transparent: 'transparent',
-        textTertiary: '#B1B1B1',
-        textValidationError: '#CF6679',
-        error: '#CF6679'
-    },
-    spacing: lightTheme.spacing,
-    fontSizes: lightTheme.fontSizes,
-    radii: lightTheme.radii,
-    sizes: lightTheme.sizes,
-    iconSizes: lightTheme.iconSizes,
-    elevation: lightTheme.elevation,
-    lineHeights: lightTheme.lineHeights,
-    components: lightTheme.components,
 };
 
 export const theme = lightTheme;
