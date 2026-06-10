@@ -8,7 +8,7 @@ vi.mock('../../services/vehicle/vehicleService');
 
 const mockVehicles: Vehicle[] = [
     { id: 1, brand: 'Toyota', model: 'Camry', licensePlate: 'CB1234AB', airConditioning: true, numberOfSeats: 5, trunkCapacity: 400, vehicleType: 'TAXI', companyId: 1 },
-    { id: 2, brand: 'Honda', model: 'Civic', licensePlate: 'CB2345CD', airConditioning: false, numberOfSeats: 4, trunkCapacity: 300, vehicleType: 'SEMI', companyId: 1 },
+    { id: 2, brand: 'Honda', model: 'Civic', licensePlate: 'CB2345CD', airConditioning: false, numberOfSeats: 4, trunkCapacity: 300, vehicleType: 'LOGISTICS', companyId: 1 },
 ];
 
 describe('useVehicles', () => {
