@@ -368,6 +368,23 @@ class OrderServiceTest {
 	}
 
 	@Test
+	void updateOrder_vehicleTypeChange_throwsConflict() {
+		UserEntity user = UserEntity.builder().id(1L).build();
+		TaxiOrderEntity existing = TaxiOrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).createdAt(NOW).build();
+		OrderRequestDTO request = OrderRequestDTO.builder()
+				.userId(1L).vehicleType(VehicleType.LOGISTICS)
+				.pickupAddress("A").pickupLatitude(1.0).pickupLongitude(1.0)
+				.dropoffAddress("B").dropoffLatitude(2.0).dropoffLongitude(2.0)
+				.weightKg(100.0)
+				.build();
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(existing));
+
+		assertThrows(OrderConflictException.class, () -> orderService.updateOrder(1L, request));
+		verify(orderRepository, never()).save(any());
+	}
+
+	@Test
 	void deleteOrder_returnTrue() {
 		when(orderRepository.existsById(1L)).thenReturn(true);
 

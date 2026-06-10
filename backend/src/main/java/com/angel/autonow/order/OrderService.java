@@ -107,6 +107,11 @@ public class OrderService {
 		Optional<OrderEntity> existing = orderRepository.findById(id);
 		if (existing.isEmpty()) return Optional.empty();
 
+		OrderEntity order = existing.get();
+		if (order.getVehicleType() != request.vehicleType()) {
+			throw new OrderConflictException("Vehicle type cannot be changed after order creation");
+		}
+
 		Optional<UserEntity> user = userRepository.findById(request.userId());
 		if (user.isEmpty()) return Optional.empty();
 
@@ -124,7 +129,6 @@ public class OrderService {
 			vehicle = vehicleOpt.get();
 		}
 
-		OrderEntity order = existing.get();
 		orderMapper.updateBaseFields(request, order);
 		order.setUser(user.get());
 		order.setDriver(driver);
