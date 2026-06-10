@@ -16,7 +16,7 @@ export const ORDER_STATUSES: OrderStatus[] = [
     'CANCELED',
 ];
 
-export const VEHICLE_TYPES = ['TAXI', 'LOGISTICS', 'AMBULANCE', 'RENTAL', 'PROM', 'SEMI'] as const;
+export const VEHICLE_TYPES = ['TAXI', 'LOGISTICS', 'AMBULANCE', 'RENTAL', 'PROM', 'FUNERAL'] as const;
 export type VehicleType = typeof VEHICLE_TYPES[number];
 export type VehicleTypeFilter = 'ALL' | VehicleType;
 
