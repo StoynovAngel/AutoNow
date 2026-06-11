@@ -27,9 +27,12 @@ const BookingCompleteBody = () => {
     const [loadError, setLoadError] = useState('');
 
     useEffect(() => {
+        let cancelled = false;
+        setLoadError('');
         getOrderById(orderId)
-            .then(setOrder)
-            .catch(() => setLoadError('failed'));
+            .then(data => { if (!cancelled) setOrder(data); })
+            .catch(() => { if (!cancelled) setLoadError('failed'); });
+        return () => { cancelled = true; };
     }, [orderId]);
 
     const [stars, setStars] = useState(0);
