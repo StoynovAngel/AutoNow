@@ -61,10 +61,17 @@ describe('OrderInfo', () => {
         render(<OrderInfo order={makeOrder({
             passengerCount: 6,
             luggageCount: 4,
+            requiresAirConditioning: true,
         })} />);
 
         expect(screen.getByText('6')).toBeInTheDocument();
         expect(screen.getByText('4')).toBeInTheDocument();
+        expect(screen.getByText('Required')).toBeInTheDocument();
+    });
+
+    it('renders "Not required" when requiresAirConditioning is explicitly false', () => {
+        render(<OrderInfo order={makeOrder({ requiresAirConditioning: false })} />);
+        expect(screen.getByText('Not required')).toBeInTheDocument();
     });
 
     it('renders an em-dash when optional numeric fields are undefined', () => {

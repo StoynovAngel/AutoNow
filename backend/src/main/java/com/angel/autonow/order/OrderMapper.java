@@ -17,6 +17,7 @@ public interface OrderMapper {
 	@Mapping(source = "vehicle", target = "vehicle", qualifiedByName = "vehicleToInfo")
 	@Mapping(target = "passengerCount", ignore = true)
 	@Mapping(target = "luggageCount", ignore = true)
+	@Mapping(target = "requiresAirConditioning", ignore = true)
 	@Mapping(target = "weightKg", ignore = true)
 	OrderResponseDTO toBaseDTO(OrderEntity order);
 
@@ -26,6 +27,7 @@ public interface OrderMapper {
 			return base.toBuilder()
 					.passengerCount(taxi.getPassengerCount())
 					.luggageCount(taxi.getLuggageCount())
+					.requiresAirConditioning(taxi.getRequiresAirConditioning())
 					.build();
 		}
 		if (order instanceof LogisticsOrderEntity logistics) {

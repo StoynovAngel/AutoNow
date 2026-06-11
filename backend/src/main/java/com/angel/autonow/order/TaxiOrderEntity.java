@@ -26,4 +26,7 @@ public class TaxiOrderEntity extends OrderEntity {
 	@Min(value = 0, message = "Luggage count cannot be negative")
 	@Column(name = "luggage_count")
 	private Integer luggageCount;
+
+	@Column(name = "requires_air_conditioning")
+	private Boolean requiresAirConditioning;
 }
