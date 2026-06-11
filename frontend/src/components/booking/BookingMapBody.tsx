@@ -94,14 +94,13 @@ const BookingMapBody = () => {
         estimateOrder({
             vehicleType,
             distanceKm: routeResult.distanceKm,
-            vehicleClass: preferences.vehicleClass,
             ...(isLogistics ? { weightKg } : {}),
         })
             .then((e) => { if (!cancelled) setEstimate(e); })
             .catch(() => { if (!cancelled) setEstimate(undefined); })
             .finally(() => { if (!cancelled) setEstimateLoading(false); });
         return () => { cancelled = true; };
-    }, [routeResult, vehicleType, preferences.vehicleClass, weightKg, isLogistics]);
+    }, [routeResult, vehicleType, weightKg, isLogistics]);
 
     const handleConfirm = async () => {
         if (!auth?.user) { Alert.alert(t('booking-must-login')); return; }
@@ -119,7 +118,6 @@ const BookingMapBody = () => {
                 dropoffLatitude: destination.coordinate.latitude,
                 dropoffLongitude: destination.coordinate.longitude,
                 distanceKm: routeResult?.distanceKm,
-                vehicleClass: preferences.vehicleClass,
                 ...(isLogistics ? { weightKg } : {}),
             });
             navigation.replace('bookingWaiting', { orderId: created.id });

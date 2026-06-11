@@ -35,23 +35,16 @@ describe('company Body', () => {
         mockGoBack.mockClear();
     });
 
-    it('TAXI bookings show STANDARD/XL buttons that navigate to map with the chosen class', () => {
+    it('TAXI bookings navigate to map', () => {
         mockRouteVehicleType = VehicleType.TAXI;
         const { getByTestId } = renderWithProviders(<Body />);
 
-        fireEvent.press(getByTestId('book-7-STANDARD'));
+        fireEvent.press(getByTestId('book-7'));
         expect(mockNavigate).toHaveBeenCalledWith('bookingMap', {
             companyId: 7,
+            companyAddress: undefined,
             vehicleType: VehicleType.TAXI,
-            preferences: { vehicleClass: 'STANDARD' },
-        });
-
-        mockNavigate.mockClear();
-        fireEvent.press(getByTestId('book-7-XL'));
-        expect(mockNavigate).toHaveBeenCalledWith('bookingMap', {
-            companyId: 7,
-            vehicleType: VehicleType.TAXI,
-            preferences: { vehicleClass: 'XL' },
+            preferences: {},
         });
     });
 
@@ -63,6 +56,7 @@ describe('company Body', () => {
 
         expect(mockNavigate).toHaveBeenCalledWith('bookingMap', {
             companyId: 7,
+            companyAddress: undefined,
             vehicleType: VehicleType.AMBULANCE,
             preferences: {},
         });
@@ -97,6 +91,5 @@ describe('company Body', () => {
         const { queryByTestId } = renderWithProviders(<Body />);
 
         expect(queryByTestId('book-7')).toBeNull();
-        expect(queryByTestId('book-7-STANDARD')).toBeNull();
     });
 });

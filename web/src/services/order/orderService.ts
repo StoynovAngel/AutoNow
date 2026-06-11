@@ -1,6 +1,5 @@
 import apiClient from '../apiClient';
 import type {Order, OrderStatus} from '../../components/order/OrderInfo';
-import type {VehicleClass} from '../vehicle/vehicleService';
 
 export interface OrderPayload {
     userId: number;
@@ -19,7 +18,6 @@ export interface OrderPayload {
     specialRequirements?: string;
     passengerCount?: number;
     luggageCount?: number;
-    vehicleClass?: VehicleClass;
     requiresAirConditioning?: boolean;
     weightKg?: number;
 }

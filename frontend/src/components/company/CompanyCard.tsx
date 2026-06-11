@@ -4,17 +4,15 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { Company } from '../../types/company';
 import { theme } from '../../constants/theme';
-import type { VehicleClass } from '../../types/booking';
 import { createStyles } from './Body.style';
 
 interface CompanyCardProps {
     company: Company;
     onCall: (phoneNumber: string) => void;
-    onBook?: (companyId: number, vehicleClass?: VehicleClass) => void;
-    showClassPicker?: boolean;
+    onBook?: (companyId: number) => void;
 }
 
-const CompanyCard = ({ company, onCall, onBook, showClassPicker }: CompanyCardProps) => {
+const CompanyCard = ({ company, onCall, onBook }: CompanyCardProps) => {
 
     const { t } = useTranslation();
     const styles = createStyles(theme);
@@ -54,32 +52,13 @@ const CompanyCard = ({ company, onCall, onBook, showClassPicker }: CompanyCardPr
                 </View>
 
                 {onBook && (
-                    showClassPicker ? (
-                        <View style={styles.bookButtonRow}>
-                            <Pressable
-                                style={styles.bookButtonHalf}
-                                onPress={() => onBook(company.id, 'STANDARD')}
-                                testID={`book-${company.id}-STANDARD`}
-                            >
-                                <Text style={styles.bookButtonText}>{t('booking-class-standard')}</Text>
-                            </Pressable>
-                            <Pressable
-                                style={styles.bookButtonHalf}
-                                onPress={() => onBook(company.id, 'XL')}
-                                testID={`book-${company.id}-XL`}
-                            >
-                                <Text style={styles.bookButtonText}>{t('booking-class-xl')}</Text>
-                            </Pressable>
-                        </View>
-                    ) : (
-                        <Pressable
-                            style={styles.bookButton}
-                            onPress={() => onBook(company.id)}
-                            testID={`book-${company.id}`}
-                        >
-                            <Text style={styles.bookButtonText}>{t('booking-book')}</Text>
-                        </Pressable>
-                    )
+                    <Pressable
+                        style={styles.bookButton}
+                        onPress={() => onBook(company.id)}
+                        testID={`book-${company.id}`}
+                    >
+                        <Text style={styles.bookButtonText}>{t('booking-book')}</Text>
+                    </Pressable>
                 )}
             </View>
 

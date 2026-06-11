@@ -15,7 +15,7 @@ jest.mock('@react-navigation/native', () => ({
         params: {
             companyId: 1,
             vehicleType: 'TAXI',
-            preferences: { vehicleClass: 'STANDARD' },
+            preferences: {},
         },
     }),
 }));
@@ -109,7 +109,6 @@ describe('BookingMapBody — estimate display', () => {
             expect(mockEstimate).toHaveBeenCalledWith({
                 vehicleType: 'TAXI',
                 distanceKm: 5.2,
-                vehicleClass: 'STANDARD',
             }),
         );
         await waitFor(() => {

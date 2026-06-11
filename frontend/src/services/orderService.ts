@@ -1,6 +1,5 @@
 import customAPI from './ApiClient';
 import type { VehicleType } from '../types/vehicle';
-import type { VehicleClass } from '../types/booking';
 
 export type OrderStatus =
     | 'CREATED'
@@ -35,7 +34,6 @@ export interface OrderRequest {
     dropoffLatitude: number;
     dropoffLongitude: number;
     distanceKm?: number;
-    vehicleClass?: VehicleClass;
     weightKg?: number;
 }
 
@@ -61,7 +59,6 @@ export interface OrderResponse {
     specialRequirements?: string;
     passengerCount?: number;
     luggageCount?: number;
-    vehicleClass?: VehicleClass;
     requiresAirConditioning?: boolean;
     cancellationReason?: string;
     createdAt?: string;
@@ -71,7 +68,6 @@ export interface OrderResponse {
 export interface OrderEstimateRequest {
     vehicleType: VehicleType;
     distanceKm: number;
-    vehicleClass?: VehicleClass;
     weightKg?: number;
 }
 

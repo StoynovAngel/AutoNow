@@ -61,13 +61,11 @@ describe('OrderInfo', () => {
         render(<OrderInfo order={makeOrder({
             passengerCount: 6,
             luggageCount: 4,
-            vehicleClass: 'XL',
             requiresAirConditioning: true,
         })} />);
 
         expect(screen.getByText('6')).toBeInTheDocument();
         expect(screen.getByText('4')).toBeInTheDocument();
-        expect(screen.getByText('XL')).toBeInTheDocument();
         expect(screen.getByText('Required')).toBeInTheDocument();
     });
 

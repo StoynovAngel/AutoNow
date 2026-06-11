@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { useCompanies } from '../../hooks/useCompanies';
 import { getVehicleOptions } from '../../constants/vehicleOptions';
 import { VehicleType } from '../../types/vehicle';
-import type { VehicleClass, BookingPreferences } from '../../types/booking';
+import type { BookingPreferences } from '../../types/booking';
 import CompanyListHeader from './CompanyListHeader';
 import CompanyCard from './CompanyCard';
 import LoadingState from './LoadingState';
@@ -44,14 +44,13 @@ const Body = () => {
         navigation.goBack();
     };
 
-    const handleBookCompany = (companyId: number, vehicleClass?: VehicleClass) => {
+    const handleBookCompany = (companyId: number) => {
         if (vehicleType === VehicleType.PROM || vehicleType === VehicleType.RENTAL) {
             navigation.navigate('vehicleList', { companyId, vehicleType });
             return;
         }
         const company = companies.find(c => c.id === companyId);
         const preferences: BookingPreferences = {
-            ...(vehicleClass ? { vehicleClass } : {}),
             ...(vehicleType === VehicleType.LOGISTICS && company?.address
                 ? { companyAddress: company.address }
                 : {}),
@@ -60,7 +59,6 @@ const Body = () => {
         navigation.navigate('bookingMap', { companyId, companyAddress, vehicleType, preferences });
     };
 
-    const showClassPicker = vehicleType === VehicleType.TAXI;
     const isBookable = vehicleType !== VehicleType.FUNERAL;
 
     return (
@@ -87,7 +85,6 @@ const Body = () => {
                                 company={company}
                                 onCall={handleCallCompany}
                                 onBook={isBookable ? handleBookCompany : undefined}
-                                showClassPicker={showClassPicker}
                             />
                         ))}
                     </View>
