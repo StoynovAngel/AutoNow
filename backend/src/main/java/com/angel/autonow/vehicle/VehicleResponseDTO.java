@@ -2,8 +2,6 @@ package com.angel.autonow.vehicle;
 
 import lombok.Builder;
 
-import java.util.Set;
-
 @Builder
 public record VehicleResponseDTO(
 		Long id,
@@ -15,7 +13,6 @@ public record VehicleResponseDTO(
 		Integer numberOfSeats,
 		Double trunkCapacity,
 		VehicleType vehicleType,
-		Set<VehicleClass> vehicleClasses,
 		Long companyId
 ) {
 

@@ -6,12 +6,13 @@ import type { Driver } from '../company/DriverInfo';
 interface AssignVehicleModalProps {
     driver: Driver;
     allVehicles: Vehicle[];
+    takenVehicleIds?: Set<number>;
     onAssign: (vehicleId: number) => Promise<void>;
     onUnassign: (vehicleId: number) => Promise<void>;
     onClose: () => void;
 }
 
-const AssignVehicleModal = ({ driver, allVehicles, onAssign, onUnassign, onClose }: AssignVehicleModalProps) => {
+const AssignVehicleModal = ({ driver, allVehicles, takenVehicleIds = new Set(), onAssign, onUnassign, onClose }: AssignVehicleModalProps) => {
     const [loading, setLoading] = useState<number | null>(null);
     const [error, setError] = useState<string | null>(null);
 
@@ -49,7 +50,7 @@ const AssignVehicleModal = ({ driver, allVehicles, onAssign, onUnassign, onClose
                     <p className="text-gray-500 text-sm text-center py-6">No vehicles available.</p>
                 ) : (
                     <div className="space-y-2 max-h-80 overflow-y-auto">
-                        {allVehicles.map(vehicle => {
+                        {allVehicles.filter(v => assignedIds.has(v.id) || !takenVehicleIds.has(v.id)).map(vehicle => {
                             const assigned = assignedIds.has(vehicle.id);
                             const isLoading = loading === vehicle.id;
                             return (

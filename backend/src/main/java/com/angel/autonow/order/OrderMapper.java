@@ -15,7 +15,6 @@ public interface OrderMapper {
 	@Mapping(source = "vehicle.id", target = "vehicleId")
 	@Mapping(source = "driver", target = "driver", qualifiedByName = "driverToInfo")
 	@Mapping(source = "vehicle", target = "vehicle", qualifiedByName = "vehicleToInfo")
-	@Mapping(target = "vehicleClass", ignore = true)
 	@Mapping(target = "passengerCount", ignore = true)
 	@Mapping(target = "luggageCount", ignore = true)
 	@Mapping(target = "requiresAirConditioning", ignore = true)
@@ -26,7 +25,6 @@ public interface OrderMapper {
 		OrderResponseDTO base = toBaseDTO(order);
 		if (order instanceof TaxiOrderEntity taxi) {
 			return base.toBuilder()
-					.vehicleClass(taxi.getVehicleClass())
 					.passengerCount(taxi.getPassengerCount())
 					.luggageCount(taxi.getLuggageCount())
 					.requiresAirConditioning(taxi.getRequiresAirConditioning())

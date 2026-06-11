@@ -61,29 +61,7 @@ class VehicleControllerIT {
 				.andExpect(jsonPath("$.brand").value("Toyota"))
 				.andExpect(jsonPath("$.model").value("Camry"))
 				.andExpect(jsonPath("$.licensePlate").value("CB1234AB"))
-				.andExpect(jsonPath("$.vehicleType").value("TAXI"))
-				.andExpect(jsonPath("$.vehicleClasses").isArray())
-				.andExpect(jsonPath("$.vehicleClasses[0]").value("STANDARD"));
-	}
-
-	@Test
-	void createVehicle_xlSeating_returnsXlOnly() throws Exception {
-		var request = VehicleRequestDTO.builder()
-				.brand("Mercedes")
-				.model("V-Class")
-				.licensePlate("CB7777AC")
-				.airConditioning(true)
-				.numberOfSeats(7)
-				.trunkCapacity(900.0)
-				.vehicleType(VehicleType.TAXI)
-				.build();
-
-		mockMvc.perform(post("/api/vehicles")
-						.with(TestData.adminJwt())
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(objectMapper.writeValueAsString(request)))
-				.andExpect(status().isCreated())
-				.andExpect(jsonPath("$.vehicleClasses", org.hamcrest.Matchers.contains("XL")));
+				.andExpect(jsonPath("$.vehicleType").value("TAXI"));
 	}
 
 	@Test

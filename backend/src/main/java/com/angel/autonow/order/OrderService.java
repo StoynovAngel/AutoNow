@@ -215,7 +215,6 @@ public class OrderService {
 					.distanceKm(request.distanceKm())
 					.estimatedDurationMinutes(request.estimatedDurationMinutes())
 					.specialRequirements(request.specialRequirements())
-					.vehicleClass(request.vehicleClass())
 					.passengerCount(request.passengerCount())
 					.luggageCount(request.luggageCount())
 					.requiresAirConditioning(request.requiresAirConditioning())
@@ -252,7 +251,6 @@ public class OrderService {
 
 	private void applySubtypeFields(OrderRequestDTO request, OrderEntity order) {
 		if (order instanceof TaxiOrderEntity taxi) {
-			taxi.setVehicleClass(request.vehicleClass());
 			taxi.setPassengerCount(request.passengerCount());
 			taxi.setLuggageCount(request.luggageCount());
 			taxi.setRequiresAirConditioning(request.requiresAirConditioning());
@@ -265,7 +263,7 @@ public class OrderService {
 		if (request.vehicleType() == VehicleType.LOGISTICS) {
 			return pricingService.calculateForLogistics(request.distanceKm(), request.weightKg());
 		}
-		return pricingService.calculatePrice(request.distanceKm(), request.vehicleType(), request.vehicleClass());
+		return pricingService.calculatePrice(request.distanceKm(), request.vehicleType());
 	}
 
 	private void validateAssignment(OrderEntity order, DriverEntity driver, VehicleEntity vehicle) {

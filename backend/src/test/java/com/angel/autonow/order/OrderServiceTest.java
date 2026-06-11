@@ -7,7 +7,6 @@ import com.angel.autonow.driver.DriverRepository;
 import com.angel.autonow.pricing.PricingService;
 import com.angel.autonow.user.UserEntity;
 import com.angel.autonow.user.UserRepository;
-import com.angel.autonow.vehicle.VehicleClass;
 import com.angel.autonow.vehicle.VehicleEntity;
 import com.angel.autonow.vehicle.VehicleRepository;
 import com.angel.autonow.vehicle.VehicleType;
@@ -409,20 +408,20 @@ class OrderServiceTest {
 				.userId(1L).vehicleType(VehicleType.TAXI)
 				.pickupAddress(TestData.DEFAULT_PICKUP_ADDRESS).pickupLatitude(TestData.DEFAULT_PICKUP_LAT).pickupLongitude(TestData.DEFAULT_PICKUP_LNG)
 				.dropoffAddress(TestData.DEFAULT_DROPOFF_ADDRESS).dropoffLatitude(TestData.DEFAULT_DROPOFF_LAT).dropoffLongitude(TestData.DEFAULT_DROPOFF_LNG)
-				.distanceKm(10.0).vehicleClass(VehicleClass.STANDARD)
+				.distanceKm(10.0)
 				.build();
 		UserEntity user = UserEntity.builder().id(1L).build();
 		TaxiOrderEntity saved = TaxiOrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).estimatedPrice(14.50).createdAt(NOW).build();
 		OrderResponseDTO response = TestData.createOrderResponse(1L, 1L, OrderStatus.CREATED, NOW);
 
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-		when(pricingService.calculatePrice(10.0, VehicleType.TAXI, VehicleClass.STANDARD)).thenReturn(14.50);
+		when(pricingService.calculatePrice(10.0, VehicleType.TAXI)).thenReturn(14.50);
 		when(orderRepository.save(any(OrderEntity.class))).thenReturn(saved);
 		when(orderMapper.toDTO(saved)).thenReturn(response);
 
 		orderService.createOrder(request);
 
-		verify(pricingService).calculatePrice(10.0, VehicleType.TAXI, VehicleClass.STANDARD);
+		verify(pricingService).calculatePrice(10.0, VehicleType.TAXI);
 	}
 
 	@Test
@@ -471,7 +470,7 @@ class OrderServiceTest {
 	@Test
 	void estimate_delegatesToPricingService() {
 		OrderEstimateRequestDTO request = OrderEstimateRequestDTO.builder()
-				.vehicleType(VehicleType.TAXI).distanceKm(10.0).vehicleClass(VehicleClass.STANDARD)
+				.vehicleType(VehicleType.TAXI).distanceKm(10.0)
 				.build();
 		OrderEstimateResponseDTO response = OrderEstimateResponseDTO.builder()
 				.estimatedPrice(14.50).currency("EUR").distanceKm(10.0).build();

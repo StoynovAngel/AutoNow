@@ -1,6 +1,5 @@
 package com.angel.autonow.order;
 
-import com.angel.autonow.vehicle.VehicleClass;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
@@ -19,10 +18,6 @@ import lombok.experimental.SuperBuilder;
 @DiscriminatorValue("TAXI")
 @EqualsAndHashCode(callSuper = true)
 public class TaxiOrderEntity extends OrderEntity {
-
-	@Enumerated(EnumType.STRING)
-	@Column(name = "vehicle_class")
-	private VehicleClass vehicleClass;
 
 	@Positive(message = "Passenger count must be positive")
 	@Column(name = "passenger_count")

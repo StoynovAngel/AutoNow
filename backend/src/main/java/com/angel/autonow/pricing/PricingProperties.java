@@ -7,7 +7,6 @@ public record PricingProperties(
 		Double baseFare,
 		Double ambulanceBaseFare,
 		Double ratePerKm,
-		Double xlMultiplier,
 		Double premiumMultiplier,
 		Double nightMultiplier,
 		Integer nightStartHour,

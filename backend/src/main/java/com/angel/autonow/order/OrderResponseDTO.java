@@ -1,6 +1,5 @@
 package com.angel.autonow.order;
 
-import com.angel.autonow.vehicle.VehicleClass;
 import com.angel.autonow.vehicle.VehicleType;
 import lombok.Builder;
 
@@ -29,7 +28,6 @@ public record OrderResponseDTO(
 		String specialRequirements,
 		Integer passengerCount,
 		Integer luggageCount,
-		VehicleClass vehicleClass,
 		Boolean requiresAirConditioning,
 		Double weightKg,
 		String cancellationReason,

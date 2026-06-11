@@ -1,6 +1,5 @@
 package com.angel.autonow.order;
 
-import com.angel.autonow.vehicle.VehicleClass;
 import com.angel.autonow.vehicle.VehicleType;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
@@ -57,8 +56,6 @@ public record OrderRequestDTO(
 
 		@Min(value = 0, message = "Luggage count cannot be negative")
 		Integer luggageCount,
-
-		VehicleClass vehicleClass,
 
 		Boolean requiresAirConditioning,
 
