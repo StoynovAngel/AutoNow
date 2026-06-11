@@ -30,7 +30,7 @@ const Company = () => {
         createCompany,
         updateCompany,
         deleteCompany,
-    } = useCompanies();
+    } = useCompanies(isCompanyAdmin);
 
     const {
         drivers,

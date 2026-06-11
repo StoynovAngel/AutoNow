@@ -55,6 +55,13 @@ public class CompanyService {
 		return companyRepository.findById(id).map(companyMapper::toDTO);
 	}
 
+	public Optional<CompanyResponseDTO> getCompanyByUserId(Long userId) {
+		return userRepository.findById(userId)
+				.map(UserEntity::getCompany)
+				.filter(company -> company != null)
+				.map(companyMapper::toDTO);
+	}
+
 	public List<CompanyResponseDTO> getAllCompanies() {
 		return companyRepository.findAll().stream()
 				.map(companyMapper::toDTO)

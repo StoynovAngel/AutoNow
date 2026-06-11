@@ -39,6 +39,19 @@ describe('useCompanies', () => {
         expect(result.current.error).toBeNull();
     });
 
+    it('calls getMyCompany when isCompanyAdmin is true', async () => {
+        const c = company(1);
+        vi.mocked(companyService.getMyCompany).mockResolvedValue([c]);
+
+        const { result } = renderHook(() => useCompanies(true));
+
+        await waitFor(() => expect(result.current.loading).toBe(false));
+
+        expect(companyService.getMyCompany).toHaveBeenCalled();
+        expect(companyService.getAllCompanies).not.toHaveBeenCalled();
+        expect(result.current.companies).toEqual([c]);
+    });
+
     it('sets an error message when the fetch fails', async () => {
         vi.mocked(companyService.getAllCompanies).mockRejectedValue(new Error('boom'));
 
