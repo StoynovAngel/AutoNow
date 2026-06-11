@@ -59,7 +59,7 @@ class OrderServiceTest {
 	void createOrder_returnOrderResponse() {
 		OrderRequestDTO request = TestData.createOrderRequest(1L);
 		UserEntity user = UserEntity.builder().id(1L).build();
-		TaxiOrderEntity saved = TaxiOrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).createdAt(NOW).build();
+		OrderEntity saved = OrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).createdAt(NOW).build();
 		OrderResponseDTO response = TestData.createOrderResponse(1L, 1L, OrderStatus.CREATED, NOW);
 
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
@@ -97,7 +97,7 @@ class OrderServiceTest {
 		UserEntity user = UserEntity.builder().id(1L).build();
 		DriverEntity driver = DriverEntity.builder().id(2L).build();
 		VehicleEntity vehicle = VehicleEntity.builder().id(3L).build();
-		TaxiOrderEntity saved = TaxiOrderEntity.builder().id(1L).user(user).driver(driver).vehicle(vehicle)
+		OrderEntity saved = OrderEntity.builder().id(1L).user(user).driver(driver).vehicle(vehicle)
 				.vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).createdAt(NOW).build();
 		OrderResponseDTO response = OrderResponseDTO.builder()
 				.id(1L).userId(1L).driverId(2L).vehicleId(3L)
@@ -283,8 +283,8 @@ class OrderServiceTest {
 	void updateOrder_returnUpdatedResponse() {
 		OrderRequestDTO request = TestData.createOrderRequest(1L);
 		UserEntity user = UserEntity.builder().id(1L).build();
-		TaxiOrderEntity existing = TaxiOrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).createdAt(NOW).build();
-		TaxiOrderEntity saved = TaxiOrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).createdAt(NOW).build();
+		OrderEntity existing = OrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).createdAt(NOW).build();
+		OrderEntity saved = OrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).createdAt(NOW).build();
 		OrderResponseDTO response = TestData.createOrderResponse(1L, 1L, OrderStatus.CREATED, NOW);
 
 		when(orderRepository.findById(1L)).thenReturn(Optional.of(existing));
@@ -369,7 +369,7 @@ class OrderServiceTest {
 	@Test
 	void updateOrder_vehicleTypeChange_throwsConflict() {
 		UserEntity user = UserEntity.builder().id(1L).build();
-		TaxiOrderEntity existing = TaxiOrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).createdAt(NOW).build();
+		OrderEntity existing = OrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).createdAt(NOW).build();
 		OrderRequestDTO request = OrderRequestDTO.builder()
 				.userId(1L).vehicleType(VehicleType.LOGISTICS)
 				.pickupAddress("A").pickupLatitude(1.0).pickupLongitude(1.0)
@@ -411,7 +411,7 @@ class OrderServiceTest {
 				.distanceKm(10.0)
 				.build();
 		UserEntity user = UserEntity.builder().id(1L).build();
-		TaxiOrderEntity saved = TaxiOrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).estimatedPrice(14.50).createdAt(NOW).build();
+		OrderEntity saved = OrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).estimatedPrice(14.50).createdAt(NOW).build();
 		OrderResponseDTO response = TestData.createOrderResponse(1L, 1L, OrderStatus.CREATED, NOW);
 
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
@@ -454,7 +454,7 @@ class OrderServiceTest {
 				.dropoffAddress(TestData.DEFAULT_DROPOFF_ADDRESS).dropoffLatitude(TestData.DEFAULT_DROPOFF_LAT).dropoffLongitude(TestData.DEFAULT_DROPOFF_LNG)
 				.build();
 		UserEntity user = UserEntity.builder().id(1L).build();
-		TaxiOrderEntity saved = TaxiOrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).createdAt(NOW).build();
+		OrderEntity saved = OrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).createdAt(NOW).build();
 		OrderResponseDTO response = TestData.createOrderResponse(1L, 1L, OrderStatus.CREATED, NOW);
 
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));

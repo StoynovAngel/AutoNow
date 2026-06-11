@@ -16,9 +16,6 @@ export interface OrderPayload {
     distanceKm?: number;
     estimatedDurationMinutes?: number;
     specialRequirements?: string;
-    passengerCount?: number;
-    luggageCount?: number;
-    requiresAirConditioning?: boolean;
     weightKg?: number;
 }
 

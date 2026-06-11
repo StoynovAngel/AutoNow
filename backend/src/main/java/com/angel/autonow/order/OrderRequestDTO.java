@@ -3,7 +3,6 @@ package com.angel.autonow.order;
 import com.angel.autonow.vehicle.VehicleType;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -50,14 +49,6 @@ public record OrderRequestDTO(
 		Integer estimatedDurationMinutes,
 
 		String specialRequirements,
-
-		@Positive(message = "Passenger count must be positive")
-		Integer passengerCount,
-
-		@Min(value = 0, message = "Luggage count cannot be negative")
-		Integer luggageCount,
-
-		Boolean requiresAirConditioning,
 
 		@DecimalMin(value = "0.1", message = "Weight must be at least 0.1 kg")
 		@DecimalMax(value = "5000.0", message = "Weight cannot exceed 5000 kg")

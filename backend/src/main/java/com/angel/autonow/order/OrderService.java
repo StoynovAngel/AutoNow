@@ -203,23 +203,6 @@ public class OrderService {
 	// --- private helpers ---
 
 	private OrderEntity buildEntity(OrderRequestDTO request) {
-		if (request.vehicleType() == VehicleType.TAXI) {
-			return TaxiOrderEntity.builder()
-					.vehicleType(request.vehicleType())
-					.pickupAddress(request.pickupAddress())
-					.pickupLatitude(request.pickupLatitude())
-					.pickupLongitude(request.pickupLongitude())
-					.dropoffAddress(request.dropoffAddress())
-					.dropoffLatitude(request.dropoffLatitude())
-					.dropoffLongitude(request.dropoffLongitude())
-					.distanceKm(request.distanceKm())
-					.estimatedDurationMinutes(request.estimatedDurationMinutes())
-					.specialRequirements(request.specialRequirements())
-					.passengerCount(request.passengerCount())
-					.luggageCount(request.luggageCount())
-					.requiresAirConditioning(request.requiresAirConditioning())
-					.build();
-		}
 		if (request.vehicleType() == VehicleType.LOGISTICS) {
 			return LogisticsOrderEntity.builder()
 					.vehicleType(request.vehicleType())
@@ -250,11 +233,7 @@ public class OrderService {
 	}
 
 	private void applySubtypeFields(OrderRequestDTO request, OrderEntity order) {
-		if (order instanceof TaxiOrderEntity taxi) {
-			taxi.setPassengerCount(request.passengerCount());
-			taxi.setLuggageCount(request.luggageCount());
-			taxi.setRequiresAirConditioning(request.requiresAirConditioning());
-		} else if (order instanceof LogisticsOrderEntity logistics) {
+		if (order instanceof LogisticsOrderEntity logistics) {
 			logistics.setWeightKg(request.weightKg());
 		}
 	}
