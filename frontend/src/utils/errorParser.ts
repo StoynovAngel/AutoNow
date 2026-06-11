@@ -1,23 +1,21 @@
-export const parseApiError = (err: any): string => {
+export const parseApiError = (err: unknown): string => {
     try {
-        if (err?.response?.data?.errors) {
-            const errors = err.response.data.errors;
-            if (typeof errors === 'object' && errors !== null) {
-                const errorMessages = Object.values(errors)
+        if (typeof err === 'object' && err !== null) {
+            const e = err as Record<string, unknown>;
+            const data = (e?.response as Record<string, unknown>)?.data as Record<string, unknown> | undefined;
+
+            if (data?.errors && typeof data.errors === 'object' && data.errors !== null) {
+                const errorMessages = Object.values(data.errors)
                     .filter(msg => typeof msg === 'string')
                     .join(', ');
-                if (errorMessages) {
-                    return errorMessages;
-                }
+                if (errorMessages) return errorMessages;
             }
-        }
 
-        if (err?.response?.data?.detail) {
-            return String(err.response.data.detail);
-        }
+            if (typeof data?.detail === 'string') return data.detail;
 
-        if (err?.message) {
-            return String(err.message);
+            if (typeof (e as { message?: unknown }).message === 'string') {
+                return (e as { message: string }).message;
+            }
         }
     } catch (parseError) {
         console.error('Error parsing API error:', parseError);

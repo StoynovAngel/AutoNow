@@ -1,6 +1,8 @@
-import type { ReactElement } from 'react';
+import React from 'react';
 import { render } from '@testing-library/react-native';
-import { ThemeProvider } from '../hooks/useTheme';
+import type { ReactElement } from 'react';
+import type { RenderOptions } from '@testing-library/react-native';
 
-export const renderWithProviders = (ui: ReactElement) =>
-    render(<ThemeProvider>{ui}</ThemeProvider>);
+export function renderWithProviders(ui: ReactElement, options?: RenderOptions) {
+    return render(ui, options);
+}

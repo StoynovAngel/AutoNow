@@ -1,13 +1,13 @@
 import React from 'react';
-import { View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from './BookingWaiting.style';
 import BookingWaitingBody from '../../components/booking/BookingWaitingBody';
 
 const BookingWaiting = () => {
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
             <BookingWaitingBody />
-        </View>
+        </SafeAreaView>
     );
 };
 

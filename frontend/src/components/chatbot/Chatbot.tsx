@@ -1,17 +1,20 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import {
+    KeyboardAvoidingView,
     Modal,
+    Platform,
     Pressable,
     ScrollView,
     Text,
     TextInput,
     View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useTheme } from '../../hooks/useTheme';
+import { theme } from '../../constants/theme';
 import type { RootStackParamList } from '../../navigation/Navigation';
 import { VehicleType } from '../../types/vehicle';
 import type { ChatbotMessage } from '../../types/chatbot';
@@ -19,10 +22,11 @@ import { sendChatbotMessage } from '../../services/chatbotService';
 import { createStyles } from './Chatbot.style';
 
 const Chatbot = () => {
-    const { theme } = useTheme();
+
     const styles = createStyles(theme);
     const { t } = useTranslation();
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+    const insets = useSafeAreaInsets();
 
     const [open, setOpen] = useState(false);
     const [input, setInput] = useState('');
@@ -32,18 +36,15 @@ const Chatbot = () => {
     const [recommendedService, setRecommendedService] = useState<VehicleType | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const scrollRef = useRef<ScrollView | null>(null);
 
-    const close = useCallback(() => {
+    const close = () => {
         setOpen(false);
         setError(null);
-    }, []);
+    };
 
-    const handleSend = useCallback(async () => {
+    const handleSend = async () => {
         const trimmed = input.trim();
-        if (!trimmed || loading) {
-            return;
-        }
+        if (!trimmed || loading) return;
         setError(null);
         setRecommendedService(null);
         const nextHistory: ChatbotMessage[] = [...messages, { role: 'user', content: trimmed }];
@@ -61,24 +62,21 @@ const Chatbot = () => {
             setError(t('chatbot-error'));
         } finally {
             setLoading(false);
-            requestAnimationFrame(() => scrollRef.current?.scrollToEnd({ animated: true }));
         }
-    }, [input, loading, messages, t]);
+    };
 
-    const goToRecommended = useCallback(() => {
-        if (!recommendedService) {
-            return;
-        }
+    const goToRecommended = () => {
+        if (!recommendedService) return;
         close();
         navigation.navigate('companyList', { vehicleType: recommendedService });
-    }, [recommendedService, close, navigation]);
+    };
 
     return (
         <>
             <Pressable
                 accessibilityRole="button"
                 accessibilityLabel={t('chatbot-open')}
-                style={styles.fab}
+                style={[styles.fab, { bottom: 24 + insets.bottom }]}
                 onPress={() => setOpen(true)}
             >
                 <MaterialIcons name="chat" size={28} color="#FFFFFF" />
@@ -88,10 +86,15 @@ const Chatbot = () => {
                 visible={open}
                 animationType="slide"
                 transparent
+                statusBarTranslucent
                 onRequestClose={close}
             >
                 <View style={styles.modalBackdrop}>
-                    <View style={styles.sheet}>
+                    <KeyboardAvoidingView
+                        style={styles.sheetWrapper}
+                        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                    >
+                    <View style={[styles.sheet, { paddingBottom: 16 + insets.bottom }]}>
                         <View style={styles.header}>
                             <Text style={styles.headerTitle}>{t('chatbot-title')}</Text>
                             <Pressable
@@ -105,9 +108,8 @@ const Chatbot = () => {
                         </View>
 
                         <ScrollView
-                            ref={scrollRef}
                             style={styles.messages}
-                            onContentSizeChange={() => scrollRef.current?.scrollToEnd({ animated: true })}
+                            keyboardShouldPersistTaps="handled"
                         >
                             {messages.map((m, idx) => (
                                 <View
@@ -168,6 +170,7 @@ const Chatbot = () => {
                             </Pressable>
                         </View>
                     </View>
+                    </KeyboardAvoidingView>
                 </View>
             </Modal>
         </>

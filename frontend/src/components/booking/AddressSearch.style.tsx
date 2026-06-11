@@ -31,6 +31,7 @@ export const createStyles = (theme: any) => StyleSheet.create({
         borderWidth: 1,
         borderColor: theme.colors.border,
         overflow: 'hidden',
+        maxHeight: 200,
     },
     suggestion: {
         paddingVertical: 12,

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useTheme } from '../../hooks/useTheme';
+import { theme } from '../../constants/theme';
 import { createStyles } from './Body.style';
 import { useTranslation } from 'react-i18next';
 
@@ -11,7 +11,7 @@ interface ErrorStateProps {
 }
 
 const ErrorState = ({ error, onRetry }: ErrorStateProps) => {
-    const { theme } = useTheme();
+
     const styles = createStyles(theme);
     const { t } = useTranslation();
 

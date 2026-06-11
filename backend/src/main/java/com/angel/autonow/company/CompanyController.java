@@ -28,9 +28,7 @@ public class CompanyController {
 	@PostMapping
 	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'COMPANY_ADMIN')")
 	public ResponseEntity<CompanyResponseDTO> createCompany(@Valid @RequestBody CompanyRequestDTO request) {
-		return companyService.createCompany(request)
-				.map(company -> ResponseEntity.status(HttpStatus.CREATED).body(company))
-				.orElse(ResponseEntity.badRequest().build());
+		return ResponseEntity.status(HttpStatus.CREATED).body(companyService.createCompany(request));
 	}
 
 	@PostMapping("/{id}/join")
@@ -43,8 +41,10 @@ public class CompanyController {
 
 	@GetMapping("/{id}")
 	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'DRIVER', 'COMPANY_ADMIN')")
-	public CompanyResponseDTO getCompanyById(@PathVariable Long id) {
-		return companyService.getCompanyById(id).orElse(null);
+	public ResponseEntity<CompanyResponseDTO> getCompanyById(@PathVariable Long id) {
+		return companyService.getCompanyById(id)
+				.map(ResponseEntity::ok)
+				.orElse(ResponseEntity.notFound().build());
 	}
 
 	@GetMapping

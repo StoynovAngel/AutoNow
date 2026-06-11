@@ -219,6 +219,11 @@ const Drivers = () => {
                 <AssignVehicleModal
                     driver={assigningDriver}
                     allVehicles={vehicles}
+                    takenVehicleIds={new Set(
+                        drivers
+                            .filter(d => d.id !== assigningDriver.id)
+                            .flatMap(d => d.vehicleIds)
+                    )}
                     onAssign={handleAssign}
                     onUnassign={handleUnassign}
                     onClose={() => setAssigningDriver(null)}

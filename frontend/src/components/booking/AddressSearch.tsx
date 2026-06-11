@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, TextInput, Pressable, ActivityIndicator } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, TextInput, Pressable, ActivityIndicator, ScrollView } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '../../hooks/useTheme';
+import { theme } from '../../constants/theme';
 import { searchAddress } from '../../services/mapboxService';
 import type { AddressSuggestion, Coordinate } from '../../services/mapboxService';
 import { createStyles } from './AddressSearch.style';
@@ -25,7 +25,7 @@ const AddressSearch = ({
     placeholder,
     testID,
 }: AddressSearchProps) => {
-    const { theme } = useTheme();
+
     const { t } = useTranslation();
     const styles = createStyles(theme);
 
@@ -33,7 +33,6 @@ const AddressSearch = ({
     const [suggestions, setSuggestions] = useState<AddressSuggestion[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | undefined>();
-    const requestIdRef = useRef(0);
 
     useEffect(() => {
         if (selected) return;
@@ -44,22 +43,17 @@ const AddressSearch = ({
             return;
         }
 
-        const requestId = ++requestIdRef.current;
         setLoading(true);
         const handle = setTimeout(async () => {
             try {
                 const results = await searchAddress(trimmed, proximity);
-                if (requestIdRef.current === requestId) {
-                    setSuggestions(results);
-                    setError(undefined);
-                }
+                setSuggestions(results);
+                setError(undefined);
             } catch (e) {
-                if (requestIdRef.current === requestId) {
-                    setError(e instanceof Error ? e.message : 'Search failed');
-                    setSuggestions([]);
-                }
+                setError(e instanceof Error ? e.message : 'Search failed');
+                setSuggestions([]);
             } finally {
-                if (requestIdRef.current === requestId) setLoading(false);
+                setLoading(false);
             }
         }, debounceMs);
 
@@ -123,7 +117,12 @@ const AddressSearch = ({
                 </Text>
             )}
             {suggestions.length > 0 && (
-                <View style={styles.suggestions} testID={testID ? `${testID}-suggestions` : 'address-suggestions'}>
+                <ScrollView
+                    style={styles.suggestions}
+                    keyboardShouldPersistTaps="handled"
+                    nestedScrollEnabled
+                    testID={testID ? `${testID}-suggestions` : 'address-suggestions'}
+                >
                     {suggestions.map((s) => (
                         <Pressable
                             key={s.id}
@@ -136,7 +135,7 @@ const AddressSearch = ({
                             </Text>
                         </Pressable>
                     ))}
-                </View>
+                </ScrollView>
             )}
         </View>
     );

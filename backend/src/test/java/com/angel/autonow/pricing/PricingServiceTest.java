@@ -2,7 +2,6 @@ package com.angel.autonow.pricing;
 
 import com.angel.autonow.order.OrderEstimateRequestDTO;
 import com.angel.autonow.order.OrderEstimateResponseDTO;
-import com.angel.autonow.vehicle.VehicleClass;
 import com.angel.autonow.vehicle.VehicleType;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +18,7 @@ class PricingServiceTest {
 	private static final ZoneId SOFIA = ZoneId.of("Europe/Sofia");
 
 	private static final PricingProperties PROPERTIES = new PricingProperties(
-			2.50, 60.00, 1.20, 1.30, 1.60, 1.20, 22, 6, "Europe/Sofia", "EUR", 5.00, 0.05
+			2.50, 60.00, 1.20, 1.60, 1.20, 22, 6, "Europe/Sofia", "EUR", 5.00, 0.05
 	);
 
 	private PricingService serviceAt(int hour) {
@@ -28,9 +27,9 @@ class PricingServiceTest {
 	}
 
 	@Test
-	void calculatePrice_standardDayTime() {
+	void calculatePrice_dayTime() {
 		PricingService service = serviceAt(14);
-		double price = service.calculatePrice(10.0, VehicleClass.STANDARD);
+		double price = service.calculatePrice(10.0, VehicleType.TAXI);
 		assertEquals(2.50 + 10.0 * 1.20, price, 0.001);
 	}
 
@@ -38,56 +37,35 @@ class PricingServiceTest {
 	void calculatePrice_negativeDistance_throwsIllegalArgument() {
 		PricingService service = serviceAt(14);
 		IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-				() -> service.calculatePrice(-1.0, VehicleClass.STANDARD));
+				() -> service.calculatePrice(-1.0, VehicleType.TAXI));
 		assertEquals(true, ex.getMessage().contains("-1.0"));
 	}
 
 	@Test
-	void calculatePrice_xlDayTime() {
-		PricingService service = serviceAt(14);
-		double price = service.calculatePrice(10.0, VehicleClass.XL);
-		assertEquals(2.50 + 10.0 * 1.20 * 1.30, price, 0.001);
-	}
-
-	@Test
-	void calculatePrice_nullClass_treatedAsStandard() {
-		PricingService service = serviceAt(14);
-		double price = service.calculatePrice(10.0, null);
-		assertEquals(2.50 + 10.0 * 1.20, price, 0.001);
-	}
-
-	@Test
-	void calculatePrice_standardAtNight_appliesNightMultiplier() {
+	void calculatePrice_atNight_appliesNightMultiplier() {
 		PricingService service = serviceAt(23);
-		double price = service.calculatePrice(10.0, VehicleClass.STANDARD);
+		double price = service.calculatePrice(10.0, VehicleType.TAXI);
 		assertEquals(2.50 + 10.0 * 1.20 * 1.20, price, 0.001);
-	}
-
-	@Test
-	void calculatePrice_xlAtNight_multipliersCompose() {
-		PricingService service = serviceAt(23);
-		double price = service.calculatePrice(10.0, VehicleClass.XL);
-		assertEquals(2.50 + 10.0 * 1.20 * 1.30 * 1.20, price, 0.001);
 	}
 
 	@Test
 	void calculatePrice_atNightStartBoundary_isNight() {
 		PricingService service = serviceAt(22);
-		double price = service.calculatePrice(10.0, VehicleClass.STANDARD);
+		double price = service.calculatePrice(10.0, VehicleType.TAXI);
 		assertEquals(2.50 + 10.0 * 1.20 * 1.20, price, 0.001);
 	}
 
 	@Test
 	void calculatePrice_atNightEndBoundary_isDay() {
 		PricingService service = serviceAt(6);
-		double price = service.calculatePrice(10.0, VehicleClass.STANDARD);
+		double price = service.calculatePrice(10.0, VehicleType.TAXI);
 		assertEquals(2.50 + 10.0 * 1.20, price, 0.001);
 	}
 
 	@Test
 	void calculatePrice_pastMidnight_isNight() {
 		PricingService service = serviceAt(3);
-		double price = service.calculatePrice(10.0, VehicleClass.STANDARD);
+		double price = service.calculatePrice(10.0, VehicleType.TAXI);
 		assertEquals(2.50 + 10.0 * 1.20 * 1.20, price, 0.001);
 	}
 
@@ -97,7 +75,6 @@ class PricingServiceTest {
 		OrderEstimateRequestDTO request = OrderEstimateRequestDTO.builder()
 				.vehicleType(VehicleType.TAXI)
 				.distanceKm(7.3)
-				.vehicleClass(VehicleClass.STANDARD)
 				.build();
 
 		OrderEstimateResponseDTO result = service.estimate(request);
@@ -156,7 +133,6 @@ class PricingServiceTest {
 				.distanceKm(10.0)
 				.build();
 		OrderEstimateResponseDTO result = service.estimate(request);
-		// distance is doubled: hospital→patient + patient→hospital
 		assertEquals(round(60.00 + 20.0 * 1.20), result.estimatedPrice(), 0.001);
 	}
 
@@ -169,6 +145,14 @@ class PricingServiceTest {
 				.build();
 		OrderEstimateResponseDTO result = service.estimate(request);
 		assertEquals(round(60.00 + 20.0 * 1.20 * 1.20), result.estimatedPrice(), 0.001);
+	}
+
+	@Test
+	void calculatePrice_logisticsVehicleType_throwsIllegalArgument() {
+		PricingService service = serviceAt(14);
+		IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+				() -> service.calculatePrice(10.0, VehicleType.LOGISTICS));
+		assertEquals(true, ex.getMessage().contains("LOGISTICS"));
 	}
 
 	private static double round(double value) {

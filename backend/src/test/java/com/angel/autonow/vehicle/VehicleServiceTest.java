@@ -29,6 +29,9 @@ class VehicleServiceTest {
 	@Mock
 	private CompanyRepository companyRepository;
 
+	@Mock
+	private com.angel.autonow.order.OrderRepository orderRepository;
+
 	@InjectMocks
 	private VehicleService vehicleService;
 

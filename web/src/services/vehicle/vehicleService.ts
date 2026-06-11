@@ -1,9 +1,5 @@
 import apiClient from '../apiClient';
 
-export type VehicleClass = 'STANDARD' | 'XL';
-
-export const VEHICLE_CLASSES: VehicleClass[] = ['STANDARD', 'XL'];
-
 export interface VehiclePayload {
     brand: string;
     model: string;

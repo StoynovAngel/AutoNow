@@ -35,26 +35,24 @@ public class OrderService {
 
 	@Transactional
 	public Optional<OrderResponseDTO> createOrder(OrderRequestDTO request) {
-		Optional<UserEntity> user = userRepository.findById(request.userId());
-		if (user.isEmpty()) {
-			return Optional.empty();
-		}
+		Optional<UserEntity> userOpt = userRepository.findById(request.userId());
+		if (userOpt.isEmpty()) return Optional.empty();
 
 		if (orderRepository.existsByUserIdAndStatusIn(request.userId(), ACTIVE_STATUSES)) {
 			throw new OrderConflictException("User already has an active order");
 		}
 
 		OrderEntity order = buildEntity(request);
-		order.setUser(user.get());
+		order.setUser(userOpt.get());
 
 		if (request.driverId() != null) {
-			var driver = driverRepository.findById(request.driverId());
+			Optional<DriverEntity> driver = driverRepository.findById(request.driverId());
 			if (driver.isEmpty()) return Optional.empty();
 			order.setDriver(driver.get());
 		}
 
 		if (request.vehicleId() != null) {
-			var vehicle = vehicleRepository.findById(request.vehicleId());
+			Optional<VehicleEntity> vehicle = vehicleRepository.findById(request.vehicleId());
 			if (vehicle.isEmpty()) return Optional.empty();
 			order.setVehicle(vehicle.get());
 		}
@@ -106,8 +104,8 @@ public class OrderService {
 	public Optional<OrderResponseDTO> updateOrder(Long id, OrderRequestDTO request) {
 		Optional<OrderEntity> existing = orderRepository.findById(id);
 		if (existing.isEmpty()) return Optional.empty();
-
 		OrderEntity order = existing.get();
+
 		if (order.getVehicleType() != request.vehicleType()) {
 			throw new OrderConflictException("Vehicle type cannot be changed after order creation");
 		}
@@ -117,14 +115,14 @@ public class OrderService {
 
 		DriverEntity driver = null;
 		if (request.driverId() != null) {
-			var driverOpt = driverRepository.findById(request.driverId());
+			Optional<DriverEntity> driverOpt = driverRepository.findById(request.driverId());
 			if (driverOpt.isEmpty()) return Optional.empty();
 			driver = driverOpt.get();
 		}
 
 		VehicleEntity vehicle = null;
 		if (request.vehicleId() != null) {
-			var vehicleOpt = vehicleRepository.findById(request.vehicleId());
+			Optional<VehicleEntity> vehicleOpt = vehicleRepository.findById(request.vehicleId());
 			if (vehicleOpt.isEmpty()) return Optional.empty();
 			vehicle = vehicleOpt.get();
 		}
@@ -181,61 +179,21 @@ public class OrderService {
 
 	@Transactional
 	public Optional<OrderResponseDTO> cancelOrder(Long id, String callerEmail) {
-		Optional<OrderEntity> existing = orderRepository.findById(id);
-		if (existing.isEmpty()) return Optional.empty();
-
-		OrderEntity order = existing.get();
-		UserEntity owner = order.getUser();
-		if (owner == null || !owner.getEmail().equals(callerEmail)) {
-			throw new OrderForbiddenException("Only the order owner can cancel this order");
-		}
-
-		return Optional.of(transitionToCanceled(order));
+		return orderRepository.findById(id).map(order -> {
+			UserEntity owner = order.getUser();
+			if (owner == null || !owner.getEmail().equals(callerEmail)) {
+				throw new OrderForbiddenException("Only the order owner can cancel this order");
+			}
+			return transitionToCanceled(order);
+		});
 	}
 
 	@Transactional
 	public Optional<OrderResponseDTO> adminCancelOrder(Long id) {
-		Optional<OrderEntity> existing = orderRepository.findById(id);
-		if (existing.isEmpty()) return Optional.empty();
-		return Optional.of(transitionToCanceled(existing.get()));
+		return orderRepository.findById(id).map(this::transitionToCanceled);
 	}
 
-	// --- private helpers ---
-
 	private OrderEntity buildEntity(OrderRequestDTO request) {
-		if (request.vehicleType() == VehicleType.TAXI) {
-			return TaxiOrderEntity.builder()
-					.vehicleType(request.vehicleType())
-					.pickupAddress(request.pickupAddress())
-					.pickupLatitude(request.pickupLatitude())
-					.pickupLongitude(request.pickupLongitude())
-					.dropoffAddress(request.dropoffAddress())
-					.dropoffLatitude(request.dropoffLatitude())
-					.dropoffLongitude(request.dropoffLongitude())
-					.distanceKm(request.distanceKm())
-					.estimatedDurationMinutes(request.estimatedDurationMinutes())
-					.specialRequirements(request.specialRequirements())
-					.vehicleClass(request.vehicleClass())
-					.passengerCount(request.passengerCount())
-					.luggageCount(request.luggageCount())
-					.requiresAirConditioning(request.requiresAirConditioning())
-					.build();
-		}
-		if (request.vehicleType() == VehicleType.LOGISTICS) {
-			return LogisticsOrderEntity.builder()
-					.vehicleType(request.vehicleType())
-					.pickupAddress(request.pickupAddress())
-					.pickupLatitude(request.pickupLatitude())
-					.pickupLongitude(request.pickupLongitude())
-					.dropoffAddress(request.dropoffAddress())
-					.dropoffLatitude(request.dropoffLatitude())
-					.dropoffLongitude(request.dropoffLongitude())
-					.distanceKm(request.distanceKm())
-					.estimatedDurationMinutes(request.estimatedDurationMinutes())
-					.specialRequirements(request.specialRequirements())
-					.weightKg(request.weightKg())
-					.build();
-		}
 		return OrderEntity.builder()
 				.vehicleType(request.vehicleType())
 				.pickupAddress(request.pickupAddress())
@@ -247,25 +205,19 @@ public class OrderService {
 				.distanceKm(request.distanceKm())
 				.estimatedDurationMinutes(request.estimatedDurationMinutes())
 				.specialRequirements(request.specialRequirements())
+				.weightKg(request.weightKg())
 				.build();
 	}
 
 	private void applySubtypeFields(OrderRequestDTO request, OrderEntity order) {
-		if (order instanceof TaxiOrderEntity taxi) {
-			taxi.setVehicleClass(request.vehicleClass());
-			taxi.setPassengerCount(request.passengerCount());
-			taxi.setLuggageCount(request.luggageCount());
-			taxi.setRequiresAirConditioning(request.requiresAirConditioning());
-		} else if (order instanceof LogisticsOrderEntity logistics) {
-			logistics.setWeightKg(request.weightKg());
-		}
+		order.setWeightKg(request.weightKg());
 	}
 
 	private double calculatePrice(OrderRequestDTO request) {
 		if (request.vehicleType() == VehicleType.LOGISTICS) {
 			return pricingService.calculateForLogistics(request.distanceKm(), request.weightKg());
 		}
-		return pricingService.calculatePrice(request.distanceKm(), request.vehicleType(), request.vehicleClass());
+		return pricingService.calculatePrice(request.distanceKm(), request.vehicleType());
 	}
 
 	private void validateAssignment(OrderEntity order, DriverEntity driver, VehicleEntity vehicle) {
