@@ -28,7 +28,7 @@ describe('ErrorBoundary', () => {
         );
 
         expect(getByText('Something went wrong')).toBeTruthy();
-        expect(getByText(/kaboom/)).toBeTruthy();
+        expect(getByText(/unexpected error/i)).toBeTruthy();
 
         errorSpy.mockRestore();
     });

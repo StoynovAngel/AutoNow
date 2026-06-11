@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import {
     KeyboardAvoidingView,
     Modal,
@@ -36,7 +36,6 @@ const Chatbot = () => {
     const [recommendedService, setRecommendedService] = useState<VehicleType | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const scrollRef = useRef<ScrollView | null>(null);
 
     const close = () => {
         setOpen(false);
@@ -63,7 +62,6 @@ const Chatbot = () => {
             setError(t('chatbot-error'));
         } finally {
             setLoading(false);
-            requestAnimationFrame(() => scrollRef.current?.scrollToEnd({ animated: true }));
         }
     };
 
@@ -110,10 +108,8 @@ const Chatbot = () => {
                         </View>
 
                         <ScrollView
-                            ref={scrollRef}
                             style={styles.messages}
                             keyboardShouldPersistTaps="handled"
-                            onContentSizeChange={() => scrollRef.current?.scrollToEnd({ animated: true })}
                         >
                             {messages.map((m, idx) => (
                                 <View

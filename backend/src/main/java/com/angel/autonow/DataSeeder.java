@@ -391,7 +391,7 @@ public class DataSeeder implements ApplicationRunner {
 
 		VehicleEntity v3 = vehicleRepository.save(VehicleEntity.builder()
 				.brand("Hummer").model("H2 Limo").licensePlate("CA9090OT")
-				.imageUrl("https://www.hertslimos.com/wp-content/uploads/2023/01/hummer-h2-limo-hero.jpg	")
+				.imageUrl("https://www.hertslimos.com/wp-content/uploads/2023/01/hummer-h2-limo-hero.jpg")
 				.airConditioning(true).numberOfSeats(14).trunkCapacity(500.0)
 				.vehicleType(VehicleType.PROM)
 				.company(company).build());

@@ -159,7 +159,7 @@ public final class TestData {
 				.numberOfSeats(5)
 				.trunkCapacity(450.0)
 				.vehicleType(VehicleType.TAXI)
-				
+				.imageUrl("https://example.com/vehicle.jpg")
 				.build();
 	}
 
