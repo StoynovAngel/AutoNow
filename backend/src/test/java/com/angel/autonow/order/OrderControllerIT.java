@@ -7,7 +7,6 @@ import com.angel.autonow.driver.DriverEntity;
 import com.angel.autonow.driver.DriverRepository;
 import com.angel.autonow.user.UserEntity;
 import com.angel.autonow.user.UserRepository;
-import com.angel.autonow.vehicle.VehicleClass;
 import com.angel.autonow.vehicle.VehicleEntity;
 import com.angel.autonow.vehicle.VehicleRepository;
 import com.angel.autonow.vehicle.VehicleType;
@@ -100,7 +99,6 @@ class OrderControllerIT {
 				.estimatedDurationMinutes(15)
 				.passengerCount(6)
 				.luggageCount(4)
-				.vehicleClass(VehicleClass.XL)
 				.requiresAirConditioning(true)
 				.build();
 
@@ -111,7 +109,6 @@ class OrderControllerIT {
 				.andExpect(status().isCreated())
 				.andExpect(jsonPath("$.passengerCount").value(6))
 				.andExpect(jsonPath("$.luggageCount").value(4))
-				.andExpect(jsonPath("$.vehicleClass").value("XL"))
 				.andExpect(jsonPath("$.requiresAirConditioning").value(true));
 	}
 
