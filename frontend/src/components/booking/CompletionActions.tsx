@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { theme } from '../../constants/theme';
 import { createStyles } from './CompletionActions.style';
 
-interface CompletionActionsProps {
+export interface CompletionActionsProps {
     hasDriver: boolean;
     canSubmit: boolean;
     submitting: boolean;
