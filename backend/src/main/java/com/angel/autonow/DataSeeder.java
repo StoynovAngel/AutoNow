@@ -336,7 +336,7 @@ public class DataSeeder implements ApplicationRunner {
 
 		VehicleEntity v3 = vehicleRepository.save(VehicleEntity.builder()
 				.brand("Mercedes").model("E-Class Hearse").licensePlate("BT3030AE")
-				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Mercedes_Benz_W212_hearse.jpg/1280px-Mercedes_Benz_W212_hearse.jpg")
+				.imageUrl("https://cdn.prod.website-files.com/63f8694b1895d86ca0fbf44e/6943c4a25d367ae9605111b9_kuhlmann-cars-e-klasse-header-opt.webp")
 				.airConditioning(true).numberOfSeats(2).trunkCapacity(2300.0)
 				.vehicleType(VehicleType.FUNERAL)
 				.company(company).build());
@@ -377,21 +377,21 @@ public class DataSeeder implements ApplicationRunner {
 
 		VehicleEntity v1 = vehicleRepository.save(VehicleEntity.builder()
 				.brand("Chrysler").model("300 Limousine").licensePlate("CA7070EM")
-				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Chrysler_300_limo.jpg/1280px-Chrysler_300_limo.jpg")
+				.imageUrl("https://d11kcrtzt740u6.cloudfront.net/veh/price4limo-black-chrysler-300-limousine.jpg")
 				.airConditioning(true).numberOfSeats(8).trunkCapacity(400.0)
 				.vehicleType(VehicleType.PROM)
 				.company(company).build());
 
 		VehicleEntity v2 = vehicleRepository.save(VehicleEntity.builder()
 				.brand("Lincoln").model("Stretch").licensePlate("CA8080MO")
-				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Lincoln_Town_Car_Stretch_Limo.jpg/1280px-Lincoln_Town_Car_Stretch_Limo.jpg")
+				.imageUrl("https://qualitycoachwork.com/wp-content/uploads/2023/03/Lincoln-Navigator-Stretch-CEO-Conversion.jpg")
 				.airConditioning(true).numberOfSeats(10).trunkCapacity(450.0)
 				.vehicleType(VehicleType.PROM)
 				.company(company).build());
 
 		VehicleEntity v3 = vehicleRepository.save(VehicleEntity.builder()
 				.brand("Hummer").model("H2 Limo").licensePlate("CA9090OT")
-				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Hummer_H2_Limousine.jpg/1280px-Hummer_H2_Limousine.jpg")
+				.imageUrl("https://www.hertslimos.com/wp-content/uploads/2023/01/hummer-h2-limo-hero.jpg	")
 				.airConditioning(true).numberOfSeats(14).trunkCapacity(500.0)
 				.vehicleType(VehicleType.PROM)
 				.company(company).build());
