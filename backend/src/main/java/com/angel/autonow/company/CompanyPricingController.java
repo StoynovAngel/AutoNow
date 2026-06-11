@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import jakarta.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,7 +33,7 @@ public class CompanyPricingController {
 	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN')")
 	public ResponseEntity<CompanyPricingResponseDTO> createPricing(
 			@PathVariable Long id,
-			@RequestBody CompanyPricingRequestDTO request,
+			@RequestBody @Valid CompanyPricingRequestDTO request,
 			Authentication authentication) {
 		return pricingService.createPricing(id, request, authentication.getName())
 				.map(dto -> ResponseEntity.status(HttpStatus.CREATED).body(dto))
@@ -43,7 +44,7 @@ public class CompanyPricingController {
 	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN')")
 	public ResponseEntity<CompanyPricingResponseDTO> updatePricing(
 			@PathVariable Long id,
-			@RequestBody CompanyPricingRequestDTO request,
+			@RequestBody @Valid CompanyPricingRequestDTO request,
 			Authentication authentication) {
 		return pricingService.updatePricing(id, request, authentication.getName())
 				.map(ResponseEntity::ok)
