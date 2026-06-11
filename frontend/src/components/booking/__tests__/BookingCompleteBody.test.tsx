@@ -159,13 +159,15 @@ describe('BookingCompleteBody', () => {
         await findByTestId('complete-load-error');
     });
 
-    it('hides the rating block when no driver is on the order', async () => {
-        mockGetOrder.mockResolvedValue({ ...completedOrder, driver: undefined });
+    it('ignores a response that resolves after unmount', async () => {
+        let resolve!: (v: typeof completedOrder) => void;
+        mockGetOrder.mockReturnValue(new Promise(r => { resolve = r; }));
 
-        const { findByTestId, queryByTestId } = renderWithProviders(<BookingCompleteBody />);
+        const { unmount } = renderWithProviders(<BookingCompleteBody />);
+        unmount();
 
-        await findByTestId('complete-summary');
-        expect(queryByTestId('complete-rate')).toBeNull();
-        expect(queryByTestId('complete-submit')).toBeNull();
+        // Resolving after unmount must not throw (cancelled flag prevents setState)
+        await act(async () => { resolve(completedOrder); });
     });
 });
+

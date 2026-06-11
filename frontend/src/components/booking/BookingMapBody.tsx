@@ -87,7 +87,7 @@ const BookingMapBody = () => {
 
     useEffect(() => {
         if (!routeResult) { setEstimate(undefined); setEstimateLoading(false); return; }
-        if (isLogistics && weightKg === undefined) { setEstimate(undefined); return; }
+        if (isLogistics && weightKg === undefined) { setEstimate(undefined); setEstimateLoading(false); return; }
         let cancelled = false;
         setEstimate(undefined);
         setEstimateLoading(true);
