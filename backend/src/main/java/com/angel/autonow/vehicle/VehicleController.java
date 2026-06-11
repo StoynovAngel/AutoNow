@@ -33,7 +33,7 @@ public class VehicleController {
 	}
 
 	@GetMapping("/{id}")
-	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'DRIVER', 'GUEST')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'DRIVER', 'GUEST', 'COMPANY_ADMIN')")
 	public VehicleResponseDTO getVehicleById(@PathVariable Long id) {
 		return vehicleService.getVehicleById(id).orElse(null);
 	}

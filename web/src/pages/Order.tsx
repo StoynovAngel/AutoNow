@@ -9,8 +9,13 @@ import {useOrders} from '../hooks/useOrders';
 import {useAllDrivers} from '../hooks/useAllDrivers';
 import {vehicleService} from '../services/vehicle/vehicleService';
 import type {Vehicle} from '../components/company/VehicleInfo';
+import {useAuth} from '../contexts/AuthContext';
 
 const Order = () => {
+    const {user} = useAuth();
+    const isCompanyAdmin = user?.authorities?.includes('ROLE_COMPANY_ADMIN') ?? false;
+    const companyId = isCompanyAdmin ? (user?.companyId ?? null) : null;
+
     const {
         orders,
         selectedOrderId,
@@ -21,7 +26,7 @@ const Order = () => {
         changeOrderStatus,
         assignOrder,
         refreshOrders,
-    } = useOrders();
+    } = useOrders(companyId);
 
     const {drivers} = useAllDrivers();
     const [vehicles, setVehicles] = useState<Vehicle[]>([]);
