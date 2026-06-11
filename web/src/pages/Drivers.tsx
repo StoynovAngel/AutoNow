@@ -8,6 +8,7 @@ import DriverCard from '../components/driver/DriverCard';
 import AssignVehicleModal from '../components/driver/AssignVehicleModal';
 import { useAllDrivers } from '../hooks/useAllDrivers';
 import { useVehicles } from '../hooks/useVehicles';
+import { useAuth } from '../contexts/AuthContext';
 import type { Driver } from '../components/company/DriverInfo';
 import type { DriverPayload } from '../services/driver/driverService';
 import { COMPANY_TYPES } from '../services/company/companyService';
@@ -15,8 +16,12 @@ import { COMPANY_TYPES } from '../services/company/companyService';
 const EXPERTISE_TYPES = ['AM', 'A1', 'A2', 'A', 'B1', 'B', 'BE', 'C1', 'C1E', 'C', 'CE', 'D1', 'D1E', 'D', 'DE', 'Tkt'] as const;
 
 const Drivers = () => {
+    const { user } = useAuth();
+    const isCompanyAdmin = user?.authorities?.includes('ROLE_COMPANY_ADMIN') ?? false;
+    const companyId = isCompanyAdmin ? (user?.companyId ?? null) : null;
+
     const [filterCompanyType, setFilterCompanyType] = useState<string>('');
-    const { drivers, loading, error, addDriver, updateDriver, removeDriver, assignVehicle, unassignVehicle, refreshDrivers } = useAllDrivers(filterCompanyType || null);
+    const { drivers, loading, error, addDriver, updateDriver, removeDriver, assignVehicle, unassignVehicle, refreshDrivers } = useAllDrivers(filterCompanyType || null, companyId);
 
     const [showForm, setShowForm] = useState(false);
     const [editingDriver, setEditingDriver] = useState<Driver | null>(null);

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { vehicleService } from '../services/vehicle/vehicleService';
 import type { Vehicle } from '../components/company/VehicleInfo';
 import type { VehiclePayload } from '../services/vehicle/vehicleService';
@@ -10,7 +10,7 @@ export const useVehicles = (companyId?: number | null) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const fetchVehicles = useCallback(async () => {
+    const fetchVehicles = async () => {
         setLoading(true);
         setError(null);
         try {
@@ -30,11 +30,11 @@ export const useVehicles = (companyId?: number | null) => {
         } finally {
             setLoading(false);
         }
-    }, [companyId]);
+    };
 
     useEffect(() => {
         fetchVehicles();
-    }, [fetchVehicles]);
+    }, [companyId]);
 
     const selectVehicle = async (vehicleId: number) => {
         setSelectedVehicleId(vehicleId);

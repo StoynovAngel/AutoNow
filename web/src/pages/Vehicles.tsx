@@ -6,13 +6,18 @@ import ConfirmDialog from '../components/ui/ConfirmDialog';
 import AddVehicleForm from '../components/vehicle/AddVehicleForm';
 import VehicleInfo from '../components/company/VehicleInfo';
 import { useVehicles } from '../hooks/useVehicles';
+import { useAuth } from '../contexts/AuthContext';
 import type { Vehicle } from '../components/company/VehicleInfo';
 import type { VehiclePayload } from '../services/vehicle/vehicleService';
 
 const VEHICLE_TYPES = ['TAXI', 'LOGISTICS', 'AMBULANCE', 'RENTAL', 'PROM', 'FUNERAL'] as const;
 
 const Vehicles = () => {
-    const { vehicles, loading, error, addVehicle, updateVehicle, removeVehicle, refreshVehicles } = useVehicles();
+    const { user } = useAuth();
+    const isCompanyAdmin = user?.authorities?.includes('ROLE_COMPANY_ADMIN') ?? false;
+    const companyId = isCompanyAdmin ? (user?.companyId ?? null) : null;
+
+    const { vehicles, loading, error, addVehicle, updateVehicle, removeVehicle, refreshVehicles } = useVehicles(companyId);
     const [showForm, setShowForm] = useState(false);
     const [editingVehicle, setEditingVehicle] = useState<Vehicle | null>(null);
     const [deletingId, setDeletingId] = useState<number | null>(null);
