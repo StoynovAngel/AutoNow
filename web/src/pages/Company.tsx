@@ -5,8 +5,10 @@ import CompanyManagementSidebar from '../components/company/CompanyManagementSid
 import CompanyManagementContent from '../components/company/CompanyManagementContent';
 import AddCompanyModal from '../components/company/AddCompanyModal';
 import EditCompanyModal from '../components/company/EditCompanyModal';
+import EditPricingModal from '../components/company/EditPricingModal';
 import {useCompanies} from '../hooks/useCompanies';
 import {useDrivers} from '../hooks/useDrivers';
+import {useCompanyPricing} from '../hooks/useCompanyPricing';
 import {useAuth} from '../contexts/AuthContext';
 
 const Company = () => {
@@ -39,12 +41,17 @@ const Company = () => {
         selectDriver
     } = useDrivers(selectedCompanyId);
 
+    const { pricing, savePricing, supported: pricingSupported } = useCompanyPricing(selectedCompanyId, selectedCompany?.companyType);
+
     const [showAddModal, setShowAddModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
+    const [showEditPricingModal, setShowEditPricingModal] = useState(false);
 
     const canEditSelectedCompany =
         !!selectedCompany &&
         (isAdmin || (isCompanyAdmin && user?.companyId === selectedCompany.id));
+
+    const canEditPricing = canEditSelectedCompany && pricingSupported;
 
     const loading = companiesLoading || driversLoading;
     const error = companiesError || driversError;
@@ -82,8 +89,11 @@ const Company = () => {
                             selectedDriver={selectedDriver}
                             driverVehicles={driverVehicles}
                             driverRatings={driverRatings}
+                            pricing={pricing}
                             canEditCompany={canEditSelectedCompany}
                             onEditCompany={() => setShowEditModal(true)}
+                            canEditPricing={canEditPricing}
+                            onEditPricing={() => setShowEditPricingModal(true)}
                         />
                     </div>
                 </div>
@@ -101,6 +111,16 @@ const Company = () => {
                     company={selectedCompany}
                     onClose={() => setShowEditModal(false)}
                     onSubmit={async (payload) => { await updateCompany(selectedCompany.id, payload); }}
+                />
+            )}
+
+            {selectedCompany && pricingSupported && (
+                <EditPricingModal
+                    show={showEditPricingModal}
+                    pricing={pricing}
+                    companyType={selectedCompany.companyType}
+                    onClose={() => setShowEditPricingModal(false)}
+                    onSubmit={async (payload) => { await savePricing(selectedCompany.id, payload); }}
                 />
             )}
         </>
