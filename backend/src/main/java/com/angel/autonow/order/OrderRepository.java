@@ -13,6 +13,7 @@ import java.util.Optional;
 @Repository
 public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
 	List<OrderEntity> findByUserId(Long userId);
+	List<OrderEntity> findByDriverCompanyId(Long companyId);
 	Optional<OrderEntity> findFirstByUserIdAndStatusInOrderByCreatedAtDesc(Long userId, Collection<OrderStatus> statuses);
 	boolean existsByUserIdAndStatusIn(Long userId, Collection<OrderStatus> statuses);
 

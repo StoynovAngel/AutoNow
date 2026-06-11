@@ -25,6 +25,11 @@ export const orderService = {
         return data;
     },
 
+    getOrdersByCompany: async (companyId: number): Promise<Order[]> => {
+        const {data} = await apiClient.get(`/orders/company/${companyId}`);
+        return data;
+    },
+
     getOrderById: async (id: string): Promise<Order> => {
         const {data} = await apiClient.get(`/orders/${id}`);
         return data;

@@ -78,6 +78,12 @@ public class OrderService {
 				.toList();
 	}
 
+	public List<OrderResponseDTO> getOrdersByCompanyId(Long companyId) {
+		return orderRepository.findByDriverCompanyId(companyId).stream()
+				.map(orderMapper::toDTO)
+				.toList();
+	}
+
 	public Optional<OrderResponseDTO> getActiveOrderByUserId(Long userId) {
 		return orderRepository.findFirstByUserIdAndStatusInOrderByCreatedAtDesc(userId, ACTIVE_STATUSES)
 				.map(orderMapper::toDTO);

@@ -72,6 +72,12 @@ public class OrderController {
 		return orderService.getAllOrders();
 	}
 
+	@GetMapping("/company/{companyId}")
+	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN')")
+	public List<OrderResponseDTO> getOrdersByCompanyId(@PathVariable Long companyId) {
+		return orderService.getOrdersByCompanyId(companyId);
+	}
+
 	@PutMapping("/{id}")
 	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
 	public ResponseEntity<OrderResponseDTO> updateOrder(@PathVariable Long id, @Valid @RequestBody OrderRequestDTO request) {

@@ -22,6 +22,10 @@ export const useCompanies = (isCompanyAdmin: boolean = false) => {
                 ? await companyService.getMyCompany()
                 : await companyService.getAllCompanies();
             setCompanies(data);
+            if (isCompanyAdmin && data.length === 1) {
+                setSelectedCompanyId(data[0].id);
+                setSelectedCompany(data[0]);
+            }
         } catch (err: unknown) {
             setError(getErrorMessage(err, 'Failed to load companies'));
         } finally {
