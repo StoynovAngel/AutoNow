@@ -62,10 +62,8 @@ export const useCompanies = () => {
     const deleteCompany = async (id: number): Promise<void> => {
         await companyService.deleteCompany(id);
         setCompanies((prev) => prev.filter((c) => c.id !== id));
-        if (selectedCompanyId === id) {
-            setSelectedCompanyId(null);
-            setSelectedCompany(null);
-        }
+        setSelectedCompanyId((prev) => (prev === id ? null : prev));
+        setSelectedCompany((prev) => (prev && prev.id === id ? null : prev));
     };
 
     return {
