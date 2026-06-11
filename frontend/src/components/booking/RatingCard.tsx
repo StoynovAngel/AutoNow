@@ -40,6 +40,8 @@ const RatingCard = ({
                         testID={`star-${value}`}
                         accessibilityRole="button"
                         accessibilityLabel={t('rating-star-label', { value })}
+                        accessibilityState={{ selected: value === stars }}
+                        aria-pressed={value === stars}
                     >
                         <MaterialIcons
                             name={value <= stars ? 'star' : 'star-border'}
