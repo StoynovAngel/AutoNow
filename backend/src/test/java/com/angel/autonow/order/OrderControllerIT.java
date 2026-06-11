@@ -99,7 +99,6 @@ class OrderControllerIT {
 				.estimatedDurationMinutes(15)
 				.passengerCount(6)
 				.luggageCount(4)
-				.requiresAirConditioning(true)
 				.build();
 
 		mockMvc.perform(post("/api/orders")
@@ -108,8 +107,7 @@ class OrderControllerIT {
 						.content(objectMapper.writeValueAsString(request)))
 				.andExpect(status().isCreated())
 				.andExpect(jsonPath("$.passengerCount").value(6))
-				.andExpect(jsonPath("$.luggageCount").value(4))
-				.andExpect(jsonPath("$.requiresAirConditioning").value(true));
+				.andExpect(jsonPath("$.luggageCount").value(4));
 	}
 
 	@Test

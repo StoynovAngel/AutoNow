@@ -57,8 +57,6 @@ public record OrderRequestDTO(
 		@Min(value = 0, message = "Luggage count cannot be negative")
 		Integer luggageCount,
 
-		Boolean requiresAirConditioning,
-
 		@DecimalMin(value = "0.1", message = "Weight must be at least 0.1 kg")
 		@DecimalMax(value = "5000.0", message = "Weight cannot exceed 5000 kg")
 		Double weightKg

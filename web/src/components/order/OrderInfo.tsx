@@ -39,7 +39,6 @@ export interface Order {
     specialRequirements?: string;
     passengerCount?: number;
     luggageCount?: number;
-    requiresAirConditioning?: boolean;
     weightKg?: number;
     cancellationReason?: string;
     createdAt: string;
@@ -214,12 +213,6 @@ const OrderInfo = ({order, onChangeStatus, onOpenAssign}: OrderInfoProps) => {
                     <label className="block text-xs font-semibold text-gray-500 mb-1">Luggage</label>
                     <p className="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
                         {order.luggageCount ?? '—'}
-                    </p>
-                </div>
-                <div>
-                    <label className="block text-xs font-semibold text-gray-500 mb-1">Air Conditioning</label>
-                    <p className="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
-                        {order.requiresAirConditioning === undefined ? '—' : order.requiresAirConditioning ? 'Required' : 'Not required'}
                     </p>
                 </div>
 

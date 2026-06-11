@@ -28,7 +28,6 @@ public record OrderResponseDTO(
 		String specialRequirements,
 		Integer passengerCount,
 		Integer luggageCount,
-		Boolean requiresAirConditioning,
 		Double weightKg,
 		String cancellationReason,
 		LocalDateTime createdAt,

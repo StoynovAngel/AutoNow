@@ -217,7 +217,6 @@ public class OrderService {
 					.specialRequirements(request.specialRequirements())
 					.passengerCount(request.passengerCount())
 					.luggageCount(request.luggageCount())
-					.requiresAirConditioning(request.requiresAirConditioning())
 					.build();
 		}
 		if (request.vehicleType() == VehicleType.LOGISTICS) {
@@ -253,7 +252,6 @@ public class OrderService {
 		if (order instanceof TaxiOrderEntity taxi) {
 			taxi.setPassengerCount(request.passengerCount());
 			taxi.setLuggageCount(request.luggageCount());
-			taxi.setRequiresAirConditioning(request.requiresAirConditioning());
 		} else if (order instanceof LogisticsOrderEntity logistics) {
 			logistics.setWeightKg(request.weightKg());
 		}

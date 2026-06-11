@@ -18,7 +18,6 @@ export interface OrderPayload {
     specialRequirements?: string;
     passengerCount?: number;
     luggageCount?: number;
-    requiresAirConditioning?: boolean;
     weightKg?: number;
 }
 

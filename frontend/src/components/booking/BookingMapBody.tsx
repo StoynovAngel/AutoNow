@@ -16,6 +16,7 @@ import AddressSearch from './AddressSearch';
 import MapHeader from './MapHeader';
 import PickupRow from './PickupRow';
 import WeightInput from './WeightInput';
+import TaxiInputs from './TaxiInputs';
 import RouteSummary from './RouteSummary';
 import ConfirmButton from './ConfirmButton';
 import { createStyles } from './BookingMapBody.style';
@@ -45,11 +46,20 @@ const BookingMapBody = () => {
     const [estimateLoading, setEstimateLoading] = useState(false);
     const [pickupGeocodeError, setPickupGeocodeError] = useState(false);
     const [weightKgInput, setWeightKgInput] = useState('');
+    const [passengerCountInput, setPassengerCountInput] = useState('');
+    const [luggageCountInput, setLuggageCountInput] = useState('');
     const [submitting, setSubmitting] = useState(false);
 
     const parsedWeight = parseFloat(weightKgInput);
     const weightKg = isLogistics && Number.isFinite(parsedWeight) ? parsedWeight : undefined;
     const weightError = weightKg !== undefined && (weightKg < 0.1 || weightKg > 5000);
+
+    const isTaxi = vehicleType === VehicleType.TAXI;
+    const parsedPassengers = parseInt(passengerCountInput, 10);
+    const passengerCount = isTaxi && Number.isFinite(parsedPassengers) ? parsedPassengers : undefined;
+    const passengerError = isTaxi && passengerCountInput.trim() !== '' && (passengerCount === undefined || passengerCount < 1);
+    const parsedLuggage = parseInt(luggageCountInput, 10);
+    const luggageCount = isTaxi && Number.isFinite(parsedLuggage) ? parsedLuggage : undefined;
 
     useEffect(() => {
         if (!isLogistics || !preferences.companyAddress) return;
@@ -118,6 +128,7 @@ const BookingMapBody = () => {
                 dropoffLatitude: destination.coordinate.latitude,
                 dropoffLongitude: destination.coordinate.longitude,
                 distanceKm: routeResult?.distanceKm,
+                ...(isTaxi ? { passengerCount, luggageCount } : {}),
                 ...(isLogistics ? { weightKg } : {}),
             });
             navigation.replace('bookingWaiting', { orderId: created.id });
@@ -133,7 +144,8 @@ const BookingMapBody = () => {
         ? Boolean(pickup && destination && estimate && !routeLoading && !estimateLoading && !submitting)
         : Boolean(
             pickup && destination && routeResult && estimate && !estimateLoading && !submitting &&
-            (!isLogistics || (weightKg !== undefined && !weightError)),
+            (!isLogistics || (weightKg !== undefined && !weightError)) &&
+            (!isTaxi || (passengerCount !== undefined && passengerCount >= 1 && !passengerError)),
         );
 
     const proximity = (isAmbulance ? destination?.coordinate : pickup?.coordinate) ?? SOFIA_CENTER;
@@ -198,6 +210,16 @@ const BookingMapBody = () => {
                         value={weightKgInput}
                         onChange={setWeightKgInput}
                         error={weightError}
+                    />
+                )}
+
+                {isTaxi && (
+                    <TaxiInputs
+                        passengerCount={passengerCountInput}
+                        luggageCount={luggageCountInput}
+                        onPassengerCountChange={setPassengerCountInput}
+                        onLuggageCountChange={setLuggageCountInput}
+                        passengerError={passengerError}
                     />
                 )}
 

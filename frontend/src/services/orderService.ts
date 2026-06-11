@@ -59,7 +59,6 @@ export interface OrderResponse {
     specialRequirements?: string;
     passengerCount?: number;
     luggageCount?: number;
-    requiresAirConditioning?: boolean;
     cancellationReason?: string;
     createdAt?: string;
     updatedAt?: string;
