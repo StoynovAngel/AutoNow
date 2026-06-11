@@ -17,15 +17,23 @@ interface CompanyManagementContentProps {
     pricing: CompanyPricing | null;
     canEditCompany?: boolean;
     onEditCompany?: () => void;
+    canDeleteCompany?: boolean;
+    onDeleteCompany?: () => void;
     canEditPricing?: boolean;
     onEditPricing?: () => void;
 }
 
-const CompanyManagementContent = ({selectedCompany, selectedDriver, driverVehicles, driverRatings, pricing, canEditCompany, onEditCompany, canEditPricing, onEditPricing}: CompanyManagementContentProps) => {
+const CompanyManagementContent = ({selectedCompany, selectedDriver, driverVehicles, driverRatings, pricing, canEditCompany, onEditCompany, canDeleteCompany, onDeleteCompany, canEditPricing, onEditPricing}: CompanyManagementContentProps) => {
     return (
         <div className="flex-1 flex gap-4 items-stretch min-w-0 h-full">
             <div className="flex-1 flex flex-col gap-4 min-h-0 min-w-0">
-                <CompanyInfo company={selectedCompany} canEdit={canEditCompany} onEdit={onEditCompany}/>
+                <CompanyInfo
+                    company={selectedCompany}
+                    canEdit={canEditCompany}
+                    onEdit={onEditCompany}
+                    canDelete={canDeleteCompany}
+                    onDelete={onDeleteCompany}
+                />
                 {selectedCompany && (
                     <CompanyPricingInfo
                         pricing={pricing}

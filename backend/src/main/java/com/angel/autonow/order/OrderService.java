@@ -196,28 +196,10 @@ public class OrderService {
 	@Transactional
 	public Optional<OrderResponseDTO> adminCancelOrder(Long id) {
 		Optional<OrderEntity> existing = orderRepository.findById(id);
-		if (existing.isEmpty()) return Optional.empty();
-		return Optional.of(transitionToCanceled(existing.get()));
-	}
-
-	// --- private helpers ---
-
+        return existing.map(this::transitionToCanceled);
+    }
+	
 	private OrderEntity buildEntity(OrderRequestDTO request) {
-		if (request.vehicleType() == VehicleType.LOGISTICS) {
-			return LogisticsOrderEntity.builder()
-					.vehicleType(request.vehicleType())
-					.pickupAddress(request.pickupAddress())
-					.pickupLatitude(request.pickupLatitude())
-					.pickupLongitude(request.pickupLongitude())
-					.dropoffAddress(request.dropoffAddress())
-					.dropoffLatitude(request.dropoffLatitude())
-					.dropoffLongitude(request.dropoffLongitude())
-					.distanceKm(request.distanceKm())
-					.estimatedDurationMinutes(request.estimatedDurationMinutes())
-					.specialRequirements(request.specialRequirements())
-					.weightKg(request.weightKg())
-					.build();
-		}
 		return OrderEntity.builder()
 				.vehicleType(request.vehicleType())
 				.pickupAddress(request.pickupAddress())
@@ -229,13 +211,12 @@ public class OrderService {
 				.distanceKm(request.distanceKm())
 				.estimatedDurationMinutes(request.estimatedDurationMinutes())
 				.specialRequirements(request.specialRequirements())
+				.weightKg(request.weightKg())
 				.build();
 	}
 
 	private void applySubtypeFields(OrderRequestDTO request, OrderEntity order) {
-		if (order instanceof LogisticsOrderEntity logistics) {
-			logistics.setWeightKg(request.weightKg());
-		}
+		order.setWeightKg(request.weightKg());
 	}
 
 	private double calculatePrice(OrderRequestDTO request) {

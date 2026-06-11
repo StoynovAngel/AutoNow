@@ -433,7 +433,7 @@ class OrderServiceTest {
 				.distanceKm(10.0).weightKg(50.0)
 				.build();
 		UserEntity user = UserEntity.builder().id(1L).build();
-		LogisticsOrderEntity saved = LogisticsOrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.LOGISTICS).status(OrderStatus.CREATED).estimatedPrice(12.00).createdAt(NOW).build();
+		OrderEntity saved = OrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.LOGISTICS).status(OrderStatus.CREATED).estimatedPrice(12.00).createdAt(NOW).build();
 		OrderResponseDTO response = TestData.createOrderResponse(1L, 1L, OrderStatus.CREATED, NOW);
 
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));

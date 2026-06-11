@@ -159,4 +159,67 @@ describe('useCompanies', () => {
             })
         ).rejects.toThrow('boom');
     });
+
+    it('deleteCompany removes the company from the list and clears selection', async () => {
+        const c1 = company(1);
+        const c2 = company(2);
+        vi.mocked(companyService.getAllCompanies).mockResolvedValue([c1, c2]);
+        vi.mocked(companyService.getCompanyById).mockResolvedValue(c1);
+        vi.mocked(companyService.deleteCompany).mockResolvedValue(undefined);
+
+        const { result } = renderHook(() => useCompanies());
+        await waitFor(() => expect(result.current.loading).toBe(false));
+
+        await act(async () => {
+            await result.current.selectCompany(1);
+        });
+
+        await act(async () => {
+            await result.current.deleteCompany(1);
+        });
+
+        expect(companyService.deleteCompany).toHaveBeenCalledWith(1);
+        expect(result.current.companies).toEqual([c2]);
+        expect(result.current.selectedCompanyId).toBeNull();
+        expect(result.current.selectedCompany).toBeNull();
+    });
+
+    it('deleteCompany leaves selection alone when deleting a non-selected company', async () => {
+        const c1 = company(1);
+        const c2 = company(2);
+        vi.mocked(companyService.getAllCompanies).mockResolvedValue([c1, c2]);
+        vi.mocked(companyService.getCompanyById).mockResolvedValue(c1);
+        vi.mocked(companyService.deleteCompany).mockResolvedValue(undefined);
+
+        const { result } = renderHook(() => useCompanies());
+        await waitFor(() => expect(result.current.loading).toBe(false));
+
+        await act(async () => {
+            await result.current.selectCompany(1);
+        });
+
+        await act(async () => {
+            await result.current.deleteCompany(2);
+        });
+
+        expect(result.current.companies).toEqual([c1]);
+        expect(result.current.selectedCompanyId).toBe(1);
+        expect(result.current.selectedCompany).toEqual(c1);
+    });
+
+    it('deleteCompany propagates errors from the service', async () => {
+        vi.mocked(companyService.getAllCompanies).mockResolvedValue([company(1)]);
+        vi.mocked(companyService.deleteCompany).mockRejectedValue(new Error('has dependents'));
+
+        const { result } = renderHook(() => useCompanies());
+        await waitFor(() => expect(result.current.loading).toBe(false));
+
+        await expect(
+            act(async () => {
+                await result.current.deleteCompany(1);
+            })
+        ).rejects.toThrow('has dependents');
+
+        expect(result.current.companies).toHaveLength(1);
+    });
 });

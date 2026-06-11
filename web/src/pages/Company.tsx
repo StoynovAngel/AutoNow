@@ -10,6 +10,7 @@ import {useCompanies} from '../hooks/useCompanies';
 import {useDrivers} from '../hooks/useDrivers';
 import {useCompanyPricing} from '../hooks/useCompanyPricing';
 import {useAuth} from '../contexts/AuthContext';
+import {getErrorMessage} from '../utils/errors';
 
 const Company = () => {
     const {user} = useAuth();
@@ -28,6 +29,7 @@ const Company = () => {
         selectCompany,
         createCompany,
         updateCompany,
+        deleteCompany,
     } = useCompanies();
 
     const {
@@ -51,7 +53,20 @@ const Company = () => {
         !!selectedCompany &&
         (isAdmin || (isCompanyAdmin && user?.companyId === selectedCompany.id));
 
+    const canDeleteSelectedCompany = !!selectedCompany && isAdmin;
+
     const canEditPricing = canEditSelectedCompany && pricingSupported;
+
+    const handleDeleteCompany = async () => {
+        if (!selectedCompany) return;
+        const confirmed = window.confirm(`Delete company "${selectedCompany.name}"? This cannot be undone.`);
+        if (!confirmed) return;
+        try {
+            await deleteCompany(selectedCompany.id);
+        } catch (err: unknown) {
+            window.alert(getErrorMessage(err, 'Failed to delete company. It may have drivers, vehicles, or users assigned.'));
+        }
+    };
 
     const loading = companiesLoading || driversLoading;
     const error = companiesError || driversError;
@@ -92,6 +107,8 @@ const Company = () => {
                             pricing={pricing}
                             canEditCompany={canEditSelectedCompany}
                             onEditCompany={() => setShowEditModal(true)}
+                            canDeleteCompany={canDeleteSelectedCompany}
+                            onDeleteCompany={handleDeleteCompany}
                             canEditPricing={canEditPricing}
                             onEditPricing={() => setShowEditPricingModal(true)}
                         />
