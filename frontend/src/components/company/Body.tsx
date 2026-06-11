@@ -56,7 +56,8 @@ const Body = () => {
                 ? { companyAddress: company.address }
                 : {}),
         };
-        navigation.navigate('bookingMap', { companyId, vehicleType, preferences });
+        const companyAddress = vehicleType === VehicleType.AMBULANCE ? company?.address : undefined;
+        navigation.navigate('bookingMap', { companyId, companyAddress, vehicleType, preferences });
     };
 
     const showClassPicker = vehicleType === VehicleType.TAXI;

@@ -45,7 +45,7 @@ const VehicleInfo = ({vehicles, onEdit, onDelete, layout = 'grid'}: VehicleInfoP
                 {vehicles.map((vehicle, index) => (
                     <div
                         key={vehicle.id}
-                        className={`flex flex-col bg-white border border-gray-200 text-gray-900 rounded-lg shadow-sm overflow-hidden ${layout === 'sidebar' ? 'flex-shrink-0 h-[calc(50%-0.25rem)]' : 'h-full'}`}
+                        className={`flex flex-col bg-white border border-gray-200 text-gray-900 rounded-lg shadow-sm overflow-hidden ${layout === 'sidebar' ? 'flex-shrink-0' : 'h-full'}`}
                     >
                         {vehicle.imageUrl && (
                             <div className={`w-full overflow-hidden bg-gray-100 flex-shrink-0 ${layout === 'sidebar' ? 'h-42' : 'h-42'}`}>
@@ -60,7 +60,7 @@ const VehicleInfo = ({vehicles, onEdit, onDelete, layout = 'grid'}: VehicleInfoP
                             </div>
                         )}
 
-                        <div className="p-3 flex flex-col flex-1 min-h-0 overflow-hidden">
+                        <div className="p-3 flex flex-col flex-1 min-h-0">
                             <div className="flex items-start justify-between mb-2 gap-2">
                                 <div className="flex-1 min-w-0">
                                     <div className="flex flex-wrap items-center gap-1.5 mb-1.5">

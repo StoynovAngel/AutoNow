@@ -61,7 +61,7 @@ const Company = () => {
         <>
             <Navigation/>
             <div className="h-screen bg-linear-to-br from-gray-50 to-gray-100 pt-24 px-6 pb-6 overflow-hidden">
-                <div className="w-full max-w-full">
+                <div className="w-full max-w-full overflow-x-hidden">
                     <div className="mb-4">
                         <h1 className="text-2xl font-bold text-gray-900">Company Management</h1>
                         <p className="text-sm text-gray-600 mt-0.5">Manage companies, drivers and vehicles</p>
