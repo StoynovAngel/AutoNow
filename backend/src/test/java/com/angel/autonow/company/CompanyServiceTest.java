@@ -62,9 +62,8 @@ class CompanyServiceTest {
 
 		var result = companyService.createCompany(request);
 
-		assertTrue(result.isPresent());
-		assertEquals(1L, result.get().id());
-		assertEquals("Test Fleet Co", result.get().name());
+		assertEquals(1L, result.id());
+		assertEquals("Test Fleet Co", result.name());
 	}
 
 	@Test
@@ -208,7 +207,7 @@ class CompanyServiceTest {
 	}
 
 	@Test
-	void updateCompany_notOwner_returnsEmpty() {
+	void updateCompany_notOwner_throwsAuthorizationDenied() {
 		CompanyRequestDTO request = TestData.createCompanyRequest();
 		CompanyEntity otherCompany = CompanyEntity.builder().id(2L).build();
 		UserEntity user = UserEntity.builder()
@@ -220,9 +219,8 @@ class CompanyServiceTest {
 
 		when(userRepository.findByEmail("other@test.com")).thenReturn(Optional.of(user));
 
-		var result = companyService.updateCompany(1L, request, "other@test.com");
-
-		assertTrue(result.isEmpty());
+		assertThrows(org.springframework.security.authorization.AuthorizationDeniedException.class,
+				() -> companyService.updateCompany(1L, request, "other@test.com"));
 		verify(companyRepository, never()).save(any());
 	}
 
@@ -244,14 +242,13 @@ class CompanyServiceTest {
 	}
 
 	@Test
-	void updateCompany_userNotFound_returnsEmpty() {
+	void updateCompany_userNotFound_throwsUsernameNotFound() {
 		CompanyRequestDTO request = TestData.createCompanyRequest();
 
 		when(userRepository.findByEmail("unknown@test.com")).thenReturn(Optional.empty());
 
-		var result = companyService.updateCompany(1L, request, "unknown@test.com");
-
-		assertTrue(result.isEmpty());
+		assertThrows(org.springframework.security.core.userdetails.UsernameNotFoundException.class,
+				() -> companyService.updateCompany(1L, request, "unknown@test.com"));
 		verify(companyRepository, never()).save(any());
 	}
 

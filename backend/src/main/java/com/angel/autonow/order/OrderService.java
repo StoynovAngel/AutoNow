@@ -35,26 +35,24 @@ public class OrderService {
 
 	@Transactional
 	public Optional<OrderResponseDTO> createOrder(OrderRequestDTO request) {
-		Optional<UserEntity> user = userRepository.findById(request.userId());
-		if (user.isEmpty()) {
-			return Optional.empty();
-		}
+		Optional<UserEntity> userOpt = userRepository.findById(request.userId());
+		if (userOpt.isEmpty()) return Optional.empty();
 
 		if (orderRepository.existsByUserIdAndStatusIn(request.userId(), ACTIVE_STATUSES)) {
 			throw new OrderConflictException("User already has an active order");
 		}
 
 		OrderEntity order = buildEntity(request);
-		order.setUser(user.get());
+		order.setUser(userOpt.get());
 
 		if (request.driverId() != null) {
-			var driver = driverRepository.findById(request.driverId());
+			Optional<DriverEntity> driver = driverRepository.findById(request.driverId());
 			if (driver.isEmpty()) return Optional.empty();
 			order.setDriver(driver.get());
 		}
 
 		if (request.vehicleId() != null) {
-			var vehicle = vehicleRepository.findById(request.vehicleId());
+			Optional<VehicleEntity> vehicle = vehicleRepository.findById(request.vehicleId());
 			if (vehicle.isEmpty()) return Optional.empty();
 			order.setVehicle(vehicle.get());
 		}
@@ -106,8 +104,8 @@ public class OrderService {
 	public Optional<OrderResponseDTO> updateOrder(Long id, OrderRequestDTO request) {
 		Optional<OrderEntity> existing = orderRepository.findById(id);
 		if (existing.isEmpty()) return Optional.empty();
-
 		OrderEntity order = existing.get();
+
 		if (order.getVehicleType() != request.vehicleType()) {
 			throw new OrderConflictException("Vehicle type cannot be changed after order creation");
 		}
@@ -117,14 +115,14 @@ public class OrderService {
 
 		DriverEntity driver = null;
 		if (request.driverId() != null) {
-			var driverOpt = driverRepository.findById(request.driverId());
+			Optional<DriverEntity> driverOpt = driverRepository.findById(request.driverId());
 			if (driverOpt.isEmpty()) return Optional.empty();
 			driver = driverOpt.get();
 		}
 
 		VehicleEntity vehicle = null;
 		if (request.vehicleId() != null) {
-			var vehicleOpt = vehicleRepository.findById(request.vehicleId());
+			Optional<VehicleEntity> vehicleOpt = vehicleRepository.findById(request.vehicleId());
 			if (vehicleOpt.isEmpty()) return Optional.empty();
 			vehicle = vehicleOpt.get();
 		}
@@ -181,24 +179,20 @@ public class OrderService {
 
 	@Transactional
 	public Optional<OrderResponseDTO> cancelOrder(Long id, String callerEmail) {
-		Optional<OrderEntity> existing = orderRepository.findById(id);
-		if (existing.isEmpty()) return Optional.empty();
-
-		OrderEntity order = existing.get();
-		UserEntity owner = order.getUser();
-		if (owner == null || !owner.getEmail().equals(callerEmail)) {
-			throw new OrderForbiddenException("Only the order owner can cancel this order");
-		}
-
-		return Optional.of(transitionToCanceled(order));
+		return orderRepository.findById(id).map(order -> {
+			UserEntity owner = order.getUser();
+			if (owner == null || !owner.getEmail().equals(callerEmail)) {
+				throw new OrderForbiddenException("Only the order owner can cancel this order");
+			}
+			return transitionToCanceled(order);
+		});
 	}
 
 	@Transactional
 	public Optional<OrderResponseDTO> adminCancelOrder(Long id) {
-		Optional<OrderEntity> existing = orderRepository.findById(id);
-        return existing.map(this::transitionToCanceled);
-    }
-	
+		return orderRepository.findById(id).map(this::transitionToCanceled);
+	}
+
 	private OrderEntity buildEntity(OrderRequestDTO request) {
 		return OrderEntity.builder()
 				.vehicleType(request.vehicleType())

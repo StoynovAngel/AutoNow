@@ -138,11 +138,10 @@ class OrderControllerIT {
 	}
 
 	@Test
-	void getOrderById_notFound_returnsOkEmpty() throws Exception {
+	void getOrderById_notFound_returnsNotFound() throws Exception {
 		mockMvc.perform(get("/api/orders/{id}", NON_EXISTENT_ID)
 						.with(TestData.customerJwt()))
-				.andExpect(status().isOk())
-				.andExpect(content().string(""));
+				.andExpect(status().isNotFound());
 	}
 
 	@Test

@@ -278,11 +278,10 @@ class CompanyControllerIT {
 	}
 
 	@Test
-	void getCompanyById_notFound_returnsOkEmpty() throws Exception {
+	void getCompanyById_notFound_returnsNotFound() throws Exception {
 		mockMvc.perform(get("/api/companies/{id}", NON_EXISTENT_ID)
 						.with(TestData.customerJwt()))
-				.andExpect(status().isOk())
-				.andExpect(content().string(""));
+				.andExpect(status().isNotFound());
 	}
 
 	@Test
@@ -380,7 +379,7 @@ class CompanyControllerIT {
 	}
 
 	@Test
-	void updateCompany_asCompanyAdmin_notOwner_returnsBadRequest() throws Exception {
+	void updateCompany_asCompanyAdmin_notOwner_returnsForbidden() throws Exception {
 		var company = TestData.createCompanyEntity();
 		companyRepository.save(company);
 
@@ -408,7 +407,7 @@ class CompanyControllerIT {
 								.authorities(new SimpleGrantedAuthority(Role.COMPANY_ADMIN.getAuthority())))
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(updateRequest)))
-				.andExpect(status().isBadRequest());
+				.andExpect(status().isForbidden());
 	}
 
 	@Test

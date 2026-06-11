@@ -147,6 +147,14 @@ class PricingServiceTest {
 		assertEquals(round(60.00 + 20.0 * 1.20 * 1.20), result.estimatedPrice(), 0.001);
 	}
 
+	@Test
+	void calculatePrice_logisticsVehicleType_throwsIllegalArgument() {
+		PricingService service = serviceAt(14);
+		IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+				() -> service.calculatePrice(10.0, VehicleType.LOGISTICS));
+		assertEquals(true, ex.getMessage().contains("LOGISTICS"));
+	}
+
 	private static double round(double value) {
 		return Math.round(value * 100.0) / 100.0;
 	}

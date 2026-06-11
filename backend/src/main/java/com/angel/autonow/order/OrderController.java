@@ -41,8 +41,10 @@ public class OrderController {
 
 	@GetMapping("/{id}")
 	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'DRIVER')")
-	public OrderResponseDTO getOrderById(@PathVariable Long id) {
-		return orderService.getOrderById(id).orElse(null);
+	public ResponseEntity<OrderResponseDTO> getOrderById(@PathVariable Long id) {
+		return orderService.getOrderById(id)
+				.map(ResponseEntity::ok)
+				.orElse(ResponseEntity.notFound().build());
 	}
 
 	@GetMapping("/user/{userId}")

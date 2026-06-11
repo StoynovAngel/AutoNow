@@ -175,7 +175,7 @@ class CompanyPricingServiceTest {
 		CompanyPricingRequestDTO request = CompanyPricingRequestDTO.builder().baseFare(4.00).build();
 		CompanyPricingResponseDTO dto = CompanyPricingResponseDTO.builder().id(7L).companyId(1L).baseFare(4.00).build();
 
-		when(companyRepository.findById(1L)).thenReturn(Optional.of(company));
+		when(companyRepository.existsById(1L)).thenReturn(true);
 		when(userRepository.findByEmail("admin@test.com")).thenReturn(Optional.of(admin));
 		when(pricingRepository.findByCompanyId(1L)).thenReturn(Optional.of(existing));
 		when(pricingRepository.save(existing)).thenReturn(existing);
@@ -187,10 +187,9 @@ class CompanyPricingServiceTest {
 
 	@Test
 	void updatePricing_noRow_throwsNotFound() {
-		CompanyEntity company = CompanyEntity.builder().id(1L).companyType(CompanyType.TAXI).build();
 		UserEntity admin = userWithRole("admin@test.com", Role.ADMIN);
 
-		when(companyRepository.findById(1L)).thenReturn(Optional.of(company));
+		when(companyRepository.existsById(1L)).thenReturn(true);
 		when(userRepository.findByEmail("admin@test.com")).thenReturn(Optional.of(admin));
 		when(pricingRepository.findByCompanyId(1L)).thenReturn(Optional.empty());
 
@@ -200,13 +199,12 @@ class CompanyPricingServiceTest {
 
 	@Test
 	void updatePricing_companyNotFound_returnsEmpty() {
-		when(companyRepository.findById(99L)).thenReturn(Optional.empty());
+		when(companyRepository.existsById(99L)).thenReturn(false);
 		assertThat(pricingService.updatePricing(99L, CompanyPricingRequestDTO.builder().build(), "admin@test.com")).isEmpty();
 	}
 
 	@Test
 	void updatePricing_nonOwner_throwsAuthorizationDenied() {
-		CompanyEntity company = CompanyEntity.builder().id(1L).companyType(CompanyType.TAXI).build();
 		CompanyEntity other = CompanyEntity.builder().id(2L).companyType(CompanyType.TAXI).build();
 		UserEntity nonOwner = UserEntity.builder()
 				.email("other@test.com")
@@ -214,7 +212,7 @@ class CompanyPricingServiceTest {
 				.company(other)
 				.build();
 
-		when(companyRepository.findById(1L)).thenReturn(Optional.of(company));
+		when(companyRepository.existsById(1L)).thenReturn(true);
 		when(userRepository.findByEmail("other@test.com")).thenReturn(Optional.of(nonOwner));
 
 		assertThatThrownBy(() -> pricingService.updatePricing(1L, CompanyPricingRequestDTO.builder().build(), "other@test.com"))

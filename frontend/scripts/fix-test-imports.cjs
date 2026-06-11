@@ -19,7 +19,8 @@ for (const file of files) {
         /(from\s+["']|require\(\s*["']|jest\.mock\(\s*["'])(\.\.?\/)/g,
         (_m, prefix, dots) => {
             if (dots === './') return prefix + '../';
-            return prefix + '../../';
+            if (dots === '../') return prefix + '../../';
+            return _m;
         }
     );
     if (next !== src) {

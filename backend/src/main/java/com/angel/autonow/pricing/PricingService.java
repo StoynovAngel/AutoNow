@@ -45,11 +45,11 @@ public class PricingService {
 			throw new IllegalArgumentException("distanceKm must not be negative: " + distanceKm);
 		}
 
-		if (vehicleType == VehicleType.AMBULANCE) {
-			return calculateForAmbulance(distanceKm);
-		}
-
-		return calculateForTaxi(distanceKm);
+		return switch (vehicleType) {
+			case TAXI -> calculateForTaxi(distanceKm);
+			case AMBULANCE -> calculateForAmbulance(distanceKm);
+			default -> throw new IllegalArgumentException("Unsupported vehicle type for calculatePrice: " + vehicleType);
+		};
 	}
 
 	private double calculateForTaxi(double distanceKm) {

@@ -33,7 +33,6 @@ public class CompanyPricingService {
 	public Optional<CompanyPricingResponseDTO> createPricing(Long companyId, CompanyPricingRequestDTO dto, String userEmail) {
 		Optional<CompanyEntity> companyOpt = companyRepository.findById(companyId);
 		if (companyOpt.isEmpty()) return Optional.empty();
-		CompanyEntity company = companyOpt.get();
 
 		requireAuthorized(companyId, userEmail);
 
@@ -42,13 +41,13 @@ public class CompanyPricingService {
 		}
 
 		CompanyPricingEntity created = pricingMapper.toEntity(dto);
-		created.setCompany(company);
+		created.setCompany(companyOpt.get());
 		return Optional.of(pricingMapper.toDTO(pricingRepository.save(created)));
 	}
 
 	@Transactional
 	public Optional<CompanyPricingResponseDTO> updatePricing(Long companyId, CompanyPricingRequestDTO dto, String userEmail) {
-		if (companyRepository.findById(companyId).isEmpty()) return Optional.empty();
+		if (!companyRepository.existsById(companyId)) return Optional.empty();
 
 		requireAuthorized(companyId, userEmail);
 
