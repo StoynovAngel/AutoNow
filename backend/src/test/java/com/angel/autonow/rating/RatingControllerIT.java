@@ -424,4 +424,31 @@ class RatingControllerIT {
 	void deleteRating_withoutAuth_returnsUnauthorized() throws Exception {
 		mockMvc.perform(delete("/api/ratings/{id}", 1L)).andExpect(status().isUnauthorized());
 	}
+
+	@Test
+	void getRatingById_asCompanyAdmin_returnsOk() throws Exception {
+		var rating = TestData.createRatingEntity(order, 4, "Good service");
+		ratingRepository.save(rating);
+
+		mockMvc.perform(get("/api/ratings/{id}", rating.getId())
+						.with(TestData.companyAdminJwt()))
+				.andExpect(status().isOk());
+	}
+
+	@Test
+	void getRatingByOrderId_asCompanyAdmin_returnsOk() throws Exception {
+		var rating = TestData.createRatingEntity(order, 4, "Good service");
+		ratingRepository.save(rating);
+
+		mockMvc.perform(get("/api/ratings/order/{orderId}", order.getId())
+						.with(TestData.companyAdminJwt()))
+				.andExpect(status().isOk());
+	}
+
+	@Test
+	void getRatingsByDriverId_asCompanyAdmin_returnsOk() throws Exception {
+		mockMvc.perform(get("/api/ratings/driver/{driverId}", 1L)
+						.with(TestData.companyAdminJwt()))
+				.andExpect(status().isOk());
+	}
 }

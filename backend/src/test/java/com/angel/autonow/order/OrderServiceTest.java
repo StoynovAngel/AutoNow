@@ -2,6 +2,7 @@ package com.angel.autonow.order;
 
 import com.angel.autonow.data.TestData;
 import com.angel.autonow.company.CompanyEntity;
+import com.angel.autonow.company.CompanyRepository;
 import com.angel.autonow.driver.DriverEntity;
 import com.angel.autonow.driver.DriverRepository;
 import com.angel.autonow.pricing.PricingService;
@@ -48,6 +49,9 @@ class OrderServiceTest {
 
 	@Mock
 	private VehicleRepository vehicleRepository;
+
+	@Mock
+	private com.angel.autonow.company.CompanyRepository companyRepository;
 
 	@Mock
 	private PricingService pricingService;
@@ -740,6 +744,76 @@ class OrderServiceTest {
 		when(orderRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
 
 		var result = orderService.adminCancelOrder(NON_EXISTENT_ID);
+
+		assertTrue(result.isEmpty());
+		verify(orderRepository, never()).save(any());
+	}
+
+	@Test
+	void getOrdersByCompanyId_returnsOrdersForCompany() {
+		OrderEntity order = OrderEntity.builder().id(1L).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).createdAt(NOW).build();
+		OrderResponseDTO response = TestData.createOrderResponse(1L, 1L, OrderStatus.CREATED, NOW);
+
+		when(orderRepository.findByCompanyId(1L)).thenReturn(List.of(order));
+		when(orderMapper.toDTO(order)).thenReturn(response);
+
+		var result = orderService.getOrdersByCompanyId(1L);
+
+		assertEquals(1, result.size());
+		verify(orderRepository).findByCompanyId(1L);
+	}
+
+	@Test
+	void getOrdersByCompanyId_noOrders_returnsEmptyList() {
+		when(orderRepository.findByCompanyId(NON_EXISTENT_ID)).thenReturn(List.of());
+
+		var result = orderService.getOrdersByCompanyId(NON_EXISTENT_ID);
+
+		assertTrue(result.isEmpty());
+	}
+
+	@Test
+	void createOrder_withCompanyId_setsCompany() {
+		CompanyEntity company = TestData.createCompanyEntity();
+		UserEntity user = UserEntity.builder().id(1L).build();
+		OrderRequestDTO request = OrderRequestDTO.builder()
+				.userId(1L)
+				.companyId(1L)
+				.vehicleType(VehicleType.TAXI)
+				.pickupAddress("123 Main St").pickupLatitude(42.69).pickupLongitude(23.32)
+				.dropoffAddress("456 Oak Ave").dropoffLatitude(42.71).dropoffLongitude(23.32)
+				.build();
+		OrderEntity saved = OrderEntity.builder().id(1L).user(user).company(company).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).createdAt(NOW).build();
+		OrderResponseDTO response = TestData.createOrderResponse(1L, 1L, OrderStatus.CREATED, NOW);
+
+		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+		when(companyRepository.findById(1L)).thenReturn(Optional.of(company));
+		when(orderRepository.existsByUserIdAndStatusIn(anyLong(), anySet())).thenReturn(false);
+		when(orderRepository.save(any(OrderEntity.class))).thenReturn(saved);
+		when(orderMapper.toDTO(saved)).thenReturn(response);
+
+		var result = orderService.createOrder(request);
+
+		assertTrue(result.isPresent());
+		verify(companyRepository).findById(1L);
+	}
+
+	@Test
+	void createOrder_companyNotFound_returnsEmpty() {
+		UserEntity user = UserEntity.builder().id(1L).build();
+		OrderRequestDTO request = OrderRequestDTO.builder()
+				.userId(1L)
+				.companyId(NON_EXISTENT_ID)
+				.vehicleType(VehicleType.TAXI)
+				.pickupAddress("123 Main St").pickupLatitude(42.69).pickupLongitude(23.32)
+				.dropoffAddress("456 Oak Ave").dropoffLatitude(42.71).dropoffLongitude(23.32)
+				.build();
+
+		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+		when(companyRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
+		when(orderRepository.existsByUserIdAndStatusIn(anyLong(), anySet())).thenReturn(false);
+
+		var result = orderService.createOrder(request);
 
 		assertTrue(result.isEmpty());
 		verify(orderRepository, never()).save(any());

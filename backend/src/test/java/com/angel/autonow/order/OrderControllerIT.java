@@ -639,4 +639,116 @@ class OrderControllerIT {
 		mockMvc.perform(post("/api/orders/{id}/cancel", 1L))
 				.andExpect(status().isUnauthorized());
 	}
+
+	@Test
+	void getOrdersByCompanyId_asCompanyAdmin_returnsOrders() throws Exception {
+		var company = companyRepository.save(TestData.createCompanyEntity());
+		var order = TestData.createOrderEntity(user);
+		order.setCompany(company);
+		orderRepository.save(order);
+
+		mockMvc.perform(get("/api/orders/company/{companyId}", company.getId())
+						.with(TestData.companyAdminJwt(company.getId())))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.length()").value(1))
+				.andExpect(jsonPath("$[0].companyId").value(company.getId()));
+	}
+
+	@Test
+	void getOrdersByCompanyId_noOrders_returnsEmptyList() throws Exception {
+		var company = companyRepository.save(TestData.createCompanyEntity());
+
+		mockMvc.perform(get("/api/orders/company/{companyId}", company.getId())
+						.with(TestData.companyAdminJwt(company.getId())))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$").isEmpty());
+	}
+
+	@Test
+	void getOrdersByCompanyId_asCustomer_returnsForbidden() throws Exception {
+		mockMvc.perform(get("/api/orders/company/{companyId}", 1L)
+						.with(TestData.customerJwt()))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	void getOrdersByCompanyId_withoutAuth_returnsUnauthorized() throws Exception {
+		mockMvc.perform(get("/api/orders/company/{companyId}", 1L))
+				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	void getOrderById_asCompanyAdmin_returnsOrder() throws Exception {
+		var order = TestData.createOrderEntity(user);
+		orderRepository.save(order);
+
+		mockMvc.perform(get("/api/orders/{id}", order.getId())
+						.with(TestData.companyAdminJwt()))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.id").value(order.getId()));
+	}
+
+	@Test
+	void assignOrder_asCompanyAdmin_setsDriverVehicleAndStatusAccepted() throws Exception {
+		var order = TestData.createOrderEntity(user);
+		orderRepository.save(order);
+		var company = companyRepository.save(TestData.createCompanyEntity());
+		var driverFixture = TestData.createDriverEntity();
+		driverFixture.setCompany(company);
+		var driver = driverRepository.save(driverFixture);
+		var vehicleFixture = TestData.createVehicleEntity();
+		vehicleFixture.setCompany(company);
+		var vehicle = vehicleRepository.save(vehicleFixture);
+
+		var request = OrderAssignmentRequestDTO.builder()
+				.driverId(driver.getId())
+				.vehicleId(vehicle.getId())
+				.build();
+
+		mockMvc.perform(patch("/api/orders/{id}/assign", order.getId())
+						.with(TestData.companyAdminJwt(company.getId()))
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(request)))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.status").value("ACCEPTED"))
+				.andExpect(jsonPath("$.driver.id").value(driver.getId()));
+	}
+
+	@Test
+	void createOrder_withCompanyId_storesCompany() throws Exception {
+		var company = companyRepository.save(TestData.createCompanyEntity());
+		var request = OrderRequestDTO.builder()
+				.userId(user.getId())
+				.companyId(company.getId())
+				.vehicleType(VehicleType.TAXI)
+				.pickupAddress("123 Main St").pickupLatitude(42.69).pickupLongitude(23.32)
+				.dropoffAddress("456 Oak Ave").dropoffLatitude(42.71).dropoffLongitude(23.32)
+				.estimatedPrice(15.0).distanceKm(5.0).estimatedDurationMinutes(10)
+				.build();
+
+		mockMvc.perform(post("/api/orders")
+						.with(TestData.customerJwt())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(request)))
+				.andExpect(status().isCreated())
+				.andExpect(jsonPath("$.companyId").value(company.getId()));
+	}
+
+	@Test
+	void createOrder_companyNotFound_returnsBadRequest() throws Exception {
+		var request = OrderRequestDTO.builder()
+				.userId(user.getId())
+				.companyId(NON_EXISTENT_ID)
+				.vehicleType(VehicleType.TAXI)
+				.pickupAddress("123 Main St").pickupLatitude(42.69).pickupLongitude(23.32)
+				.dropoffAddress("456 Oak Ave").dropoffLatitude(42.71).dropoffLongitude(23.32)
+				.estimatedPrice(15.0).distanceKm(5.0).estimatedDurationMinutes(10)
+				.build();
+
+		mockMvc.perform(post("/api/orders")
+						.with(TestData.customerJwt())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(request)))
+				.andExpect(status().isBadRequest());
+	}
 }

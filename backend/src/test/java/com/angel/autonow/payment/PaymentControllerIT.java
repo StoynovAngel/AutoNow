@@ -271,4 +271,31 @@ class PaymentControllerIT {
 		mockMvc.perform(delete("/api/payments/{id}", 1L))
 				.andExpect(status().isUnauthorized());
 	}
+
+	@Test
+	void getPaymentById_asCompanyAdmin_returnsOk() throws Exception {
+		PaymentEntity payment = TestData.createPaymentEntity(order, 16.00, PaymentMethod.CASH, PaymentStatus.PENDING);
+		paymentRepository.save(payment);
+
+		mockMvc.perform(get("/api/payments/{id}", payment.getId())
+						.with(TestData.companyAdminJwt()))
+				.andExpect(status().isOk());
+	}
+
+	@Test
+	void getPaymentByOrderId_asCompanyAdmin_returnsOk() throws Exception {
+		PaymentEntity payment = TestData.createPaymentEntity(order, 16.00, PaymentMethod.CASH, PaymentStatus.PENDING);
+		paymentRepository.save(payment);
+
+		mockMvc.perform(get("/api/payments/order/{orderId}", order.getId())
+						.with(TestData.companyAdminJwt()))
+				.andExpect(status().isOk());
+	}
+
+	@Test
+	void getPaymentById_asDriver_returnsForbidden() throws Exception {
+		mockMvc.perform(get("/api/payments/{id}", 1L)
+						.with(TestData.driverJwt()))
+				.andExpect(status().isForbidden());
+	}
 }
