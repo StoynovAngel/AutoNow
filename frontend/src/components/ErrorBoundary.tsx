@@ -1,5 +1,5 @@
 import React, { Component, ReactNode } from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
 
 interface Props {
     children: ReactNode;
@@ -7,30 +7,20 @@ interface Props {
 
 interface State {
     hasError: boolean;
-    error: Error | null;
-    errorInfo: React.ErrorInfo | null;
 }
 
 export class ErrorBoundary extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
-        this.state = {
-            hasError: false,
-            error: null,
-            errorInfo: null
-        };
+        this.state = { hasError: false };
     }
 
-    static getDerivedStateFromError(error: Error): Partial<State> {
+    static getDerivedStateFromError(): Partial<State> {
         return { hasError: true };
     }
 
     componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
         console.error('ErrorBoundary caught an error:', error, errorInfo);
-        this.setState({
-            error,
-            errorInfo
-        });
     }
 
     render() {
@@ -38,14 +28,10 @@ export class ErrorBoundary extends Component<Props, State> {
             return (
                 <View style={styles.container}>
                     <Text style={styles.title}>Something went wrong</Text>
-                    <ScrollView style={styles.scrollView}>
-                        <Text style={styles.errorText}>
-                            {this.state.error?.toString()}
-                        </Text>
-                        <Text style={styles.stackText}>
-                            {this.state.errorInfo?.componentStack}
-                        </Text>
-                    </ScrollView>
+                    <Text style={styles.message}>An unexpected error occurred. Please restart the app.</Text>
+                    <Pressable style={styles.button} onPress={() => this.setState({ hasError: false })}>
+                        <Text style={styles.buttonText}>Try again</Text>
+                    </Pressable>
                 </View>
             );
         }
@@ -58,27 +44,31 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
-        padding: 20,
-        paddingTop: 50,
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 32,
     },
     title: {
         fontSize: 20,
         fontWeight: 'bold',
-        color: '#e74c3c',
-        marginBottom: 10,
+        color: '#1A1A1A',
+        marginBottom: 12,
     },
-    scrollView: {
-        flex: 1,
-    },
-    errorText: {
+    message: {
         fontSize: 14,
-        color: '#c0392b',
-        marginBottom: 10,
-        fontFamily: 'monospace',
+        color: '#6B7280',
+        textAlign: 'center',
+        marginBottom: 24,
     },
-    stackText: {
-        fontSize: 12,
-        color: '#7f8c8d',
-        fontFamily: 'monospace',
+    button: {
+        backgroundColor: '#444444',
+        paddingVertical: 12,
+        paddingHorizontal: 32,
+        borderRadius: 16,
+    },
+    buttonText: {
+        color: '#FFFFFF',
+        fontSize: 16,
+        fontWeight: '600',
     },
 });

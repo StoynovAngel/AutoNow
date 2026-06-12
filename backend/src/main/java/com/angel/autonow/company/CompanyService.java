@@ -7,6 +7,8 @@ import com.angel.autonow.user.UserRepository;
 import com.angel.autonow.user.role.Role;
 import com.angel.autonow.vehicle.VehicleRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,10 +27,10 @@ public class CompanyService {
 	private final VehicleRepository vehicleRepository;
 
 	@Transactional
-	public Optional<CompanyResponseDTO> createCompany(CompanyRequestDTO request) {
+	public CompanyResponseDTO createCompany(CompanyRequestDTO request) {
 		CompanyEntity company = companyMapper.toEntity(request);
 		CompanyEntity saved = companyRepository.save(company);
-		return Optional.of(companyMapper.toDTO(saved));
+		return companyMapper.toDTO(saved);
 	}
 
 	@Transactional
@@ -40,18 +42,24 @@ public class CompanyService {
 			return Optional.empty();
 		}
 
+		CompanyEntity company = companyOpt.get();
 		UserEntity user = userOpt.get();
-		user.setCompany(companyOpt.get());
+		user.setCompany(company);
 		user.getAuthorities().add(Role.COMPANY_ADMIN.getAuthority());
 		userRepository.save(user);
 
-		String token = jwtService.generateToken(user.getId(), user.getEmail(), user.getAuthorities(), companyOpt.get().getId());
-
-		return Optional.of(token);
+		return Optional.of(jwtService.generateToken(user.getId(), user.getEmail(), user.getAuthorities(), company.getId()));
 	}
 
 	public Optional<CompanyResponseDTO> getCompanyById(Long id) {
 		return companyRepository.findById(id).map(companyMapper::toDTO);
+	}
+
+	public Optional<CompanyResponseDTO> getCompanyByUserId(Long userId) {
+		return userRepository.findById(userId)
+				.map(UserEntity::getCompany)
+				.filter(company -> company != null)
+				.map(companyMapper::toDTO);
 	}
 
 	public List<CompanyResponseDTO> getAllCompanies() {
@@ -69,18 +77,13 @@ public class CompanyService {
 
 	@Transactional
 	public Optional<CompanyResponseDTO> updateCompany(Long id, CompanyRequestDTO request, String userEmail) {
-		Optional<UserEntity> userOpt = userRepository.findByEmail(userEmail);
+		UserEntity user = userRepository.findByEmail(userEmail)
+				.orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-		if (userOpt.isEmpty()) {
-			return Optional.empty();
-		}
-
-		UserEntity user = userOpt.get();
 		boolean isAdmin = user.getAuthorities().contains(Role.ADMIN.getAuthority());
 		boolean isOwner = user.getCompany() != null && user.getCompany().getId().equals(id);
-
 		if (!isAdmin && !isOwner) {
-			return Optional.empty();
+			throw new AuthorizationDeniedException("Not authorized to update company " + id);
 		}
 
 		return companyRepository.findById(id).map(company -> {

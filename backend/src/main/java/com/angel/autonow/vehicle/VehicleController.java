@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,13 +34,13 @@ public class VehicleController {
 	}
 
 	@GetMapping("/{id}")
-	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'DRIVER', 'GUEST')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'DRIVER', 'GUEST', 'COMPANY_ADMIN')")
 	public VehicleResponseDTO getVehicleById(@PathVariable Long id) {
 		return vehicleService.getVehicleById(id).orElse(null);
 	}
 
 	@GetMapping
-	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'DRIVER', 'GUEST')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN', 'CUSTOMER', 'DRIVER', 'GUEST')")
 	public List<VehicleResponseDTO> getAllVehicles() {
 		return vehicleService.getAllVehicles();
 	}
@@ -48,6 +49,14 @@ public class VehicleController {
 	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN')")
 	public List<VehicleResponseDTO> getVehiclesByCompanyId(@PathVariable Long companyId) {
 		return vehicleService.getVehiclesByCompanyId(companyId);
+	}
+
+	@GetMapping("/my")
+	@PreAuthorize("hasRole('COMPANY_ADMIN')")
+	public ResponseEntity<List<VehicleResponseDTO>> getMyVehicles(Authentication authentication) {
+		return vehicleService.getMyVehicles(authentication)
+				.map(ResponseEntity::ok)
+				.orElse(ResponseEntity.badRequest().build());
 	}
 
 	@GetMapping("/public/company/{companyId}")

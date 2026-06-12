@@ -1,5 +1,4 @@
 import { Badge, Button, Select } from 'flowbite-react';
-import type {VehicleClass} from '../../services/vehicle/vehicleService';
 
 export type OrderStatus =
     | 'CREATED'
@@ -23,6 +22,7 @@ export type VehicleTypeFilter = 'ALL' | VehicleType;
 export interface Order {
     id: number;
     userId: number;
+    companyId?: number;
     driverId?: number;
     vehicleId?: number;
     vehicleType: string;
@@ -38,10 +38,6 @@ export interface Order {
     distanceKm?: number;
     estimatedDurationMinutes?: number;
     specialRequirements?: string;
-    passengerCount?: number;
-    luggageCount?: number;
-    vehicleClass?: VehicleClass;
-    requiresAirConditioning?: boolean;
     weightKg?: number;
     cancellationReason?: string;
     createdAt: string;
@@ -203,31 +199,6 @@ const OrderInfo = ({order, onChangeStatus, onOpenAssign}: OrderInfoProps) => {
                     <label className="block text-xs font-semibold text-gray-500 mb-1">Est. Duration (min)</label>
                     <p className="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
                         {order.estimatedDurationMinutes ?? '—'}
-                    </p>
-                </div>
-
-                <div>
-                    <label className="block text-xs font-semibold text-gray-500 mb-1">Passengers</label>
-                    <p className="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
-                        {order.passengerCount ?? '—'}
-                    </p>
-                </div>
-                <div>
-                    <label className="block text-xs font-semibold text-gray-500 mb-1">Luggage</label>
-                    <p className="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
-                        {order.luggageCount ?? '—'}
-                    </p>
-                </div>
-                <div>
-                    <label className="block text-xs font-semibold text-gray-500 mb-1">Vehicle Class</label>
-                    <p className="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
-                        {order.vehicleClass ?? '—'}
-                    </p>
-                </div>
-                <div>
-                    <label className="block text-xs font-semibold text-gray-500 mb-1">Air Conditioning</label>
-                    <p className="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
-                        {order.requiresAirConditioning === undefined ? '—' : order.requiresAirConditioning ? 'Required' : 'Not required'}
                     </p>
                 </div>
 

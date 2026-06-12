@@ -40,20 +40,11 @@ export const createStyles = (theme: Theme) => StyleSheet.create({
         marginLeft: 8,
     },
 
-    actionsContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-
     container: {
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: theme.colors.background,
         paddingTop: 36,
         paddingBottom: 12,
-    },
-    buttonContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
     },
 });

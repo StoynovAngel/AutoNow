@@ -1,6 +1,5 @@
 package com.angel.autonow.order;
 
-import com.angel.autonow.vehicle.VehicleClass;
 import com.angel.autonow.vehicle.VehicleType;
 import lombok.Builder;
 
@@ -10,6 +9,7 @@ import java.time.LocalDateTime;
 public record OrderResponseDTO(
 		Long id,
 		Long userId,
+		Long companyId,
 		Long driverId,
 		Long vehicleId,
 		DriverInfoDTO driver,
@@ -27,10 +27,6 @@ public record OrderResponseDTO(
 		Double distanceKm,
 		Integer estimatedDurationMinutes,
 		String specialRequirements,
-		Integer passengerCount,
-		Integer luggageCount,
-		VehicleClass vehicleClass,
-		Boolean requiresAirConditioning,
 		Double weightKg,
 		String cancellationReason,
 		LocalDateTime createdAt,

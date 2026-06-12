@@ -16,9 +16,11 @@ interface CompanyInfoProps {
     company: Company | null;
     canEdit?: boolean;
     onEdit?: () => void;
+    canDelete?: boolean;
+    onDelete?: () => void;
 }
 
-const CompanyInfo = ({company, canEdit = false, onEdit}: CompanyInfoProps) => {
+const CompanyInfo = ({company, canEdit = false, onEdit, canDelete = false, onDelete}: CompanyInfoProps) => {
     if (!company) {
         return (
             <div className="bg-white rounded-xl shadow-md p-4 border border-gray-100 flex-1 min-h-0 flex flex-col">
@@ -50,6 +52,15 @@ const CompanyInfo = ({company, canEdit = false, onEdit}: CompanyInfoProps) => {
                             className="px-2 py-1 text-xs font-semibold text-brand-700 bg-brand-50 hover:bg-brand-100 rounded-md transition-colors"
                         >
                             Edit
+                        </button>
+                    )}
+                    {canDelete && onDelete && (
+                        <button
+                            type="button"
+                            onClick={onDelete}
+                            className="px-2 py-1 text-xs font-semibold text-red-700 bg-red-50 hover:bg-red-100 rounded-md transition-colors"
+                        >
+                            Delete
                         </button>
                     )}
                 </div>

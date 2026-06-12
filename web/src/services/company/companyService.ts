@@ -18,6 +18,11 @@ export const companyService = {
         return data;
     },
 
+    getMyCompany: async () => {
+        const {data} = await apiClient.get('/companies/my');
+        return [data];
+    },
+
     getCompanyById: async (id: number) => {
         const {data} = await apiClient.get(`/companies/${id}`);
         return data;

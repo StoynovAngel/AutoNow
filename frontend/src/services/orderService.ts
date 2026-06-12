@@ -1,6 +1,5 @@
 import customAPI from './ApiClient';
 import type { VehicleType } from '../types/vehicle';
-import type { VehicleClass } from '../types/booking';
 
 export type OrderStatus =
     | 'CREATED'
@@ -8,8 +7,6 @@ export type OrderStatus =
     | 'IN_PROGRESS'
     | 'COMPLETED'
     | 'CANCELED';
-
-export const ACTIVE_ORDER_STATUSES: OrderStatus[] = ['CREATED', 'ACCEPTED', 'IN_PROGRESS'];
 
 export interface DriverInfo {
     id: number;
@@ -29,6 +26,7 @@ export interface VehicleInfo {
 
 export interface OrderRequest {
     userId: number;
+    companyId?: number;
     vehicleType: VehicleType;
     pickupAddress: string;
     pickupLatitude: number;
@@ -37,7 +35,6 @@ export interface OrderRequest {
     dropoffLatitude: number;
     dropoffLongitude: number;
     distanceKm?: number;
-    vehicleClass?: VehicleClass;
     weightKg?: number;
 }
 
@@ -61,10 +58,6 @@ export interface OrderResponse {
     distanceKm?: number;
     estimatedDurationMinutes?: number;
     specialRequirements?: string;
-    passengerCount?: number;
-    luggageCount?: number;
-    vehicleClass?: VehicleClass;
-    requiresAirConditioning?: boolean;
     cancellationReason?: string;
     createdAt?: string;
     updatedAt?: string;
@@ -73,7 +66,6 @@ export interface OrderResponse {
 export interface OrderEstimateRequest {
     vehicleType: VehicleType;
     distanceKm: number;
-    vehicleClass?: VehicleClass;
     weightKg?: number;
 }
 

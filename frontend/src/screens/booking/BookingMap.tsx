@@ -1,13 +1,13 @@
 import React from 'react';
-import { View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from './BookingMap.style';
 import BookingMapBody from '../../components/booking/BookingMapBody';
 
 const BookingMap = () => {
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
             <BookingMapBody />
-        </View>
+        </SafeAreaView>
     );
 };
 

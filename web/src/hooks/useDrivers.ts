@@ -1,4 +1,4 @@
-import {useState, useEffect, useCallback} from 'react';
+import {useState, useEffect} from 'react';
 import {driverService} from '../services/driver/driverService';
 import {vehicleService} from '../services/vehicle/vehicleService';
 import {ratingService} from '../services/rating/ratingService';
@@ -16,7 +16,7 @@ export const useDrivers = (companyId?: number | null) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const fetchDrivers = useCallback(async () => {
+    const fetchDrivers = async () => {
         if (!companyId) return;
         setLoading(true);
         setError(null);
@@ -37,12 +37,12 @@ export const useDrivers = (companyId?: number | null) => {
         } finally {
             setLoading(false);
         }
-    }, [companyId]);
+    };
 
     useEffect(() => {
         if (!companyId) return;
         fetchDrivers();
-    }, [companyId, fetchDrivers]);
+    }, [companyId]);
 
     const selectDriver = async (driverId: number) => {
         setSelectedDriverId(driverId);

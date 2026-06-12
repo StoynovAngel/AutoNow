@@ -3,7 +3,7 @@ import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 import type {RootStackParamList} from "../../navigation/Navigation";
 import {createStyles} from "./Body.style";
-import {useTheme} from "../../hooks/useTheme";
+import { theme } from '../../constants/theme';
 import {getVehicleOptions} from "../../constants/vehicleOptions";
 import {VehicleType} from "../../types/vehicle";
 import {MaterialIcons} from "@expo/vector-icons";
@@ -12,7 +12,7 @@ import {useResumeActiveOrder} from "../../hooks/useResumeActiveOrder";
 
 const Body = () => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-    const {theme} = useTheme();
+
     const {t} = useTranslation();
     const styles = createStyles(theme);
     const vehicleOptions = getVehicleOptions(t);

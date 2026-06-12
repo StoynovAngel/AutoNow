@@ -1,11 +1,11 @@
 import React from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
-import { useTheme } from '../../hooks/useTheme';
+import { theme } from '../../constants/theme';
 import { createStyles } from './Body.style';
 import { useTranslation } from 'react-i18next';
 
 const LoadingState = () => {
-    const { theme } = useTheme();
+
     const styles = createStyles(theme);
     const { t } = useTranslation();
 

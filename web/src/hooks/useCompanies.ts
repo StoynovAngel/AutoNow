@@ -3,7 +3,7 @@ import {companyService, type CompanyPayload} from '../services/company/companySe
 import type {Company} from '../components/company/CompanyInfo';
 import {getErrorMessage} from '../utils/errors';
 
-export const useCompanies = () => {
+export const useCompanies = (isCompanyAdmin: boolean = false) => {
     const [companies, setCompanies] = useState<Company[]>([]);
     const [selectedCompanyId, setSelectedCompanyId] = useState<number | null>(null);
     const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
@@ -18,8 +18,14 @@ export const useCompanies = () => {
         setLoading(true);
         setError(null);
         try {
-            const data = await companyService.getAllCompanies();
+            const data = isCompanyAdmin
+                ? await companyService.getMyCompany()
+                : await companyService.getAllCompanies();
             setCompanies(data);
+            if (isCompanyAdmin && data.length === 1) {
+                setSelectedCompanyId(data[0].id);
+                setSelectedCompany(data[0]);
+            }
         } catch (err: unknown) {
             setError(getErrorMessage(err, 'Failed to load companies'));
         } finally {
@@ -59,6 +65,13 @@ export const useCompanies = () => {
         return updated;
     };
 
+    const deleteCompany = async (id: number): Promise<void> => {
+        await companyService.deleteCompany(id);
+        setCompanies((prev) => prev.filter((c) => c.id !== id));
+        setSelectedCompanyId((prev) => (prev === id ? null : prev));
+        setSelectedCompany((prev) => (prev && prev.id === id ? null : prev));
+    };
+
     return {
         companies,
         selectedCompanyId,
@@ -68,6 +81,7 @@ export const useCompanies = () => {
         selectCompany,
         createCompany,
         updateCompany,
+        deleteCompany,
         refreshCompanies: fetchCompanies
     };
 };

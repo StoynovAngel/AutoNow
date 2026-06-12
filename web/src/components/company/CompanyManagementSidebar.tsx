@@ -1,4 +1,5 @@
-import { Button } from 'flowbite-react';
+import { useState } from 'react';
+import { Button, TextInput } from 'flowbite-react';
 import type { Company } from './CompanyInfo';
 import type { Driver } from './DriverInfo';
 
@@ -11,6 +12,7 @@ interface CompanyManagementSidebarProps {
     onSelectDriver: (driverId: number) => void;
     canCreateCompany?: boolean;
     onAddCompany?: () => void;
+    isCompanyAdmin?: boolean;
 }
 
 const CompanyManagementSidebar = ({
@@ -22,21 +24,41 @@ const CompanyManagementSidebar = ({
     onSelectDriver,
     canCreateCompany = false,
     onAddCompany,
+    isCompanyAdmin = false,
 }: CompanyManagementSidebarProps) => {
+    const [companySearch, setCompanySearch] = useState('');
+    const filteredCompanies = companySearch.trim()
+        ? companies.filter(c => c.name.toLowerCase().includes(companySearch.toLowerCase()))
+        : companies;
+
     return (
         <div className="flex flex-col gap-3 w-72 h-full">
             <div className="bg-white rounded-xl shadow-md p-4 flex flex-col border border-gray-100 min-h-0 flex-1">
                 <div className="flex items-center justify-between mb-3">
                     <h3 className="text-lg font-bold text-gray-800">Companies</h3>
                     <span className="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
-                        {companies.length}
+                        {filteredCompanies.length}
                     </span>
                 </div>
-                <div className="flex-1 space-y-2 mb-3 overflow-hidden min-h-0">
-                    {companies.length === 0 ? (
-                        <p className="text-xs text-gray-400 text-center py-6">No companies yet</p>
+                {!isCompanyAdmin && (
+                    <div className="mb-2">
+                        <label htmlFor="company-search" className="sr-only">Search companies</label>
+                        <TextInput
+                            id="company-search"
+                            sizing="sm"
+                            placeholder="Search by name…"
+                            value={companySearch}
+                            onChange={e => setCompanySearch(e.target.value)}
+                        />
+                    </div>
+                )}
+                <div className="flex-1 space-y-2 mb-3 overflow-y-auto min-h-0">
+                    {filteredCompanies.length === 0 ? (
+                        <p className="text-xs text-gray-400 text-center py-6">
+                            {companies.length === 0 ? 'No companies yet' : 'No matches'}
+                        </p>
                     ) : (
-                        companies.map((company) => (
+                        filteredCompanies.map((company) => (
                             <button
                                 key={company.id}
                                 type="button"
@@ -72,7 +94,7 @@ const CompanyManagementSidebar = ({
                         {drivers.length}
                     </span>
                 </div>
-                <div className="flex-1 space-y-2 mb-3 overflow-hidden min-h-0">
+                <div className="flex-1 space-y-2 mb-3 overflow-y-auto min-h-0">
                     {drivers.length === 0 ? (
                         <p className="text-xs text-gray-400 text-center py-6">
                             {selectedCompanyId ? 'No drivers in this company' : 'Select a company'}

@@ -1,9 +1,5 @@
 import apiClient from '../apiClient';
 
-export type VehicleClass = 'STANDARD' | 'XL';
-
-export const VEHICLE_CLASSES: VehicleClass[] = ['STANDARD', 'XL'];
-
 export interface VehiclePayload {
     brand: string;
     model: string;
@@ -19,6 +15,11 @@ export interface VehiclePayload {
 export const vehicleService = {
     getAllVehicles: async () => {
         const {data} = await apiClient.get('/vehicles');
+        return data;
+    },
+
+    getMyVehicles: async () => {
+        const {data} = await apiClient.get('/vehicles/my');
         return data;
     },
 

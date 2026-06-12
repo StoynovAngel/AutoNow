@@ -40,9 +40,11 @@ public class OrderController {
 	}
 
 	@GetMapping("/{id}")
-	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'DRIVER')")
-	public OrderResponseDTO getOrderById(@PathVariable Long id) {
-		return orderService.getOrderById(id).orElse(null);
+	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN', 'CUSTOMER', 'DRIVER')")
+	public ResponseEntity<OrderResponseDTO> getOrderById(@PathVariable Long id) {
+		return orderService.getOrderById(id)
+				.map(ResponseEntity::ok)
+				.orElse(ResponseEntity.notFound().build());
 	}
 
 	@GetMapping("/user/{userId}")
@@ -70,6 +72,12 @@ public class OrderController {
 		return orderService.getAllOrders();
 	}
 
+	@GetMapping("/company/{companyId}")
+	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN')")
+	public List<OrderResponseDTO> getOrdersByCompanyId(@PathVariable Long companyId) {
+		return orderService.getOrdersByCompanyId(companyId);
+	}
+
 	@PutMapping("/{id}")
 	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
 	public ResponseEntity<OrderResponseDTO> updateOrder(@PathVariable Long id, @Valid @RequestBody OrderRequestDTO request) {
@@ -79,7 +87,7 @@ public class OrderController {
 	}
 
 	@PatchMapping("/{id}/status")
-	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'DRIVER')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN', 'CUSTOMER', 'DRIVER')")
 	public ResponseEntity<OrderResponseDTO> updateOrderStatus(@PathVariable Long id, @Valid @RequestBody OrderStatusUpdateDTO request) {
 		return orderService.updateOrderStatus(id, request.status())
 				.map(ResponseEntity::ok)
@@ -87,7 +95,7 @@ public class OrderController {
 	}
 
 	@PatchMapping("/{id}/assign")
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN')")
 	public ResponseEntity<OrderResponseDTO> assignOrder(@PathVariable Long id, @Valid @RequestBody OrderAssignmentRequestDTO request) {
 		return orderService.assignOrder(id, request)
 				.map(ResponseEntity::ok)

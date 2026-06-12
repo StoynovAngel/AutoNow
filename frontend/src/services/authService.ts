@@ -3,61 +3,31 @@ import storage from './storage';
 import type { JwtResponse } from '../types/auth';
 
 const decodeToken = (token: string) => {
-    if (!token || typeof token !== 'string' || token.trim() === '') {
-        throw new Error('Invalid token: token is empty or not a string');
-    }
-
-    const segments = token.split('.');
-    if (segments.length !== 3) {
-        throw new Error('Invalid token: JWT must have exactly 3 segments');
-    }
-
-    const payload = segments[1];
-    if (!payload) {
-        throw new Error('Invalid token: payload segment is empty');
-    }
-
-    try {
-        let base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
-
-        while (base64.length % 4 !== 0) {
-            base64 += '=';
-        }
-
-        return JSON.parse(atob(base64));
-    } catch (error) {
-        throw new Error('Invalid token: failed to decode or parse payload');
-    }
+    const payload = token.split('.')[1];
+    return JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/')));
 };
 
-export const login = async (email: string, password: string) => {
-    const response = await customAPI.post<JwtResponse>('api/auth/login', {email, password});
-
-    const token = response.data.token;
+const storeAndDecode = async (token: string) => {
     try {
         await storage.setItem('jwt', token);
     } catch (error) {
         console.warn('Failed to store token:', error);
     }
-
     return decodeToken(token);
+};
+
+export const login = async (email: string, password: string) => {
+    const response = await customAPI.post<JwtResponse>('api/auth/login', { email, password });
+    return storeAndDecode(response.data.token);
 };
 
 export const register = async (email: string, password: string) => {
     const response = await customAPI.post<JwtResponse>('api/auth/register', {
         email,
         password,
-        roleNames: ['CUSTOMER']
+        roleNames: ['CUSTOMER'],
     });
-
-    const token = response.data.token;
-    try {
-        await storage.setItem('jwt', token);
-    } catch (error) {
-        console.warn('Failed to store token:', error);
-    }
-
-    return decodeToken(token);
+    return storeAndDecode(response.data.token);
 };
 
 export const logout = async () => {
@@ -78,3 +48,4 @@ export const getStoredToken = async () => {
 };
 
 export { decodeToken };
+

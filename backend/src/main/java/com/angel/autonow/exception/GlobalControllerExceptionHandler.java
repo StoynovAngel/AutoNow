@@ -1,5 +1,7 @@
 package com.angel.autonow.exception;
 
+import com.angel.autonow.company.PricingAlreadyExistsException;
+import com.angel.autonow.company.PricingNotFoundException;
 import com.angel.autonow.driver.VehicleAlreadyAssignedException;
 import com.angel.autonow.order.OrderConflictException;
 import com.angel.autonow.order.OrderForbiddenException;
@@ -104,6 +106,20 @@ public class GlobalControllerExceptionHandler {
 	public ProblemDetail handleVehicleAlreadyAssignedException(VehicleAlreadyAssignedException e) {
 		log.warn(e.getMessage(), HttpStatus.CONFLICT, e);
 		return handle(e, HttpStatus.CONFLICT);
+	}
+
+	@ResponseStatus(HttpStatus.CONFLICT)
+	@ExceptionHandler(PricingAlreadyExistsException.class)
+	public ProblemDetail handlePricingAlreadyExistsException(PricingAlreadyExistsException e) {
+		log.warn(e.getMessage(), HttpStatus.CONFLICT, e);
+		return handle(e, HttpStatus.CONFLICT);
+	}
+
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	@ExceptionHandler(PricingNotFoundException.class)
+	public ProblemDetail handlePricingNotFoundException(PricingNotFoundException e) {
+		log.warn(e.getMessage(), HttpStatus.NOT_FOUND, e);
+		return handle(e, HttpStatus.NOT_FOUND);
 	}
 
 	@ResponseStatus(HttpStatus.FORBIDDEN)

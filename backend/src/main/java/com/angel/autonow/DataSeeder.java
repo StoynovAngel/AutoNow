@@ -102,7 +102,7 @@ public class DataSeeder implements ApplicationRunner {
 
 		VehicleEntity v1 = vehicleRepository.save(VehicleEntity.builder()
 				.brand("Toyota").model("Camry").licensePlate("CA1234AB")
-				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/2018_Toyota_Camry_%28ASV70R%29_Ascent_sedan_%282018-08-27%29_01.jpg/1280px-2018_Toyota_Camry_%28ASV70R%29_Ascent_sedan_%282018-08-27%29_01.jpg")
+				.imageUrl("https://thumbs.dreamstime.com/b/toyota-camry-moscow-russia-march-yellow-taxi-car-city-street-243245084.jpg")
 				.airConditioning(true).numberOfSeats(5).trunkCapacity(450.0)
 				.vehicleType(VehicleType.TAXI)
 				.company(company).build());
@@ -164,14 +164,14 @@ public class DataSeeder implements ApplicationRunner {
 
 		VehicleEntity v2 = vehicleRepository.save(VehicleEntity.builder()
 				.brand("Scania").model("R450").licensePlate("PB2233HK")
-				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Scania_R_450_-_2017.jpg/1280px-Scania_R_450_-_2017.jpg")
+				.imageUrl("https://d2e5b8shawuel2.cloudfront.net/vehicle/290839/hlv/original.jpg")
 				.airConditioning(true).numberOfSeats(2).trunkCapacity(38000.0)
 				.vehicleType(VehicleType.LOGISTICS)
 				.company(company).build());
 
 		VehicleEntity v3 = vehicleRepository.save(VehicleEntity.builder()
 				.brand("MAN").model("TGX").licensePlate("PB3344TX")
-				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/MAN_TGX_18.500_4x2_BLS_Efficient_Line_3_%28cropped%29.jpg/1280px-MAN_TGX_18.500_4x2_BLS_Efficient_Line_3_%28cropped%29.jpg")
+				.imageUrl("https://media.man.eu/is/image/MAN/man-spezifikation-tgx-stage-16-9?crop=0,428,8192,4608&wid=1600&hei=900&fit=stretch&fmt=webp-alpha")
 				.airConditioning(true).numberOfSeats(2).trunkCapacity(42000.0)
 				.vehicleType(VehicleType.LOGISTICS)
 				.company(company).build());
@@ -196,7 +196,7 @@ public class DataSeeder implements ApplicationRunner {
 	private void seedAmbulance(String password) {
 		CompanyEntity company = companyRepository.save(CompanyEntity.builder()
 				.name("MedTransport BG")
-				.address("\"Nikola Y. Vaptsarov\" 51Б, 1407 Sofia")
+				.address("Bolnichna 40")
 				.phone("+359888300003")
 				.email("info@medtransport.bg")
 				.description("24/7 ambulance and medical transport")
@@ -219,14 +219,14 @@ public class DataSeeder implements ApplicationRunner {
 
 		VehicleEntity v2 = vehicleRepository.save(VehicleEntity.builder()
 				.brand("Volkswagen").model("Crafter").licensePlate("CB2020BO")
-				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/VW_Crafter_Ambulance_%282021%29_-_Front_view.jpg/1280px-VW_Crafter_Ambulance_%282021%29_-_Front_view.jpg")
+				.imageUrl("https://media.drive.com.au/obj/tx_q:50,rs:auto:1920:1080:1/driveau/upload/cms/uploads/1qHbRHTkR26wgrP3sWpZ")
 				.airConditioning(true).numberOfSeats(3).trunkCapacity(1400.0)
 				.vehicleType(VehicleType.AMBULANCE)
 				.company(company).build());
 
 		VehicleEntity v3 = vehicleRepository.save(VehicleEntity.builder()
 				.brand("Ford").model("Transit").licensePlate("CB3030EK")
-				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Ford_Transit_Ambulance.jpg/1280px-Ford_Transit_Ambulance.jpg")
+				.imageUrl("https://ambulancemed.com/wp-content/uploads/2024/02/IMG_1470-1-scaled-min.jpg")
 				.airConditioning(true).numberOfSeats(3).trunkCapacity(1300.0)
 				.vehicleType(VehicleType.AMBULANCE)
 				.company(company).build());
@@ -267,14 +267,14 @@ public class DataSeeder implements ApplicationRunner {
 
 		VehicleEntity v1 = vehicleRepository.save(VehicleEntity.builder()
 				.brand("Renault").model("Clio").licensePlate("CA4040HP")
-				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Renault_Clio_V_in_Aalborg.jpg/1280px-Renault_Clio_V_in_Aalborg.jpg")
+				.imageUrl("https://autodesignmagazine.com/wp-content/uploads/2025/11/Renault_Clio_full_hybrid_E-Tech_-_Techno_-_Rouge_Absolu_15.jpg")
 				.airConditioning(true).numberOfSeats(5).trunkCapacity(300.0)
 				.vehicleType(VehicleType.RENTAL)
 				.company(company).build());
 
 		VehicleEntity v2 = vehicleRepository.save(VehicleEntity.builder()
 				.brand("Hyundai").model("Tucson").licensePlate("CA5050PT")
-				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/2021_Hyundai_Tucson_%28NX4%29_Premium_2.0.jpg/1280px-2021_Hyundai_Tucson_%28NX4%29_Premium_2.0.jpg")
+				.imageUrl("https://www.topgear.com/sites/default/files/2024/12/hyundai-tucson-ultimate-17.jpg")
 				.airConditioning(true).numberOfSeats(5).trunkCapacity(620.0)
 				.vehicleType(VehicleType.RENTAL)
 				.company(company).build());
@@ -336,7 +336,7 @@ public class DataSeeder implements ApplicationRunner {
 
 		VehicleEntity v3 = vehicleRepository.save(VehicleEntity.builder()
 				.brand("Mercedes").model("E-Class Hearse").licensePlate("BT3030AE")
-				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Mercedes_Benz_W212_hearse.jpg/1280px-Mercedes_Benz_W212_hearse.jpg")
+				.imageUrl("https://cdn.prod.website-files.com/63f8694b1895d86ca0fbf44e/6943c4a25d367ae9605111b9_kuhlmann-cars-e-klasse-header-opt.webp")
 				.airConditioning(true).numberOfSeats(2).trunkCapacity(2300.0)
 				.vehicleType(VehicleType.FUNERAL)
 				.company(company).build());
@@ -377,21 +377,21 @@ public class DataSeeder implements ApplicationRunner {
 
 		VehicleEntity v1 = vehicleRepository.save(VehicleEntity.builder()
 				.brand("Chrysler").model("300 Limousine").licensePlate("CA7070EM")
-				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Chrysler_300_limo.jpg/1280px-Chrysler_300_limo.jpg")
+				.imageUrl("https://d11kcrtzt740u6.cloudfront.net/veh/price4limo-black-chrysler-300-limousine.jpg")
 				.airConditioning(true).numberOfSeats(8).trunkCapacity(400.0)
 				.vehicleType(VehicleType.PROM)
 				.company(company).build());
 
 		VehicleEntity v2 = vehicleRepository.save(VehicleEntity.builder()
 				.brand("Lincoln").model("Stretch").licensePlate("CA8080MO")
-				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Lincoln_Town_Car_Stretch_Limo.jpg/1280px-Lincoln_Town_Car_Stretch_Limo.jpg")
+				.imageUrl("https://qualitycoachwork.com/wp-content/uploads/2023/03/Lincoln-Navigator-Stretch-CEO-Conversion.jpg")
 				.airConditioning(true).numberOfSeats(10).trunkCapacity(450.0)
 				.vehicleType(VehicleType.PROM)
 				.company(company).build());
 
 		VehicleEntity v3 = vehicleRepository.save(VehicleEntity.builder()
 				.brand("Hummer").model("H2 Limo").licensePlate("CA9090OT")
-				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Hummer_H2_Limousine.jpg/1280px-Hummer_H2_Limousine.jpg")
+				.imageUrl("https://www.hertslimos.com/wp-content/uploads/2023/01/hummer-h2-limo-hero.jpg")
 				.airConditioning(true).numberOfSeats(14).trunkCapacity(500.0)
 				.vehicleType(VehicleType.PROM)
 				.company(company).build());

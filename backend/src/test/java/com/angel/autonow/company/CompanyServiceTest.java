@@ -62,9 +62,8 @@ class CompanyServiceTest {
 
 		var result = companyService.createCompany(request);
 
-		assertTrue(result.isPresent());
-		assertEquals(1L, result.get().id());
-		assertEquals("Test Fleet Co", result.get().name());
+		assertEquals(1L, result.id());
+		assertEquals("Test Fleet Co", result.name());
 	}
 
 	@Test
@@ -130,6 +129,41 @@ class CompanyServiceTest {
 		when(companyRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
 
 		var result = companyService.getCompanyById(NON_EXISTENT_ID);
+
+		assertTrue(result.isEmpty());
+	}
+
+	@Test
+	void getCompanyByUserId_returnsCompany() {
+		CompanyEntity company = CompanyEntity.builder().id(1L).name("Fleet A").build();
+		UserEntity user = UserEntity.builder().id(5L).company(company).build();
+		CompanyResponseDTO response = TestData.createCompanyResponse(1L);
+
+		when(userRepository.findById(5L)).thenReturn(Optional.of(user));
+		when(companyMapper.toDTO(company)).thenReturn(response);
+
+		var result = companyService.getCompanyByUserId(5L);
+
+		assertTrue(result.isPresent());
+		assertEquals(1L, result.get().id());
+	}
+
+	@Test
+	void getCompanyByUserId_userHasNoCompany_returnsEmpty() {
+		UserEntity user = UserEntity.builder().id(5L).company(null).build();
+
+		when(userRepository.findById(5L)).thenReturn(Optional.of(user));
+
+		var result = companyService.getCompanyByUserId(5L);
+
+		assertTrue(result.isEmpty());
+	}
+
+	@Test
+	void getCompanyByUserId_userNotFound_returnsEmpty() {
+		when(userRepository.findById(99L)).thenReturn(Optional.empty());
+
+		var result = companyService.getCompanyByUserId(99L);
 
 		assertTrue(result.isEmpty());
 	}
@@ -208,7 +242,7 @@ class CompanyServiceTest {
 	}
 
 	@Test
-	void updateCompany_notOwner_returnsEmpty() {
+	void updateCompany_notOwner_throwsAuthorizationDenied() {
 		CompanyRequestDTO request = TestData.createCompanyRequest();
 		CompanyEntity otherCompany = CompanyEntity.builder().id(2L).build();
 		UserEntity user = UserEntity.builder()
@@ -220,9 +254,8 @@ class CompanyServiceTest {
 
 		when(userRepository.findByEmail("other@test.com")).thenReturn(Optional.of(user));
 
-		var result = companyService.updateCompany(1L, request, "other@test.com");
-
-		assertTrue(result.isEmpty());
+		assertThrows(org.springframework.security.authorization.AuthorizationDeniedException.class,
+				() -> companyService.updateCompany(1L, request, "other@test.com"));
 		verify(companyRepository, never()).save(any());
 	}
 
@@ -244,14 +277,13 @@ class CompanyServiceTest {
 	}
 
 	@Test
-	void updateCompany_userNotFound_returnsEmpty() {
+	void updateCompany_userNotFound_throwsUsernameNotFound() {
 		CompanyRequestDTO request = TestData.createCompanyRequest();
 
 		when(userRepository.findByEmail("unknown@test.com")).thenReturn(Optional.empty());
 
-		var result = companyService.updateCompany(1L, request, "unknown@test.com");
-
-		assertTrue(result.isEmpty());
+		assertThrows(org.springframework.security.core.userdetails.UsernameNotFoundException.class,
+				() -> companyService.updateCompany(1L, request, "unknown@test.com"));
 		verify(companyRepository, never()).save(any());
 	}
 

@@ -1,9 +1,9 @@
 import apiClient from '../apiClient';
 import type {Order, OrderStatus} from '../../components/order/OrderInfo';
-import type {VehicleClass} from '../vehicle/vehicleService';
 
 export interface OrderPayload {
     userId: number;
+    companyId?: number;
     driverId?: number;
     vehicleId?: number;
     vehicleType: string;
@@ -17,16 +17,17 @@ export interface OrderPayload {
     distanceKm?: number;
     estimatedDurationMinutes?: number;
     specialRequirements?: string;
-    passengerCount?: number;
-    luggageCount?: number;
-    vehicleClass?: VehicleClass;
-    requiresAirConditioning?: boolean;
     weightKg?: number;
 }
 
 export const orderService = {
     getAllOrders: async (): Promise<Order[]> => {
         const {data} = await apiClient.get('/orders');
+        return data;
+    },
+
+    getOrdersByCompany: async (companyId: number): Promise<Order[]> => {
+        const {data} = await apiClient.get(`/orders/company/${companyId}`);
         return data;
     },
 

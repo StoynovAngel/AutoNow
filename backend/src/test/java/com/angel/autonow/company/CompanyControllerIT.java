@@ -47,6 +47,54 @@ class CompanyControllerIT {
 	private UserRepository userRepository;
 
 	@Test
+	void getMyCompany_asCompanyAdmin_returnsOwnCompany() throws Exception {
+		var company = TestData.createCompanyEntity();
+		companyRepository.save(company);
+
+		var owner = UserEntity.builder()
+				.email("owner@fleet.com")
+				.password("encodedPassword")
+				.authorities(new HashSet<>(Set.of(Role.COMPANY_ADMIN.getAuthority())))
+				.company(company)
+				.build();
+		userRepository.save(owner);
+
+		mockMvc.perform(get("/api/companies/my")
+						.with(jwt().jwt(j -> j.subject("owner@fleet.com").claim("id", owner.getId()))
+								.authorities(new SimpleGrantedAuthority(Role.COMPANY_ADMIN.getAuthority()))))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.name").value("Test Fleet Co"));
+	}
+
+	@Test
+	void getMyCompany_userHasNoCompany_returnsNotFound() throws Exception {
+		var user = UserEntity.builder()
+				.email("nocompany@test.com")
+				.password("encodedPassword")
+				.authorities(new HashSet<>(Set.of(Role.COMPANY_ADMIN.getAuthority())))
+				.build();
+		userRepository.save(user);
+
+		mockMvc.perform(get("/api/companies/my")
+						.with(jwt().jwt(j -> j.subject("nocompany@test.com").claim("id", user.getId()))
+								.authorities(new SimpleGrantedAuthority(Role.COMPANY_ADMIN.getAuthority()))))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void getMyCompany_asCustomer_returnsForbidden() throws Exception {
+		mockMvc.perform(get("/api/companies/my")
+						.with(TestData.customerJwt()))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	void getMyCompany_withoutAuth_returnsUnauthorized() throws Exception {
+		mockMvc.perform(get("/api/companies/my"))
+				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
 	void createCompany_asAdmin() throws Exception {
 		var request = TestData.createCompanyRequest();
 
@@ -278,11 +326,10 @@ class CompanyControllerIT {
 	}
 
 	@Test
-	void getCompanyById_notFound_returnsOkEmpty() throws Exception {
+	void getCompanyById_notFound_returnsNotFound() throws Exception {
 		mockMvc.perform(get("/api/companies/{id}", NON_EXISTENT_ID)
 						.with(TestData.customerJwt()))
-				.andExpect(status().isOk())
-				.andExpect(content().string(""));
+				.andExpect(status().isNotFound());
 	}
 
 	@Test
@@ -380,7 +427,7 @@ class CompanyControllerIT {
 	}
 
 	@Test
-	void updateCompany_asCompanyAdmin_notOwner_returnsBadRequest() throws Exception {
+	void updateCompany_asCompanyAdmin_notOwner_returnsForbidden() throws Exception {
 		var company = TestData.createCompanyEntity();
 		companyRepository.save(company);
 
@@ -408,7 +455,7 @@ class CompanyControllerIT {
 								.authorities(new SimpleGrantedAuthority(Role.COMPANY_ADMIN.getAuthority())))
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(updateRequest)))
-				.andExpect(status().isBadRequest());
+				.andExpect(status().isForbidden());
 	}
 
 	@Test

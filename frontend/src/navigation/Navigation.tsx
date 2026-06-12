@@ -18,7 +18,6 @@ export type RootStackParamList = {
     home: undefined;
     login: undefined;
     register: undefined;
-    profile: { userId: number };
     companyList: { vehicleType: VehicleType };
     bookingMap: {
         companyId: number;

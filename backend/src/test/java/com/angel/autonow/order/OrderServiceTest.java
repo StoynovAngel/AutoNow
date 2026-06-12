@@ -2,12 +2,12 @@ package com.angel.autonow.order;
 
 import com.angel.autonow.data.TestData;
 import com.angel.autonow.company.CompanyEntity;
+import com.angel.autonow.company.CompanyRepository;
 import com.angel.autonow.driver.DriverEntity;
 import com.angel.autonow.driver.DriverRepository;
 import com.angel.autonow.pricing.PricingService;
 import com.angel.autonow.user.UserEntity;
 import com.angel.autonow.user.UserRepository;
-import com.angel.autonow.vehicle.VehicleClass;
 import com.angel.autonow.vehicle.VehicleEntity;
 import com.angel.autonow.vehicle.VehicleRepository;
 import com.angel.autonow.vehicle.VehicleType;
@@ -51,6 +51,9 @@ class OrderServiceTest {
 	private VehicleRepository vehicleRepository;
 
 	@Mock
+	private com.angel.autonow.company.CompanyRepository companyRepository;
+
+	@Mock
 	private PricingService pricingService;
 
 	@InjectMocks
@@ -60,7 +63,7 @@ class OrderServiceTest {
 	void createOrder_returnOrderResponse() {
 		OrderRequestDTO request = TestData.createOrderRequest(1L);
 		UserEntity user = UserEntity.builder().id(1L).build();
-		TaxiOrderEntity saved = TaxiOrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).createdAt(NOW).build();
+		OrderEntity saved = OrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).createdAt(NOW).build();
 		OrderResponseDTO response = TestData.createOrderResponse(1L, 1L, OrderStatus.CREATED, NOW);
 
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
@@ -98,7 +101,7 @@ class OrderServiceTest {
 		UserEntity user = UserEntity.builder().id(1L).build();
 		DriverEntity driver = DriverEntity.builder().id(2L).build();
 		VehicleEntity vehicle = VehicleEntity.builder().id(3L).build();
-		TaxiOrderEntity saved = TaxiOrderEntity.builder().id(1L).user(user).driver(driver).vehicle(vehicle)
+		OrderEntity saved = OrderEntity.builder().id(1L).user(user).driver(driver).vehicle(vehicle)
 				.vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).createdAt(NOW).build();
 		OrderResponseDTO response = OrderResponseDTO.builder()
 				.id(1L).userId(1L).driverId(2L).vehicleId(3L)
@@ -284,8 +287,8 @@ class OrderServiceTest {
 	void updateOrder_returnUpdatedResponse() {
 		OrderRequestDTO request = TestData.createOrderRequest(1L);
 		UserEntity user = UserEntity.builder().id(1L).build();
-		TaxiOrderEntity existing = TaxiOrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).createdAt(NOW).build();
-		TaxiOrderEntity saved = TaxiOrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).createdAt(NOW).build();
+		OrderEntity existing = OrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).createdAt(NOW).build();
+		OrderEntity saved = OrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).createdAt(NOW).build();
 		OrderResponseDTO response = TestData.createOrderResponse(1L, 1L, OrderStatus.CREATED, NOW);
 
 		when(orderRepository.findById(1L)).thenReturn(Optional.of(existing));
@@ -370,7 +373,7 @@ class OrderServiceTest {
 	@Test
 	void updateOrder_vehicleTypeChange_throwsConflict() {
 		UserEntity user = UserEntity.builder().id(1L).build();
-		TaxiOrderEntity existing = TaxiOrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).createdAt(NOW).build();
+		OrderEntity existing = OrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).createdAt(NOW).build();
 		OrderRequestDTO request = OrderRequestDTO.builder()
 				.userId(1L).vehicleType(VehicleType.LOGISTICS)
 				.pickupAddress("A").pickupLatitude(1.0).pickupLongitude(1.0)
@@ -409,20 +412,20 @@ class OrderServiceTest {
 				.userId(1L).vehicleType(VehicleType.TAXI)
 				.pickupAddress(TestData.DEFAULT_PICKUP_ADDRESS).pickupLatitude(TestData.DEFAULT_PICKUP_LAT).pickupLongitude(TestData.DEFAULT_PICKUP_LNG)
 				.dropoffAddress(TestData.DEFAULT_DROPOFF_ADDRESS).dropoffLatitude(TestData.DEFAULT_DROPOFF_LAT).dropoffLongitude(TestData.DEFAULT_DROPOFF_LNG)
-				.distanceKm(10.0).vehicleClass(VehicleClass.STANDARD)
+				.distanceKm(10.0)
 				.build();
 		UserEntity user = UserEntity.builder().id(1L).build();
-		TaxiOrderEntity saved = TaxiOrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).estimatedPrice(14.50).createdAt(NOW).build();
+		OrderEntity saved = OrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).estimatedPrice(14.50).createdAt(NOW).build();
 		OrderResponseDTO response = TestData.createOrderResponse(1L, 1L, OrderStatus.CREATED, NOW);
 
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-		when(pricingService.calculatePrice(10.0, VehicleType.TAXI, VehicleClass.STANDARD)).thenReturn(14.50);
+		when(pricingService.calculatePrice(10.0, VehicleType.TAXI)).thenReturn(14.50);
 		when(orderRepository.save(any(OrderEntity.class))).thenReturn(saved);
 		when(orderMapper.toDTO(saved)).thenReturn(response);
 
 		orderService.createOrder(request);
 
-		verify(pricingService).calculatePrice(10.0, VehicleType.TAXI, VehicleClass.STANDARD);
+		verify(pricingService).calculatePrice(10.0, VehicleType.TAXI);
 	}
 
 	@Test
@@ -434,7 +437,7 @@ class OrderServiceTest {
 				.distanceKm(10.0).weightKg(50.0)
 				.build();
 		UserEntity user = UserEntity.builder().id(1L).build();
-		LogisticsOrderEntity saved = LogisticsOrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.LOGISTICS).status(OrderStatus.CREATED).estimatedPrice(12.00).createdAt(NOW).build();
+		OrderEntity saved = OrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.LOGISTICS).status(OrderStatus.CREATED).estimatedPrice(12.00).createdAt(NOW).build();
 		OrderResponseDTO response = TestData.createOrderResponse(1L, 1L, OrderStatus.CREATED, NOW);
 
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
@@ -455,7 +458,7 @@ class OrderServiceTest {
 				.dropoffAddress(TestData.DEFAULT_DROPOFF_ADDRESS).dropoffLatitude(TestData.DEFAULT_DROPOFF_LAT).dropoffLongitude(TestData.DEFAULT_DROPOFF_LNG)
 				.build();
 		UserEntity user = UserEntity.builder().id(1L).build();
-		TaxiOrderEntity saved = TaxiOrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).createdAt(NOW).build();
+		OrderEntity saved = OrderEntity.builder().id(1L).user(user).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).createdAt(NOW).build();
 		OrderResponseDTO response = TestData.createOrderResponse(1L, 1L, OrderStatus.CREATED, NOW);
 
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
@@ -471,7 +474,7 @@ class OrderServiceTest {
 	@Test
 	void estimate_delegatesToPricingService() {
 		OrderEstimateRequestDTO request = OrderEstimateRequestDTO.builder()
-				.vehicleType(VehicleType.TAXI).distanceKm(10.0).vehicleClass(VehicleClass.STANDARD)
+				.vehicleType(VehicleType.TAXI).distanceKm(10.0)
 				.build();
 		OrderEstimateResponseDTO response = OrderEstimateResponseDTO.builder()
 				.estimatedPrice(14.50).currency("EUR").distanceKm(10.0).build();
@@ -741,6 +744,76 @@ class OrderServiceTest {
 		when(orderRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
 
 		var result = orderService.adminCancelOrder(NON_EXISTENT_ID);
+
+		assertTrue(result.isEmpty());
+		verify(orderRepository, never()).save(any());
+	}
+
+	@Test
+	void getOrdersByCompanyId_returnsOrdersForCompany() {
+		OrderEntity order = OrderEntity.builder().id(1L).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).createdAt(NOW).build();
+		OrderResponseDTO response = TestData.createOrderResponse(1L, 1L, OrderStatus.CREATED, NOW);
+
+		when(orderRepository.findByCompanyId(1L)).thenReturn(List.of(order));
+		when(orderMapper.toDTO(order)).thenReturn(response);
+
+		var result = orderService.getOrdersByCompanyId(1L);
+
+		assertEquals(1, result.size());
+		verify(orderRepository).findByCompanyId(1L);
+	}
+
+	@Test
+	void getOrdersByCompanyId_noOrders_returnsEmptyList() {
+		when(orderRepository.findByCompanyId(NON_EXISTENT_ID)).thenReturn(List.of());
+
+		var result = orderService.getOrdersByCompanyId(NON_EXISTENT_ID);
+
+		assertTrue(result.isEmpty());
+	}
+
+	@Test
+	void createOrder_withCompanyId_setsCompany() {
+		CompanyEntity company = TestData.createCompanyEntity();
+		UserEntity user = UserEntity.builder().id(1L).build();
+		OrderRequestDTO request = OrderRequestDTO.builder()
+				.userId(1L)
+				.companyId(1L)
+				.vehicleType(VehicleType.TAXI)
+				.pickupAddress("123 Main St").pickupLatitude(42.69).pickupLongitude(23.32)
+				.dropoffAddress("456 Oak Ave").dropoffLatitude(42.71).dropoffLongitude(23.32)
+				.build();
+		OrderEntity saved = OrderEntity.builder().id(1L).user(user).company(company).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).createdAt(NOW).build();
+		OrderResponseDTO response = TestData.createOrderResponse(1L, 1L, OrderStatus.CREATED, NOW);
+
+		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+		when(companyRepository.findById(1L)).thenReturn(Optional.of(company));
+		when(orderRepository.existsByUserIdAndStatusIn(anyLong(), anySet())).thenReturn(false);
+		when(orderRepository.save(any(OrderEntity.class))).thenReturn(saved);
+		when(orderMapper.toDTO(saved)).thenReturn(response);
+
+		var result = orderService.createOrder(request);
+
+		assertTrue(result.isPresent());
+		verify(companyRepository).findById(1L);
+	}
+
+	@Test
+	void createOrder_companyNotFound_returnsEmpty() {
+		UserEntity user = UserEntity.builder().id(1L).build();
+		OrderRequestDTO request = OrderRequestDTO.builder()
+				.userId(1L)
+				.companyId(NON_EXISTENT_ID)
+				.vehicleType(VehicleType.TAXI)
+				.pickupAddress("123 Main St").pickupLatitude(42.69).pickupLongitude(23.32)
+				.dropoffAddress("456 Oak Ave").dropoffLatitude(42.71).dropoffLongitude(23.32)
+				.build();
+
+		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+		when(companyRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
+		when(orderRepository.existsByUserIdAndStatusIn(anyLong(), anySet())).thenReturn(false);
+
+		var result = orderService.createOrder(request);
 
 		assertTrue(result.isEmpty());
 		verify(orderRepository, never()).save(any());

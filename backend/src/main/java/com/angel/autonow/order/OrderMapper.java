@@ -11,37 +11,16 @@ import org.mapstruct.Named;
 public interface OrderMapper {
 
 	@Mapping(source = "user.id", target = "userId")
+	@Mapping(source = "company.id", target = "companyId")
 	@Mapping(source = "driver.id", target = "driverId")
 	@Mapping(source = "vehicle.id", target = "vehicleId")
 	@Mapping(source = "driver", target = "driver", qualifiedByName = "driverToInfo")
 	@Mapping(source = "vehicle", target = "vehicle", qualifiedByName = "vehicleToInfo")
-	@Mapping(target = "vehicleClass", ignore = true)
-	@Mapping(target = "passengerCount", ignore = true)
-	@Mapping(target = "luggageCount", ignore = true)
-	@Mapping(target = "requiresAirConditioning", ignore = true)
-	@Mapping(target = "weightKg", ignore = true)
-	OrderResponseDTO toBaseDTO(OrderEntity order);
-
-	default OrderResponseDTO toDTO(OrderEntity order) {
-		OrderResponseDTO base = toBaseDTO(order);
-		if (order instanceof TaxiOrderEntity taxi) {
-			return base.toBuilder()
-					.vehicleClass(taxi.getVehicleClass())
-					.passengerCount(taxi.getPassengerCount())
-					.luggageCount(taxi.getLuggageCount())
-					.requiresAirConditioning(taxi.getRequiresAirConditioning())
-					.build();
-		}
-		if (order instanceof LogisticsOrderEntity logistics) {
-			return base.toBuilder()
-					.weightKg(logistics.getWeightKg())
-					.build();
-		}
-		return base;
-	}
+	OrderResponseDTO toDTO(OrderEntity order);
 
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "user", ignore = true)
+	@Mapping(target = "company", ignore = true)
 	@Mapping(target = "driver", ignore = true)
 	@Mapping(target = "vehicle", ignore = true)
 	@Mapping(target = "status", ignore = true)

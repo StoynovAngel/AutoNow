@@ -34,13 +34,13 @@ public class DriverController {
 	}
 
 	@GetMapping("/{id}")
-	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'DRIVER')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'DRIVER', 'COMPANY_ADMIN')")
 	public DriverResponseDTO getDriverById(@PathVariable Long id) {
 		return driverService.getDriverById(id).orElse(null);
 	}
 
 	@GetMapping
-	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'DRIVER')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN', 'CUSTOMER', 'DRIVER')")
 	public List<DriverResponseDTO> getAllDrivers() {
 		return driverService.getAllDrivers();
 	}

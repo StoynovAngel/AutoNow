@@ -6,20 +6,23 @@ import ConfirmDialog from '../components/ui/ConfirmDialog';
 import AddVehicleForm from '../components/vehicle/AddVehicleForm';
 import VehicleInfo from '../components/company/VehicleInfo';
 import { useVehicles } from '../hooks/useVehicles';
+import { useAuth } from '../contexts/AuthContext';
 import type { Vehicle } from '../components/company/VehicleInfo';
 import type { VehiclePayload } from '../services/vehicle/vehicleService';
 
 const VEHICLE_TYPES = ['TAXI', 'LOGISTICS', 'AMBULANCE', 'RENTAL', 'PROM', 'FUNERAL'] as const;
 
 const Vehicles = () => {
-    const { vehicles, loading, error, addVehicle, updateVehicle, removeVehicle, refreshVehicles } = useVehicles();
+    const { user } = useAuth();
+    const isCompanyAdmin = user?.authorities?.includes('ROLE_COMPANY_ADMIN') ?? false;
+
+    const { vehicles, loading, error, addVehicle, updateVehicle, removeVehicle, refreshVehicles } = useVehicles(null, isCompanyAdmin);
     const [showForm, setShowForm] = useState(false);
     const [editingVehicle, setEditingVehicle] = useState<Vehicle | null>(null);
     const [deletingId, setDeletingId] = useState<number | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [filterType, setFilterType] = useState('');
     const [filterCompanyId, setFilterCompanyId] = useState<number | null>(null);
-
     const showSuccess = (msg: string) => {
         setSuccessMessage(msg);
         setTimeout(() => setSuccessMessage(null), 4000);
@@ -92,28 +95,32 @@ const Vehicles = () => {
                     </div>
 
                     <div className="flex gap-3 mb-6">
-                        <Select
-                            value={filterType}
-                            onChange={e => setFilterType(e.target.value)}
-                            aria-label="Filter by vehicle type"
-                        >
-                            <option value="">All Types</option>
-                            {VEHICLE_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
-                        </Select>
-                        <TextInput
-                            type="number"
-                            min={1}
-                            value={filterCompanyId ?? ''}
-                            onChange={e => {
-                                const v = e.target.value;
-                                if (v === '') return setFilterCompanyId(null);
-                                const n = Number(v);
-                                setFilterCompanyId(Number.isFinite(n) ? n : null);
-                            }}
-                            placeholder="Filter by Company ID"
-                            className="w-48"
-                            aria-label="Filter by company ID"
-                        />
+                        {!isCompanyAdmin && (
+                            <Select
+                                value={filterType}
+                                onChange={e => setFilterType(e.target.value)}
+                                aria-label="Filter by vehicle type"
+                            >
+                                <option value="">All Types</option>
+                                {VEHICLE_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                            </Select>
+                        )}
+                        {!isCompanyAdmin && (
+                            <TextInput
+                                type="number"
+                                min={1}
+                                value={filterCompanyId ?? ''}
+                                onChange={e => {
+                                    const v = e.target.value;
+                                    if (v === '') return setFilterCompanyId(null);
+                                    const n = Number(v);
+                                    setFilterCompanyId(Number.isFinite(n) ? n : null);
+                                }}
+                                placeholder="Filter by Company ID"
+                                className="w-48"
+                                aria-label="Filter by company ID"
+                            />
+                        )}
                         {(filterType || filterCompanyId !== null) && (
                             <button
                                 type="button"

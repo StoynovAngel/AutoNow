@@ -1,13 +1,13 @@
 import React from 'react';
-import { View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from './BookingComplete.style';
 import BookingCompleteBody from '../../components/booking/BookingCompleteBody';
 
 const BookingComplete = () => {
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
             <BookingCompleteBody />
-        </View>
+        </SafeAreaView>
     );
 };
 

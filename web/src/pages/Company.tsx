@@ -5,9 +5,12 @@ import CompanyManagementSidebar from '../components/company/CompanyManagementSid
 import CompanyManagementContent from '../components/company/CompanyManagementContent';
 import AddCompanyModal from '../components/company/AddCompanyModal';
 import EditCompanyModal from '../components/company/EditCompanyModal';
+import EditPricingModal from '../components/company/EditPricingModal';
 import {useCompanies} from '../hooks/useCompanies';
 import {useDrivers} from '../hooks/useDrivers';
+import {useCompanyPricing} from '../hooks/useCompanyPricing';
 import {useAuth} from '../contexts/AuthContext';
+import {getErrorMessage} from '../utils/errors';
 
 const Company = () => {
     const {user} = useAuth();
@@ -26,7 +29,8 @@ const Company = () => {
         selectCompany,
         createCompany,
         updateCompany,
-    } = useCompanies();
+        deleteCompany,
+    } = useCompanies(isCompanyAdmin);
 
     const {
         drivers,
@@ -39,12 +43,30 @@ const Company = () => {
         selectDriver
     } = useDrivers(selectedCompanyId);
 
+    const { pricing, savePricing, supported: pricingSupported } = useCompanyPricing(selectedCompanyId, selectedCompany?.companyType);
+
     const [showAddModal, setShowAddModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
+    const [showEditPricingModal, setShowEditPricingModal] = useState(false);
 
     const canEditSelectedCompany =
         !!selectedCompany &&
         (isAdmin || (isCompanyAdmin && user?.companyId === selectedCompany.id));
+
+    const canDeleteSelectedCompany = !!selectedCompany && isAdmin;
+
+    const canEditPricing = canEditSelectedCompany && pricingSupported;
+
+    const handleDeleteCompany = async () => {
+        if (!selectedCompany) return;
+        const confirmed = window.confirm(`Delete company "${selectedCompany.name}"? This cannot be undone.`);
+        if (!confirmed) return;
+        try {
+            await deleteCompany(selectedCompany.id);
+        } catch (err: unknown) {
+            window.alert(getErrorMessage(err, 'Failed to delete company. It may have drivers, vehicles, or users assigned.'));
+        }
+    };
 
     const loading = companiesLoading || driversLoading;
     const error = companiesError || driversError;
@@ -61,7 +83,7 @@ const Company = () => {
         <>
             <Navigation/>
             <div className="h-screen bg-linear-to-br from-gray-50 to-gray-100 pt-24 px-6 pb-6 overflow-hidden">
-                <div className="w-full max-w-full">
+                <div className="w-full max-w-full overflow-x-hidden">
                     <div className="mb-4">
                         <h1 className="text-2xl font-bold text-gray-900">Company Management</h1>
                         <p className="text-sm text-gray-600 mt-0.5">Manage companies, drivers and vehicles</p>
@@ -76,14 +98,20 @@ const Company = () => {
                             onSelectDriver={selectDriver}
                             canCreateCompany={canCreateCompany}
                             onAddCompany={() => setShowAddModal(true)}
+                            isCompanyAdmin={isCompanyAdmin}
                         />
                         <CompanyManagementContent
                             selectedCompany={selectedCompany}
                             selectedDriver={selectedDriver}
                             driverVehicles={driverVehicles}
                             driverRatings={driverRatings}
+                            pricing={pricing}
                             canEditCompany={canEditSelectedCompany}
                             onEditCompany={() => setShowEditModal(true)}
+                            canDeleteCompany={canDeleteSelectedCompany}
+                            onDeleteCompany={handleDeleteCompany}
+                            canEditPricing={canEditPricing}
+                            onEditPricing={() => setShowEditPricingModal(true)}
                         />
                     </div>
                 </div>
@@ -101,6 +129,16 @@ const Company = () => {
                     company={selectedCompany}
                     onClose={() => setShowEditModal(false)}
                     onSubmit={async (payload) => { await updateCompany(selectedCompany.id, payload); }}
+                />
+            )}
+
+            {selectedCompany && pricingSupported && (
+                <EditPricingModal
+                    show={showEditPricingModal}
+                    pricing={pricing}
+                    companyType={selectedCompany.companyType}
+                    onClose={() => setShowEditPricingModal(false)}
+                    onSubmit={async (payload) => { await savePricing(selectedCompany.id, payload); }}
                 />
             )}
         </>

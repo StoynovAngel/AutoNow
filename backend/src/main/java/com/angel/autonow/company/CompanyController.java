@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,9 +29,7 @@ public class CompanyController {
 	@PostMapping
 	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'COMPANY_ADMIN')")
 	public ResponseEntity<CompanyResponseDTO> createCompany(@Valid @RequestBody CompanyRequestDTO request) {
-		return companyService.createCompany(request)
-				.map(company -> ResponseEntity.status(HttpStatus.CREATED).body(company))
-				.orElse(ResponseEntity.badRequest().build());
+		return ResponseEntity.status(HttpStatus.CREATED).body(companyService.createCompany(request));
 	}
 
 	@PostMapping("/{id}/join")
@@ -43,8 +42,10 @@ public class CompanyController {
 
 	@GetMapping("/{id}")
 	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'DRIVER', 'COMPANY_ADMIN')")
-	public CompanyResponseDTO getCompanyById(@PathVariable Long id) {
-		return companyService.getCompanyById(id).orElse(null);
+	public ResponseEntity<CompanyResponseDTO> getCompanyById(@PathVariable Long id) {
+		return companyService.getCompanyById(id)
+				.map(ResponseEntity::ok)
+				.orElse(ResponseEntity.notFound().build());
 	}
 
 	@GetMapping
@@ -57,6 +58,16 @@ public class CompanyController {
 	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'DRIVER', 'COMPANY_ADMIN')")
 	public List<CompanyResponseDTO> getAllCompaniesByCompanyType(@PathVariable String companyType) {
 		return companyService.getAllCompaniesByCompanyType(companyType);
+	}
+
+	@GetMapping("/my")
+	@PreAuthorize("hasRole('COMPANY_ADMIN')")
+	public ResponseEntity<CompanyResponseDTO> getMyCompany(Authentication authentication) {
+		JwtAuthenticationToken jwt = (JwtAuthenticationToken) authentication;
+		Long userId = jwt.getToken().getClaim("id");
+		return companyService.getCompanyByUserId(userId)
+				.map(ResponseEntity::ok)
+				.orElse(ResponseEntity.notFound().build());
 	}
 
 	@PutMapping("/{id}")

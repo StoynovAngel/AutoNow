@@ -2,7 +2,10 @@ package com.angel.autonow.vehicle;
 
 import com.angel.autonow.company.CompanyEntity;
 import com.angel.autonow.company.CompanyRepository;
+import com.angel.autonow.order.OrderRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +19,7 @@ public class VehicleService {
 	private final VehicleRepository vehicleRepository;
 	private final VehicleMapper vehicleMapper;
 	private final CompanyRepository companyRepository;
+	private final OrderRepository orderRepository;
 
 	public Optional<VehicleResponseDTO> createVehicle(VehicleRequestDTO request) {
 		VehicleEntity vehicle = vehicleMapper.toEntity(request);
@@ -73,6 +77,19 @@ public class VehicleService {
 				.toList();
 	}
 
+	public Optional<List<VehicleResponseDTO>> getMyVehicles(Authentication authentication) {
+		if (!(authentication instanceof JwtAuthenticationToken jwt)) {
+			return Optional.empty();
+		}
+
+		Long companyId = jwt.getToken().getClaim("companyId");
+		if (companyId == null) {
+			return Optional.empty();
+		}
+
+		return Optional.of(getVehiclesByCompanyId(companyId));
+	}
+
 	@Transactional(readOnly = true)
 	public List<PublicVehicleResponseDTO> getPublicVehiclesByCompanyAndType(Long companyId, VehicleType vehicleType) {
 		List<VehicleEntity> vehicles = vehicleType != null
@@ -100,13 +117,13 @@ public class VehicleService {
 				.build();
 	}
 
+	@Transactional
 	public boolean deleteVehicle(Long id) {
 		if (!vehicleRepository.existsById(id)) {
 			return false;
 		}
-
+		orderRepository.detachVehicleFromOrders(id);
 		vehicleRepository.deleteById(id);
-
 		return true;
 	}
 }

@@ -2,7 +2,6 @@ package com.angel.autonow.pricing;
 
 import com.angel.autonow.order.OrderEstimateRequestDTO;
 import com.angel.autonow.order.OrderEstimateResponseDTO;
-import com.angel.autonow.vehicle.VehicleClass;
 import com.angel.autonow.vehicle.VehicleType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,7 +31,7 @@ public class PricingService {
 	public OrderEstimateResponseDTO estimate(OrderEstimateRequestDTO request) {
 		double price = request.vehicleType() == VehicleType.LOGISTICS
 				? calculateForLogistics(request.distanceKm(), request.weightKg())
-				: calculatePrice(request.distanceKm(), request.vehicleType(), request.vehicleClass());
+				: calculatePrice(request.distanceKm(), request.vehicleType());
 
 		return OrderEstimateResponseDTO.builder()
 				.estimatedPrice(round(price))
@@ -41,33 +40,29 @@ public class PricingService {
 				.build();
 	}
 
-	public double calculatePrice(double distanceKm, VehicleClass vehicleClass) {
-		return calculatePrice(distanceKm, null, vehicleClass);
-	}
-
-	public double calculatePrice(double distanceKm, VehicleType vehicleType, VehicleClass vehicleClass) {
+	public double calculatePrice(double distanceKm, VehicleType vehicleType) {
 		if (distanceKm < 0) {
 			throw new IllegalArgumentException("distanceKm must not be negative: " + distanceKm);
 		}
 
-		if (vehicleType == VehicleType.AMBULANCE) {
-			return calculateForAmbulance(distanceKm, vehicleClass);
-		}
-
-		return calculateForTaxi(distanceKm, vehicleClass);
+		return switch (vehicleType) {
+			case TAXI -> calculateForTaxi(distanceKm);
+			case AMBULANCE -> calculateForAmbulance(distanceKm);
+			default -> throw new IllegalArgumentException("Unsupported vehicle type for calculatePrice: " + vehicleType);
+		};
 	}
 
-	private double calculateForTaxi(double distanceKm, VehicleClass vehicleClass) {
-		return pricingProperties.baseFare() + distanceKm * effectiveRatePerKm(vehicleClass);
+	private double calculateForTaxi(double distanceKm) {
+		return pricingProperties.baseFare() + distanceKm * effectiveRatePerKm();
 	}
 
-	private double calculateForAmbulance(double distanceKm, VehicleClass vehicleClass) {
-		return pricingProperties.ambulanceBaseFare() + distanceKm * 2 * effectiveRatePerKm(vehicleClass);
+	private double calculateForAmbulance(double distanceKm) {
+		return pricingProperties.ambulanceBaseFare() + distanceKm * 2 * effectiveRatePerKm();
 	}
 
-	private double effectiveRatePerKm(VehicleClass vehicleClass) {
+	private double effectiveRatePerKm() {
 		double timeMultiplier = isNight() ? pricingProperties.nightMultiplier() : 1.0;
-		return pricingProperties.ratePerKm() * multiplierFor(vehicleClass) * timeMultiplier;
+		return pricingProperties.ratePerKm() * timeMultiplier;
 	}
 
 	public double calculateForLogistics(double distanceKm, Double weightKg) {
@@ -80,17 +75,6 @@ public class PricingService {
 		double weightCost = weightKg != null ? weightKg * pricingProperties.logisticsRatePerKg() : 0.0;
 
 		return base + distanceCost + weightCost;
-	}
-
-	private double multiplierFor(VehicleClass vehicleClass) {
-		if (vehicleClass == null) {
-			return 1.0;
-		}
-
-		return switch (vehicleClass) {
-			case XL -> pricingProperties.xlMultiplier();
-			case STANDARD -> 1.0;
-		};
 	}
 
 	private boolean isNight() {

@@ -14,6 +14,7 @@ const mockVehicles: Vehicle[] = [
 describe('useVehicles', () => {
     beforeEach(() => {
         vi.mocked(vehicleService.getAllVehicles).mockResolvedValue(mockVehicles);
+        vi.mocked(vehicleService.getMyVehicles).mockResolvedValue(mockVehicles);
         vi.mocked(vehicleService.getVehicleById).mockResolvedValue(mockVehicles[0]);
         vi.mocked(vehicleService.createVehicle).mockResolvedValue({ ...mockVehicles[0], id: 3 });
         vi.mocked(vehicleService.updateVehicle).mockResolvedValue({ ...mockVehicles[0], brand: 'Updated' });
@@ -34,6 +35,14 @@ describe('useVehicles', () => {
         await act(async () => {});
         expect(vehicleService.getVehiclesByCompany).toHaveBeenCalledWith('1');
         expect(result.current.vehicles).toHaveLength(1);
+    });
+
+    it('calls getMyVehicles when isCompanyAdmin is true', async () => {
+        const { result } = renderHook(() => useVehicles(null, true));
+        await act(async () => {});
+        expect(vehicleService.getMyVehicles).toHaveBeenCalled();
+        expect(vehicleService.getAllVehicles).not.toHaveBeenCalled();
+        expect(result.current.vehicles).toEqual(mockVehicles);
     });
 
     it('sets error on fetch failure', async () => {

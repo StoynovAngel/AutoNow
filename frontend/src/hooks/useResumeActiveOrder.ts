@@ -23,11 +23,7 @@ export const useResumeActiveOrder = () => {
                 resumedRef.current = true;
                 navigation.navigate('bookingWaiting', { orderId: order.id });
             })
-            .catch(() => {
-                // silently ignore — user can still book a new ride
-            });
-        return () => {
-            cancelled = true;
-        };
+            .catch(() => {});
+        return () => { cancelled = true; };
     }, [auth?.user, auth?.loading, navigation]);
 };

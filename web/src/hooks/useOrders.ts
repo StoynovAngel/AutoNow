@@ -3,7 +3,7 @@ import {orderService} from '../services/order/orderService';
 import type {Order, OrderStatus} from '../components/order/OrderInfo';
 import {getErrorMessage} from '../utils/errors';
 
-export const useOrders = () => {
+export const useOrders = (companyId?: number | null) => {
     const [orders, setOrders] = useState<Order[]>([]);
     const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
     const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
@@ -12,13 +12,15 @@ export const useOrders = () => {
 
     useEffect(() => {
         fetchOrders();
-    }, []);
+    }, [companyId]);
 
     const fetchOrders = async () => {
         setLoading(true);
         setError(null);
         try {
-            const data = await orderService.getAllOrders();
+            const data = companyId
+                ? await orderService.getOrdersByCompany(companyId)
+                : await orderService.getAllOrders();
             setOrders(data);
         } catch (err: unknown) {
             setError(getErrorMessage(err, 'Failed to load orders'));

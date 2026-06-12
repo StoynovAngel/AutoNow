@@ -1,29 +1,25 @@
 package com.angel.autonow.order;
 
+import com.angel.autonow.company.CompanyEntity;
 import com.angel.autonow.driver.DriverEntity;
 import com.angel.autonow.user.UserEntity;
 import com.angel.autonow.vehicle.VehicleEntity;
 import com.angel.autonow.vehicle.VehicleType;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
 @Data
 @Entity
-@SuperBuilder
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "orders")
-@Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "order_type", discriminatorType = DiscriminatorType.STRING)
-@DiscriminatorValue("BASE")
 public class OrderEntity {
 
 	@Id
@@ -34,6 +30,10 @@ public class OrderEntity {
 	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
 	private UserEntity user;
+
+	@ManyToOne
+	@JoinColumn(name = "company_id")
+	private CompanyEntity company;
 
 	@ManyToOne
 	@JoinColumn(name = "driver_id")
@@ -95,6 +95,11 @@ public class OrderEntity {
 
 	@Column(name = "special_requirements")
 	private String specialRequirements;
+
+	@DecimalMin(value = "0.1", message = "Weight must be at least 0.1 kg")
+	@DecimalMax(value = "5000.0", message = "Weight cannot exceed 5000 kg")
+	@Column(name = "weight_kg")
+	private Double weightKg;
 
 	@Column(name = "cancellation_reason")
 	private String cancellationReason;
