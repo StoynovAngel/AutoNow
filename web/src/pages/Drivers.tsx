@@ -8,6 +8,7 @@ import DriverCard from '../components/driver/DriverCard';
 import AssignVehicleModal from '../components/driver/AssignVehicleModal';
 import { useAllDrivers } from '../hooks/useAllDrivers';
 import { useVehicles } from '../hooks/useVehicles';
+import { useAuth } from '../contexts/AuthContext';
 import type { Driver } from '../components/company/DriverInfo';
 import type { DriverPayload } from '../services/driver/driverService';
 import { COMPANY_TYPES } from '../services/company/companyService';
@@ -15,8 +16,12 @@ import { COMPANY_TYPES } from '../services/company/companyService';
 const EXPERTISE_TYPES = ['AM', 'A1', 'A2', 'A', 'B1', 'B', 'BE', 'C1', 'C1E', 'C', 'CE', 'D1', 'D1E', 'D', 'DE', 'Tkt'] as const;
 
 const Drivers = () => {
+    const { user } = useAuth();
+    const isCompanyAdmin = user?.authorities?.includes('ROLE_COMPANY_ADMIN') ?? false;
+    const companyId = isCompanyAdmin ? (user?.companyId ?? null) : null;
+
     const [filterCompanyType, setFilterCompanyType] = useState<string>('');
-    const { drivers, loading, error, addDriver, updateDriver, removeDriver, assignVehicle, unassignVehicle, refreshDrivers } = useAllDrivers(filterCompanyType || null);
+    const { drivers, loading, error, addDriver, updateDriver, removeDriver, assignVehicle, unassignVehicle, refreshDrivers } = useAllDrivers(filterCompanyType || null, companyId);
 
     const [showForm, setShowForm] = useState(false);
     const [editingDriver, setEditingDriver] = useState<Driver | null>(null);
@@ -111,17 +116,19 @@ const Drivers = () => {
                     </div>
 
                     <div className="flex gap-3 mb-6">
-                        <Select
-                            value={filterCompanyType}
-                            onChange={e => setFilterCompanyType(e.target.value)}
-                            aria-label="Filter by company type"
-                            className="w-48"
-                        >
-                            <option value="">Company Types</option>
-                            {COMPANY_TYPES.map(t => (
-                                <option key={t} value={t}>{t.charAt(0) + t.slice(1).toLowerCase()}</option>
-                            ))}
-                        </Select>
+                        {!isCompanyAdmin && (
+                            <Select
+                                value={filterCompanyType}
+                                onChange={e => setFilterCompanyType(e.target.value)}
+                                aria-label="Filter by company type"
+                                className="w-48"
+                            >
+                                <option value="">Company Types</option>
+                                {COMPANY_TYPES.map(t => (
+                                    <option key={t} value={t}>{t.charAt(0) + t.slice(1).toLowerCase()}</option>
+                                ))}
+                            </Select>
+                        )}
                         <Select
                             value={filterType}
                             onChange={e => setFilterType(e.target.value)}
@@ -131,20 +138,22 @@ const Drivers = () => {
                             <option value="">License Types</option>
                             {EXPERTISE_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
                         </Select>
-                        <TextInput
-                            type="number"
-                            min={1}
-                            value={filterCompanyId ?? ''}
-                            onChange={e => {
-                                const v = e.target.value;
-                                if (v === '') return setFilterCompanyId(null);
-                                const n = Number(v);
-                                setFilterCompanyId(Number.isFinite(n) ? n : null);
-                            }}
-                            placeholder="Filter by Company ID"
-                            className="w-48"
-                            aria-label="Filter by company ID"
-                        />
+                        {!isCompanyAdmin && (
+                            <TextInput
+                                type="number"
+                                min={1}
+                                value={filterCompanyId ?? ''}
+                                onChange={e => {
+                                    const v = e.target.value;
+                                    if (v === '') return setFilterCompanyId(null);
+                                    const n = Number(v);
+                                    setFilterCompanyId(Number.isFinite(n) ? n : null);
+                                }}
+                                placeholder="Filter by Company ID"
+                                className="w-48"
+                                aria-label="Filter by company ID"
+                            />
+                        )}
                         <TextInput
                             type="text"
                             value={searchName}

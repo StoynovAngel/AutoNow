@@ -22,6 +22,7 @@ export type VehicleTypeFilter = 'ALL' | VehicleType;
 export interface Order {
     id: number;
     userId: number;
+    companyId?: number;
     driverId?: number;
     vehicleId?: number;
     vehicleType: string;

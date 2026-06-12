@@ -18,6 +18,11 @@ export const vehicleService = {
         return data;
     },
 
+    getMyVehicles: async () => {
+        const {data} = await apiClient.get('/vehicles/my');
+        return data;
+    },
+
     getVehicleById: async (id: string) => {
         const {data} = await apiClient.get(`/vehicles/${id}`);
         return data;

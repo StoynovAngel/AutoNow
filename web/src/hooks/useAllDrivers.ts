@@ -1,29 +1,34 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { driverService } from '../services/driver/driverService';
 import type { DriverPayload } from '../services/driver/driverService';
 import type { Driver } from '../components/company/DriverInfo';
 
-export const useAllDrivers = (companyTypeFilter: string | null = null) => {
+export const useAllDrivers = (companyTypeFilter: string | null = null, companyId: number | null = null) => {
     const [drivers, setDrivers] = useState<Driver[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    const fetchDrivers = useCallback(async () => {
+    const fetchDrivers = async () => {
         setLoading(true);
         setError(null);
         try {
-            const data = companyTypeFilter
-                ? await driverService.getDriversByCompanyType(companyTypeFilter)
-                : await driverService.getAllDrivers();
+            let data: Driver[];
+            if (companyId) {
+                data = await driverService.getDriversByCompany(String(companyId));
+            } else if (companyTypeFilter) {
+                data = await driverService.getDriversByCompanyType(companyTypeFilter);
+            } else {
+                data = await driverService.getAllDrivers();
+            }
             setDrivers(data);
         } catch {
             setError('Failed to load drivers.');
         } finally {
             setLoading(false);
         }
-    }, [companyTypeFilter]);
+    };
 
-    useEffect(() => { fetchDrivers(); }, [fetchDrivers]);
+    useEffect(() => { fetchDrivers(); }, [companyId, companyTypeFilter]);
 
     const addDriver = async (payload: DriverPayload) => {
         const created = await driverService.createDriver(payload);

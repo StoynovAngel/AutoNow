@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -57,6 +58,16 @@ public class CompanyController {
 	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'DRIVER', 'COMPANY_ADMIN')")
 	public List<CompanyResponseDTO> getAllCompaniesByCompanyType(@PathVariable String companyType) {
 		return companyService.getAllCompaniesByCompanyType(companyType);
+	}
+
+	@GetMapping("/my")
+	@PreAuthorize("hasRole('COMPANY_ADMIN')")
+	public ResponseEntity<CompanyResponseDTO> getMyCompany(Authentication authentication) {
+		JwtAuthenticationToken jwt = (JwtAuthenticationToken) authentication;
+		Long userId = jwt.getToken().getClaim("id");
+		return companyService.getCompanyByUserId(userId)
+				.map(ResponseEntity::ok)
+				.orElse(ResponseEntity.notFound().build());
 	}
 
 	@PutMapping("/{id}")

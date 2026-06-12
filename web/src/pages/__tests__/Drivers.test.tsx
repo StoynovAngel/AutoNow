@@ -8,6 +8,10 @@ vi.mock('../../components/ui/Navigation', () => ({
     default: () => <nav data-testid="nav" />,
 }));
 
+vi.mock('../../contexts/AuthContext', () => ({
+    useAuth: () => ({ user: { authorities: ['ROLE_ADMIN'], companyId: null } }),
+}));
+
 const mockDrivers: Driver[] = [
     { id: 1, firstName: 'Ivan', lastName: 'Petrov', phoneNumber: '+359888100100', expertiseType: ['B'], available: true, companyId: 1, vehicleIds: [] },
     { id: 2, firstName: 'Maria', lastName: 'Ivanova', phoneNumber: '+359888100101', expertiseType: ['C'], available: true, companyId: 1, vehicleIds: [] },

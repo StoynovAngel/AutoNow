@@ -26,6 +26,7 @@ export interface VehicleInfo {
 
 export interface OrderRequest {
     userId: number;
+    companyId?: number;
     vehicleType: VehicleType;
     pickupAddress: string;
     pickupLatitude: number;

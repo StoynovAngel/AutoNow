@@ -1,5 +1,7 @@
 package com.angel.autonow.order;
 
+import com.angel.autonow.company.CompanyEntity;
+import com.angel.autonow.company.CompanyRepository;
 import com.angel.autonow.driver.DriverEntity;
 import com.angel.autonow.driver.DriverRepository;
 import com.angel.autonow.pricing.PricingService;
@@ -31,6 +33,7 @@ public class OrderService {
 	private final UserRepository userRepository;
 	private final DriverRepository driverRepository;
 	private final VehicleRepository vehicleRepository;
+	private final CompanyRepository companyRepository;
 	private final PricingService pricingService;
 
 	@Transactional
@@ -44,6 +47,12 @@ public class OrderService {
 
 		OrderEntity order = buildEntity(request);
 		order.setUser(userOpt.get());
+
+		if (request.companyId() != null) {
+			Optional<CompanyEntity> company = companyRepository.findById(request.companyId());
+			if (company.isEmpty()) return Optional.empty();
+			order.setCompany(company.get());
+		}
 
 		if (request.driverId() != null) {
 			Optional<DriverEntity> driver = driverRepository.findById(request.driverId());
@@ -74,6 +83,12 @@ public class OrderService {
 
 	public List<OrderResponseDTO> getOrdersByUserId(Long userId) {
 		return orderRepository.findByUserId(userId).stream()
+				.map(orderMapper::toDTO)
+				.toList();
+	}
+
+	public List<OrderResponseDTO> getOrdersByCompanyId(Long companyId) {
+		return orderRepository.findByCompanyId(companyId).stream()
 				.map(orderMapper::toDTO)
 				.toList();
 	}

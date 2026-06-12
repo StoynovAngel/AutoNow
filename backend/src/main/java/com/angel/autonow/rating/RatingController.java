@@ -33,13 +33,13 @@ public class RatingController {
 	}
 
 	@GetMapping("/{id}")
-	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'DRIVER')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN', 'CUSTOMER', 'DRIVER')")
 	public RatingResponseDTO getRatingById(@PathVariable Long id) {
 		return ratingService.getRatingById(id).orElse(null);
 	}
 
 	@GetMapping("/order/{orderId}")
-	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'DRIVER')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN', 'CUSTOMER', 'DRIVER')")
 	public RatingResponseDTO getRatingByOrderId(@PathVariable Long orderId) {
 		return ratingService.getRatingByOrderId(orderId).orElse(null);
 	}
@@ -51,7 +51,7 @@ public class RatingController {
 	}
 
 	@GetMapping("/driver/{driverId}")
-	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'DRIVER')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN', 'CUSTOMER', 'DRIVER')")
 	public List<RatingResponseDTO> getRatingsByDriverId(@PathVariable Long driverId) {
 		return ratingService.getRatingsByDriverId(driverId);
 	}

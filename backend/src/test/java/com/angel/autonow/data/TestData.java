@@ -80,6 +80,11 @@ public final class TestData {
 		return jwt().authorities(new SimpleGrantedAuthority(Role.COMPANY_ADMIN.getAuthority()));
 	}
 
+	public static RequestPostProcessor companyAdminJwt(Long companyId) {
+		return jwt().jwt(j -> j.claim("companyId", companyId))
+				.authorities(new SimpleGrantedAuthority(Role.COMPANY_ADMIN.getAuthority()));
+	}
+
 	public static UserEntity createUserEntity() {
 		return UserEntity.builder()
 				.email("test@example.com")

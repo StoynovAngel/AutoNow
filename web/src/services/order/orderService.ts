@@ -3,6 +3,7 @@ import type {Order, OrderStatus} from '../../components/order/OrderInfo';
 
 export interface OrderPayload {
     userId: number;
+    companyId?: number;
     driverId?: number;
     vehicleId?: number;
     vehicleType: string;
@@ -22,6 +23,11 @@ export interface OrderPayload {
 export const orderService = {
     getAllOrders: async (): Promise<Order[]> => {
         const {data} = await apiClient.get('/orders');
+        return data;
+    },
+
+    getOrdersByCompany: async (companyId: number): Promise<Order[]> => {
+        const {data} = await apiClient.get(`/orders/company/${companyId}`);
         return data;
     },
 

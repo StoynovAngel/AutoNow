@@ -289,4 +289,12 @@ class DriverControllerIT {
 	void deleteDriver_withoutAuth_returnsUnauthorized() throws Exception {
 		mockMvc.perform(delete("/api/drivers/{id}", 1L)).andExpect(status().isUnauthorized());
 	}
+
+	@Test
+	void getAllDrivers_asCompanyAdmin_returnsOk() throws Exception {
+		mockMvc.perform(get("/api/drivers")
+						.with(TestData.companyAdminJwt()))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$").isArray());
+	}
 }

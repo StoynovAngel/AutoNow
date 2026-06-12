@@ -33,6 +33,14 @@ describe('vehicleService', () => {
         expect(apiClient.get).toHaveBeenCalledWith('/vehicles');
     });
 
+    it('getMyVehicles GETs /vehicles/my', async () => {
+        vi.mocked(apiClient.get).mockResolvedValue({ data: [] });
+
+        await vehicleService.getMyVehicles();
+
+        expect(apiClient.get).toHaveBeenCalledWith('/vehicles/my');
+    });
+
     it('getVehicleById GETs /vehicles/{id}', async () => {
         vi.mocked(apiClient.get).mockResolvedValue({ data: { id: 5 } });
 

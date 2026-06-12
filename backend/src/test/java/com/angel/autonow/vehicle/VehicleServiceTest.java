@@ -9,6 +9,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 import java.util.List;
 import java.util.Optional;
@@ -236,5 +239,45 @@ class VehicleServiceTest {
 
 		assertFalse(result);
 		verify(vehicleRepository, never()).deleteById(any());
+	}
+
+	@Test
+	void getMyVehicles_withCompanyIdClaim_returnsVehicles() {
+		Jwt jwt = mock(Jwt.class);
+		when(jwt.getClaim("companyId")).thenReturn(1L);
+		JwtAuthenticationToken auth = new JwtAuthenticationToken(jwt, List.of());
+		VehicleEntity vehicle = TestData.createVehicleEntity();
+		VehicleResponseDTO response = TestData.createVehicleResponse(1L);
+
+		when(vehicleRepository.findByCompanyId(1L)).thenReturn(List.of(vehicle));
+		when(vehicleMapper.toDTO(vehicle)).thenReturn(response);
+
+		var result = vehicleService.getMyVehicles(auth);
+
+		assertTrue(result.isPresent());
+		assertEquals(1, result.get().size());
+		verify(vehicleRepository).findByCompanyId(1L);
+	}
+
+	@Test
+	void getMyVehicles_withoutCompanyIdClaim_returnsEmpty() {
+		Jwt jwt = mock(Jwt.class);
+		when(jwt.getClaim("companyId")).thenReturn(null);
+		JwtAuthenticationToken auth = new JwtAuthenticationToken(jwt, List.of());
+
+		var result = vehicleService.getMyVehicles(auth);
+
+		assertTrue(result.isEmpty());
+		verify(vehicleRepository, never()).findByCompanyId(any());
+	}
+
+	@Test
+	void getMyVehicles_nonJwtAuthentication_returnsEmpty() {
+		Authentication auth = mock(Authentication.class);
+
+		var result = vehicleService.getMyVehicles(auth);
+
+		assertTrue(result.isEmpty());
+		verify(vehicleRepository, never()).findByCompanyId(any());
 	}
 }

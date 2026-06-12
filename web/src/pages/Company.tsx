@@ -30,7 +30,7 @@ const Company = () => {
         createCompany,
         updateCompany,
         deleteCompany,
-    } = useCompanies();
+    } = useCompanies(isCompanyAdmin);
 
     const {
         drivers,
@@ -98,6 +98,7 @@ const Company = () => {
                             onSelectDriver={selectDriver}
                             canCreateCompany={canCreateCompany}
                             onAddCompany={() => setShowAddModal(true)}
+                            isCompanyAdmin={isCompanyAdmin}
                         />
                         <CompanyManagementContent
                             selectedCompany={selectedCompany}

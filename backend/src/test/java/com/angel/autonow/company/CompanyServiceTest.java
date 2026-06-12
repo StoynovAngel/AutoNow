@@ -134,6 +134,41 @@ class CompanyServiceTest {
 	}
 
 	@Test
+	void getCompanyByUserId_returnsCompany() {
+		CompanyEntity company = CompanyEntity.builder().id(1L).name("Fleet A").build();
+		UserEntity user = UserEntity.builder().id(5L).company(company).build();
+		CompanyResponseDTO response = TestData.createCompanyResponse(1L);
+
+		when(userRepository.findById(5L)).thenReturn(Optional.of(user));
+		when(companyMapper.toDTO(company)).thenReturn(response);
+
+		var result = companyService.getCompanyByUserId(5L);
+
+		assertTrue(result.isPresent());
+		assertEquals(1L, result.get().id());
+	}
+
+	@Test
+	void getCompanyByUserId_userHasNoCompany_returnsEmpty() {
+		UserEntity user = UserEntity.builder().id(5L).company(null).build();
+
+		when(userRepository.findById(5L)).thenReturn(Optional.of(user));
+
+		var result = companyService.getCompanyByUserId(5L);
+
+		assertTrue(result.isEmpty());
+	}
+
+	@Test
+	void getCompanyByUserId_userNotFound_returnsEmpty() {
+		when(userRepository.findById(99L)).thenReturn(Optional.empty());
+
+		var result = companyService.getCompanyByUserId(99L);
+
+		assertTrue(result.isEmpty());
+	}
+
+	@Test
 	void getAllCompanies_returnList() {
 		CompanyEntity first = CompanyEntity.builder().id(1L).name("Fleet A").build();
 		CompanyEntity second = CompanyEntity.builder().id(2L).name("Fleet B").build();

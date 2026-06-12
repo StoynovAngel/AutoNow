@@ -9,8 +9,13 @@ import {useOrders} from '../hooks/useOrders';
 import {useAllDrivers} from '../hooks/useAllDrivers';
 import {vehicleService} from '../services/vehicle/vehicleService';
 import type {Vehicle} from '../components/company/VehicleInfo';
+import {useAuth} from '../contexts/AuthContext';
 
 const Order = () => {
+    const {user} = useAuth();
+    const isCompanyAdmin = user?.authorities?.includes('ROLE_COMPANY_ADMIN') ?? false;
+    const companyId = isCompanyAdmin ? (user?.companyId ?? null) : null;
+
     const {
         orders,
         selectedOrderId,
@@ -21,15 +26,17 @@ const Order = () => {
         changeOrderStatus,
         assignOrder,
         refreshOrders,
-    } = useOrders();
+    } = useOrders(companyId);
 
-    const {drivers} = useAllDrivers();
+    const {drivers} = useAllDrivers(null, isCompanyAdmin ? companyId : null);
     const [vehicles, setVehicles] = useState<Vehicle[]>([]);
 
     useEffect(() => {
         let cancelled = false;
-        vehicleService
-            .getAllVehicles()
+        const fetch = isCompanyAdmin
+            ? vehicleService.getMyVehicles()
+            : vehicleService.getAllVehicles();
+        fetch
             .then((data) => {
                 if (!cancelled) setVehicles(data);
             })
@@ -39,7 +46,7 @@ const Order = () => {
         return () => {
             cancelled = true;
         };
-    }, []);
+    }, [isCompanyAdmin]);
 
     const [statusFilter, setStatusFilter] = useState<StatusFilter>('ALL');
     const [vehicleTypeFilter, setVehicleTypeFilter] = useState<VehicleTypeFilter>('ALL');
