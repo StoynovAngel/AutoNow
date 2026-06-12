@@ -5,6 +5,8 @@ import com.angel.autonow.company.PricingNotFoundException;
 import com.angel.autonow.driver.VehicleAlreadyAssignedException;
 import com.angel.autonow.order.OrderConflictException;
 import com.angel.autonow.order.OrderForbiddenException;
+import com.angel.autonow.rentalorder.RentalOrderConflictException;
+import com.angel.autonow.rentalorder.RentalOrderForbiddenException;
 import com.angel.autonow.rating.RatingConflictException;
 import com.angel.autonow.rating.RatingForbiddenException;
 import com.angel.autonow.user.UserException;
@@ -90,6 +92,20 @@ public class GlobalControllerExceptionHandler {
 	@ResponseStatus(HttpStatus.FORBIDDEN)
 	@ExceptionHandler(OrderForbiddenException.class)
 	public ProblemDetail handleOrderForbiddenException(OrderForbiddenException e) {
+		log.warn(e.getMessage(), HttpStatus.FORBIDDEN, e);
+		return handle(e, HttpStatus.FORBIDDEN);
+	}
+
+	@ResponseStatus(HttpStatus.CONFLICT)
+	@ExceptionHandler(RentalOrderConflictException.class)
+	public ProblemDetail handleRentalOrderConflictException(RentalOrderConflictException e) {
+		log.warn(e.getMessage(), HttpStatus.CONFLICT, e);
+		return handle(e, HttpStatus.CONFLICT);
+	}
+
+	@ResponseStatus(HttpStatus.FORBIDDEN)
+	@ExceptionHandler(RentalOrderForbiddenException.class)
+	public ProblemDetail handleRentalOrderForbiddenException(RentalOrderForbiddenException e) {
 		log.warn(e.getMessage(), HttpStatus.FORBIDDEN, e);
 		return handle(e, HttpStatus.FORBIDDEN);
 	}

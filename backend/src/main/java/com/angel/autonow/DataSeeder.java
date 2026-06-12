@@ -265,42 +265,26 @@ public class DataSeeder implements ApplicationRunner {
 				.company(company)
 				.build());
 
-		VehicleEntity v1 = vehicleRepository.save(VehicleEntity.builder()
+		vehicleRepository.save(VehicleEntity.builder()
 				.brand("Renault").model("Clio").licensePlate("CA4040HP")
 				.imageUrl("https://autodesignmagazine.com/wp-content/uploads/2025/11/Renault_Clio_full_hybrid_E-Tech_-_Techno_-_Rouge_Absolu_15.jpg")
 				.airConditioning(true).numberOfSeats(5).trunkCapacity(300.0)
 				.vehicleType(VehicleType.RENTAL)
 				.company(company).build());
 
-		VehicleEntity v2 = vehicleRepository.save(VehicleEntity.builder()
+		vehicleRepository.save(VehicleEntity.builder()
 				.brand("Hyundai").model("Tucson").licensePlate("CA5050PT")
 				.imageUrl("https://www.topgear.com/sites/default/files/2024/12/hyundai-tucson-ultimate-17.jpg")
 				.airConditioning(true).numberOfSeats(5).trunkCapacity(620.0)
 				.vehicleType(VehicleType.RENTAL)
 				.company(company).build());
 
-		VehicleEntity v3 = vehicleRepository.save(VehicleEntity.builder()
+		vehicleRepository.save(VehicleEntity.builder()
 				.brand("BMW").model("3 Series").licensePlate("CA6060TY")
 				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/BMW_G20_IMG_0028.jpg/1280px-BMW_G20_IMG_0028.jpg")
 				.airConditioning(true).numberOfSeats(5).trunkCapacity(480.0)
 				.vehicleType(VehicleType.RENTAL)
 				.company(company).build());
-
-		saveDriverWithVehicle(DriverEntity.builder()
-				.firstName("Anna").lastName("Petrova")
-				.phoneNumber("+359888400400")
-				.expertiseType(Set.of(ExpertiseType.B)).available(true)
-				.company(company).build(), v1);
-		saveDriverWithVehicle(DriverEntity.builder()
-				.firstName("Ivan").lastName("Dimitrov")
-				.phoneNumber("+359888400401")
-				.expertiseType(Set.of(ExpertiseType.B)).available(true)
-				.company(company).build(), v2);
-		saveDriverWithVehicle(DriverEntity.builder()
-				.firstName("Teodora").lastName("Mihaylova")
-				.phoneNumber("+359888400402")
-				.expertiseType(Set.of(ExpertiseType.B)).available(true)
-				.company(company).build(), v3);
 	}
 
 	private void seedFuneral(String password) {

@@ -65,6 +65,13 @@ public class PricingService {
 		return pricingProperties.ratePerKm() * timeMultiplier;
 	}
 
+	public double calculateForRental(long rentalDays) {
+		if (rentalDays <= 0) {
+			throw new IllegalArgumentException("rentalDays must be positive: " + rentalDays);
+		}
+		return round(rentalDays * pricingProperties.rentalRatePerDay());
+	}
+
 	public double calculateForLogistics(double distanceKm, Double weightKg) {
 		if (distanceKm < 0) {
 			throw new IllegalArgumentException("distanceKm must not be negative: " + distanceKm);

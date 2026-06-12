@@ -12,6 +12,9 @@ import com.angel.autonow.order.OrderEntity;
 import com.angel.autonow.order.OrderRequestDTO;
 import com.angel.autonow.order.OrderResponseDTO;
 import com.angel.autonow.order.OrderStatus;
+import com.angel.autonow.rentalorder.RentalOrderEntity;
+import com.angel.autonow.rentalorder.RentalOrderRequestDTO;
+import com.angel.autonow.rentalorder.RentalOrderStatus;
 import com.angel.autonow.payment.PaymentEntity;
 import com.angel.autonow.payment.PaymentMethod;
 import com.angel.autonow.payment.PaymentRequestDTO;
@@ -139,6 +142,23 @@ public final class TestData {
 				.distanceKm(5.2)
 				.estimatedDurationMinutes(15)
 				.createdAt(createdAt)
+				.build();
+	}
+
+	public static RentalOrderRequestDTO createRentalOrderRequest(Long userId) {
+		return RentalOrderRequestDTO.builder()
+				.userId(userId)
+				.rentalStartDate(LocalDateTime.now().plusDays(1))
+				.rentalEndDate(LocalDateTime.now().plusDays(4))
+				.build();
+	}
+
+	public static RentalOrderEntity createRentalOrderEntity(UserEntity user) {
+		return RentalOrderEntity.builder()
+				.user(user)
+				.rentalStartDate(LocalDateTime.now().plusDays(1))
+				.rentalEndDate(LocalDateTime.now().plusDays(4))
+				.status(RentalOrderStatus.CREATED)
 				.build();
 	}
 
