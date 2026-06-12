@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.6](https://github.com/StoynovAngel/AutoNow/compare/v0.1.5...v0.1.6) (2026-06-12)
+
+
+### Features
+
+* add register company through admin ([#121](https://github.com/StoynovAngel/AutoNow/issues/121)) ([1afc97f](https://github.com/StoynovAngel/AutoNow/commit/1afc97fbc41cbccdaed77f5c3c23d23400930bd6))
+
 ## [0.1.5](https://github.com/StoynovAngel/AutoNow/compare/v0.1.4...v0.1.5) (2026-06-12)
 
 
