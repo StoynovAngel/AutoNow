@@ -28,13 +28,15 @@ const Order = () => {
         refreshOrders,
     } = useOrders(companyId);
 
-    const {drivers} = useAllDrivers();
+    const {drivers} = useAllDrivers(null, isCompanyAdmin ? companyId : null);
     const [vehicles, setVehicles] = useState<Vehicle[]>([]);
 
     useEffect(() => {
         let cancelled = false;
-        vehicleService
-            .getAllVehicles()
+        const fetch = isCompanyAdmin
+            ? vehicleService.getMyVehicles()
+            : vehicleService.getAllVehicles();
+        fetch
             .then((data) => {
                 if (!cancelled) setVehicles(data);
             })
@@ -44,7 +46,7 @@ const Order = () => {
         return () => {
             cancelled = true;
         };
-    }, []);
+    }, [isCompanyAdmin]);
 
     const [statusFilter, setStatusFilter] = useState<StatusFilter>('ALL');
     const [vehicleTypeFilter, setVehicleTypeFilter] = useState<VehicleTypeFilter>('ALL');
