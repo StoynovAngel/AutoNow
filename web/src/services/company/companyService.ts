@@ -12,6 +12,10 @@ export interface CompanyPayload {
     companyType: CompanyType;
 }
 
+export interface JoinCompanyResponse {
+    token: string;
+}
+
 export const companyService = {
     getAllCompanies: async () => {
         const {data} = await apiClient.get('/companies');
@@ -40,5 +44,10 @@ export const companyService = {
 
     deleteCompany: async (id: number) => {
         await apiClient.delete(`/companies/${id}`);
-    }
+    },
+
+    joinCompany: async (id: number): Promise<JoinCompanyResponse> => {
+        const { data } = await apiClient.post<JoinCompanyResponse>(`/companies/${id}/join`);
+        return data;
+    },
 };

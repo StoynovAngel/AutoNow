@@ -65,4 +65,13 @@ describe('companyService', () => {
 
         expect(apiClient.delete).toHaveBeenCalledWith('/companies/5');
     });
+
+    it('joinCompany POSTs to /companies/{id}/join and returns token', async () => {
+        vi.mocked(apiClient.post).mockResolvedValue({ data: { token: 'new-jwt' } });
+
+        const result = await companyService.joinCompany(7);
+
+        expect(apiClient.post).toHaveBeenCalledWith('/companies/7/join');
+        expect(result).toEqual({ token: 'new-jwt' });
+    });
 });
