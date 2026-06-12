@@ -4,6 +4,8 @@ import com.angel.autonow.company.CompanyEntity;
 import com.angel.autonow.company.CompanyRepository;
 import com.angel.autonow.order.OrderRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -73,6 +75,19 @@ public class VehicleService {
 		return vehicleRepository.findByCompanyId(companyId).stream()
 				.map(vehicleMapper::toDTO)
 				.toList();
+	}
+
+	public Optional<List<VehicleResponseDTO>> getMyVehicles(Authentication authentication) {
+		if (!(authentication instanceof JwtAuthenticationToken jwt)) {
+			return Optional.empty();
+		}
+
+		Long companyId = jwt.getToken().getClaim("companyId");
+		if (companyId == null) {
+			return Optional.empty();
+		}
+
+		return Optional.of(getVehiclesByCompanyId(companyId));
 	}
 
 	@Transactional(readOnly = true)

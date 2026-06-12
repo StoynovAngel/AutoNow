@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -55,12 +54,9 @@ public class VehicleController {
 	@GetMapping("/my")
 	@PreAuthorize("hasRole('COMPANY_ADMIN')")
 	public ResponseEntity<List<VehicleResponseDTO>> getMyVehicles(Authentication authentication) {
-		JwtAuthenticationToken jwt = (JwtAuthenticationToken) authentication;
-		Long companyId = jwt.getToken().getClaim("companyId");
-		if (companyId == null) {
-			return ResponseEntity.badRequest().build();
-		}
-		return ResponseEntity.ok(vehicleService.getVehiclesByCompanyId(companyId));
+		return vehicleService.getMyVehicles(authentication)
+				.map(ResponseEntity::ok)
+				.orElse(ResponseEntity.badRequest().build());
 	}
 
 	@GetMapping("/public/company/{companyId}")
