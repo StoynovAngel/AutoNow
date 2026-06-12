@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.1.5](https://github.com/StoynovAngel/AutoNow/compare/v0.1.4...v0.1.5) (2026-06-12)
+
+
+### Features
+
+* Add logistics logic ([#107](https://github.com/StoynovAngel/AutoNow/issues/107)) ([de85414](https://github.com/StoynovAngel/AutoNow/commit/de8541490de98b621c08a7e4ec942f57541cc2ba))
+* Add new hospital service ([#104](https://github.com/StoynovAngel/AutoNow/issues/104)) ([6f7c1c2](https://github.com/StoynovAngel/AutoNow/commit/6f7c1c2edf7ba0e612fb7968264233341945ac60))
+* Implement service for displaying cars ([#105](https://github.com/StoynovAngel/AutoNow/issues/105)) ([ba6f01a](https://github.com/StoynovAngel/AutoNow/commit/ba6f01a572278c3d2143ab1371affcaa00ecb7a7))
+* improve frontend ([#113](https://github.com/StoynovAngel/AutoNow/issues/113)) ([3b9bd77](https://github.com/StoynovAngel/AutoNow/commit/3b9bd771ba2bbc78658544564abf1fda9fbd0147))
+
+
+### Bug Fixes
+
+* Auth company_admin ([#116](https://github.com/StoynovAngel/AutoNow/issues/116)) ([78f7a9a](https://github.com/StoynovAngel/AutoNow/commit/78f7a9a8d16537533c944816e7871332248773fd))
+
 ## [0.1.4](https://github.com/StoynovAngel/AutoNow/compare/v0.1.3...v0.1.4) (2026-06-09)
 
 
