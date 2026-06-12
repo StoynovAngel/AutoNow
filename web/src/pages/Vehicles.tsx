@@ -10,7 +10,7 @@ import { useAuth } from '../contexts/AuthContext';
 import type { Vehicle } from '../components/company/VehicleInfo';
 import type { VehiclePayload } from '../services/vehicle/vehicleService';
 
-const VEHICLE_TYPES = ['TAXI', 'LOGISTICS', 'AMBULANCE', 'RENTAL', 'PROM', 'FUNERAL'] as const;
+const VEHICLE_TYPES = ['TAXI', 'LOGISTICS', 'AMBULANCE', 'RENTAL', 'CELEBRATION', 'FUNERAL'] as const;
 
 const Vehicles = () => {
     const { user } = useAuth();

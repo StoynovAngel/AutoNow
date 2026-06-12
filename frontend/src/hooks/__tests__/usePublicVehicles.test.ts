@@ -19,18 +19,18 @@ describe('usePublicVehicles', () => {
                 brand: 'Mercedes',
                 model: 'E-Class',
                 licensePlate: 'CB1234AA',
-                vehicleType: VehicleType.PROM,
+                vehicleType: VehicleType.CELEBRATION,
                 driverPhoneNumber: '+359888111222',
             },
         ];
         mockedFetch.mockResolvedValue(data);
 
-        const { result } = renderHook(() => usePublicVehicles(10, VehicleType.PROM));
+        const { result } = renderHook(() => usePublicVehicles(10, VehicleType.CELEBRATION));
 
         expect(result.current.loading).toBe(true);
         await waitFor(() => expect(result.current.loading).toBe(false));
 
-        expect(mockedFetch).toHaveBeenCalledWith(10, VehicleType.PROM);
+        expect(mockedFetch).toHaveBeenCalledWith(10, VehicleType.CELEBRATION);
         expect(result.current.vehicles).toEqual(data);
         expect(result.current.error).toBe('');
     });
@@ -38,7 +38,7 @@ describe('usePublicVehicles', () => {
     it('sets the parsed error message when the request fails', async () => {
         mockedFetch.mockRejectedValue({ message: 'boom' });
 
-        const { result } = renderHook(() => usePublicVehicles(10, VehicleType.PROM));
+        const { result } = renderHook(() => usePublicVehicles(10, VehicleType.CELEBRATION));
 
         await waitFor(() => expect(result.current.loading).toBe(false));
 
@@ -55,11 +55,11 @@ describe('usePublicVehicles', () => {
                     brand: 'BMW',
                     model: '7',
                     licensePlate: 'CB7777OK',
-                    vehicleType: VehicleType.PROM,
+                    vehicleType: VehicleType.CELEBRATION,
                 },
             ]);
 
-        const { result } = renderHook(() => usePublicVehicles(10, VehicleType.PROM));
+        const { result } = renderHook(() => usePublicVehicles(10, VehicleType.CELEBRATION));
         await waitFor(() => expect(result.current.error).toBe('boom'));
 
         await act(async () => {

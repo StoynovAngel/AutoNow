@@ -37,10 +37,10 @@ export const getVehicleOptions = (t: (key: string) => string): VehicleOption[] =
         description: t("funeral-transport")
     },
     {
-        type: VehicleType.PROM,
-        label: t("prom"),
+        type: VehicleType.CELEBRATION,
+        label: t("celebration"),
         icon: 'celebration',
         color: '#800080',
-        description: t("prom-transport")
+        description: t("celebration-transport")
     }
 ];

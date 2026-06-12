@@ -319,16 +319,16 @@ class VehicleControllerIT {
 	}
 
 	@Test
-	void getPublicVehiclesByCompanyId_asGuest_filtersByPromAndIncludesDriverPhone() throws Exception {
+	void getPublicVehiclesByCompanyId_asGuest_filtersByCelebrationAndIncludesDriverPhone() throws Exception {
 		var company = companyRepository.save(CompanyEntity.builder()
-				.name("Prom Co").address("1 Ball St").phone("+359888500200")
-				.email("prom@co.com").companyType(CompanyType.PROM).build());
+				.name("Celebration Co").address("1 Ball St").phone("+359888500200")
+				.email("celebration@co.com").companyType(CompanyType.CELEBRATION).build());
 
-		var promVehicle = VehicleEntity.builder()
+		var celebrationVehicle = VehicleEntity.builder()
 				.brand("Mercedes").model("E-Class")
 				.licensePlate("CB1234AA").airConditioning(true).numberOfSeats(4)
-				.trunkCapacity(450.0).vehicleType(VehicleType.PROM).company(company).build();
-		vehicleRepository.save(promVehicle);
+				.trunkCapacity(450.0).vehicleType(VehicleType.CELEBRATION).company(company).build();
+		vehicleRepository.save(celebrationVehicle);
 
 		var taxiVehicle = VehicleEntity.builder()
 				.brand("Toyota").model("Camry")
@@ -343,28 +343,28 @@ class VehicleControllerIT {
 				.available(true).company(company)
 				.build();
 		driverRepository.save(driver);
-		promVehicle.setDriver(driver);
-		vehicleRepository.save(promVehicle);
+		celebrationVehicle.setDriver(driver);
+		vehicleRepository.save(celebrationVehicle);
 
 		mockMvc.perform(get("/api/vehicles/public/company/{companyId}", company.getId())
-						.param("vehicleType", "PROM")
+						.param("vehicleType", "CELEBRATION")
 						.with(TestData.guestJwt()))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.length()").value(1))
 				.andExpect(jsonPath("$[0].brand").value("Mercedes"))
-				.andExpect(jsonPath("$[0].vehicleType").value("PROM"))
+				.andExpect(jsonPath("$[0].vehicleType").value("CELEBRATION"))
 				.andExpect(jsonPath("$[0].driverPhoneNumber").value("+359888111222"));
 	}
 
 	@Test
 	void getPublicVehiclesByCompanyId_asCustomer_returnsOk() throws Exception {
 		var company = companyRepository.save(CompanyEntity.builder()
-				.name("Prom Co 2").address("2 Ball St").phone("+359888500201")
-				.email("prom2@co.com").companyType(CompanyType.PROM).build());
+				.name("Celebration Co 2").address("2 Ball St").phone("+359888500201")
+				.email("celebration2@co.com").companyType(CompanyType.CELEBRATION).build());
 
 		mockMvc.perform(get("/api/vehicles/public/company/{companyId}", company.getId())
-						.param("vehicleType", "PROM")
+						.param("vehicleType", "CELEBRATION")
 						.with(TestData.customerJwt()))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$").isArray())
@@ -385,7 +385,7 @@ class VehicleControllerIT {
 
 		var prom = VehicleEntity.builder()
 				.brand("BMW").model("7").licensePlate("CB2222CC")
-				.numberOfSeats(4).vehicleType(VehicleType.PROM).company(company).build();
+				.numberOfSeats(4).vehicleType(VehicleType.CELEBRATION).company(company).build();
 		var taxi = VehicleEntity.builder()
 				.brand("Honda").model("Civic").licensePlate("CB3333DD")
 				.numberOfSeats(4).vehicleType(VehicleType.TAXI).company(company).build();

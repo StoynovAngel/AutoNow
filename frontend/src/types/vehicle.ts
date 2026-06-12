@@ -4,7 +4,7 @@ export enum VehicleType {
     TAXI = 'TAXI',
     RENTAL = 'RENTAL',
     FUNERAL = 'FUNERAL',
-    PROM = 'PROM'
+    CELEBRATION = 'CELEBRATION'
 }
 
 export interface VehicleOption {

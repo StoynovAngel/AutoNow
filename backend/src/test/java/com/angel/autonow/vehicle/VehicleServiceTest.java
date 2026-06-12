@@ -176,17 +176,17 @@ class VehicleServiceTest {
 		VehicleEntity prom = VehicleEntity.builder()
 				.id(1L).brand("Mercedes").model("E-Class")
 				.licensePlate("CB1234AB").numberOfSeats(4)
-				.vehicleType(VehicleType.PROM).company(company).driver(driver).build();
+				.vehicleType(VehicleType.CELEBRATION).company(company).driver(driver).build();
 
-		when(vehicleRepository.findByCompanyIdAndVehicleType(10L, VehicleType.PROM))
+		when(vehicleRepository.findByCompanyIdAndVehicleType(10L, VehicleType.CELEBRATION))
 				.thenReturn(List.of(prom));
 
-		var result = vehicleService.getPublicVehiclesByCompanyAndType(10L, VehicleType.PROM);
+		var result = vehicleService.getPublicVehiclesByCompanyAndType(10L, VehicleType.CELEBRATION);
 
 		assertEquals(1, result.size());
 		assertEquals("Mercedes", result.get(0).brand());
 		assertEquals("+359888111222", result.get(0).driverPhoneNumber());
-		assertEquals(VehicleType.PROM, result.get(0).vehicleType());
+		assertEquals(VehicleType.CELEBRATION, result.get(0).vehicleType());
 		assertEquals(10L, result.get(0).companyId());
 	}
 
@@ -195,12 +195,12 @@ class VehicleServiceTest {
 		VehicleEntity vehicle = VehicleEntity.builder()
 				.id(2L).brand("BMW").model("7")
 				.licensePlate("CB5555KM").numberOfSeats(4)
-				.vehicleType(VehicleType.PROM).build();
+				.vehicleType(VehicleType.CELEBRATION).build();
 
-		when(vehicleRepository.findByCompanyIdAndVehicleType(10L, VehicleType.PROM))
+		when(vehicleRepository.findByCompanyIdAndVehicleType(10L, VehicleType.CELEBRATION))
 				.thenReturn(List.of(vehicle));
 
-		var result = vehicleService.getPublicVehiclesByCompanyAndType(10L, VehicleType.PROM);
+		var result = vehicleService.getPublicVehiclesByCompanyAndType(10L, VehicleType.CELEBRATION);
 
 		assertEquals(1, result.size());
 		assertNull(result.get(0).driverPhoneNumber());

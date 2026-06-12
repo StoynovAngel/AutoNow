@@ -73,7 +73,7 @@ public class DataSeeder implements ApplicationRunner {
 		seedAmbulance(password);
 		seedRental(password);
 		seedFuneral(password);
-		seedProm(password);
+		seedCelebration(password);
 	}
 
 	private DriverEntity saveDriverWithVehicle(DriverEntity driver, VehicleEntity vehicle) {
@@ -342,14 +342,14 @@ public class DataSeeder implements ApplicationRunner {
 				.company(company).build(), v3);
 	}
 
-	private void seedProm(String password) {
+	private void seedCelebration(String password) {
 		CompanyEntity company = companyRepository.save(CompanyEntity.builder()
 				.name("Royal Prom Limos")
 				.address("44 Boyana St, Sofia")
 				.phone("+359888600006")
 				.email("book@royalprom.bg")
 				.description("Luxury limousines for proms and weddings")
-				.companyType(CompanyType.PROM)
+				.companyType(CompanyType.CELEBRATION)
 				.build());
 
 		userRepository.save(UserEntity.builder()
@@ -363,21 +363,21 @@ public class DataSeeder implements ApplicationRunner {
 				.brand("Chrysler").model("300 Limousine").licensePlate("CA7070EM")
 				.imageUrl("https://d11kcrtzt740u6.cloudfront.net/veh/price4limo-black-chrysler-300-limousine.jpg")
 				.airConditioning(true).numberOfSeats(8).trunkCapacity(400.0)
-				.vehicleType(VehicleType.PROM)
+				.vehicleType(VehicleType.CELEBRATION)
 				.company(company).build());
 
 		VehicleEntity v2 = vehicleRepository.save(VehicleEntity.builder()
 				.brand("Lincoln").model("Stretch").licensePlate("CA8080MO")
 				.imageUrl("https://qualitycoachwork.com/wp-content/uploads/2023/03/Lincoln-Navigator-Stretch-CEO-Conversion.jpg")
 				.airConditioning(true).numberOfSeats(10).trunkCapacity(450.0)
-				.vehicleType(VehicleType.PROM)
+				.vehicleType(VehicleType.CELEBRATION)
 				.company(company).build());
 
 		VehicleEntity v3 = vehicleRepository.save(VehicleEntity.builder()
 				.brand("Hummer").model("H2 Limo").licensePlate("CA9090OT")
 				.imageUrl("https://www.hertslimos.com/wp-content/uploads/2023/01/hummer-h2-limo-hero.jpg")
 				.airConditioning(true).numberOfSeats(14).trunkCapacity(500.0)
-				.vehicleType(VehicleType.PROM)
+				.vehicleType(VehicleType.CELEBRATION)
 				.company(company).build());
 
 		saveDriverWithVehicle(DriverEntity.builder()

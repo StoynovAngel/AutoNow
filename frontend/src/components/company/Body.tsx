@@ -45,7 +45,7 @@ const Body = () => {
     };
 
     const handleBookCompany = (companyId: number) => {
-        if (vehicleType === VehicleType.PROM || vehicleType === VehicleType.RENTAL) {
+        if (vehicleType === VehicleType.CELEBRATION || vehicleType === VehicleType.RENTAL) {
             navigation.navigate('vehicleList', { companyId, vehicleType });
             return;
         }
