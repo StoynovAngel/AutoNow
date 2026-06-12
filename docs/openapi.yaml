@@ -3617,6 +3617,7 @@ components:
       required:
         - distanceKm
         - vehicleType
+        - weightKg
     OrderEstimateResponseDTO:
       type: object
       properties:
