@@ -43,6 +43,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '409':
           description: Conflict
           content:
@@ -97,6 +103,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '409':
           description: Conflict
           content:
@@ -137,6 +149,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
           content:
             application/problem+json:
               schema:
@@ -186,6 +204,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
           content:
             application/problem+json:
               schema:
@@ -244,6 +268,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '409':
           description: Conflict
           content:
@@ -284,6 +314,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
           content:
             application/problem+json:
               schema:
@@ -333,6 +369,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
           content:
             application/problem+json:
               schema:
@@ -391,6 +433,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '409':
           description: Conflict
           content:
@@ -431,6 +479,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
           content:
             application/problem+json:
               schema:
@@ -480,6 +534,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
           content:
             application/problem+json:
               schema:
@@ -538,6 +598,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '409':
           description: Conflict
           content:
@@ -578,6 +644,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
           content:
             application/problem+json:
               schema:
@@ -627,6 +699,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
           content:
             application/problem+json:
               schema:
@@ -685,6 +763,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '409':
           description: Conflict
           content:
@@ -725,6 +809,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
           content:
             application/problem+json:
               schema:
@@ -784,6 +874,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '409':
           description: Conflict
           content:
@@ -838,6 +934,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '409':
           description: Conflict
           content:
@@ -883,6 +985,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
           content:
             application/problem+json:
               schema:
@@ -941,6 +1049,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '409':
           description: Conflict
           content:
@@ -985,6 +1099,187 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: Internal Server Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+  '/api/companies/{id}/pricing':
+    get:
+      tags:
+        - company-pricing-controller
+      operationId: getPricing
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CompanyPricingResponseDTO'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: Internal Server Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+    put:
+      tags:
+        - company-pricing-controller
+      operationId: updatePricing
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompanyPricingRequestDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CompanyPricingResponseDTO'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: Internal Server Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+    post:
+      tags:
+        - company-pricing-controller
+      operationId: createPricing
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompanyPricingRequestDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CompanyPricingResponseDTO'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '409':
           description: Conflict
           content:
@@ -1025,6 +1320,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
           content:
             application/problem+json:
               schema:
@@ -1076,6 +1377,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '409':
           description: Conflict
           content:
@@ -1116,6 +1423,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
           content:
             application/problem+json:
               schema:
@@ -1167,6 +1480,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '409':
           description: Conflict
           content:
@@ -1207,6 +1526,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
           content:
             application/problem+json:
               schema:
@@ -1258,6 +1583,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '409':
           description: Conflict
           content:
@@ -1298,6 +1629,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
           content:
             application/problem+json:
               schema:
@@ -1345,6 +1682,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
           content:
             application/problem+json:
               schema:
@@ -1398,6 +1741,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '409':
           description: Conflict
           content:
@@ -1443,6 +1792,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
           content:
             application/problem+json:
               schema:
@@ -1495,6 +1850,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '409':
           description: Conflict
           content:
@@ -1535,6 +1896,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
           content:
             application/problem+json:
               schema:
@@ -1586,6 +1953,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '409':
           description: Conflict
           content:
@@ -1626,6 +1999,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
           content:
             application/problem+json:
               schema:
@@ -1673,6 +2052,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
           content:
             application/problem+json:
               schema:
@@ -1726,6 +2111,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '409':
           description: Conflict
           content:
@@ -1770,6 +2161,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
           content:
             application/problem+json:
               schema:
@@ -1822,6 +2219,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '409':
           description: Conflict
           content:
@@ -1866,6 +2269,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
           content:
             application/problem+json:
               schema:
@@ -1925,6 +2334,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '409':
           description: Conflict
           content:
@@ -1980,6 +2395,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '409':
           description: Conflict
           content:
@@ -2011,7 +2432,7 @@ paths:
             type: string
             enum:
               - TAXI
-              - SEMI
+              - LOGISTICS
               - AMBULANCE
               - RENTAL
               - PROM
@@ -2039,6 +2460,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
           content:
             application/problem+json:
               schema:
@@ -2094,6 +2521,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '409':
           description: Conflict
           content:
@@ -2139,6 +2572,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
           content:
             application/problem+json:
               schema:
@@ -2194,6 +2633,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '409':
           description: Conflict
           content:
@@ -2239,6 +2684,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
           content:
             application/problem+json:
               schema:
@@ -2294,6 +2745,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '409':
           description: Conflict
           content:
@@ -2339,6 +2796,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
           content:
             application/problem+json:
               schema:
@@ -2390,6 +2853,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
           content:
             application/problem+json:
               schema:
@@ -2451,6 +2920,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '409':
           description: Conflict
           content:
@@ -2497,6 +2972,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
           content:
             application/problem+json:
               schema:
@@ -2560,7 +3041,7 @@ components:
           type: string
           enum:
             - TAXI
-            - SEMI
+            - LOGISTICS
             - AMBULANCE
             - RENTAL
             - PROM
@@ -2599,19 +3080,11 @@ components:
           type: string
           enum:
             - TAXI
-            - SEMI
+            - LOGISTICS
             - AMBULANCE
             - RENTAL
             - PROM
             - FUNERAL
-        vehicleClasses:
-          type: array
-          items:
-            type: string
-            enum:
-              - STANDARD
-              - XL
-          uniqueItems: true
         companyId:
           type: integer
           format: int64
@@ -2730,7 +3203,7 @@ components:
           type: string
           enum:
             - TAXI
-            - SEMI
+            - LOGISTICS
             - AMBULANCE
             - RENTAL
             - PROM
@@ -2764,20 +3237,11 @@ components:
           format: int32
         specialRequirements:
           type: string
-        passengerCount:
-          type: integer
-          format: int32
-        luggageCount:
-          type: integer
-          format: int32
-          minimum: 0
-        vehicleClass:
-          type: string
-          enum:
-            - STANDARD
-            - XL
-        requiresAirConditioning:
-          type: boolean
+        weightKg:
+          type: number
+          format: double
+          maximum: 5000
+          minimum: 0.1
       required:
         - dropoffAddress
         - dropoffLatitude
@@ -2824,7 +3288,7 @@ components:
           type: string
           enum:
             - TAXI
-            - SEMI
+            - LOGISTICS
             - AMBULANCE
             - RENTAL
             - PROM
@@ -2867,19 +3331,9 @@ components:
           format: int32
         specialRequirements:
           type: string
-        passengerCount:
-          type: integer
-          format: int32
-        luggageCount:
-          type: integer
-          format: int32
-        vehicleClass:
-          type: string
-          enum:
-            - STANDARD
-            - XL
-        requiresAirConditioning:
-          type: boolean
+        weightKg:
+          type: number
+          format: double
         cancellationReason:
           type: string
         createdAt:
@@ -3064,6 +3518,82 @@ components:
         updatedAt:
           type: string
           format: date-time
+    CompanyPricingRequestDTO:
+      type: object
+      properties:
+        baseFare:
+          type: number
+          format: double
+        ratePerKm:
+          type: number
+          format: double
+        premiumMultiplier:
+          type: number
+          format: double
+        nightMultiplier:
+          type: number
+          format: double
+        nightStartHour:
+          type: integer
+          format: int32
+          maximum: 23
+          minimum: 0
+        nightEndHour:
+          type: integer
+          format: int32
+          maximum: 23
+          minimum: 0
+        ambulanceBaseFare:
+          type: number
+          format: double
+        logisticsBaseFare:
+          type: number
+          format: double
+        logisticsRatePerKg:
+          type: number
+          format: double
+    CompanyPricingResponseDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        companyId:
+          type: integer
+          format: int64
+        baseFare:
+          type: number
+          format: double
+        ratePerKm:
+          type: number
+          format: double
+        premiumMultiplier:
+          type: number
+          format: double
+        nightMultiplier:
+          type: number
+          format: double
+        nightStartHour:
+          type: integer
+          format: int32
+        nightEndHour:
+          type: integer
+          format: int32
+        ambulanceBaseFare:
+          type: number
+          format: double
+        logisticsBaseFare:
+          type: number
+          format: double
+        logisticsRatePerKg:
+          type: number
+          format: double
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
     OrderEstimateRequestDTO:
       type: object
       properties:
@@ -3071,7 +3601,7 @@ components:
           type: string
           enum:
             - TAXI
-            - SEMI
+            - LOGISTICS
             - AMBULANCE
             - RENTAL
             - PROM
@@ -3079,11 +3609,11 @@ components:
         distanceKm:
           type: number
           format: double
-        vehicleClass:
-          type: string
-          enum:
-            - STANDARD
-            - XL
+        weightKg:
+          type: number
+          format: double
+          maximum: 5000
+          minimum: 0.1
       required:
         - distanceKm
         - vehicleType
@@ -3141,7 +3671,7 @@ components:
           type: string
           enum:
             - TAXI
-            - SEMI
+            - LOGISTICS
             - AMBULANCE
             - RENTAL
             - PROM
@@ -3201,7 +3731,7 @@ components:
           type: string
           enum:
             - TAXI
-            - SEMI
+            - LOGISTICS
             - AMBULANCE
             - RENTAL
             - PROM
