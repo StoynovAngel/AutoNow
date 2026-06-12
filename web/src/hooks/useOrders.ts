@@ -62,6 +62,14 @@ export const useOrders = (companyId?: number | null) => {
         return updated;
     };
 
+    const autoAssignOrder = async () => {
+        if (!selectedOrderId) return;
+        const updated = await orderService.autoAssign(String(selectedOrderId));
+        setSelectedOrder(updated);
+        setOrders((prev) => prev.map((o) => (o.id === updated.id ? updated : o)));
+        return updated;
+    };
+
     return {
         orders,
         selectedOrderId,
@@ -71,6 +79,7 @@ export const useOrders = (companyId?: number | null) => {
         selectOrder,
         changeOrderStatus,
         assignOrder,
+        autoAssignOrder,
         refreshOrders: fetchOrders,
     };
 };

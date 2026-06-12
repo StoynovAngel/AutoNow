@@ -61,6 +61,11 @@ export const orderService = {
         return data;
     },
 
+    autoAssign: async (id: string): Promise<Order> => {
+        const {data} = await apiClient.post(`/dispatch/${id}/auto-assign`);
+        return data;
+    },
+
     deleteOrder: async (id: string): Promise<void> => {
         await apiClient.delete(`/orders/${id}`);
     }
