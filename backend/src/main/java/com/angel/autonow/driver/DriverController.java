@@ -40,7 +40,7 @@ public class DriverController {
 	}
 
 	@GetMapping
-	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'DRIVER')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN', 'CUSTOMER', 'DRIVER')")
 	public List<DriverResponseDTO> getAllDrivers() {
 		return driverService.getAllDrivers();
 	}

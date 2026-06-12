@@ -32,13 +32,13 @@ public class PaymentController {
 	}
 
 	@GetMapping("/{id}")
-	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN', 'CUSTOMER')")
 	public PaymentResponseDTO getPaymentById(@PathVariable Long id) {
 		return paymentService.getPaymentById(id).orElse(null);
 	}
 
 	@GetMapping("/order/{orderId}")
-	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN', 'CUSTOMER')")
 	public PaymentResponseDTO getPaymentByOrderId(@PathVariable Long orderId) {
 		return paymentService.getPaymentByOrderId(orderId).orElse(null);
 	}
