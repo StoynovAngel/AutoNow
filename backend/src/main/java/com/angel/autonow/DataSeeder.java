@@ -281,7 +281,7 @@ public class DataSeeder implements ApplicationRunner {
 
 		vehicleRepository.save(VehicleEntity.builder()
 				.brand("BMW").model("3 Series").licensePlate("CA6060TY")
-				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/BMW_G20_IMG_0028.jpg/1280px-BMW_G20_IMG_0028.jpg")
+				.imageUrl("https://www.topgear.com/sites/default/files/2025/07/6-BMW-3-Series-Touring-review-2025-UK.jpg")
 				.airConditioning(true).numberOfSeats(5).trunkCapacity(480.0)
 				.vehicleType(VehicleType.RENTAL)
 				.company(company).build());
@@ -306,14 +306,14 @@ public class DataSeeder implements ApplicationRunner {
 
 		VehicleEntity v1 = vehicleRepository.save(VehicleEntity.builder()
 				.brand("Cadillac").model("XTS Hearse").licensePlate("BT1010YX")
-				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Cadillac_XTS_hearse.jpg/1280px-Cadillac_XTS_hearse.jpg")
+				.imageUrl("https://live.staticflickr.com/3675/12293433396_caa3614388_b.jpg")
 				.airConditioning(true).numberOfSeats(2).trunkCapacity(2500.0)
 				.vehicleType(VehicleType.FUNERAL)
 				.company(company).build());
 
 		VehicleEntity v2 = vehicleRepository.save(VehicleEntity.builder()
 				.brand("Lincoln").model("MKT Hearse").licensePlate("BT2020XA")
-				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Lincoln_MKT_Hearse.jpg/1280px-Lincoln_MKT_Hearse.jpg")
+				.imageUrl("https://limoforsale.com/files/07-2022/ad16226/1657749088612002380_large.jpeg")
 				.airConditioning(true).numberOfSeats(2).trunkCapacity(2400.0)
 				.vehicleType(VehicleType.FUNERAL)
 				.company(company).build());
