@@ -10,7 +10,7 @@ interface CompanyManagementSidebarProps {
     selectedDriverId: number | null;
     onSelectCompany: (companyId: number) => void;
     onSelectDriver: (driverId: number) => void;
-    canCreateCompany?: boolean;
+    isAdmin?: boolean;
     onAddCompany?: () => void;
     isCompanyAdmin?: boolean;
 }
@@ -22,7 +22,7 @@ const CompanyManagementSidebar = ({
     selectedDriverId,
     onSelectCompany,
     onSelectDriver,
-    canCreateCompany = false,
+    isAdmin = false,
     onAddCompany,
     isCompanyAdmin = false,
 }: CompanyManagementSidebarProps) => {
@@ -80,7 +80,7 @@ const CompanyManagementSidebar = ({
                         ))
                     )}
                 </div>
-                {canCreateCompany && onAddCompany && (
+                {isAdmin && (
                     <Button onClick={onAddCompany} size="sm" className="w-full">
                         + Add Company
                     </Button>

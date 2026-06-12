@@ -14,7 +14,8 @@ const VEHICLE_TYPES = ['TAXI', 'LOGISTICS', 'AMBULANCE', 'RENTAL', 'PROM', 'FUNE
 
 const Vehicles = () => {
     const { user } = useAuth();
-    const isCompanyAdmin = user?.authorities?.includes('ROLE_COMPANY_ADMIN') ?? false;
+    const isAdmin = user?.authorities?.includes('ROLE_ADMIN') ?? false;
+    const isCompanyAdmin = !isAdmin && (user?.authorities?.includes('ROLE_COMPANY_ADMIN') ?? false);
 
     const { vehicles, loading, error, addVehicle, updateVehicle, removeVehicle, refreshVehicles } = useVehicles(null, isCompanyAdmin);
     const [showForm, setShowForm] = useState(false);

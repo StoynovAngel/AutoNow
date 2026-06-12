@@ -16,9 +16,7 @@ const Company = () => {
     const {user} = useAuth();
     const authorities = user?.authorities ?? [];
     const isAdmin = authorities.includes('ROLE_ADMIN');
-    const isCompanyAdmin = authorities.includes('ROLE_COMPANY_ADMIN');
-    const isCustomer = authorities.includes('ROLE_CUSTOMER');
-    const canCreateCompany = isAdmin || isCompanyAdmin || isCustomer;
+    const isCompanyAdmin = !isAdmin && authorities.includes('ROLE_COMPANY_ADMIN');
 
     const {
         companies,
@@ -27,9 +25,9 @@ const Company = () => {
         loading: companiesLoading,
         error: companiesError,
         selectCompany,
-        createCompany,
         updateCompany,
         deleteCompany,
+        refreshCompanies,
     } = useCompanies(isCompanyAdmin);
 
     const {
@@ -96,7 +94,7 @@ const Company = () => {
                             selectedDriverId={selectedDriverId}
                             onSelectCompany={selectCompany}
                             onSelectDriver={selectDriver}
-                            canCreateCompany={canCreateCompany}
+                            isAdmin={isAdmin}
                             onAddCompany={() => setShowAddModal(true)}
                             isCompanyAdmin={isCompanyAdmin}
                         />
@@ -117,11 +115,13 @@ const Company = () => {
                 </div>
             </div>
 
-            <AddCompanyModal
-                show={showAddModal}
-                onClose={() => setShowAddModal(false)}
-                onSubmit={async (payload) => { await createCompany(payload); }}
-            />
+            {isAdmin && (
+                <AddCompanyModal
+                    show={showAddModal}
+                    onClose={() => setShowAddModal(false)}
+                    onCreated={async () => { setShowAddModal(false); await refreshCompanies(); }}
+                />
+            )}
 
             {selectedCompany && (
                 <EditCompanyModal
