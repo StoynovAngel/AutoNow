@@ -98,6 +98,7 @@ const Company = () => {
                             onSelectDriver={selectDriver}
                             canCreateCompany={canCreateCompany}
                             onAddCompany={() => setShowAddModal(true)}
+                            isCompanyAdmin={isCompanyAdmin}
                         />
                         <CompanyManagementContent
                             selectedCompany={selectedCompany}

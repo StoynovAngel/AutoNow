@@ -12,6 +12,7 @@ interface CompanyManagementSidebarProps {
     onSelectDriver: (driverId: number) => void;
     canCreateCompany?: boolean;
     onAddCompany?: () => void;
+    isCompanyAdmin?: boolean;
 }
 
 const CompanyManagementSidebar = ({
@@ -23,6 +24,7 @@ const CompanyManagementSidebar = ({
     onSelectDriver,
     canCreateCompany = false,
     onAddCompany,
+    isCompanyAdmin = false,
 }: CompanyManagementSidebarProps) => {
     const [companySearch, setCompanySearch] = useState('');
     const filteredCompanies = companySearch.trim()
@@ -38,16 +40,18 @@ const CompanyManagementSidebar = ({
                         {filteredCompanies.length}
                     </span>
                 </div>
-                <div className="mb-2">
-                    <label htmlFor="company-search" className="sr-only">Search companies</label>
-                    <TextInput
-                        id="company-search"
-                        sizing="sm"
-                        placeholder="Search by name…"
-                        value={companySearch}
-                        onChange={e => setCompanySearch(e.target.value)}
-                    />
-                </div>
+                {!isCompanyAdmin && (
+                    <div className="mb-2">
+                        <label htmlFor="company-search" className="sr-only">Search companies</label>
+                        <TextInput
+                            id="company-search"
+                            sizing="sm"
+                            placeholder="Search by name…"
+                            value={companySearch}
+                            onChange={e => setCompanySearch(e.target.value)}
+                        />
+                    </div>
+                )}
                 <div className="flex-1 space-y-2 mb-3 overflow-y-auto min-h-0">
                     {filteredCompanies.length === 0 ? (
                         <p className="text-xs text-gray-400 text-center py-6">

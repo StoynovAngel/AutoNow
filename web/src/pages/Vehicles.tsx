@@ -23,7 +23,6 @@ const Vehicles = () => {
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [filterType, setFilterType] = useState('');
     const [filterCompanyId, setFilterCompanyId] = useState<number | null>(null);
-
     const showSuccess = (msg: string) => {
         setSuccessMessage(msg);
         setTimeout(() => setSuccessMessage(null), 4000);
@@ -96,28 +95,32 @@ const Vehicles = () => {
                     </div>
 
                     <div className="flex gap-3 mb-6">
-                        <Select
-                            value={filterType}
-                            onChange={e => setFilterType(e.target.value)}
-                            aria-label="Filter by vehicle type"
-                        >
-                            <option value="">All Types</option>
-                            {VEHICLE_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
-                        </Select>
-                        <TextInput
-                            type="number"
-                            min={1}
-                            value={filterCompanyId ?? ''}
-                            onChange={e => {
-                                const v = e.target.value;
-                                if (v === '') return setFilterCompanyId(null);
-                                const n = Number(v);
-                                setFilterCompanyId(Number.isFinite(n) ? n : null);
-                            }}
-                            placeholder="Filter by Company ID"
-                            className="w-48"
-                            aria-label="Filter by company ID"
-                        />
+                        {!isCompanyAdmin && (
+                            <Select
+                                value={filterType}
+                                onChange={e => setFilterType(e.target.value)}
+                                aria-label="Filter by vehicle type"
+                            >
+                                <option value="">All Types</option>
+                                {VEHICLE_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                            </Select>
+                        )}
+                        {!isCompanyAdmin && (
+                            <TextInput
+                                type="number"
+                                min={1}
+                                value={filterCompanyId ?? ''}
+                                onChange={e => {
+                                    const v = e.target.value;
+                                    if (v === '') return setFilterCompanyId(null);
+                                    const n = Number(v);
+                                    setFilterCompanyId(Number.isFinite(n) ? n : null);
+                                }}
+                                placeholder="Filter by Company ID"
+                                className="w-48"
+                                aria-label="Filter by company ID"
+                            />
+                        )}
                         {(filterType || filterCompanyId !== null) && (
                             <button
                                 type="button"
