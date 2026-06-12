@@ -7,7 +7,6 @@ import Order from './pages/Order.tsx';
 import Vehicles from './pages/Vehicles.tsx';
 import Drivers from './pages/Drivers.tsx';
 import Login from './pages/Login';
-import RegisterCompanyAdmin from './pages/RegisterCompanyAdmin';
 
 import './index.css';
 
@@ -27,7 +26,6 @@ function App() {
                 <Router>
                     <Routes>
                         <Route path="/login" element={<Login/>}/>
-                        <Route path="/register" element={<RegisterCompanyAdmin/>}/>
                         <Route path="/companies" element={
                             <ProtectedRoute>
                                 <Company/>

@@ -1,5 +1,4 @@
 import {type FormEvent, type ChangeEvent} from "react";
-import { Link } from "react-router-dom";
 import { Alert, Button, Label, TextInput } from 'flowbite-react';
 
 interface LoginFormProps {
@@ -59,13 +58,6 @@ const LoginForm = ({formData, errorMessage, onSubmit, onChange}: LoginFormProps)
             <Button type="submit" className="w-full">
                 Login
             </Button>
-
-            <p className="text-center text-sm text-gray-600 pt-2">
-                New here?{' '}
-                <Link to="/register" className="text-blue-600 hover:underline font-medium">
-                    Register your company
-                </Link>
-            </p>
         </form>
     );
 };

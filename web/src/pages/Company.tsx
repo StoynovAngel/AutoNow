@@ -3,6 +3,7 @@ import Navigation from '../components/ui/Navigation.tsx';
 import PageStatus from '../components/ui/PageStatus.tsx';
 import CompanyManagementSidebar from '../components/company/CompanyManagementSidebar';
 import CompanyManagementContent from '../components/company/CompanyManagementContent';
+import AddCompanyModal from '../components/company/AddCompanyModal';
 import EditCompanyModal from '../components/company/EditCompanyModal';
 import EditPricingModal from '../components/company/EditPricingModal';
 import {useCompanies} from '../hooks/useCompanies';
@@ -26,6 +27,7 @@ const Company = () => {
         selectCompany,
         updateCompany,
         deleteCompany,
+        refreshCompanies,
     } = useCompanies(isCompanyAdmin);
 
     const {
@@ -41,6 +43,7 @@ const Company = () => {
 
     const { pricing, savePricing, supported: pricingSupported } = useCompanyPricing(selectedCompanyId, selectedCompany?.companyType);
 
+    const [showAddModal, setShowAddModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [showEditPricingModal, setShowEditPricingModal] = useState(false);
 
@@ -91,6 +94,8 @@ const Company = () => {
                             selectedDriverId={selectedDriverId}
                             onSelectCompany={selectCompany}
                             onSelectDriver={selectDriver}
+                            isAdmin={isAdmin}
+                            onAddCompany={() => setShowAddModal(true)}
                             isCompanyAdmin={isCompanyAdmin}
                         />
                         <CompanyManagementContent
@@ -109,6 +114,14 @@ const Company = () => {
                     </div>
                 </div>
             </div>
+
+            {isAdmin && (
+                <AddCompanyModal
+                    show={showAddModal}
+                    onClose={() => setShowAddModal(false)}
+                    onCreated={async () => { setShowAddModal(false); await refreshCompanies(); }}
+                />
+            )}
 
             {selectedCompany && (
                 <EditCompanyModal

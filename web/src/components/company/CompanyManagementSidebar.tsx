@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { TextInput } from 'flowbite-react';
+import { Button, TextInput } from 'flowbite-react';
 import type { Company } from './CompanyInfo';
 import type { Driver } from './DriverInfo';
 
@@ -10,6 +10,8 @@ interface CompanyManagementSidebarProps {
     selectedDriverId: number | null;
     onSelectCompany: (companyId: number) => void;
     onSelectDriver: (driverId: number) => void;
+    isAdmin?: boolean;
+    onAddCompany?: () => void;
     isCompanyAdmin?: boolean;
 }
 
@@ -20,6 +22,8 @@ const CompanyManagementSidebar = ({
     selectedDriverId,
     onSelectCompany,
     onSelectDriver,
+    isAdmin = false,
+    onAddCompany,
     isCompanyAdmin = false,
 }: CompanyManagementSidebarProps) => {
     const [companySearch, setCompanySearch] = useState('');
@@ -76,6 +80,11 @@ const CompanyManagementSidebar = ({
                         ))
                     )}
                 </div>
+                {isAdmin && (
+                    <Button onClick={onAddCompany} size="sm" className="w-full">
+                        + Add Company
+                    </Button>
+                )}
             </div>
 
             <div className="bg-white rounded-xl shadow-md p-4 flex flex-col border border-gray-100 min-h-0 flex-1">
