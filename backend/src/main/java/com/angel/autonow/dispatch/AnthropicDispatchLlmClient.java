@@ -31,8 +31,8 @@ public class AnthropicDispatchLlmClient implements DispatchLlmClient {
 				order.pickupAddress(),
 				order.specialRequirements() != null ? order.specialRequirements() : "none",
 				candidates.stream()
-						.map(d -> "id=%d name=%s %s expertise=%s".formatted(
-								d.getId(), d.getFirstName(), d.getLastName(), d.getExpertiseType()))
+						.map(d -> "id=%d name=%s %s".formatted(
+								d.getId(), d.getFirstName(), d.getLastName()))
 						.collect(Collectors.joining("\n"))
 		);
 
