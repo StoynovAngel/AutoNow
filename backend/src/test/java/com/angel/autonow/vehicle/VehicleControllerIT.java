@@ -137,6 +137,14 @@ class VehicleControllerIT {
 	}
 
 	@Test
+	void getAllVehicles_asCompanyAdmin_returnsOk() throws Exception {
+		mockMvc.perform(get("/api/vehicles")
+						.with(TestData.companyAdminJwt()))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$").isArray());
+	}
+
+	@Test
 	void getAllVehicles_withoutAuth_returnsUnauthorized() throws Exception {
 		mockMvc.perform(get("/api/vehicles"))
 				.andExpect(status().isUnauthorized());
@@ -251,6 +259,40 @@ class VehicleControllerIT {
 	@Test
 	void getVehiclesByCompanyId_withoutAuth_returnsUnauthorized() throws Exception {
 		mockMvc.perform(get("/api/vehicles/company/{companyId}", 1L))
+				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	void getMyVehicles_withCompanyIdClaim_returnsCompanyVehicles() throws Exception {
+		var company = companyRepository.save(TestData.createCompanyEntity());
+		var vehicle = TestData.createVehicleEntity();
+		vehicle.setCompany(company);
+		vehicleRepository.save(vehicle);
+
+		mockMvc.perform(get("/api/vehicles/my")
+						.with(TestData.companyAdminJwt(company.getId())))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.length()").value(1))
+				.andExpect(jsonPath("$[0].companyId").value(company.getId()));
+	}
+
+	@Test
+	void getMyVehicles_withoutCompanyIdClaim_returnsBadRequest() throws Exception {
+		mockMvc.perform(get("/api/vehicles/my")
+						.with(TestData.companyAdminJwt()))
+				.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void getMyVehicles_asCustomer_returnsForbidden() throws Exception {
+		mockMvc.perform(get("/api/vehicles/my")
+						.with(TestData.customerJwt()))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	void getMyVehicles_withoutAuth_returnsUnauthorized() throws Exception {
+		mockMvc.perform(get("/api/vehicles/my"))
 				.andExpect(status().isUnauthorized());
 	}
 

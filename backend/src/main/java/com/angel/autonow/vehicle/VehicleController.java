@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,7 +41,7 @@ public class VehicleController {
 	}
 
 	@GetMapping
-	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'DRIVER', 'GUEST')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN', 'CUSTOMER', 'DRIVER', 'GUEST')")
 	public List<VehicleResponseDTO> getAllVehicles() {
 		return vehicleService.getAllVehicles();
 	}
@@ -48,6 +50,17 @@ public class VehicleController {
 	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN')")
 	public List<VehicleResponseDTO> getVehiclesByCompanyId(@PathVariable Long companyId) {
 		return vehicleService.getVehiclesByCompanyId(companyId);
+	}
+
+	@GetMapping("/my")
+	@PreAuthorize("hasRole('COMPANY_ADMIN')")
+	public ResponseEntity<List<VehicleResponseDTO>> getMyVehicles(Authentication authentication) {
+		JwtAuthenticationToken jwt = (JwtAuthenticationToken) authentication;
+		Long companyId = jwt.getToken().getClaim("companyId");
+		if (companyId == null) {
+			return ResponseEntity.badRequest().build();
+		}
+		return ResponseEntity.ok(vehicleService.getVehiclesByCompanyId(companyId));
 	}
 
 	@GetMapping("/public/company/{companyId}")

@@ -3,7 +3,7 @@ import { vehicleService } from '../services/vehicle/vehicleService';
 import type { Vehicle } from '../components/company/VehicleInfo';
 import type { VehiclePayload } from '../services/vehicle/vehicleService';
 
-export const useVehicles = (companyId?: number | null) => {
+export const useVehicles = (companyId?: number | null, isCompanyAdmin?: boolean) => {
     const [vehicles, setVehicles] = useState<Vehicle[]>([]);
     const [selectedVehicleId, setSelectedVehicleId] = useState<number | null>(null);
     const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
@@ -14,9 +14,14 @@ export const useVehicles = (companyId?: number | null) => {
         setLoading(true);
         setError(null);
         try {
-            const data = companyId
-                ? await vehicleService.getVehiclesByCompany(String(companyId))
-                : await vehicleService.getAllVehicles();
+            let data: Vehicle[];
+            if (isCompanyAdmin) {
+                data = await vehicleService.getMyVehicles();
+            } else if (companyId) {
+                data = await vehicleService.getVehiclesByCompany(String(companyId));
+            } else {
+                data = await vehicleService.getAllVehicles();
+            }
             setVehicles(data);
             setSelectedVehicleId((prevId) => {
                 if (prevId && !data.find((v: Vehicle) => v.id === prevId)) {
@@ -34,7 +39,7 @@ export const useVehicles = (companyId?: number | null) => {
 
     useEffect(() => {
         fetchVehicles();
-    }, [companyId]);
+    }, [companyId, isCompanyAdmin]);
 
     const selectVehicle = async (vehicleId: number) => {
         setSelectedVehicleId(vehicleId);
