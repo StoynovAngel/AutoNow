@@ -15,11 +15,6 @@ import com.angel.autonow.order.OrderStatus;
 import com.angel.autonow.rentalorder.RentalOrderEntity;
 import com.angel.autonow.rentalorder.RentalOrderRequestDTO;
 import com.angel.autonow.rentalorder.RentalOrderStatus;
-import com.angel.autonow.payment.PaymentEntity;
-import com.angel.autonow.payment.PaymentMethod;
-import com.angel.autonow.payment.PaymentRequestDTO;
-import com.angel.autonow.payment.PaymentResponseDTO;
-import com.angel.autonow.payment.PaymentStatus;
 import com.angel.autonow.rating.RatingEntity;
 import com.angel.autonow.rating.RatingRequestDTO;
 import com.angel.autonow.rating.RatingResponseDTO;
@@ -41,8 +36,6 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 public final class TestData {
 
 	public static final long NON_EXISTENT_ID = 999L;
-	public static final String DEFAULT_CURRENCY = "EUR";
-	public static final double DEFAULT_AMOUNT = 16.00;
 	public static final String DEFAULT_PICKUP_ADDRESS = "123 Main St";
 	public static final String DEFAULT_DROPOFF_ADDRESS = "456 Oak Ave";
 	public static final double DEFAULT_PICKUP_LAT = 42.6977;
@@ -230,38 +223,6 @@ public final class TestData {
 				.expertiseType(Set.of(ExpertiseType.B))
 				.available(true)
 				.vehicleIds(Collections.emptySet())
-				.build();
-	}
-
-	public static PaymentRequestDTO createPaymentRequest(Long orderId) {
-		return PaymentRequestDTO.builder()
-				.orderId(orderId)
-				.amount(DEFAULT_AMOUNT)
-				.paymentMethod(PaymentMethod.CREDIT_CARD)
-				.transactionId("TXN-TEST-001")
-				.currency(DEFAULT_CURRENCY)
-				.build();
-	}
-
-	public static PaymentEntity createPaymentEntity(OrderEntity order, double amount, PaymentMethod method, PaymentStatus status) {
-		return PaymentEntity.builder()
-				.order(order)
-				.amount(amount)
-				.paymentMethod(method)
-				.status(status)
-				.currency(DEFAULT_CURRENCY)
-				.build();
-	}
-
-	public static PaymentResponseDTO createPaymentResponse(Long id, Long orderId, double amount, PaymentMethod method, PaymentStatus status, LocalDateTime createdAt) {
-		return PaymentResponseDTO.builder()
-				.id(id)
-				.orderId(orderId)
-				.amount(amount)
-				.paymentMethod(method)
-				.status(status)
-				.currency(DEFAULT_CURRENCY)
-				.createdAt(createdAt)
 				.build();
 	}
 
