@@ -18,7 +18,7 @@ class PricingServiceTest {
 	private static final ZoneId SOFIA = ZoneId.of("Europe/Sofia");
 
 	private static final PricingProperties PROPERTIES = new PricingProperties(
-			2.50, 60.00, 1.20, 1.60, 1.20, 22, 6, "Europe/Sofia", "EUR", 5.00, 0.05
+			2.50, 60.00, 1.20, 1.60, 1.20, 22, 6, "Europe/Sofia", "EUR", 5.00, 0.05, 45.00
 	);
 
 	private PricingService serviceAt(int hour) {
