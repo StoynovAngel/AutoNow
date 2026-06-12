@@ -1,5 +1,6 @@
 package com.angel.autonow.order;
 
+import com.angel.autonow.company.CompanyEntity;
 import com.angel.autonow.driver.DriverEntity;
 import com.angel.autonow.user.UserEntity;
 import com.angel.autonow.vehicle.VehicleEntity;
@@ -29,6 +30,10 @@ public class OrderEntity {
 	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
 	private UserEntity user;
+
+	@ManyToOne
+	@JoinColumn(name = "company_id")
+	private CompanyEntity company;
 
 	@ManyToOne
 	@JoinColumn(name = "driver_id")

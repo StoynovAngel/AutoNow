@@ -3,6 +3,7 @@ import type {Order, OrderStatus} from '../../components/order/OrderInfo';
 
 export interface OrderPayload {
     userId: number;
+    companyId?: number;
     driverId?: number;
     vehicleId?: number;
     vehicleType: string;

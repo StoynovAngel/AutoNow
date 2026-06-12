@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 public record OrderResponseDTO(
 		Long id,
 		Long userId,
+		Long companyId,
 		Long driverId,
 		Long vehicleId,
 		DriverInfoDTO driver,

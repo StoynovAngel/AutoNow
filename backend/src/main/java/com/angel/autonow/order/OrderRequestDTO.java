@@ -14,6 +14,8 @@ public record OrderRequestDTO(
 		@NotNull(message = "User ID is required")
 		Long userId,
 
+		Long companyId,
+
 		Long driverId,
 
 		Long vehicleId,

@@ -31,7 +31,7 @@ const BookingMapBody = () => {
 
     const route = useRoute<BookingMapRouteProp>();
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-    const { companyAddress, vehicleType, preferences } = route.params;
+    const { companyId, companyAddress, vehicleType, preferences } = route.params;
 
     const auth = useContext(AuthContext);
     const isAmbulance = vehicleType === VehicleType.AMBULANCE;
@@ -110,6 +110,7 @@ const BookingMapBody = () => {
         try {
             const created = await createOrder({
                 userId: auth.user.id,
+                companyId,
                 vehicleType,
                 pickupAddress: pickup.placeName,
                 pickupLatitude: pickup.coordinate.latitude,

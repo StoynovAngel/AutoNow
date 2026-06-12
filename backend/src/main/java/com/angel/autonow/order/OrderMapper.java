@@ -11,6 +11,7 @@ import org.mapstruct.Named;
 public interface OrderMapper {
 
 	@Mapping(source = "user.id", target = "userId")
+	@Mapping(source = "company.id", target = "companyId")
 	@Mapping(source = "driver.id", target = "driverId")
 	@Mapping(source = "vehicle.id", target = "vehicleId")
 	@Mapping(source = "driver", target = "driver", qualifiedByName = "driverToInfo")
@@ -19,6 +20,7 @@ public interface OrderMapper {
 
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "user", ignore = true)
+	@Mapping(target = "company", ignore = true)
 	@Mapping(target = "driver", ignore = true)
 	@Mapping(target = "vehicle", ignore = true)
 	@Mapping(target = "status", ignore = true)

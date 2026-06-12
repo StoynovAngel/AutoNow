@@ -12,7 +12,7 @@ export const useOrders = (companyId?: number | null) => {
 
     useEffect(() => {
         fetchOrders();
-    }, []);
+    }, [companyId]);
 
     const fetchOrders = async () => {
         setLoading(true);
