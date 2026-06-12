@@ -50,7 +50,7 @@ const AssignVehicleModal = ({ driver, allVehicles, takenVehicleIds = new Set(), 
                     <p className="text-gray-500 text-sm text-center py-6">No vehicles available.</p>
                 ) : (
                     <div className="space-y-2 max-h-80 overflow-y-auto">
-                        {allVehicles.filter(v => assignedIds.has(v.id) || !takenVehicleIds.has(v.id)).map(vehicle => {
+                        {allVehicles.filter(v => v.vehicleType !== 'RENTAL' && (assignedIds.has(v.id) || !takenVehicleIds.has(v.id))).map(vehicle => {
                             const assigned = assignedIds.has(vehicle.id);
                             const isLoading = loading === vehicle.id;
                             return (
