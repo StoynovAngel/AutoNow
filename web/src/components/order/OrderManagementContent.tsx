@@ -11,6 +11,7 @@ interface OrderManagementContentProps {
     vehicles: Vehicle[];
     onChangeStatus: (status: OrderStatus) => void;
     onAssign: (driverId: number, vehicleId: number) => Promise<void>;
+    onAutoAssign: () => Promise<void>;
 }
 
 const OrderManagementContent = ({
@@ -19,6 +20,7 @@ const OrderManagementContent = ({
     vehicles,
     onChangeStatus,
     onAssign,
+    onAutoAssign,
 }: OrderManagementContentProps) => {
     const [assignOpen, setAssignOpen] = useState(false);
 
@@ -28,6 +30,7 @@ const OrderManagementContent = ({
                 order={selectedOrder}
                 onChangeStatus={onChangeStatus}
                 onOpenAssign={selectedOrder ? () => setAssignOpen(true) : undefined}
+                onAutoAssign={selectedOrder?.status === 'CREATED' ? onAutoAssign : undefined}
             />
             {assignOpen && selectedOrder && (
                 <AssignOrderModal

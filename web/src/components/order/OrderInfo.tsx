@@ -1,4 +1,5 @@
-import { Badge, Button, Select } from 'flowbite-react';
+import {useState} from 'react';
+import { Badge, Button, Select, Spinner } from 'flowbite-react';
 
 export type OrderStatus =
     | 'CREATED'
@@ -84,11 +85,23 @@ interface OrderInfoProps {
     order: Order | null;
     onChangeStatus?: (status: OrderStatus) => void;
     onOpenAssign?: () => void;
+    onAutoAssign?: () => Promise<void>;
 }
 
 const ASSIGNABLE_STATUSES: OrderStatus[] = ['CREATED', 'ACCEPTED', 'IN_PROGRESS'];
 
-const OrderInfo = ({order, onChangeStatus, onOpenAssign}: OrderInfoProps) => {
+const OrderInfo = ({order, onChangeStatus, onOpenAssign, onAutoAssign}: OrderInfoProps) => {
+    const [autoAssigning, setAutoAssigning] = useState(false);
+
+    const handleAutoAssign = async () => {
+        if (!onAutoAssign) return;
+        setAutoAssigning(true);
+        try {
+            await onAutoAssign();
+        } finally {
+            setAutoAssigning(false);
+        }
+    };
     if (!order) {
         return (
             <div className="flex-1 bg-white rounded-xl shadow-md p-4 border border-gray-100">
@@ -123,6 +136,17 @@ const OrderInfo = ({order, onChangeStatus, onOpenAssign}: OrderInfoProps) => {
                             data-testid="order-assign-btn"
                         >
                             {order.driverId ? 'Reassign' : 'Assign'}
+                        </Button>
+                    )}
+                    {onAutoAssign && order.status === 'CREATED' && !order.driverId && (
+                        <Button
+                            size="xs"
+                            color="purple"
+                            onClick={handleAutoAssign}
+                            disabled={autoAssigning}
+                            data-testid="order-auto-assign-btn"
+                        >
+                            {autoAssigning ? <Spinner size="xs" /> : 'Auto-assign'}
                         </Button>
                     )}
                     {onChangeStatus && (

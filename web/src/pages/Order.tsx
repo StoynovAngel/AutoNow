@@ -25,6 +25,7 @@ const Order = () => {
         selectOrder,
         changeOrderStatus,
         assignOrder,
+        autoAssignOrder,
         refreshOrders,
     } = useOrders(companyId);
 
@@ -64,6 +65,11 @@ const Order = () => {
         await refreshOrders();
     };
 
+    const handleAutoAssign = async () => {
+        await autoAssignOrder();
+        await refreshOrders();
+    };
+
     return (
         <>
             <Navigation/>
@@ -89,6 +95,7 @@ const Order = () => {
                             vehicles={vehicles}
                             onChangeStatus={changeOrderStatus}
                             onAssign={handleAssign}
+                            onAutoAssign={handleAutoAssign}
                         />
                     </div>
                 </div>
