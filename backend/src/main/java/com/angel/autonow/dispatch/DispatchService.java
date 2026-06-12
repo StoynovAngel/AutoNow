@@ -60,9 +60,16 @@ public class DispatchService {
 			return available.stream()
 					.filter(d -> d.getId().equals(suggestion.driverId()))
 					.findFirst()
-					.orElseGet(() -> randomDriver(available));
+					.map(d -> {
+						log.info("AI dispatched driver={} for order={}", d.getId(), order.id());
+						return d;
+					})
+					.orElseGet(() -> {
+						log.warn("AI returned unknown driverId={} for order={}, falling back to random", suggestion.driverId(), order.id());
+						return randomDriver(available);
+					});
 		} catch (Exception e) {
-			log.warn("AI dispatch failed, picking random driver", e);
+			log.warn("AI dispatch failed for order={}, falling back to random", order.id(), e);
 			return randomDriver(available);
 		}
 	}
