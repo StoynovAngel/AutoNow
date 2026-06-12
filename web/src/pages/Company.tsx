@@ -3,7 +3,6 @@ import Navigation from '../components/ui/Navigation.tsx';
 import PageStatus from '../components/ui/PageStatus.tsx';
 import CompanyManagementSidebar from '../components/company/CompanyManagementSidebar';
 import CompanyManagementContent from '../components/company/CompanyManagementContent';
-import AddCompanyModal from '../components/company/AddCompanyModal';
 import EditCompanyModal from '../components/company/EditCompanyModal';
 import EditPricingModal from '../components/company/EditPricingModal';
 import {useCompanies} from '../hooks/useCompanies';
@@ -16,9 +15,7 @@ const Company = () => {
     const {user} = useAuth();
     const authorities = user?.authorities ?? [];
     const isAdmin = authorities.includes('ROLE_ADMIN');
-    const isCompanyAdmin = authorities.includes('ROLE_COMPANY_ADMIN');
-    const isCustomer = authorities.includes('ROLE_CUSTOMER');
-    const canCreateCompany = isAdmin || isCompanyAdmin || isCustomer;
+    const isCompanyAdmin = !isAdmin && authorities.includes('ROLE_COMPANY_ADMIN');
 
     const {
         companies,
@@ -27,7 +24,6 @@ const Company = () => {
         loading: companiesLoading,
         error: companiesError,
         selectCompany,
-        createCompany,
         updateCompany,
         deleteCompany,
     } = useCompanies(isCompanyAdmin);
@@ -45,7 +41,6 @@ const Company = () => {
 
     const { pricing, savePricing, supported: pricingSupported } = useCompanyPricing(selectedCompanyId, selectedCompany?.companyType);
 
-    const [showAddModal, setShowAddModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [showEditPricingModal, setShowEditPricingModal] = useState(false);
 
@@ -96,8 +91,6 @@ const Company = () => {
                             selectedDriverId={selectedDriverId}
                             onSelectCompany={selectCompany}
                             onSelectDriver={selectDriver}
-                            canCreateCompany={canCreateCompany}
-                            onAddCompany={() => setShowAddModal(true)}
                             isCompanyAdmin={isCompanyAdmin}
                         />
                         <CompanyManagementContent
@@ -116,12 +109,6 @@ const Company = () => {
                     </div>
                 </div>
             </div>
-
-            <AddCompanyModal
-                show={showAddModal}
-                onClose={() => setShowAddModal(false)}
-                onSubmit={async (payload) => { await createCompany(payload); }}
-            />
 
             {selectedCompany && (
                 <EditCompanyModal

@@ -17,7 +17,8 @@ const EXPERTISE_TYPES = ['AM', 'A1', 'A2', 'A', 'B1', 'B', 'BE', 'C1', 'C1E', 'C
 
 const Drivers = () => {
     const { user } = useAuth();
-    const isCompanyAdmin = user?.authorities?.includes('ROLE_COMPANY_ADMIN') ?? false;
+    const isAdmin = user?.authorities?.includes('ROLE_ADMIN') ?? false;
+    const isCompanyAdmin = !isAdmin && (user?.authorities?.includes('ROLE_COMPANY_ADMIN') ?? false);
     const companyId = isCompanyAdmin ? (user?.companyId ?? null) : null;
 
     const [filterCompanyType, setFilterCompanyType] = useState<string>('');
