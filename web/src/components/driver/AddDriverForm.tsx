@@ -10,6 +10,7 @@ interface AddDriverFormProps {
     onSubmit: (payload: DriverPayload) => Promise<void>;
     onCancel: () => void;
     initialData?: Driver;
+    hideCompanyId?: boolean;
 }
 
 interface FormFields {
@@ -36,7 +37,7 @@ const buildInitialFields = (initialData?: Driver): FormFields => ({
     uploading: false,
 });
 
-const AddDriverForm = ({ onSubmit, onCancel, initialData }: AddDriverFormProps) => {
+const AddDriverForm = ({ onSubmit, onCancel, initialData, hideCompanyId = false }: AddDriverFormProps) => {
     const [fields, setFields] = useState<FormFields>(() => buildInitialFields(initialData));
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -160,10 +161,12 @@ const AddDriverForm = ({ onSubmit, onCancel, initialData }: AddDriverFormProps) 
                         })}
                     </div>
                 </div>
-                <div>
-                    <Label htmlFor="companyId" className="mb-1 block">Company ID</Label>
-                    <TextInput id="companyId" type="number" min={1} value={fields.companyId} onChange={e => set('companyId', e.target.value)} placeholder="Optional" />
-                </div>
+                {!hideCompanyId && (
+                    <div>
+                        <Label htmlFor="companyId" className="mb-1 block">Company ID</Label>
+                        <TextInput id="companyId" type="number" min={1} value={fields.companyId} onChange={e => set('companyId', e.target.value)} placeholder="Optional" />
+                    </div>
+                )}
                 <div className="col-span-3 flex items-center gap-3 pt-1">
                     <Checkbox
                         id="available"

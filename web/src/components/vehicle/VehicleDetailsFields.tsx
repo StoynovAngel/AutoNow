@@ -5,6 +5,7 @@ interface VehicleDetailsFieldsProps {
     trunkCapacity: string;
     companyId: string;
     airConditioning: boolean;
+    hideCompanyId?: boolean;
     onNumberOfSeatsChange: (v: string) => void;
     onTrunkCapacityChange: (v: string) => void;
     onCompanyIdChange: (v: string) => void;
@@ -16,6 +17,7 @@ const VehicleDetailsFields = ({
     trunkCapacity,
     companyId,
     airConditioning,
+    hideCompanyId = false,
     onNumberOfSeatsChange,
     onTrunkCapacityChange,
     onCompanyIdChange,
@@ -50,19 +52,21 @@ const VehicleDetailsFields = ({
                 placeholder="e.g. 400"
             />
         </div>
-        <div>
-            <Label htmlFor="companyId" className="mb-1 block">
-                Company ID
-            </Label>
-            <TextInput
-                id="companyId"
-                type="number"
-                min={1}
-                value={companyId}
-                onChange={(e) => onCompanyIdChange(e.target.value)}
-                placeholder="Optional"
-            />
-        </div>
+        {!hideCompanyId && (
+            <div>
+                <Label htmlFor="companyId" className="mb-1 block">
+                    Company ID
+                </Label>
+                <TextInput
+                    id="companyId"
+                    type="number"
+                    min={1}
+                    value={companyId}
+                    onChange={(e) => onCompanyIdChange(e.target.value)}
+                    placeholder="Optional"
+                />
+            </div>
+        )}
         <div className="col-span-3 flex items-center gap-3 pt-1">
             <Checkbox
                 id="airConditioning"
