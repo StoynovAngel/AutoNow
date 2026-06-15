@@ -7,6 +7,7 @@ interface User {
     role?: string;
     authorities?: string[];
     companyId?: number | null;
+    companyType?: string | null;
 }
 
 interface AuthContextType {

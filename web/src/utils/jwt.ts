@@ -2,6 +2,7 @@ export interface JwtPayload {
     sub: string;
     authorities: string[];
     companyId?: number | null;
+    companyType?: string | null;
     [claim: string]: unknown;
 }
 
