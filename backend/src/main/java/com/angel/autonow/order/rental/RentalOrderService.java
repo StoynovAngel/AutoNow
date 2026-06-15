@@ -22,11 +22,8 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class RentalOrderService {
 
-	private static final Set<RentalOrderStatus> ACTIVE_STATUSES =
-			Set.of(RentalOrderStatus.CREATED, RentalOrderStatus.ACCEPTED, RentalOrderStatus.IN_PROGRESS);
-
-	private static final Set<RentalOrderStatus> CANCELLABLE_STATUSES =
-			Set.of(RentalOrderStatus.CREATED, RentalOrderStatus.ACCEPTED);
+	private static final Set<RentalOrderStatus> ACTIVE_STATUSES =Set.of(RentalOrderStatus.CREATED, RentalOrderStatus.ACCEPTED, RentalOrderStatus.IN_PROGRESS);
+	private static final Set<RentalOrderStatus> CANCELLABLE_STATUSES =Set.of(RentalOrderStatus.CREATED, RentalOrderStatus.ACCEPTED);
 
 	private final RentalOrderRepository rentalOrderRepository;
 	private final RentalOrderMapper rentalOrderMapper;
@@ -51,6 +48,7 @@ public class RentalOrderService {
 				.rentalEndDate(request.rentalEndDate())
 				.specialRequirements(request.specialRequirements())
 				.build();
+
 		order.setUser(userOpt.get());
 
 		if (request.companyId() != null) {
@@ -131,9 +129,11 @@ public class RentalOrderService {
 	public Optional<RentalOrderResponseDTO> cancelRentalOrder(Long id, String callerEmail) {
 		return rentalOrderRepository.findById(id).map(order -> {
 			UserEntity owner = order.getUser();
+
 			if (owner == null || !owner.getEmail().equals(callerEmail)) {
 				throw new RentalOrderForbiddenException("Only the rental order owner can cancel this order");
 			}
+
 			return transitionToCanceled(order);
 		});
 	}
@@ -179,6 +179,7 @@ public class RentalOrderService {
 		if (vehicle.getVehicleType() != VehicleType.RENTAL) {
 			throw new RentalOrderConflictException("Vehicle is not a rental vehicle");
 		}
+
 		return vehicle;
 	}
 
@@ -193,6 +194,7 @@ public class RentalOrderService {
 		long days = Math.max(1, ChronoUnit.DAYS.between(start.toLocalDate(), end.toLocalDate()));
 		Double pricePerDay = vehicle != null ? vehicle.getRentalPricePerDay() : null;
 		Double depositAmount = vehicle != null ? vehicle.getSecurityDepositAmount() : null;
+
 		return pricingService.estimateRental(pricePerDay, depositAmount, days);
 	}
 
@@ -200,6 +202,7 @@ public class RentalOrderService {
 		if (!CANCELLABLE_STATUSES.contains(order.getStatus())) {
 			throw new RentalOrderConflictException("Rental order cannot be cancelled in status " + order.getStatus());
 		}
+
 		order.setStatus(RentalOrderStatus.CANCELED);
 		return rentalOrderMapper.toDTO(rentalOrderRepository.save(order));
 	}

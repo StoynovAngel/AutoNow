@@ -6,10 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 public interface RentalOrderRepository extends JpaRepository<RentalOrderEntity, Long> {
-
 	List<RentalOrderEntity> findByUserId(Long userId);
-
 	List<RentalOrderEntity> findByCompanyId(Long companyId);
-
 	boolean existsByUserIdAndStatusIn(Long userId, Set<RentalOrderStatus> statuses);
 }
