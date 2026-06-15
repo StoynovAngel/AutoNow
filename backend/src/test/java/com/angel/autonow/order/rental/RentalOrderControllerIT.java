@@ -194,7 +194,7 @@ class RentalOrderControllerIT {
 		rentalOrderRepository.save(TestData.createRentalOrderEntity(user));
 
 		mockMvc.perform(get("/api/rental-orders/user/{userId}", user.getId())
-						.with(TestData.customerJwt()))
+						.with(TestData.customerJwt(user.getEmail())))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.length()").value(1));
 	}
