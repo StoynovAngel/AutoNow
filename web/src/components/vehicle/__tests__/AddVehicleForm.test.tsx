@@ -140,4 +140,14 @@ describe('AddVehicleForm', () => {
         const options = Array.from((select as HTMLSelectElement).options).map(o => o.value);
         expect(options).toEqual(['TAXI', 'LOGISTICS', 'AMBULANCE', 'RENTAL', 'CELEBRATION', 'FUNERAL']);
     });
+
+    it('shows Company ID field by default', () => {
+        render(<AddVehicleForm onSubmit={onSubmit} onCancel={onCancel} />);
+        expect(screen.getByLabelText(/company id/i)).toBeInTheDocument();
+    });
+
+    it('hides Company ID field when hideCompanyId is true', () => {
+        render(<AddVehicleForm onSubmit={onSubmit} onCancel={onCancel} hideCompanyId />);
+        expect(screen.queryByLabelText(/company id/i)).not.toBeInTheDocument();
+    });
 });

@@ -11,6 +11,7 @@ interface AddVehicleFormProps {
     onCancel: () => void;
     initialData?: Vehicle;
     defaultCompanyId?: number;
+    hideCompanyId?: boolean;
 }
 
 interface FormFields {
@@ -41,7 +42,7 @@ const buildInitialFields = (initialData?: Vehicle, defaultCompanyId?: number): F
     uploading: false,
 });
 
-const AddVehicleForm = ({ onSubmit, onCancel, initialData, defaultCompanyId }: AddVehicleFormProps) => {
+const AddVehicleForm = ({ onSubmit, onCancel, initialData, defaultCompanyId, hideCompanyId = false }: AddVehicleFormProps) => {
     const [fields, setFields] = useState<FormFields>(() => buildInitialFields(initialData, defaultCompanyId));
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -138,6 +139,7 @@ const AddVehicleForm = ({ onSubmit, onCancel, initialData, defaultCompanyId }: A
                     trunkCapacity={fields.trunkCapacity}
                     companyId={fields.companyId}
                     airConditioning={fields.airConditioning}
+                    hideCompanyId={hideCompanyId}
                     onNumberOfSeatsChange={v => set('numberOfSeats', v)}
                     onTrunkCapacityChange={v => set('trunkCapacity', v)}
                     onCompanyIdChange={v => set('companyId', v)}

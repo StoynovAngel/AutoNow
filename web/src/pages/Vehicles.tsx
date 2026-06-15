@@ -16,6 +16,7 @@ const Vehicles = () => {
     const { user } = useAuth();
     const isAdmin = user?.authorities?.includes('ROLE_ADMIN') ?? false;
     const isCompanyAdmin = !isAdmin && (user?.authorities?.includes('ROLE_COMPANY_ADMIN') ?? false);
+    const companyId = isCompanyAdmin ? (user?.companyId ?? null) : null;
 
     const { vehicles, loading, error, addVehicle, updateVehicle, removeVehicle, refreshVehicles } = useVehicles(null, isCompanyAdmin);
     const [showForm, setShowForm] = useState(false);
@@ -30,7 +31,10 @@ const Vehicles = () => {
     };
 
     const handleAdd = async (payload: VehiclePayload) => {
-        await addVehicle(payload);
+        const finalPayload: VehiclePayload = isCompanyAdmin && companyId !== null
+            ? { ...payload, companyId }
+            : payload;
+        await addVehicle(finalPayload);
         setShowForm(false);
         showSuccess(`${payload.brand} ${payload.model} added successfully.`);
     };
@@ -144,6 +148,7 @@ const Vehicles = () => {
                             <AddVehicleForm
                                 onSubmit={handleAdd}
                                 onCancel={() => setShowForm(false)}
+                                hideCompanyId={isCompanyAdmin}
                             />
                         </div>
                     )}
@@ -154,6 +159,7 @@ const Vehicles = () => {
                                 initialData={editingVehicle}
                                 onSubmit={handleUpdate}
                                 onCancel={() => setEditingVehicle(null)}
+                                hideCompanyId={isCompanyAdmin}
                             />
                         </div>
                     )}
