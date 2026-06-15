@@ -36,6 +36,11 @@ export const createStyles = (theme: any) => StyleSheet.create({
         color: theme.colors.textSecondary,
     },
     content: {
+        flex: 1,
+    },
+    contentContainer: {
+        flexGrow: 1,
+        justifyContent: 'center',
         padding: 20,
         gap: 20,
     },
@@ -48,7 +53,7 @@ export const createStyles = (theme: any) => StyleSheet.create({
     },
     vehicleImage: {
         width: '100%',
-        height: 180,
+        height: 480,
     },
     vehicleImagePlaceholder: {
         width: '100%',
@@ -72,6 +77,7 @@ export const createStyles = (theme: any) => StyleSheet.create({
     },
     dateSection: {
         gap: 12,
+        marginVertical: 30
     },
     dateLabel: {
         fontSize: 14,
