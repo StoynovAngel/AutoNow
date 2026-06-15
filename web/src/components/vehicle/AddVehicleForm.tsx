@@ -12,6 +12,7 @@ interface AddVehicleFormProps {
     initialData?: Vehicle;
     defaultCompanyId?: number;
     hideCompanyId?: boolean;
+    lockedVehicleType?: string;
 }
 
 interface FormFields {
@@ -30,11 +31,11 @@ interface FormFields {
     uploading: boolean;
 }
 
-const buildInitialFields = (initialData?: Vehicle, defaultCompanyId?: number): FormFields => ({
+const buildInitialFields = (initialData?: Vehicle, defaultCompanyId?: number, lockedVehicleType?: string): FormFields => ({
     brand: initialData?.brand ?? '',
     model: initialData?.model ?? '',
     licensePlate: initialData?.licensePlate ?? '',
-    vehicleType: initialData?.vehicleType ?? 'TAXI',
+    vehicleType: initialData?.vehicleType ?? lockedVehicleType ?? 'TAXI',
     numberOfSeats: initialData?.numberOfSeats ? String(initialData.numberOfSeats) : '',
     trunkCapacity: initialData?.trunkCapacity ? String(initialData.trunkCapacity) : '',
     rentalPricePerDay: initialData?.rentalPricePerDay ? String(initialData.rentalPricePerDay) : '',
@@ -46,8 +47,8 @@ const buildInitialFields = (initialData?: Vehicle, defaultCompanyId?: number): F
     uploading: false,
 });
 
-const AddVehicleForm = ({ onSubmit, onCancel, initialData, defaultCompanyId, hideCompanyId = false }: AddVehicleFormProps) => {
-    const [fields, setFields] = useState<FormFields>(() => buildInitialFields(initialData, defaultCompanyId));
+const AddVehicleForm = ({ onSubmit, onCancel, initialData, defaultCompanyId, hideCompanyId = false, lockedVehicleType }: AddVehicleFormProps) => {
+    const [fields, setFields] = useState<FormFields>(() => buildInitialFields(initialData, defaultCompanyId, lockedVehicleType));
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -146,6 +147,7 @@ const AddVehicleForm = ({ onSubmit, onCancel, initialData, defaultCompanyId, hid
                     brand={fields.brand}
                     model={fields.model}
                     vehicleType={fields.vehicleType}
+                    lockedType={lockedVehicleType}
                     onLicensePlateChange={v => set('licensePlate', v)}
                     onBrandChange={v => set('brand', v)}
                     onModelChange={v => set('model', v)}

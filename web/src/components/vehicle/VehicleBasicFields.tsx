@@ -7,13 +7,14 @@ interface VehicleBasicFieldsProps {
     brand: string;
     model: string;
     vehicleType: string;
+    lockedType?: string;
     onLicensePlateChange: (v: string) => void;
     onBrandChange: (v: string) => void;
     onModelChange: (v: string) => void;
     onVehicleTypeChange: (v: string) => void;
 }
 
-const VehicleBasicFields = ({ licensePlate, brand, model, vehicleType, onLicensePlateChange, onBrandChange, onModelChange, onVehicleTypeChange }: VehicleBasicFieldsProps) => (
+const VehicleBasicFields = ({ licensePlate, brand, model, vehicleType, lockedType, onLicensePlateChange, onBrandChange, onModelChange, onVehicleTypeChange }: VehicleBasicFieldsProps) => (
     <>
         <div>
             <Label htmlFor="licensePlate" className="mb-1 block">
@@ -58,15 +59,19 @@ const VehicleBasicFields = ({ licensePlate, brand, model, vehicleType, onLicense
             <Label htmlFor="vehicleType" className="mb-1 block">
                 Vehicle Type <span className="text-red-500">*</span>
             </Label>
-            <Select
-                id="vehicleType"
-                value={vehicleType}
-                onChange={(e) => onVehicleTypeChange(e.target.value)}
-            >
-                {VEHICLE_TYPES.map((t) => (
-                    <option key={t} value={t}>{t}</option>
-                ))}
-            </Select>
+            {lockedType ? (
+                <TextInput id="vehicleType" value={lockedType} readOnly disabled />
+            ) : (
+                <Select
+                    id="vehicleType"
+                    value={vehicleType}
+                    onChange={(e) => onVehicleTypeChange(e.target.value)}
+                >
+                    {VEHICLE_TYPES.map((t) => (
+                        <option key={t} value={t}>{t}</option>
+                    ))}
+                </Select>
+            )}
         </div>
     </>
 );
