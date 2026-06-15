@@ -23,7 +23,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "driver")
+@Table(name = "drivers")
 public class DriverEntity {
 
 	@Id
@@ -40,7 +40,7 @@ public class DriverEntity {
 
 	@NotBlank(message = "Phone number is required")
 	@Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "Phone number must be valid")
-	@Column(name = "phone_number", nullable = false)
+	@Column(name = "phone_number", nullable = false, unique = true)
 	private String phoneNumber;
 
 	@NotEmpty(message = "At least one expertise type is required")
