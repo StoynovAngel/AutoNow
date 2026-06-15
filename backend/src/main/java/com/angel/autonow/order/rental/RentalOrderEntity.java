@@ -1,4 +1,4 @@
-package com.angel.autonow.rentalorder;
+package com.angel.autonow.order.rental;
 
 import com.angel.autonow.company.CompanyEntity;
 import com.angel.autonow.user.UserEntity;

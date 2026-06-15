@@ -1,4 +1,4 @@
-package com.angel.autonow.rentalorder;
+package com.angel.autonow.order.rental;
 
 public enum RentalOrderStatus {
 	CREATED,

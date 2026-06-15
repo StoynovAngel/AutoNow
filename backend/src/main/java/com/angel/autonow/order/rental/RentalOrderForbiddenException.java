@@ -1,4 +1,4 @@
-package com.angel.autonow.rentalorder;
+package com.angel.autonow.order.rental;
 
 public class RentalOrderForbiddenException extends RuntimeException {
 	public RentalOrderForbiddenException(String message) {

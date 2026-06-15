@@ -1,4 +1,4 @@
-package com.angel.autonow.rentalorder;
+package com.angel.autonow.order.rental;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
