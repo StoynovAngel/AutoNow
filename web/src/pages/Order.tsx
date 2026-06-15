@@ -31,6 +31,7 @@ const Order = () => {
         loading: ordersLoading,
         error: ordersError,
         selectOrder,
+        deselectOrder,
         changeOrderStatus,
         assignOrder,
         refreshOrders,
@@ -41,7 +42,9 @@ const Order = () => {
         selectedOrderId: selectedRentalOrderId,
         selectedOrder: selectedRentalOrder,
         loading: rentalsLoading,
+        error: rentalsError,
         selectOrder: selectRentalOrder,
+        deselectOrder: deselectRentalOrder,
         changeStatus: changeRentalStatus,
     } = useRentalOrders(companyId);
 
@@ -65,7 +68,7 @@ const Order = () => {
     const loading = ordersLoading || rentalsLoading;
 
     if (loading) return <PageStatus state="loading" />;
-    if (ordersError) return <PageStatus state="error" message={ordersError} />;
+    if (ordersError || rentalsError) return <PageStatus state="error" message={ordersError ?? rentalsError ?? undefined} />;
 
     const handleAssign = async (driverId: number, vehicleId: number) => {
         await assignOrder(driverId, vehicleId);
@@ -74,12 +77,12 @@ const Order = () => {
 
     const handleSelectOrder = (id: number) => {
         selectOrder(id);
-        // deselect rental if a regular order is selected
+        deselectRentalOrder();
     };
 
     const handleSelectRental = (id: number) => {
         selectRentalOrder(id);
-        // deselect regular order if a rental is selected
+        deselectOrder();
     };
 
     const isRentalSelected = selectedRentalOrderId !== null && selectedRentalOrder !== null;

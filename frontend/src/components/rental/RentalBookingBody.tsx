@@ -24,6 +24,7 @@ interface DatePickerModalProps {
 }
 
 const DatePickerModal = ({ visible, value, minimumDate, onConfirm, onCancel }: DatePickerModalProps) => {
+    const { t } = useTranslation();
     const today = minimumDate;
     const [day, setDay] = useState(value.getDate());
     const [month, setMonth] = useState(value.getMonth());
@@ -67,16 +68,16 @@ const DatePickerModal = ({ visible, value, minimumDate, onConfirm, onCancel }: D
             <Pressable style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'center', alignItems: 'center' }} onPress={onCancel}>
                 <Pressable style={{ backgroundColor: '#fff', borderRadius: 20, padding: 24, width: 300 }} onPress={e => e.stopPropagation()}>
                     <View style={{ flexDirection: 'row', marginBottom: 20 }}>
-                        {col('Day', String(safeDay).padStart(2, '0'), () => adjust('day', 1), () => adjust('day', -1))}
-                        {col('Month', MONTHS[month], () => adjust('month', 1), () => adjust('month', -1))}
-                        {col('Year', String(year), () => adjust('year', 1), () => adjust('year', -1))}
+                        {col(t('picker-day'), String(safeDay).padStart(2, '0'), () => adjust('day', 1), () => adjust('day', -1))}
+                        {col(t('picker-month'), MONTHS[month], () => adjust('month', 1), () => adjust('month', -1))}
+                        {col(t('picker-year'), String(year), () => adjust('year', 1), () => adjust('year', -1))}
                     </View>
                     <View style={{ flexDirection: 'row', gap: 12 }}>
                         <Pressable onPress={onCancel} style={{ flex: 1, padding: 12, borderRadius: 10, borderWidth: 1, borderColor: '#D1D5DB', alignItems: 'center' }} testID="date-picker-cancel">
-                            <Text style={{ color: '#374151', fontWeight: '600' }}>Cancel</Text>
+                            <Text style={{ color: '#374151', fontWeight: '600' }}>{t('picker-cancel')}</Text>
                         </Pressable>
                         <Pressable onPress={handleConfirm} style={{ flex: 1, padding: 12, borderRadius: 10, backgroundColor: theme.colors.primary, alignItems: 'center' }} testID="date-picker-confirm">
-                            <Text style={{ color: '#fff', fontWeight: '600' }}>OK</Text>
+                            <Text style={{ color: '#fff', fontWeight: '600' }}>{t('picker-ok')}</Text>
                         </Pressable>
                     </View>
                 </Pressable>

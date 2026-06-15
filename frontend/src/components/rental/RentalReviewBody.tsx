@@ -27,13 +27,18 @@ const RentalReviewBody = () => {
     const formatDate = (iso: string) =>
         new Date(iso).toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' });
 
+    const formatCurrency = (amount: number) => new Intl.NumberFormat(undefined, { style: 'currency', currency: estimate.currency }).format(amount);
+
     const handleConfirm = async () => {
-        if (!user) return;
+        if (!user) {
+            setError(t('booking-must-login'));
+            return;
+        }
+
         setLoading(true);
         setError(null);
         try {
             await createRentalOrder({
-                userId: user.id,
                 vehicleId,
                 companyId,
                 rentalStartDate,
@@ -47,7 +52,7 @@ const RentalReviewBody = () => {
         }
     };
 
-    const totalCharged = (estimate.totalPrice + estimate.securityDeposit).toFixed(2);
+    const totalCharged = estimate.totalPrice + estimate.securityDeposit;
 
     return (
         <View style={styles.container}>
@@ -89,18 +94,18 @@ const RentalReviewBody = () => {
                 </View>
 
                 <View style={styles.pricingCard}>
-                    <Text style={styles.pricingTitle}>Price breakdown</Text>
+                    <Text style={styles.pricingTitle}>{t('rental-price-breakdown')}</Text>
 
                     <View style={styles.pricingRow}>
                         <Text style={styles.pricingLabel} testID="review-rental-line">
-                            {estimate.rentalDays} {estimate.rentalDays === 1 ? 'day' : 'days'} × {estimate.pricePerDay.toFixed(2)} EUR
+                            {t('rental-days', { count: estimate.rentalDays })} × {formatCurrency(estimate.pricePerDay)}
                         </Text>
-                        <Text style={styles.pricingValue} testID="review-rental-total">{estimate.totalPrice.toFixed(2)} EUR</Text>
+                        <Text style={styles.pricingValue} testID="review-rental-total">{formatCurrency(estimate.totalPrice)}</Text>
                     </View>
 
                     <View style={styles.pricingRow}>
                         <Text style={styles.pricingLabel} testID="review-deposit-label">{t('rental-security-deposit')}</Text>
-                        <Text style={styles.pricingValue} testID="review-deposit-value">{estimate.securityDeposit.toFixed(2)} EUR</Text>
+                        <Text style={styles.pricingValue} testID="review-deposit-value">{formatCurrency(estimate.securityDeposit)}</Text>
                     </View>
                     <Text style={styles.depositNote}>{t('rental-deposit-note')}</Text>
 
@@ -108,7 +113,7 @@ const RentalReviewBody = () => {
 
                     <View style={styles.totalRow}>
                         <Text style={styles.totalLabel}>{t('rental-total-today')}</Text>
-                        <Text style={styles.totalValue} testID="review-total">{totalCharged} EUR</Text>
+                        <Text style={styles.totalValue} testID="review-total">{formatCurrency(totalCharged)}</Text>
                     </View>
                 </View>
 

@@ -159,12 +159,12 @@ public class GlobalControllerExceptionHandler {
 		return handle(e, HttpStatus.BAD_REQUEST);
 	}
 
-	@ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	@ExceptionHandler(NullPointerException.class)
 	public ProblemDetail handleNullPointerException(NullPointerException e) {
 		log.error("Unexpected null value: {}", e.getMessage(), e);
-		ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.UNPROCESSABLE_ENTITY);
-		problemDetail.setDetail("A required value is missing or not configured");
+		ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+		problemDetail.setDetail("An unexpected server error occurred");
 		return problemDetail;
 	}
 

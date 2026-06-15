@@ -34,7 +34,7 @@ const VehicleListBody = () => {
             vehicleModel: vehicle.model,
             vehiclePlate: vehicle.licensePlate,
             vehicleImageUrl: vehicle.imageUrl,
-            companyId: vehicle.companyId,
+            companyId: companyId,
         });
     };
 

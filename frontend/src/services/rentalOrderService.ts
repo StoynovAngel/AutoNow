@@ -1,7 +1,6 @@
 import customAPI from './ApiClient';
 
 export interface RentalOrderRequest {
-    userId: number;
     companyId?: number;
     vehicleId: number;
     rentalStartDate: string;

@@ -46,9 +46,8 @@ class RentalOrderServiceTest {
 	@InjectMocks
 	private RentalOrderService rentalOrderService;
 
-	private RentalOrderRequestDTO buildRequest(Long userId, Long vehicleId) {
+	private RentalOrderRequestDTO buildRequest(Long vehicleId) {
 		return RentalOrderRequestDTO.builder()
-				.userId(userId)
 				.vehicleId(vehicleId)
 				.rentalStartDate(START)
 				.rentalEndDate(END)
@@ -64,20 +63,20 @@ class RentalOrderServiceTest {
 
 	@Test
 	void createRentalOrder_returnsResponse() {
-		RentalOrderRequestDTO request = buildRequest(1L, null);
-		UserEntity user = UserEntity.builder().id(1L).build();
+		RentalOrderRequestDTO request = buildRequest(null);
+		UserEntity user = UserEntity.builder().id(1L).email("user@example.com").authorities(Set.of()).build();
 		RentalOrderEntity saved = RentalOrderEntity.builder().id(1L).user(user)
 				.rentalStartDate(START).rentalEndDate(END).status(RentalOrderStatus.CREATED).createdAt(NOW).build();
 		RentalOrderResponseDTO response = buildResponse(1L, 1L, RentalOrderStatus.CREATED);
 
-		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+		when(userRepository.findByEmail("user@example.com")).thenReturn(Optional.of(user));
 		when(rentalOrderRepository.existsByUserIdAndStatusIn(eq(1L), anySet())).thenReturn(false);
 		when(pricingService.estimateRental(isNull(), isNull(), anyLong()))
 				.thenReturn(new RentalEstimate(135.0, 0.0, "EUR", 3, 45.0));
 		when(rentalOrderRepository.save(any())).thenReturn(saved);
 		when(rentalOrderMapper.toDTO(saved)).thenReturn(response);
 
-		var result = rentalOrderService.createRentalOrder(request);
+		var result = rentalOrderService.createRentalOrder(request, "user@example.com");
 
 		assertTrue(result.isPresent());
 		assertEquals(RentalOrderStatus.CREATED, result.get().status());
@@ -86,9 +85,9 @@ class RentalOrderServiceTest {
 
 	@Test
 	void createRentalOrder_userNotFound_returnsEmpty() {
-		when(userRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
+		when(userRepository.findByEmail("user@example.com")).thenReturn(Optional.empty());
 
-		var result = rentalOrderService.createRentalOrder(buildRequest(NON_EXISTENT_ID, null));
+		var result = rentalOrderService.createRentalOrder(buildRequest(null), "user@example.com");
 
 		assertTrue(result.isEmpty());
 		verify(rentalOrderRepository, never()).save(any());
@@ -96,35 +95,35 @@ class RentalOrderServiceTest {
 
 	@Test
 	void createRentalOrder_userHasActiveRental_throwsConflict() {
-		UserEntity user = UserEntity.builder().id(1L).build();
-		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+		UserEntity user = UserEntity.builder().id(1L).email("user@example.com").authorities(Set.of()).build();
+		when(userRepository.findByEmail("user@example.com")).thenReturn(Optional.of(user));
 		when(rentalOrderRepository.existsByUserIdAndStatusIn(eq(1L), anySet())).thenReturn(true);
 
 		assertThrows(RentalOrderConflictException.class,
-				() -> rentalOrderService.createRentalOrder(buildRequest(1L, null)));
+				() -> rentalOrderService.createRentalOrder(buildRequest(null), "user@example.com"));
 		verify(rentalOrderRepository, never()).save(any());
 	}
 
 	@Test
 	void createRentalOrder_endBeforeStart_throwsConflict() {
 		RentalOrderRequestDTO bad = RentalOrderRequestDTO.builder()
-				.userId(1L).rentalStartDate(END).rentalEndDate(START).build();
+				.rentalStartDate(END).rentalEndDate(START).build();
 
 		assertThrows(RentalOrderConflictException.class,
-				() -> rentalOrderService.createRentalOrder(bad));
-		verify(userRepository, never()).findById(anyLong());
+				() -> rentalOrderService.createRentalOrder(bad, "user@example.com"));
+		verify(userRepository, never()).findByEmail(any());
 	}
 
 	@Test
 	void createRentalOrder_withVehicle_setsPriceAndVehicle() {
-		RentalOrderRequestDTO request = buildRequest(1L, 2L);
-		UserEntity user = UserEntity.builder().id(1L).build();
+		RentalOrderRequestDTO request = buildRequest(2L);
+		UserEntity user = UserEntity.builder().id(1L).email("user@example.com").authorities(Set.of()).build();
 		VehicleEntity vehicle = VehicleEntity.builder().id(2L).vehicleType(VehicleType.RENTAL).build();
 		RentalOrderEntity saved = RentalOrderEntity.builder().id(1L).user(user).vehicle(vehicle)
 				.rentalStartDate(START).rentalEndDate(END).status(RentalOrderStatus.CREATED).createdAt(NOW).build();
 		RentalOrderResponseDTO response = buildResponse(1L, 1L, RentalOrderStatus.CREATED);
 
-		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+		when(userRepository.findByEmail("user@example.com")).thenReturn(Optional.of(user));
 		when(rentalOrderRepository.existsByUserIdAndStatusIn(eq(1L), anySet())).thenReturn(false);
 		when(vehicleRepository.findById(2L)).thenReturn(Optional.of(vehicle));
 		when(pricingService.estimateRental(isNull(), isNull(), anyLong()))
@@ -132,7 +131,7 @@ class RentalOrderServiceTest {
 		when(rentalOrderRepository.save(any())).thenReturn(saved);
 		when(rentalOrderMapper.toDTO(saved)).thenReturn(response);
 
-		var result = rentalOrderService.createRentalOrder(request);
+		var result = rentalOrderService.createRentalOrder(request, "user@example.com");
 
 		assertTrue(result.isPresent());
 		verify(pricingService).estimateRental(isNull(), isNull(), anyLong());
@@ -140,29 +139,29 @@ class RentalOrderServiceTest {
 
 	@Test
 	void createRentalOrder_nonRentalVehicle_throwsConflict() {
-		RentalOrderRequestDTO request = buildRequest(1L, 2L);
-		UserEntity user = UserEntity.builder().id(1L).build();
+		RentalOrderRequestDTO request = buildRequest(2L);
+		UserEntity user = UserEntity.builder().id(1L).email("user@example.com").authorities(Set.of()).build();
 		VehicleEntity vehicle = VehicleEntity.builder().id(2L).vehicleType(VehicleType.TAXI).build();
 
-		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+		when(userRepository.findByEmail("user@example.com")).thenReturn(Optional.of(user));
 		when(rentalOrderRepository.existsByUserIdAndStatusIn(eq(1L), anySet())).thenReturn(false);
 		when(vehicleRepository.findById(2L)).thenReturn(Optional.of(vehicle));
 
 		assertThrows(RentalOrderConflictException.class,
-				() -> rentalOrderService.createRentalOrder(request));
+				() -> rentalOrderService.createRentalOrder(request, "user@example.com"));
 		verify(rentalOrderRepository, never()).save(any());
 	}
 
 	@Test
 	void createRentalOrder_vehicleNotFound_returnsEmpty() {
-		RentalOrderRequestDTO request = buildRequest(1L, NON_EXISTENT_ID);
-		UserEntity user = UserEntity.builder().id(1L).build();
+		RentalOrderRequestDTO request = buildRequest(NON_EXISTENT_ID);
+		UserEntity user = UserEntity.builder().id(1L).email("user@example.com").authorities(Set.of()).build();
 
-		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+		when(userRepository.findByEmail("user@example.com")).thenReturn(Optional.of(user));
 		when(rentalOrderRepository.existsByUserIdAndStatusIn(eq(1L), anySet())).thenReturn(false);
 		when(vehicleRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
 
-		var result = rentalOrderService.createRentalOrder(request);
+		var result = rentalOrderService.createRentalOrder(request, "user@example.com");
 
 		assertTrue(result.isEmpty());
 		verify(rentalOrderRepository, never()).save(any());
@@ -192,13 +191,16 @@ class RentalOrderServiceTest {
 
 	@Test
 	void getRentalOrdersByUserId_returnsList() {
+		UserEntity user = UserEntity.builder().id(1L).email("user@example.com").authorities(Set.of()).build();
 		RentalOrderEntity entity = RentalOrderEntity.builder().id(1L).createdAt(NOW).build();
 		RentalOrderResponseDTO response = buildResponse(1L, 1L, RentalOrderStatus.CREATED);
 
+		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+		when(userRepository.findByEmail("user@example.com")).thenReturn(Optional.of(user));
 		when(rentalOrderRepository.findByUserId(1L)).thenReturn(List.of(entity));
 		when(rentalOrderMapper.toDTO(entity)).thenReturn(response);
 
-		assertEquals(1, rentalOrderService.getRentalOrdersByUserId(1L).size());
+		assertEquals(1, rentalOrderService.getRentalOrdersByUserId(1L, "user@example.com").size());
 	}
 
 	@Test

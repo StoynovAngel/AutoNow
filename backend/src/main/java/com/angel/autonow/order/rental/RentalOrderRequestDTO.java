@@ -7,12 +7,7 @@ import java.time.LocalDateTime;
 
 @Builder
 public record RentalOrderRequestDTO(
-
-		@NotNull(message = "User ID is required")
-		Long userId,
-
 		Long companyId,
-
 		Long vehicleId,
 
 		@NotNull(message = "Rental start date is required")

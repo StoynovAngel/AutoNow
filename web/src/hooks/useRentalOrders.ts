@@ -41,11 +41,20 @@ export const useRentalOrders = (companyId?: number | null) => {
 
     const changeStatus = async (status: RentalOrderStatus) => {
         if (!selectedOrderId) return;
-        const updated = status === 'CANCELED'
-            ? await rentalOrderService.adminCancelRentalOrder(selectedOrderId)
-            : await rentalOrderService.updateRentalOrderStatus(selectedOrderId, status);
-        setSelectedOrder(updated);
-        setOrders(prev => prev.map(o => o.id === updated.id ? updated : o));
+        try {
+            const updated = status === 'CANCELED'
+                ? await rentalOrderService.adminCancelRentalOrder(selectedOrderId)
+                : await rentalOrderService.updateRentalOrderStatus(selectedOrderId, status);
+            setSelectedOrder(updated);
+            setOrders(prev => prev.map(o => o.id === updated.id ? updated : o));
+        } catch (err: unknown) {
+            setError(getErrorMessage(err, 'Failed to update rental order status'));
+        }
+    };
+
+    const deselectOrder = () => {
+        setSelectedOrderId(null);
+        setSelectedOrder(null);
     };
 
     return {
@@ -55,6 +64,7 @@ export const useRentalOrders = (companyId?: number | null) => {
         loading,
         error,
         selectOrder,
+        deselectOrder,
         changeStatus,
         refreshOrders: fetchOrders,
     };

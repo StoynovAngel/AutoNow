@@ -50,10 +50,10 @@ class RentalOrderControllerIT {
 
 	@Test
 	void createRentalOrder_returnsCreated() throws Exception {
-		var request = TestData.createRentalOrderRequest(user.getId());
+		var request = TestData.createRentalOrderRequest();
 
 		mockMvc.perform(post("/api/rental-orders")
-						.with(TestData.customerJwt())
+						.with(TestData.customerJwt(user.getEmail()))
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(request)))
 				.andExpect(status().isCreated())
@@ -63,14 +63,15 @@ class RentalOrderControllerIT {
 	}
 
 	@Test
-	void createRentalOrder_userNotFound_returnsBadRequest() throws Exception {
-		var request = TestData.createRentalOrderRequest(NON_EXISTENT_ID);
+	void createRentalOrder_ownerBoundToJwt_ignoresRequestBody() throws Exception {
+		var request = TestData.createRentalOrderRequest();
 
 		mockMvc.perform(post("/api/rental-orders")
-						.with(TestData.customerJwt())
+						.with(TestData.customerJwt(user.getEmail()))
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(request)))
-				.andExpect(status().isBadRequest());
+				.andExpect(status().isCreated())
+				.andExpect(jsonPath("$.userId").value(user.getId()));
 	}
 
 	@Test
@@ -78,7 +79,7 @@ class RentalOrderControllerIT {
 		var invalid = RentalOrderRequestDTO.builder().build();
 
 		mockMvc.perform(post("/api/rental-orders")
-						.with(TestData.customerJwt())
+						.with(TestData.customerJwt(user.getEmail()))
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(invalid)))
 				.andExpect(status().isBadRequest());
@@ -86,7 +87,7 @@ class RentalOrderControllerIT {
 
 	@Test
 	void createRentalOrder_withoutAuth_returnsUnauthorized() throws Exception {
-		var request = TestData.createRentalOrderRequest(user.getId());
+		var request = TestData.createRentalOrderRequest();
 
 		mockMvc.perform(post("/api/rental-orders")
 						.contentType(MediaType.APPLICATION_JSON)
@@ -97,13 +98,12 @@ class RentalOrderControllerIT {
 	@Test
 	void createRentalOrder_endBeforeStart_returnsConflict() throws Exception {
 		var request = RentalOrderRequestDTO.builder()
-				.userId(user.getId())
 				.rentalStartDate(LocalDateTime.now().plusDays(5))
 				.rentalEndDate(LocalDateTime.now().plusDays(1))
 				.build();
 
 		mockMvc.perform(post("/api/rental-orders")
-						.with(TestData.customerJwt())
+						.with(TestData.customerJwt(user.getEmail()))
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(request)))
 				.andExpect(status().isConflict());
@@ -120,14 +120,13 @@ class RentalOrderControllerIT {
 				.company(company).build());
 
 		var request = RentalOrderRequestDTO.builder()
-				.userId(user.getId())
 				.vehicleId(vehicle.getId())
 				.rentalStartDate(LocalDateTime.now().plusDays(1))
 				.rentalEndDate(LocalDateTime.now().plusDays(4))
 				.build();
 
 		mockMvc.perform(post("/api/rental-orders")
-						.with(TestData.customerJwt())
+						.with(TestData.customerJwt(user.getEmail()))
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(request)))
 				.andExpect(status().isCreated())
@@ -145,14 +144,13 @@ class RentalOrderControllerIT {
 				.build());
 
 		var request = RentalOrderRequestDTO.builder()
-				.userId(user.getId())
 				.vehicleId(vehicle.getId())
 				.rentalStartDate(LocalDateTime.now().plusDays(1))
 				.rentalEndDate(LocalDateTime.now().plusDays(4))
 				.build();
 
 		mockMvc.perform(post("/api/rental-orders")
-						.with(TestData.customerJwt())
+						.with(TestData.customerJwt(user.getEmail()))
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(request)))
 				.andExpect(status().isConflict());
@@ -164,10 +162,10 @@ class RentalOrderControllerIT {
 		existing.setStatus(RentalOrderStatus.CREATED);
 		rentalOrderRepository.save(existing);
 
-		var request = TestData.createRentalOrderRequest(user.getId());
+		var request = TestData.createRentalOrderRequest();
 
 		mockMvc.perform(post("/api/rental-orders")
-						.with(TestData.customerJwt())
+						.with(TestData.customerJwt(user.getEmail()))
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(request)))
 				.andExpect(status().isConflict());
@@ -185,10 +183,10 @@ class RentalOrderControllerIT {
 	}
 
 	@Test
-	void getRentalOrderById_notFound_returnsNotFound() throws Exception {
+	void getRentalOrderById_notFound_returnsBadRequest() throws Exception {
 		mockMvc.perform(get("/api/rental-orders/{id}", NON_EXISTENT_ID)
 						.with(TestData.customerJwt()))
-				.andExpect(status().isNotFound());
+				.andExpect(status().isBadRequest());
 	}
 
 	@Test
@@ -236,7 +234,6 @@ class RentalOrderControllerIT {
 		rentalOrderRepository.save(order);
 
 		var update = RentalOrderRequestDTO.builder()
-				.userId(user.getId())
 				.rentalStartDate(LocalDateTime.now().plusDays(2))
 				.rentalEndDate(LocalDateTime.now().plusDays(6))
 				.specialRequirements("Child seat")
@@ -252,7 +249,7 @@ class RentalOrderControllerIT {
 
 	@Test
 	void updateRentalOrder_notFound_returnsBadRequest() throws Exception {
-		var update = TestData.createRentalOrderRequest(user.getId());
+		var update = TestData.createRentalOrderRequest();
 
 		mockMvc.perform(put("/api/rental-orders/{id}", NON_EXISTENT_ID)
 						.with(TestData.customerJwt())
@@ -342,10 +339,10 @@ class RentalOrderControllerIT {
 	}
 
 	@Test
-	void adminCancelRentalOrder_notFound_returnsNotFound() throws Exception {
+	void adminCancelRentalOrder_notFound_returnsBadRequest() throws Exception {
 		mockMvc.perform(post("/api/rental-orders/{id}/admin-cancel", NON_EXISTENT_ID)
 						.with(TestData.adminJwt()))
-				.andExpect(status().isNotFound());
+				.andExpect(status().isBadRequest());
 	}
 
 	@Test

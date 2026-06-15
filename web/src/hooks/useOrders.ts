@@ -62,6 +62,11 @@ export const useOrders = (companyId?: number | null) => {
         return updated;
     };
 
+    const deselectOrder = () => {
+        setSelectedOrderId(null);
+        setSelectedOrder(null);
+    };
+
     return {
         orders,
         selectedOrderId,
@@ -69,6 +74,7 @@ export const useOrders = (companyId?: number | null) => {
         loading,
         error,
         selectOrder,
+        deselectOrder,
         changeOrderStatus,
         assignOrder,
         refreshOrders: fetchOrders,

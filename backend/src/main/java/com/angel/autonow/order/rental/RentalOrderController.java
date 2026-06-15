@@ -27,8 +27,11 @@ public class RentalOrderController {
 
 	@PostMapping
 	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
-	public ResponseEntity<RentalOrderResponseDTO> createRentalOrder(@Valid @RequestBody RentalOrderRequestDTO request) {
-		return rentalOrderService.createRentalOrder(request)
+	public ResponseEntity<RentalOrderResponseDTO> createRentalOrder(
+			@Valid @RequestBody RentalOrderRequestDTO request,
+			Authentication authentication
+    ) {
+		return rentalOrderService.createRentalOrder(request, authentication.getName())
 				.map(order -> ResponseEntity.status(HttpStatus.CREATED).body(order))
 				.orElse(ResponseEntity.badRequest().build());
 	}
@@ -46,13 +49,15 @@ public class RentalOrderController {
 	public ResponseEntity<RentalOrderResponseDTO> getRentalOrderById(@PathVariable Long id) {
 		return rentalOrderService.getRentalOrderById(id)
 				.map(ResponseEntity::ok)
-				.orElse(ResponseEntity.notFound().build());
+				.orElse(ResponseEntity.badRequest().build());
 	}
 
 	@GetMapping("/user/{userId}")
 	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
-	public List<RentalOrderResponseDTO> getRentalOrdersByUserId(@PathVariable Long userId) {
-		return rentalOrderService.getRentalOrdersByUserId(userId);
+	public List<RentalOrderResponseDTO> getRentalOrdersByUserId(
+			@PathVariable Long userId,
+			Authentication authentication) {
+		return rentalOrderService.getRentalOrdersByUserId(userId, authentication.getName());
 	}
 
 	@GetMapping("/company/{companyId}")
@@ -80,7 +85,7 @@ public class RentalOrderController {
 	public ResponseEntity<RentalOrderResponseDTO> updateRentalOrderStatus(@PathVariable Long id, @Valid @RequestBody RentalOrderStatusUpdateDTO request) {
 		return rentalOrderService.updateRentalOrderStatus(id, request.status())
 				.map(ResponseEntity::ok)
-				.orElse(ResponseEntity.notFound().build());
+				.orElse(ResponseEntity.badRequest().build());
 	}
 
 	@PostMapping("/{id}/cancel")
@@ -88,7 +93,7 @@ public class RentalOrderController {
 	public ResponseEntity<RentalOrderResponseDTO> cancelRentalOrder(@PathVariable Long id, Authentication authentication) {
 		return rentalOrderService.cancelRentalOrder(id, authentication.getName())
 				.map(ResponseEntity::ok)
-				.orElse(ResponseEntity.notFound().build());
+				.orElse(ResponseEntity.badRequest().build());
 	}
 
 	@PostMapping("/{id}/admin-cancel")
@@ -96,7 +101,7 @@ public class RentalOrderController {
 	public ResponseEntity<RentalOrderResponseDTO> adminCancelRentalOrder(@PathVariable Long id) {
 		return rentalOrderService.adminCancelRentalOrder(id)
 				.map(ResponseEntity::ok)
-				.orElse(ResponseEntity.notFound().build());
+				.orElse(ResponseEntity.badRequest().build());
 	}
 
 	@DeleteMapping("/{id}")

@@ -33,13 +33,15 @@ public class RentalOrderService {
 	private final PricingService pricingService;
 
 	@Transactional
-	public Optional<RentalOrderResponseDTO> createRentalOrder(RentalOrderRequestDTO request) {
+	public Optional<RentalOrderResponseDTO> createRentalOrder(RentalOrderRequestDTO request, String callerEmail) {
 		validateDates(request.rentalStartDate(), request.rentalEndDate());
 
-		Optional<UserEntity> userOpt = userRepository.findById(request.userId());
+		Optional<UserEntity> userOpt = userRepository.findByEmail(callerEmail);
 		if (userOpt.isEmpty()) return Optional.empty();
 
-		if (rentalOrderRepository.existsByUserIdAndStatusIn(request.userId(), ACTIVE_STATUSES)) {
+		UserEntity caller = userOpt.get();
+
+		if (rentalOrderRepository.existsByUserIdAndStatusIn(caller.getId(), ACTIVE_STATUSES)) {
 			throw new RentalOrderConflictException("User already has an active rental order");
 		}
 
@@ -49,7 +51,7 @@ public class RentalOrderService {
 				.specialRequirements(request.specialRequirements())
 				.build();
 
-		order.setUser(userOpt.get());
+		order.setUser(caller);
 
 		if (request.companyId() != null) {
 			Optional<CompanyEntity> company = companyRepository.findById(request.companyId());
@@ -72,7 +74,9 @@ public class RentalOrderService {
 		return rentalOrderRepository.findById(id).map(rentalOrderMapper::toDTO);
 	}
 
-	public List<RentalOrderResponseDTO> getRentalOrdersByUserId(Long userId) {
+	public List<RentalOrderResponseDTO> getRentalOrdersByUserId(Long userId, String callerEmail) {
+		UserEntity user = userRepository.findById(userId).orElse(null);
+		if (user != null) requireOwnership(user, callerEmail);
 		return rentalOrderRepository.findByUserId(userId).stream()
 				.map(rentalOrderMapper::toDTO)
 				.toList();
@@ -97,9 +101,6 @@ public class RentalOrderService {
 
 		validateDates(request.rentalStartDate(), request.rentalEndDate());
 
-		Optional<UserEntity> user = userRepository.findById(request.userId());
-		if (user.isEmpty()) return Optional.empty();
-
 		VehicleEntity vehicle = null;
 		if (request.vehicleId() != null) {
 			Optional<VehicleEntity> vehicleOpt = vehicleRepository.findById(request.vehicleId());
@@ -109,8 +110,9 @@ public class RentalOrderService {
 
 		RentalOrderEntity order = existing.get();
 		rentalOrderMapper.updateBaseFields(request, order);
-		order.setUser(user.get());
-		order.setVehicle(vehicle);
+		if (vehicle != null) {
+			order.setVehicle(vehicle);
+		}
 		applyPricing(order);
 
 		return Optional.of(rentalOrderMapper.toDTO(rentalOrderRepository.save(order)));
@@ -167,6 +169,16 @@ public class RentalOrderService {
 				.rentalDays(est.rentalDays())
 				.pricePerDay(est.pricePerDay())
 				.build());
+	}
+
+	private void requireOwnership(UserEntity user, String callerEmail) {
+		boolean isAdmin = userRepository.findByEmail(callerEmail)
+				.map(u -> u.getAuthorities().contains("ROLE_ADMIN"))
+				.orElse(false);
+
+		if (!isAdmin && !user.getEmail().equals(callerEmail)) {
+			throw new RentalOrderForbiddenException("Access denied: you can only access your own rental orders");
+		}
 	}
 
 	private void validateDates(java.time.LocalDateTime start, java.time.LocalDateTime end) {

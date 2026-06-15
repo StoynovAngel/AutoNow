@@ -138,9 +138,8 @@ public final class TestData {
 				.build();
 	}
 
-	public static RentalOrderRequestDTO createRentalOrderRequest(Long userId) {
+	public static RentalOrderRequestDTO createRentalOrderRequest() {
 		return RentalOrderRequestDTO.builder()
-				.userId(userId)
 				.rentalStartDate(LocalDateTime.now().plusDays(1))
 				.rentalEndDate(LocalDateTime.now().plusDays(4))
 				.build();
