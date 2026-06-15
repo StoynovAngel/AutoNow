@@ -6,10 +6,15 @@ interface VehicleDetailsFieldsProps {
     companyId: string;
     airConditioning: boolean;
     hideCompanyId?: boolean;
+    showRentalPrice?: boolean;
+    rentalPricePerDay?: string;
+    securityDepositAmount?: string;
     onNumberOfSeatsChange: (v: string) => void;
     onTrunkCapacityChange: (v: string) => void;
     onCompanyIdChange: (v: string) => void;
     onAirConditioningChange: (v: boolean) => void;
+    onRentalPricePerDayChange?: (v: string) => void;
+    onSecurityDepositAmountChange?: (v: string) => void;
 }
 
 const VehicleDetailsFields = ({
@@ -18,10 +23,15 @@ const VehicleDetailsFields = ({
     companyId,
     airConditioning,
     hideCompanyId = false,
+    showRentalPrice = false,
+    rentalPricePerDay = '',
+    securityDepositAmount = '',
     onNumberOfSeatsChange,
     onTrunkCapacityChange,
     onCompanyIdChange,
     onAirConditioningChange,
+    onRentalPricePerDayChange,
+    onSecurityDepositAmountChange,
 }: VehicleDetailsFieldsProps) => (
     <>
         <div>
@@ -64,6 +74,38 @@ const VehicleDetailsFields = ({
                     value={companyId}
                     onChange={(e) => onCompanyIdChange(e.target.value)}
                     placeholder="Optional"
+                />
+            </div>
+        )}
+        {showRentalPrice && (
+            <div>
+                <Label htmlFor="rentalPricePerDay" className="mb-1 block">
+                    Rental Price per Day (EUR)
+                </Label>
+                <TextInput
+                    id="rentalPricePerDay"
+                    type="number"
+                    min={0.01}
+                    step={0.01}
+                    value={rentalPricePerDay}
+                    onChange={(e) => onRentalPricePerDayChange?.(e.target.value)}
+                    placeholder="e.g. 60"
+                />
+            </div>
+        )}
+        {showRentalPrice && (
+            <div>
+                <Label htmlFor="securityDepositAmount" className="mb-1 block">
+                    Security Deposit (EUR)
+                </Label>
+                <TextInput
+                    id="securityDepositAmount"
+                    type="number"
+                    min={0.01}
+                    step={0.01}
+                    value={securityDepositAmount}
+                    onChange={(e) => onSecurityDepositAmountChange?.(e.target.value)}
+                    placeholder="e.g. 500"
                 />
             </div>
         )}
