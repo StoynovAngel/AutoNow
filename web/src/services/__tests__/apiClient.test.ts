@@ -88,4 +88,33 @@ describe('apiClient', () => {
             value: originalLocation,
         });
     });
+
+    it('does not redirect or clear storage on a 401 from an auth endpoint', async () => {
+        localStorage.setItem('accessToken', 'stale-token');
+        localStorage.setItem('userInfo', '{"name":"x"}');
+
+        const originalLocation = window.location;
+        Object.defineProperty(window, 'location', {
+            configurable: true,
+            value: { ...originalLocation, href: '' },
+        });
+
+        apiClient.defaults.adapter = async (config) => {
+            const error = new Error('unauthorized') as Error & { response?: unknown; config?: unknown };
+            error.response = { status: 401, data: {}, statusText: 'Unauthorized', headers: {}, config };
+            error.config = config;
+            throw error;
+        };
+
+        await expect(apiClient.post('/auth/login', {})).rejects.toBeDefined();
+
+        expect(localStorage.getItem('accessToken')).toBe('stale-token');
+        expect(localStorage.getItem('userInfo')).toBe('{"name":"x"}');
+        expect(window.location.href).toBe('');
+
+        Object.defineProperty(window, 'location', {
+            configurable: true,
+            value: originalLocation,
+        });
+    });
 });
