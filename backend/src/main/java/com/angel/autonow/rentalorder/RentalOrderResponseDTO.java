@@ -15,6 +15,7 @@ public record RentalOrderResponseDTO(
 		LocalDateTime rentalEndDate,
 		RentalOrderStatus status,
 		Double totalPrice,
+		Double securityDeposit,
 		String specialRequirements,
 		String cancellationReason,
 		LocalDateTime createdAt,

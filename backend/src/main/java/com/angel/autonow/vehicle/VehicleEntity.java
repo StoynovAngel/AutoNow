@@ -51,6 +51,14 @@ public class VehicleEntity {
 	@Column(name = "trunk_capacity")
 	private Double trunkCapacity;
 
+	@Positive(message = "Rental price per day must be positive")
+	@Column(name = "rental_price_per_day")
+	private Double rentalPricePerDay;
+
+	@Positive(message = "Security deposit amount must be positive")
+	@Column(name = "security_deposit_amount")
+	private Double securityDepositAmount;
+
 	@NotNull(message = "Vehicle type is required")
 	@Enumerated(EnumType.STRING)
 	@Column(name = "vehicle_type")

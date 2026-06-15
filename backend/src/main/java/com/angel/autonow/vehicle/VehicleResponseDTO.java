@@ -12,6 +12,8 @@ public record VehicleResponseDTO(
 		boolean airConditioning,
 		Integer numberOfSeats,
 		Double trunkCapacity,
+		Double rentalPricePerDay,
+		Double securityDepositAmount,
 		VehicleType vehicleType,
 		Long companyId
 ) {

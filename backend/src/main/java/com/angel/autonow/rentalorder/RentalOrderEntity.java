@@ -54,6 +54,9 @@ public class RentalOrderEntity {
 	@Column(name = "total_price")
 	private Double totalPrice;
 
+	@Column(name = "security_deposit")
+	private Double securityDeposit;
+
 	@Column(name = "special_requirements")
 	private String specialRequirements;
 

@@ -111,6 +111,8 @@ public class VehicleService {
 				.licensePlate(vehicle.getLicensePlate())
 				.imageUrl(vehicle.getImageUrl())
 				.numberOfSeats(vehicle.getNumberOfSeats())
+				.rentalPricePerDay(vehicle.getRentalPricePerDay())
+				.securityDepositAmount(vehicle.getSecurityDepositAmount())
 				.vehicleType(vehicle.getVehicleType())
 				.companyId(vehicle.getCompany() != null ? vehicle.getCompany().getId() : null)
 				.driverPhoneNumber(driverPhone)

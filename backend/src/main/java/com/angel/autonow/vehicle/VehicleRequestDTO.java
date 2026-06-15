@@ -29,6 +29,12 @@ public record VehicleRequestDTO(
 		@Positive(message = "Trunk capacity must be positive")
 		Double trunkCapacity,
 
+		@Positive(message = "Rental price per day must be positive")
+		Double rentalPricePerDay,
+
+		@Positive(message = "Security deposit amount must be positive")
+		Double securityDepositAmount,
+
 		@NotNull(message = "Vehicle type is required")
 		VehicleType vehicleType,
 

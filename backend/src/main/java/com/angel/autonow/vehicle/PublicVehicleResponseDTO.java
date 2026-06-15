@@ -10,6 +10,8 @@ public record PublicVehicleResponseDTO(
 		String licensePlate,
 		String imageUrl,
 		Integer numberOfSeats,
+		Double rentalPricePerDay,
+		Double securityDepositAmount,
 		VehicleType vehicleType,
 		Long companyId,
 		String driverPhoneNumber
