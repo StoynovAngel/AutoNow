@@ -270,6 +270,7 @@ public class DataSeeder implements ApplicationRunner {
 				.imageUrl("https://autodesignmagazine.com/wp-content/uploads/2025/11/Renault_Clio_full_hybrid_E-Tech_-_Techno_-_Rouge_Absolu_15.jpg")
 				.airConditioning(true).numberOfSeats(5).trunkCapacity(300.0)
 				.vehicleType(VehicleType.RENTAL)
+				.rentalPricePerDay(45.0).securityDepositAmount(300.0)
 				.company(company).build());
 
 		vehicleRepository.save(VehicleEntity.builder()
@@ -277,6 +278,7 @@ public class DataSeeder implements ApplicationRunner {
 				.imageUrl("https://www.topgear.com/sites/default/files/2024/12/hyundai-tucson-ultimate-17.jpg")
 				.airConditioning(true).numberOfSeats(5).trunkCapacity(620.0)
 				.vehicleType(VehicleType.RENTAL)
+				.rentalPricePerDay(65.0).securityDepositAmount(500.0)
 				.company(company).build());
 
 		vehicleRepository.save(VehicleEntity.builder()
@@ -284,6 +286,7 @@ public class DataSeeder implements ApplicationRunner {
 				.imageUrl("https://www.topgear.com/sites/default/files/2025/07/6-BMW-3-Series-Touring-review-2025-UK.jpg")
 				.airConditioning(true).numberOfSeats(5).trunkCapacity(480.0)
 				.vehicleType(VehicleType.RENTAL)
+				.rentalPricePerDay(90.0).securityDepositAmount(700.0)
 				.company(company).build());
 	}
 
