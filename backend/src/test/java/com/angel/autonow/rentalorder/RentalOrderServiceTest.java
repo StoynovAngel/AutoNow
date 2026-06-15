@@ -3,6 +3,7 @@ package com.angel.autonow.rentalorder;
 import com.angel.autonow.company.CompanyEntity;
 import com.angel.autonow.company.CompanyRepository;
 import com.angel.autonow.pricing.PricingService;
+import com.angel.autonow.pricing.RentalEstimate;
 import com.angel.autonow.user.UserEntity;
 import com.angel.autonow.user.UserRepository;
 import com.angel.autonow.vehicle.VehicleEntity;
@@ -24,6 +25,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -70,6 +72,8 @@ class RentalOrderServiceTest {
 
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 		when(rentalOrderRepository.existsByUserIdAndStatusIn(eq(1L), anySet())).thenReturn(false);
+		when(pricingService.estimateRental(isNull(), isNull(), anyLong()))
+				.thenReturn(new RentalEstimate(135.0, 0.0, "EUR", 3, 45.0));
 		when(rentalOrderRepository.save(any())).thenReturn(saved);
 		when(rentalOrderMapper.toDTO(saved)).thenReturn(response);
 
@@ -123,14 +127,15 @@ class RentalOrderServiceTest {
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 		when(rentalOrderRepository.existsByUserIdAndStatusIn(eq(1L), anySet())).thenReturn(false);
 		when(vehicleRepository.findById(2L)).thenReturn(Optional.of(vehicle));
-		when(pricingService.calculateForRental(3L)).thenReturn(135.0);
+		when(pricingService.estimateRental(isNull(), isNull(), anyLong()))
+				.thenReturn(new RentalEstimate(135.0, 0.0, "EUR", 3, 45.0));
 		when(rentalOrderRepository.save(any())).thenReturn(saved);
 		when(rentalOrderMapper.toDTO(saved)).thenReturn(response);
 
 		var result = rentalOrderService.createRentalOrder(request);
 
 		assertTrue(result.isPresent());
-		verify(pricingService).calculateForRental(3L);
+		verify(pricingService).estimateRental(isNull(), isNull(), anyLong());
 	}
 
 	@Test
@@ -315,5 +320,53 @@ class RentalOrderServiceTest {
 
 		assertThrows(RentalOrderConflictException.class,
 				() -> rentalOrderService.adminCancelRentalOrder(1L));
+	}
+
+	@Test
+	void estimate_returnsBreakdown() {
+		VehicleEntity vehicle = VehicleEntity.builder().id(3L).vehicleType(VehicleType.RENTAL)
+				.rentalPricePerDay(60.0).securityDepositAmount(300.0).build();
+		RentalOrderEstimateRequestDTO request = RentalOrderEstimateRequestDTO.builder()
+				.vehicleId(3L)
+				.rentalStartDate(START)
+				.rentalEndDate(END)
+				.build();
+
+		when(vehicleRepository.findById(3L)).thenReturn(Optional.of(vehicle));
+		when(pricingService.estimateRental(60.0, 300.0, 3L))
+				.thenReturn(new RentalEstimate(180.0, 300.0, "EUR", 3, 60.0));
+
+		var result = rentalOrderService.estimate(request);
+
+		assertTrue(result.isPresent());
+		assertEquals(180.0, result.get().totalPrice());
+		assertEquals(300.0, result.get().securityDeposit());
+		assertEquals(3, result.get().rentalDays());
+		assertEquals(60.0, result.get().pricePerDay());
+	}
+
+	@Test
+	void estimate_nonRentalVehicle_throwsConflict() {
+		VehicleEntity vehicle = VehicleEntity.builder().id(3L).vehicleType(VehicleType.TAXI).build();
+		RentalOrderEstimateRequestDTO request = RentalOrderEstimateRequestDTO.builder()
+				.vehicleId(3L)
+				.rentalStartDate(START)
+				.rentalEndDate(END)
+				.build();
+
+		when(vehicleRepository.findById(3L)).thenReturn(Optional.of(vehicle));
+
+		assertThrows(RentalOrderConflictException.class, () -> rentalOrderService.estimate(request));
+	}
+
+	@Test
+	void estimate_endBeforeStart_throwsConflict() {
+		RentalOrderEstimateRequestDTO request = RentalOrderEstimateRequestDTO.builder()
+				.vehicleId(3L)
+				.rentalStartDate(END)
+				.rentalEndDate(START)
+				.build();
+
+		assertThrows(RentalOrderConflictException.class, () -> rentalOrderService.estimate(request));
 	}
 }

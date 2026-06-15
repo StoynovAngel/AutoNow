@@ -3,6 +3,7 @@ package com.angel.autonow.rentalorder;
 import com.angel.autonow.company.CompanyEntity;
 import com.angel.autonow.company.CompanyRepository;
 import com.angel.autonow.pricing.PricingService;
+import com.angel.autonow.pricing.RentalEstimate;
 import com.angel.autonow.user.UserEntity;
 import com.angel.autonow.user.UserRepository;
 import com.angel.autonow.vehicle.VehicleEntity;
@@ -36,9 +37,7 @@ public class RentalOrderService {
 
 	@Transactional
 	public Optional<RentalOrderResponseDTO> createRentalOrder(RentalOrderRequestDTO request) {
-		if (request.rentalStartDate() != null && request.rentalEndDate() != null && !request.rentalEndDate().isAfter(request.rentalStartDate())) {
-			throw new RentalOrderConflictException("Rental end date must be after start date");
-		}
+		validateDates(request.rentalStartDate(), request.rentalEndDate());
 
 		Optional<UserEntity> userOpt = userRepository.findById(request.userId());
 		if (userOpt.isEmpty()) return Optional.empty();
@@ -63,19 +62,10 @@ public class RentalOrderService {
 		if (request.vehicleId() != null) {
 			Optional<VehicleEntity> vehicleOpt = vehicleRepository.findById(request.vehicleId());
 			if (vehicleOpt.isEmpty()) return Optional.empty();
-			VehicleEntity vehicle = vehicleOpt.get();
-			if (vehicle.getVehicleType() != VehicleType.RENTAL) {
-				throw new RentalOrderConflictException("Vehicle is not a rental vehicle");
-			}
-			order.setVehicle(vehicle);
+			order.setVehicle(requireRentalVehicle(vehicleOpt.get()));
 		}
 
-		if (request.rentalStartDate() != null && request.rentalEndDate() != null) {
-			long days = Math.max(1, ChronoUnit.DAYS.between(
-					request.rentalStartDate().toLocalDate(),
-					request.rentalEndDate().toLocalDate()));
-			order.setTotalPrice(pricingService.calculateForRental(days));
-		}
+		applyPricing(order);
 
 		return Optional.of(rentalOrderMapper.toDTO(rentalOrderRepository.save(order)));
 	}
@@ -106,12 +96,8 @@ public class RentalOrderService {
 	public Optional<RentalOrderResponseDTO> updateRentalOrder(Long id, RentalOrderRequestDTO request) {
 		Optional<RentalOrderEntity> existing = rentalOrderRepository.findById(id);
 		if (existing.isEmpty()) return Optional.empty();
-		RentalOrderEntity order = existing.get();
 
-		if (request.rentalStartDate() != null && request.rentalEndDate() != null
-				&& !request.rentalEndDate().isAfter(request.rentalStartDate())) {
-			throw new RentalOrderConflictException("Rental end date must be after start date");
-		}
+		validateDates(request.rentalStartDate(), request.rentalEndDate());
 
 		Optional<UserEntity> user = userRepository.findById(request.userId());
 		if (user.isEmpty()) return Optional.empty();
@@ -120,22 +106,14 @@ public class RentalOrderService {
 		if (request.vehicleId() != null) {
 			Optional<VehicleEntity> vehicleOpt = vehicleRepository.findById(request.vehicleId());
 			if (vehicleOpt.isEmpty()) return Optional.empty();
-			vehicle = vehicleOpt.get();
-			if (vehicle.getVehicleType() != VehicleType.RENTAL) {
-				throw new RentalOrderConflictException("Vehicle is not a rental vehicle");
-			}
+			vehicle = requireRentalVehicle(vehicleOpt.get());
 		}
 
+		RentalOrderEntity order = existing.get();
 		rentalOrderMapper.updateBaseFields(request, order);
 		order.setUser(user.get());
 		order.setVehicle(vehicle);
-
-		if (request.rentalStartDate() != null && request.rentalEndDate() != null) {
-			long days = Math.max(1, ChronoUnit.DAYS.between(
-					request.rentalStartDate().toLocalDate(),
-					request.rentalEndDate().toLocalDate()));
-			order.setTotalPrice(pricingService.calculateForRental(days));
-		}
+		applyPricing(order);
 
 		return Optional.of(rentalOrderMapper.toDTO(rentalOrderRepository.save(order)));
 	}
@@ -171,6 +149,51 @@ public class RentalOrderService {
 		}
 		rentalOrderRepository.deleteById(id);
 		return true;
+	}
+
+	public Optional<RentalOrderEstimateResponseDTO> estimate(RentalOrderEstimateRequestDTO request) {
+		validateDates(request.rentalStartDate(), request.rentalEndDate());
+
+		Optional<VehicleEntity> vehicleOpt = vehicleRepository.findById(request.vehicleId());
+		if (vehicleOpt.isEmpty()) return Optional.empty();
+
+		VehicleEntity vehicle = requireRentalVehicle(vehicleOpt.get());
+		RentalEstimate est = calculateRentalEstimate(vehicle, request.rentalStartDate(), request.rentalEndDate());
+
+		return Optional.of(RentalOrderEstimateResponseDTO.builder()
+				.totalPrice(est.totalPrice())
+				.securityDeposit(est.securityDeposit())
+				.currency(est.currency())
+				.rentalDays(est.rentalDays())
+				.pricePerDay(est.pricePerDay())
+				.build());
+	}
+
+	private void validateDates(java.time.LocalDateTime start, java.time.LocalDateTime end) {
+		if (start != null && end != null && !end.isAfter(start)) {
+			throw new RentalOrderConflictException("Rental end date must be after start date");
+		}
+	}
+
+	private VehicleEntity requireRentalVehicle(VehicleEntity vehicle) {
+		if (vehicle.getVehicleType() != VehicleType.RENTAL) {
+			throw new RentalOrderConflictException("Vehicle is not a rental vehicle");
+		}
+		return vehicle;
+	}
+
+	private void applyPricing(RentalOrderEntity order) {
+		if (order.getRentalStartDate() == null || order.getRentalEndDate() == null) return;
+		RentalEstimate est = calculateRentalEstimate(order.getVehicle(), order.getRentalStartDate(), order.getRentalEndDate());
+		order.setTotalPrice(est.totalPrice());
+		order.setSecurityDeposit(est.securityDeposit());
+	}
+
+	private RentalEstimate calculateRentalEstimate(VehicleEntity vehicle, java.time.LocalDateTime start, java.time.LocalDateTime end) {
+		long days = Math.max(1, ChronoUnit.DAYS.between(start.toLocalDate(), end.toLocalDate()));
+		Double pricePerDay = vehicle != null ? vehicle.getRentalPricePerDay() : null;
+		Double depositAmount = vehicle != null ? vehicle.getSecurityDepositAmount() : null;
+		return pricingService.estimateRental(pricePerDay, depositAmount, days);
 	}
 
 	private RentalOrderResponseDTO transitionToCanceled(RentalOrderEntity order) {

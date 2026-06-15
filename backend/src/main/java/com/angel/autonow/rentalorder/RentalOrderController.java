@@ -33,6 +33,14 @@ public class RentalOrderController {
 				.orElse(ResponseEntity.badRequest().build());
 	}
 
+	@PostMapping("/estimate")
+	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'COMPANY_ADMIN')")
+	public ResponseEntity<RentalOrderEstimateResponseDTO> estimateRentalOrder(@Valid @RequestBody RentalOrderEstimateRequestDTO request) {
+		return rentalOrderService.estimate(request)
+				.map(ResponseEntity::ok)
+				.orElse(ResponseEntity.badRequest().build());
+	}
+
 	@GetMapping("/{id}")
 	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN', 'CUSTOMER')")
 	public ResponseEntity<RentalOrderResponseDTO> getRentalOrderById(@PathVariable Long id) {
