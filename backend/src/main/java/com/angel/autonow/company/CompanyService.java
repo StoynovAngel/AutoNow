@@ -48,7 +48,12 @@ public class CompanyService {
 		user.getAuthorities().add(Role.COMPANY_ADMIN.getAuthority());
 		userRepository.save(user);
 
-		return Optional.of(jwtService.generateToken(user.getId(), user.getEmail(), user.getAuthorities(), company.getId()));
+		return Optional.of(jwtService.generateToken(
+				user.getId(),
+				user.getEmail(),
+				user.getAuthorities(),
+				company.getId(),
+				company.getCompanyType() != null ? company.getCompanyType().name() : null));
 	}
 
 	public Optional<CompanyResponseDTO> getCompanyById(Long id) {
