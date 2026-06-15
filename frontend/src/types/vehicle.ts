@@ -22,6 +22,8 @@ export interface PublicVehicle {
     licensePlate: string;
     imageUrl?: string;
     numberOfSeats?: number;
+    rentalPricePerDay?: number;
+    securityDepositAmount?: number;
     vehicleType: VehicleType;
     companyId?: number;
     driverPhoneNumber?: string;

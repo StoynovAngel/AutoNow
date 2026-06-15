@@ -12,8 +12,10 @@ import BookingWaiting from '../screens/booking/BookingWaiting';
 import BookingComplete from '../screens/booking/BookingComplete';
 import VehicleList from '../screens/vehicle/VehicleList';
 import RentalBooking from '../screens/rental/RentalBooking';
+import RentalReview from '../screens/rental/RentalReview';
 import { VehicleType } from '../types/vehicle';
 import type { BookingPreferences as BookingPreferencesData } from '../types/booking';
+import type { RentalEstimateResponse } from '../services/rentalOrderService';
 
 export type RootStackParamList = {
     home: undefined;
@@ -36,6 +38,17 @@ export type RootStackParamList = {
         vehiclePlate: string;
         vehicleImageUrl?: string;
         companyId?: number;
+    };
+    rentalReview: {
+        vehicleId: number;
+        vehicleBrand: string;
+        vehicleModel: string;
+        vehiclePlate: string;
+        vehicleImageUrl?: string;
+        companyId?: number;
+        estimate: RentalEstimateResponse;
+        rentalStartDate: string;
+        rentalEndDate: string;
     };
 };
 
@@ -70,6 +83,7 @@ const Navigation = () => {
             <Stack.Screen name="bookingComplete" component={BookingComplete} />
             <Stack.Screen name="vehicleList" component={VehicleList} />
             <Stack.Screen name="rentalBooking" component={RentalBooking} />
+            <Stack.Screen name="rentalReview" component={RentalReview} />
         </Stack.Navigator>
     );
 };

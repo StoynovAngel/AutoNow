@@ -9,6 +9,20 @@ export interface RentalOrderRequest {
     specialRequirements?: string;
 }
 
+export interface RentalEstimateRequest {
+    vehicleId: number;
+    rentalStartDate: string;
+    rentalEndDate: string;
+}
+
+export interface RentalEstimateResponse {
+    totalPrice: number;
+    securityDeposit: number;
+    currency: string;
+    rentalDays: number;
+    pricePerDay: number;
+}
+
 export type RentalOrderStatus = 'CREATED' | 'ACCEPTED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELED';
 
 export interface RentalVehicleInfo {
@@ -29,6 +43,7 @@ export interface RentalOrderResponse {
     rentalEndDate: string;
     status: RentalOrderStatus;
     totalPrice?: number;
+    securityDeposit?: number;
     specialRequirements?: string;
     cancellationReason?: string;
     createdAt?: string;
@@ -37,6 +52,11 @@ export interface RentalOrderResponse {
 
 export const createRentalOrder = async (payload: RentalOrderRequest): Promise<RentalOrderResponse> => {
     const response = await customAPI.post<RentalOrderResponse>('api/rental-orders', payload);
+    return response.data;
+};
+
+export const estimateRentalOrder = async (payload: RentalEstimateRequest): Promise<RentalEstimateResponse> => {
+    const response = await customAPI.post<RentalEstimateResponse>('api/rental-orders/estimate', payload);
     return response.data;
 };
 

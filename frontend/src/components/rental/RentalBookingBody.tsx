@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, Pressable, Image, ActivityIndicator, Alert, Modal } from 'react-native';
+import { View, Text, ScrollView, Pressable, Image, ActivityIndicator, Modal } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -7,8 +7,7 @@ import { useTranslation } from 'react-i18next';
 import type { RootStackParamList } from '../../navigation/Navigation';
 import { theme } from '../../constants/theme';
 import { createStyles } from './RentalBookingBody.style';
-import { useAuth } from '../../hooks/useAuth';
-import { createRentalOrder } from '../../services/rentalOrderService';
+import { estimateRentalOrder } from '../../services/rentalOrderService';
 
 type RentalBookingRouteProp = RouteProp<RootStackParamList, 'rentalBooking'>;
 
@@ -90,7 +89,6 @@ const RentalBookingBody = () => {
     const route = useRoute<RentalBookingRouteProp>();
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const { t } = useTranslation();
-    const { user } = useAuth();
     const styles = createStyles(theme);
 
     const { vehicleId, vehicleBrand, vehicleModel, vehiclePlate, vehicleImageUrl, companyId } = route.params;
@@ -109,7 +107,6 @@ const RentalBookingBody = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const rentalDays = Math.max(1, Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)));
     const dateError = endDate <= startDate ? t('rental-date-error') : null;
 
     const formatDate = (d: Date) =>
@@ -131,20 +128,26 @@ const RentalBookingBody = () => {
     };
 
     const handleConfirm = async () => {
-        if (!user || dateError) return;
+        if (dateError) return;
         setLoading(true);
         setError(null);
         try {
-            await createRentalOrder({
-                userId: user.id,
+            const estimate = await estimateRentalOrder({
                 vehicleId,
-                companyId,
                 rentalStartDate: startDate.toISOString(),
                 rentalEndDate: endDate.toISOString(),
             });
-            Alert.alert(t('rental-booking-success'), '', [
-                { text: 'OK', onPress: () => navigation.navigate('home') },
-            ]);
+            navigation.navigate('rentalReview', {
+                vehicleId,
+                vehicleBrand,
+                vehicleModel,
+                vehiclePlate,
+                vehicleImageUrl,
+                companyId,
+                estimate,
+                rentalStartDate: startDate.toISOString(),
+                rentalEndDate: endDate.toISOString(),
+            });
         } catch {
             setError(t('rental-booking-failed'));
         } finally {
@@ -169,7 +172,7 @@ const RentalBookingBody = () => {
                 <Text style={styles.vehicleLabel}>{vehicleBrand} {vehicleModel}</Text>
             </View>
 
-            <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+            <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer} showsVerticalScrollIndicator={false}>
                 <View style={styles.vehicleCard}>
                     {vehicleImageUrl ? (
                         <Image source={{ uri: vehicleImageUrl }} style={styles.vehicleImage} resizeMode="cover" testID="rental-vehicle-image" />
@@ -220,13 +223,6 @@ const RentalBookingBody = () => {
                         )}
                     </View>
                 </View>
-
-                {!dateError && (
-                    <View style={styles.priceRow}>
-                        <Text style={styles.priceLabel}>{rentalDays} {rentalDays === 1 ? 'day' : 'days'} × 45 EUR</Text>
-                        <Text style={styles.priceValue}>{rentalDays * 45} EUR</Text>
-                    </View>
-                )}
 
                 {error && (
                     <View style={styles.errorAlert} accessibilityRole="alert" accessibilityLiveRegion="assertive">

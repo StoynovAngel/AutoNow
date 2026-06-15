@@ -1,0 +1,177 @@
+import { StyleSheet } from 'react-native';
+
+export const createStyles = (theme: any) => StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: theme.colors.background,
+    },
+    header: {
+        backgroundColor: theme.colors.surface,
+        paddingTop: 48,
+        paddingBottom: 16,
+        paddingHorizontal: 20,
+        borderBottomWidth: 1,
+        borderBottomColor: theme.colors.border,
+        shadowColor: theme.colors.shadow,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3,
+    },
+    backButton: {
+        width: 40,
+        height: 40,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 12,
+    },
+    headerTitle: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: theme.colors.textPrimary,
+        marginBottom: 4,
+    },
+    vehicleLabel: {
+        fontSize: 14,
+        color: theme.colors.textSecondary,
+    },
+    content: {
+        flex: 1,
+    },
+    contentContainer: {
+        padding: 20,
+        gap: 16,
+        paddingBottom: 36,
+    },
+    vehicleCard: {
+        backgroundColor: theme.colors.surface,
+        borderRadius: 16,
+        borderWidth: 1,
+        borderColor: theme.colors.border,
+        overflow: 'hidden',
+    },
+    vehicleImage: {
+        width: '100%',
+        height: 480,
+    },
+    vehicleImagePlaceholder: {
+        width: '100%',
+        height: 480,
+        backgroundColor: theme.colors.background,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    vehicleInfo: {
+        padding: 16,
+    },
+    vehicleName: {
+        fontSize: 20,
+        fontWeight: '700',
+        color: theme.colors.textPrimary,
+    },
+    vehiclePlate: {
+        fontSize: 13,
+        color: theme.colors.textSecondary,
+        marginTop: 4,
+    },
+    datesCard: {
+        backgroundColor: theme.colors.surface,
+        borderRadius: 16,
+        borderWidth: 1,
+        borderColor: theme.colors.border,
+        padding: 18,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
+    },
+    datesText: {
+        fontSize: 15,
+        color: theme.colors.textPrimary,
+        fontWeight: '600',
+        flex: 1,
+    },
+    pricingCard: {
+        backgroundColor: theme.colors.surface,
+        borderRadius: 16,
+        borderWidth: 1,
+        borderColor: theme.colors.border,
+        padding: 20,
+        gap: 14,
+    },
+    pricingTitle: {
+        fontSize: 12,
+        fontWeight: '700',
+        color: theme.colors.textSecondary,
+        textTransform: 'uppercase',
+        letterSpacing: 1,
+        marginBottom: 2,
+    },
+    pricingRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    pricingLabel: {
+        fontSize: 15,
+        color: theme.colors.textSecondary,
+        flex: 1,
+    },
+    pricingValue: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: theme.colors.textPrimary,
+    },
+    depositNote: {
+        fontSize: 12,
+        color: theme.colors.textSecondary,
+        fontStyle: 'italic',
+        marginTop: -6,
+    },
+    divider: {
+        height: 1,
+        backgroundColor: theme.colors.border,
+        marginVertical: 2,
+    },
+    totalRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginTop: 2,
+    },
+    totalLabel: {
+        fontSize: 16,
+        fontWeight: '700',
+        color: theme.colors.textPrimary,
+    },
+    totalValue: {
+        fontSize: 24,
+        fontWeight: '800',
+        color: theme.colors.primary,
+    },
+    confirmButton: {
+        backgroundColor: theme.colors.primary,
+        borderRadius: 14,
+        paddingVertical: 18,
+        alignItems: 'center',
+        marginTop: 4,
+    },
+    confirmButtonDisabled: {
+        opacity: 0.5,
+    },
+    confirmButtonText: {
+        fontSize: 17,
+        fontWeight: '700',
+        color: '#FFFFFF',
+    },
+    errorAlert: {
+        backgroundColor: '#FEE2E2',
+        borderRadius: 10,
+        padding: 14,
+        borderWidth: 1,
+        borderColor: '#FECACA',
+    },
+    errorAlertText: {
+        fontSize: 14,
+        color: '#DC2626',
+    },
+});
