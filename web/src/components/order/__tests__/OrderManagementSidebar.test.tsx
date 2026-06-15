@@ -167,6 +167,23 @@ describe('OrderManagementSidebar', () => {
         expect(screen.getByRole('button', { name: /#1/ })).toHaveAttribute('aria-pressed', 'false');
     });
 
+    it('hides vehicle type filter row when hideVehicleTypeFilter is true', () => {
+        render(
+            <OrderManagementSidebar
+                {...defaultProps}
+                orders={[makeOrder(1), makeOrder(2)]}
+                selectedOrderId={2}
+                statusFilter="ALL"
+                hideVehicleTypeFilter
+            />
+        );
+
+        // Only one "ALL" button — the vehicle type row is gone
+        expect(screen.getAllByRole('button', { name: 'ALL' })).toHaveLength(1);
+        expect(screen.queryByRole('button', { name: 'TAXI' })).not.toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: 'LOGISTICS' })).not.toBeInTheDocument();
+    });
+
     it('marks the active vehicle type chip with aria-pressed=true', () => {
         render(
             <OrderManagementSidebar

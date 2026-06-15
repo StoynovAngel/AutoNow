@@ -82,6 +82,7 @@ const Order = () => {
                             onSelectOrder={selectOrder}
                             onChangeFilter={setStatusFilter}
                             onChangeVehicleType={setVehicleTypeFilter}
+                            hideVehicleTypeFilter={isCompanyAdmin}
                         />
                         <OrderManagementContent
                             selectedOrder={selectedOrder}
