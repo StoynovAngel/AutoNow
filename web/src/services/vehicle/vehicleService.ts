@@ -8,6 +8,8 @@ export interface VehiclePayload {
     airConditioning: boolean;
     numberOfSeats: number;
     trunkCapacity?: number;
+    rentalPricePerDay?: number;
+    securityDepositAmount?: number;
     vehicleType: string;
     companyId?: number;
 }

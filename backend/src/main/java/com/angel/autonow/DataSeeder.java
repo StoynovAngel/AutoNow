@@ -73,7 +73,7 @@ public class DataSeeder implements ApplicationRunner {
 		seedAmbulance(password);
 		seedRental(password);
 		seedFuneral(password);
-		seedProm(password);
+		seedCelebration(password);
 	}
 
 	private DriverEntity saveDriverWithVehicle(DriverEntity driver, VehicleEntity vehicle) {
@@ -265,42 +265,29 @@ public class DataSeeder implements ApplicationRunner {
 				.company(company)
 				.build());
 
-		VehicleEntity v1 = vehicleRepository.save(VehicleEntity.builder()
+		vehicleRepository.save(VehicleEntity.builder()
 				.brand("Renault").model("Clio").licensePlate("CA4040HP")
 				.imageUrl("https://autodesignmagazine.com/wp-content/uploads/2025/11/Renault_Clio_full_hybrid_E-Tech_-_Techno_-_Rouge_Absolu_15.jpg")
 				.airConditioning(true).numberOfSeats(5).trunkCapacity(300.0)
 				.vehicleType(VehicleType.RENTAL)
+				.rentalPricePerDay(45.0).securityDepositAmount(300.0)
 				.company(company).build());
 
-		VehicleEntity v2 = vehicleRepository.save(VehicleEntity.builder()
+		vehicleRepository.save(VehicleEntity.builder()
 				.brand("Hyundai").model("Tucson").licensePlate("CA5050PT")
 				.imageUrl("https://www.topgear.com/sites/default/files/2024/12/hyundai-tucson-ultimate-17.jpg")
 				.airConditioning(true).numberOfSeats(5).trunkCapacity(620.0)
 				.vehicleType(VehicleType.RENTAL)
+				.rentalPricePerDay(65.0).securityDepositAmount(500.0)
 				.company(company).build());
 
-		VehicleEntity v3 = vehicleRepository.save(VehicleEntity.builder()
+		vehicleRepository.save(VehicleEntity.builder()
 				.brand("BMW").model("3 Series").licensePlate("CA6060TY")
-				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/BMW_G20_IMG_0028.jpg/1280px-BMW_G20_IMG_0028.jpg")
+				.imageUrl("https://www.topgear.com/sites/default/files/2025/07/6-BMW-3-Series-Touring-review-2025-UK.jpg")
 				.airConditioning(true).numberOfSeats(5).trunkCapacity(480.0)
 				.vehicleType(VehicleType.RENTAL)
+				.rentalPricePerDay(90.0).securityDepositAmount(700.0)
 				.company(company).build());
-
-		saveDriverWithVehicle(DriverEntity.builder()
-				.firstName("Anna").lastName("Petrova")
-				.phoneNumber("+359888400400")
-				.expertiseType(Set.of(ExpertiseType.B)).available(true)
-				.company(company).build(), v1);
-		saveDriverWithVehicle(DriverEntity.builder()
-				.firstName("Ivan").lastName("Dimitrov")
-				.phoneNumber("+359888400401")
-				.expertiseType(Set.of(ExpertiseType.B)).available(true)
-				.company(company).build(), v2);
-		saveDriverWithVehicle(DriverEntity.builder()
-				.firstName("Teodora").lastName("Mihaylova")
-				.phoneNumber("+359888400402")
-				.expertiseType(Set.of(ExpertiseType.B)).available(true)
-				.company(company).build(), v3);
 	}
 
 	private void seedFuneral(String password) {
@@ -322,14 +309,14 @@ public class DataSeeder implements ApplicationRunner {
 
 		VehicleEntity v1 = vehicleRepository.save(VehicleEntity.builder()
 				.brand("Cadillac").model("XTS Hearse").licensePlate("BT1010YX")
-				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Cadillac_XTS_hearse.jpg/1280px-Cadillac_XTS_hearse.jpg")
+				.imageUrl("https://live.staticflickr.com/3675/12293433396_caa3614388_b.jpg")
 				.airConditioning(true).numberOfSeats(2).trunkCapacity(2500.0)
 				.vehicleType(VehicleType.FUNERAL)
 				.company(company).build());
 
 		VehicleEntity v2 = vehicleRepository.save(VehicleEntity.builder()
 				.brand("Lincoln").model("MKT Hearse").licensePlate("BT2020XA")
-				.imageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Lincoln_MKT_Hearse.jpg/1280px-Lincoln_MKT_Hearse.jpg")
+				.imageUrl("https://limoforsale.com/files/07-2022/ad16226/1657749088612002380_large.jpeg")
 				.airConditioning(true).numberOfSeats(2).trunkCapacity(2400.0)
 				.vehicleType(VehicleType.FUNERAL)
 				.company(company).build());
@@ -358,14 +345,14 @@ public class DataSeeder implements ApplicationRunner {
 				.company(company).build(), v3);
 	}
 
-	private void seedProm(String password) {
+	private void seedCelebration(String password) {
 		CompanyEntity company = companyRepository.save(CompanyEntity.builder()
 				.name("Royal Prom Limos")
 				.address("44 Boyana St, Sofia")
 				.phone("+359888600006")
 				.email("book@royalprom.bg")
 				.description("Luxury limousines for proms and weddings")
-				.companyType(CompanyType.PROM)
+				.companyType(CompanyType.CELEBRATION)
 				.build());
 
 		userRepository.save(UserEntity.builder()
@@ -379,21 +366,21 @@ public class DataSeeder implements ApplicationRunner {
 				.brand("Chrysler").model("300 Limousine").licensePlate("CA7070EM")
 				.imageUrl("https://d11kcrtzt740u6.cloudfront.net/veh/price4limo-black-chrysler-300-limousine.jpg")
 				.airConditioning(true).numberOfSeats(8).trunkCapacity(400.0)
-				.vehicleType(VehicleType.PROM)
+				.vehicleType(VehicleType.CELEBRATION)
 				.company(company).build());
 
 		VehicleEntity v2 = vehicleRepository.save(VehicleEntity.builder()
 				.brand("Lincoln").model("Stretch").licensePlate("CA8080MO")
 				.imageUrl("https://qualitycoachwork.com/wp-content/uploads/2023/03/Lincoln-Navigator-Stretch-CEO-Conversion.jpg")
 				.airConditioning(true).numberOfSeats(10).trunkCapacity(450.0)
-				.vehicleType(VehicleType.PROM)
+				.vehicleType(VehicleType.CELEBRATION)
 				.company(company).build());
 
 		VehicleEntity v3 = vehicleRepository.save(VehicleEntity.builder()
 				.brand("Hummer").model("H2 Limo").licensePlate("CA9090OT")
 				.imageUrl("https://www.hertslimos.com/wp-content/uploads/2023/01/hummer-h2-limo-hero.jpg")
 				.airConditioning(true).numberOfSeats(14).trunkCapacity(500.0)
-				.vehicleType(VehicleType.PROM)
+				.vehicleType(VehicleType.CELEBRATION)
 				.company(company).build());
 
 		saveDriverWithVehicle(DriverEntity.builder()

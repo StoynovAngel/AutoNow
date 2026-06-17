@@ -6,5 +6,5 @@ public enum CompanyType {
 	AMBULANCE,
 	RENTAL,
 	FUNERAL,
-	PROM
+	CELEBRATION
 }

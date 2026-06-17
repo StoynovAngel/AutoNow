@@ -45,6 +45,7 @@ const Login = () => {
                     email: formData.email,
                     authorities: decodedToken.authorities,
                     companyId: decodedToken.companyId ?? null,
+                    companyType: typeof decodedToken.companyType === 'string' ? decodedToken.companyType : null,
                 },
                 token
             );

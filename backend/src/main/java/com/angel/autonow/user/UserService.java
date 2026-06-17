@@ -38,7 +38,7 @@ public class UserService {
 		userRepository.save(newUser);
 		log.info("User registered successfully [{}]", email);
 
-		return jwtService.generateToken(newUser.getId(), email, newUser.getAuthorities(), null);
+		return jwtService.generateToken(newUser.getId(), email, newUser.getAuthorities(), null, null);
 	}
 
 	public String login(UserRequestDTO request) {
@@ -57,6 +57,9 @@ public class UserService {
 
 		log.info("User logged in successfully [{}]", email);
 		Long companyId = user.getCompany() != null ? user.getCompany().getId() : null;
-		return jwtService.generateToken(user.getId(), email, user.getAuthorities(), companyId);
+		String companyType = user.getCompany() != null && user.getCompany().getCompanyType() != null
+				? user.getCompany().getCompanyType().name()
+				: null;
+		return jwtService.generateToken(user.getId(), email, user.getAuthorities(), companyId, companyType);
 	}
 }

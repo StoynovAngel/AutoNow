@@ -42,14 +42,14 @@ describe('AddVehicleForm', () => {
     it('pre-fills fields from initialData', () => {
         const vehicle = {
             id: 1, brand: 'Ferrari', model: 'Enzo', licensePlate: 'PB5555MT', airConditioning: true,
-            numberOfSeats: 2, trunkCapacity: 100, vehicleType: 'PROM', companyId: 3,
+            numberOfSeats: 2, trunkCapacity: 100, vehicleType: 'CELEBRATION', companyId: 3,
         };
         render(<AddVehicleForm onSubmit={onSubmit} onCancel={onCancel} initialData={vehicle} />);
         expect(screen.getByLabelText(/license plate/i)).toHaveValue('PB5555MT');
         expect(screen.getByLabelText(/brand/i)).toHaveValue('Ferrari');
         expect(screen.getByLabelText(/model/i)).toHaveValue('Enzo');
         expect(screen.getByLabelText(/number of seats/i)).toHaveValue(2);
-        expect(screen.getByLabelText(/vehicle type/i)).toHaveValue('PROM');
+        expect(screen.getByLabelText(/vehicle type/i)).toHaveValue('CELEBRATION');
         expect(screen.getByLabelText(/air conditioning/i)).toBeChecked();
     });
 
@@ -138,6 +138,16 @@ describe('AddVehicleForm', () => {
         render(<AddVehicleForm onSubmit={onSubmit} onCancel={onCancel} />);
         const select = screen.getByLabelText(/vehicle type/i);
         const options = Array.from((select as HTMLSelectElement).options).map(o => o.value);
-        expect(options).toEqual(['TAXI', 'LOGISTICS', 'AMBULANCE', 'RENTAL', 'PROM', 'FUNERAL']);
+        expect(options).toEqual(['TAXI', 'LOGISTICS', 'AMBULANCE', 'RENTAL', 'CELEBRATION', 'FUNERAL']);
+    });
+
+    it('shows Company ID field by default', () => {
+        render(<AddVehicleForm onSubmit={onSubmit} onCancel={onCancel} />);
+        expect(screen.getByLabelText(/company id/i)).toBeInTheDocument();
+    });
+
+    it('hides Company ID field when hideCompanyId is true', () => {
+        render(<AddVehicleForm onSubmit={onSubmit} onCancel={onCancel} hideCompanyId />);
+        expect(screen.queryByLabelText(/company id/i)).not.toBeInTheDocument();
     });
 });

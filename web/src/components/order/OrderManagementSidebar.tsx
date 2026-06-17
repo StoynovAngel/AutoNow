@@ -11,6 +11,7 @@ interface OrderManagementSidebarProps {
     onSelectOrder: (orderId: number) => void;
     onChangeFilter: (filter: StatusFilter) => void;
     onChangeVehicleType: (type: VehicleTypeFilter) => void;
+    hideVehicleTypeFilter?: boolean;
 }
 
 const OrderManagementSidebar = ({
@@ -21,6 +22,7 @@ const OrderManagementSidebar = ({
     onSelectOrder,
     onChangeFilter,
     onChangeVehicleType,
+    hideVehicleTypeFilter = false,
 }: OrderManagementSidebarProps) => {
     const filteredOrders = orders.filter((o) => {
         const statusMatch = statusFilter === 'ALL' || o.status === statusFilter;
@@ -41,7 +43,7 @@ const OrderManagementSidebar = ({
                     </span>
                 </div>
 
-                <div className="flex flex-wrap gap-1.5 mb-2">
+                <div className={`flex flex-wrap gap-1.5 ${hideVehicleTypeFilter ? 'mb-3' : 'mb-2'}`}>
                     {statusFilters.map((f) => (
                         <button
                             key={f}
@@ -59,23 +61,25 @@ const OrderManagementSidebar = ({
                     ))}
                 </div>
 
-                <div className="flex flex-wrap gap-1.5 mb-3">
-                    {typeFilters.map((t) => (
-                        <button
-                            key={t}
-                            type="button"
-                            onClick={() => onChangeVehicleType(t)}
-                            aria-pressed={vehicleTypeFilter === t}
-                            className={`text-xs font-semibold px-2 py-1 rounded-full border transition-all ${
-                                vehicleTypeFilter === t
-                                    ? 'bg-gray-700 text-white border-gray-700'
-                                    : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
-                            }`}
-                        >
-                            {t}
-                        </button>
-                    ))}
-                </div>
+                {!hideVehicleTypeFilter && (
+                    <div className="flex flex-wrap gap-1.5 mb-3">
+                        {typeFilters.map((t) => (
+                            <button
+                                key={t}
+                                type="button"
+                                onClick={() => onChangeVehicleType(t)}
+                                aria-pressed={vehicleTypeFilter === t}
+                                className={`text-xs font-semibold px-2 py-1 rounded-full border transition-all ${
+                                    vehicleTypeFilter === t
+                                        ? 'bg-gray-700 text-white border-gray-700'
+                                        : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                                }`}
+                            >
+                                {t}
+                            </button>
+                        ))}
+                    </div>
+                )}
 
                 <div className="flex-1 space-y-2 overflow-y-auto max-h-[28rem] scrollbar-hide">
                     {filteredOrders.length === 0 ? (

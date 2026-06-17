@@ -17,7 +17,7 @@ import org.hibernate.validator.constraints.URL;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "vehicle")
+@Table(name = "vehicles")
 public class VehicleEntity {
 
 	@Id
@@ -50,6 +50,14 @@ public class VehicleEntity {
 	@Positive(message = "Trunk capacity must be positive")
 	@Column(name = "trunk_capacity")
 	private Double trunkCapacity;
+
+	@Positive(message = "Rental price per day must be positive")
+	@Column(name = "rental_price_per_day")
+	private Double rentalPricePerDay;
+
+	@Positive(message = "Security deposit amount must be positive")
+	@Column(name = "security_deposit_amount")
+	private Double securityDepositAmount;
 
 	@NotNull(message = "Vehicle type is required")
 	@Enumerated(EnumType.STRING)

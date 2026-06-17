@@ -7,9 +7,11 @@ import { VehicleType, PublicVehicle } from '../../../types/vehicle';
 const mockNavigate = jest.fn();
 const mockGoBack = jest.fn();
 
+let mockRouteVehicleType: string = VehicleType.CELEBRATION;
+
 jest.mock('@react-navigation/native', () => ({
     useNavigation: () => ({ navigate: mockNavigate, goBack: mockGoBack }),
-    useRoute: () => ({ params: { companyId: 42, vehicleType: 'PROM' } }),
+    useRoute: () => ({ params: { companyId: 42, vehicleType: mockRouteVehicleType } }),
 }));
 
 jest.mock('../../../hooks/usePublicVehicles', () => ({
@@ -26,6 +28,7 @@ describe('VehicleListBody', () => {
         mockNavigate.mockClear();
         mockGoBack.mockClear();
         mockReload.mockClear();
+        mockRouteVehicleType = VehicleType.CELEBRATION;
         mockUsePublicVehicles.mockReturnValue({
             vehicles: [] as PublicVehicle[],
             loading: false,
@@ -49,7 +52,7 @@ describe('VehicleListBody', () => {
                     model: 'E-Class',
                     licensePlate: 'CB1234AA',
                     numberOfSeats: 4,
-                    vehicleType: VehicleType.PROM,
+                    vehicleType: VehicleType.CELEBRATION,
                     driverPhoneNumber: '+359888111222',
                     imageUrl: 'https://example.com/mercedes.jpg',
                 },
@@ -81,7 +84,7 @@ describe('VehicleListBody', () => {
                     brand: 'BMW',
                     model: '7',
                     licensePlate: 'CB5555KM',
-                    vehicleType: VehicleType.PROM,
+                    vehicleType: VehicleType.CELEBRATION,
                 },
             ] as PublicVehicle[],
             loading: false,
@@ -104,7 +107,7 @@ describe('VehicleListBody', () => {
                     brand: 'BMW',
                     model: '7',
                     licensePlate: 'CB5555KM',
-                    vehicleType: VehicleType.PROM,
+                    vehicleType: VehicleType.CELEBRATION,
                 },
             ] as PublicVehicle[],
             loading: false,
@@ -139,5 +142,62 @@ describe('VehicleListBody', () => {
         const { getByTestId } = renderWithProviders(<VehicleListBody />);
         fireEvent.press(getByTestId('vehicle-list-back'));
         expect(mockGoBack).toHaveBeenCalled();
+    });
+
+    it('shows book button instead of phone button for RENTAL vehicles', () => {
+        mockRouteVehicleType = VehicleType.RENTAL;
+        mockUsePublicVehicles.mockReturnValue({
+            vehicles: [
+                {
+                    id: 10,
+                    brand: 'Renault',
+                    model: 'Clio',
+                    licensePlate: 'CA4040HP',
+                    vehicleType: VehicleType.RENTAL,
+                    companyId: 42,
+                    imageUrl: 'https://example.com/clio.jpg',
+                },
+            ] as PublicVehicle[],
+            loading: false,
+            error: '',
+            reload: mockReload,
+        });
+
+        const { getByTestId, queryByTestId } = renderWithProviders(<VehicleListBody />);
+
+        expect(getByTestId('vehicle-book-10')).toBeTruthy();
+        expect(queryByTestId('vehicle-call-10')).toBeNull();
+    });
+
+    it('pressing the book button navigates to rentalBooking screen', () => {
+        mockRouteVehicleType = VehicleType.RENTAL;
+        mockUsePublicVehicles.mockReturnValue({
+            vehicles: [
+                {
+                    id: 10,
+                    brand: 'Renault',
+                    model: 'Clio',
+                    licensePlate: 'CA4040HP',
+                    vehicleType: VehicleType.RENTAL,
+                    companyId: 42,
+                    imageUrl: 'https://example.com/clio.jpg',
+                },
+            ] as PublicVehicle[],
+            loading: false,
+            error: '',
+            reload: mockReload,
+        });
+
+        const { getByTestId } = renderWithProviders(<VehicleListBody />);
+        fireEvent.press(getByTestId('vehicle-book-10'));
+
+        expect(mockNavigate).toHaveBeenCalledWith('rentalBooking', {
+            vehicleId: 10,
+            vehicleBrand: 'Renault',
+            vehicleModel: 'Clio',
+            vehiclePlate: 'CA4040HP',
+            vehicleImageUrl: 'https://example.com/clio.jpg',
+            companyId: 42,
+        });
     });
 });

@@ -14,6 +14,7 @@ public record PricingProperties(
 		String timezone,
 		String currency,
 		Double logisticsBaseFare,
-		Double logisticsRatePerKg
+		Double logisticsRatePerKg,
+		Double rentalRatePerDay
 ) {
 }

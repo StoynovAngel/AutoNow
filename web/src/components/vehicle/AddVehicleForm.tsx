@@ -11,6 +11,8 @@ interface AddVehicleFormProps {
     onCancel: () => void;
     initialData?: Vehicle;
     defaultCompanyId?: number;
+    hideCompanyId?: boolean;
+    lockedVehicleType?: string;
 }
 
 interface FormFields {
@@ -20,6 +22,8 @@ interface FormFields {
     vehicleType: string;
     numberOfSeats: string;
     trunkCapacity: string;
+    rentalPricePerDay: string;
+    securityDepositAmount: string;
     companyId: string;
     airConditioning: boolean;
     imageUrl: string;
@@ -27,13 +31,15 @@ interface FormFields {
     uploading: boolean;
 }
 
-const buildInitialFields = (initialData?: Vehicle, defaultCompanyId?: number): FormFields => ({
+const buildInitialFields = (initialData?: Vehicle, defaultCompanyId?: number, lockedVehicleType?: string): FormFields => ({
     brand: initialData?.brand ?? '',
     model: initialData?.model ?? '',
     licensePlate: initialData?.licensePlate ?? '',
-    vehicleType: initialData?.vehicleType ?? 'TAXI',
+    vehicleType: initialData?.vehicleType ?? lockedVehicleType ?? 'TAXI',
     numberOfSeats: initialData?.numberOfSeats ? String(initialData.numberOfSeats) : '',
     trunkCapacity: initialData?.trunkCapacity ? String(initialData.trunkCapacity) : '',
+    rentalPricePerDay: initialData?.rentalPricePerDay ? String(initialData.rentalPricePerDay) : '',
+    securityDepositAmount: initialData?.securityDepositAmount ? String(initialData.securityDepositAmount) : '',
     companyId: initialData?.companyId ? String(initialData.companyId) : defaultCompanyId ? String(defaultCompanyId) : '',
     airConditioning: initialData?.airConditioning ?? false,
     imageUrl: initialData?.imageUrl ?? '',
@@ -41,8 +47,8 @@ const buildInitialFields = (initialData?: Vehicle, defaultCompanyId?: number): F
     uploading: false,
 });
 
-const AddVehicleForm = ({ onSubmit, onCancel, initialData, defaultCompanyId }: AddVehicleFormProps) => {
-    const [fields, setFields] = useState<FormFields>(() => buildInitialFields(initialData, defaultCompanyId));
+const AddVehicleForm = ({ onSubmit, onCancel, initialData, defaultCompanyId, hideCompanyId = false, lockedVehicleType }: AddVehicleFormProps) => {
+    const [fields, setFields] = useState<FormFields>(() => buildInitialFields(initialData, defaultCompanyId, lockedVehicleType));
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -64,6 +70,8 @@ const AddVehicleForm = ({ onSubmit, onCancel, initialData, defaultCompanyId }: A
 
         const seats = parseInt(fields.numberOfSeats, 10);
         const trunk = parseFloat(fields.trunkCapacity);
+        const rentalPrice = parseFloat(fields.rentalPricePerDay);
+        const depositAmount = parseFloat(fields.securityDepositAmount);
 
         if (!fields.licensePlate.trim()) {
             setError('License plate is required.');
@@ -81,7 +89,16 @@ const AddVehicleForm = ({ onSubmit, onCancel, initialData, defaultCompanyId }: A
             setError('Trunk capacity must be a positive number.');
             return;
         }
+        if (fields.vehicleType === 'RENTAL' && fields.rentalPricePerDay && (isNaN(rentalPrice) || rentalPrice <= 0)) {
+            setError('Rental price per day must be a positive number.');
+            return;
+        }
+        if (fields.vehicleType === 'RENTAL' && fields.securityDepositAmount && (isNaN(depositAmount) || depositAmount <= 0)) {
+            setError('Security deposit must be a positive number.');
+            return;
+        }
 
+        const isRental = fields.vehicleType === 'RENTAL';
         const payload: VehiclePayload = {
             brand: fields.brand.trim(),
             model: fields.model.trim(),
@@ -90,6 +107,8 @@ const AddVehicleForm = ({ onSubmit, onCancel, initialData, defaultCompanyId }: A
             airConditioning: fields.airConditioning,
             numberOfSeats: seats,
             trunkCapacity: trunk || undefined,
+            rentalPricePerDay: isRental && fields.rentalPricePerDay ? rentalPrice : undefined,
+            securityDepositAmount: isRental && fields.securityDepositAmount ? depositAmount : undefined,
             vehicleType: fields.vehicleType,
             companyId: fields.companyId ? Number(fields.companyId) : undefined,
         };
@@ -128,6 +147,7 @@ const AddVehicleForm = ({ onSubmit, onCancel, initialData, defaultCompanyId }: A
                     brand={fields.brand}
                     model={fields.model}
                     vehicleType={fields.vehicleType}
+                    lockedType={lockedVehicleType}
                     onLicensePlateChange={v => set('licensePlate', v)}
                     onBrandChange={v => set('brand', v)}
                     onModelChange={v => set('model', v)}
@@ -138,10 +158,16 @@ const AddVehicleForm = ({ onSubmit, onCancel, initialData, defaultCompanyId }: A
                     trunkCapacity={fields.trunkCapacity}
                     companyId={fields.companyId}
                     airConditioning={fields.airConditioning}
+                    hideCompanyId={hideCompanyId}
+                    showRentalPrice={fields.vehicleType === 'RENTAL'}
+                    rentalPricePerDay={fields.rentalPricePerDay}
+                    securityDepositAmount={fields.securityDepositAmount}
                     onNumberOfSeatsChange={v => set('numberOfSeats', v)}
                     onTrunkCapacityChange={v => set('trunkCapacity', v)}
                     onCompanyIdChange={v => set('companyId', v)}
                     onAirConditioningChange={v => set('airConditioning', v)}
+                    onRentalPricePerDayChange={v => set('rentalPricePerDay', v)}
+                    onSecurityDepositAmountChange={v => set('securityDepositAmount', v)}
                 />
             </div>
 

@@ -26,9 +26,13 @@ apiClient.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response?.status === 401) {
-            localStorage.removeItem("accessToken");
-            localStorage.removeItem("userInfo");
-            window.location.href = "/login";
+            const requestUrl: string = error.config?.url ?? '';
+            const isAuthEndpoint = requestUrl.includes('/auth/');
+            if (!isAuthEndpoint) {
+                localStorage.removeItem("accessToken");
+                localStorage.removeItem("userInfo");
+                window.location.href = "/login";
+            }
         }
         return Promise.reject(error);
     }

@@ -10,12 +10,14 @@ import { useAuth } from '../contexts/AuthContext';
 import type { Vehicle } from '../components/company/VehicleInfo';
 import type { VehiclePayload } from '../services/vehicle/vehicleService';
 
-const VEHICLE_TYPES = ['TAXI', 'LOGISTICS', 'AMBULANCE', 'RENTAL', 'PROM', 'FUNERAL'] as const;
+const VEHICLE_TYPES = ['TAXI', 'LOGISTICS', 'AMBULANCE', 'RENTAL', 'CELEBRATION', 'FUNERAL'] as const;
 
 const Vehicles = () => {
     const { user } = useAuth();
     const isAdmin = user?.authorities?.includes('ROLE_ADMIN') ?? false;
     const isCompanyAdmin = !isAdmin && (user?.authorities?.includes('ROLE_COMPANY_ADMIN') ?? false);
+    const companyId = isCompanyAdmin ? (user?.companyId ?? null) : null;
+    const lockedVehicleType = isCompanyAdmin && user?.companyType ? user.companyType : undefined;
 
     const { vehicles, loading, error, addVehicle, updateVehicle, removeVehicle, refreshVehicles } = useVehicles(null, isCompanyAdmin);
     const [showForm, setShowForm] = useState(false);
@@ -30,7 +32,10 @@ const Vehicles = () => {
     };
 
     const handleAdd = async (payload: VehiclePayload) => {
-        await addVehicle(payload);
+        const finalPayload: VehiclePayload = isCompanyAdmin && companyId !== null
+            ? { ...payload, companyId }
+            : payload;
+        await addVehicle(finalPayload);
         setShowForm(false);
         showSuccess(`${payload.brand} ${payload.model} added successfully.`);
     };
@@ -144,6 +149,8 @@ const Vehicles = () => {
                             <AddVehicleForm
                                 onSubmit={handleAdd}
                                 onCancel={() => setShowForm(false)}
+                                hideCompanyId={isCompanyAdmin}
+                                lockedVehicleType={lockedVehicleType}
                             />
                         </div>
                     )}
@@ -154,6 +161,8 @@ const Vehicles = () => {
                                 initialData={editingVehicle}
                                 onSubmit={handleUpdate}
                                 onCancel={() => setEditingVehicle(null)}
+                                hideCompanyId={isCompanyAdmin}
+                                lockedVehicleType={lockedVehicleType}
                             />
                         </div>
                     )}

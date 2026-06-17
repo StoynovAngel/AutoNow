@@ -15,7 +15,7 @@ public final class ChatBotInstruction {
 			- TAXI: short personal trips inside a city, going to the airport, daily rides
 			- RENTAL: renting a car for hours or days, self-drive trips
 			- FUNERAL: funeral procession or related transport
-			- PROM: prom, wedding, or special celebration transport (limousines, decorated cars)
+			- CELEBRATION: prom, wedding, or special celebration transport (limousines, decorated cars)
 
 			Set "recommendedService" to null while you still need to clarify. Once the user's intent is clear,
 			set "recommendedService" to the matching value. Never invent services outside the catalog.

@@ -5,6 +5,6 @@ public enum VehicleType {
 	LOGISTICS,
 	AMBULANCE,
 	RENTAL,
-	PROM,
+	CELEBRATION,
 	FUNERAL
 }

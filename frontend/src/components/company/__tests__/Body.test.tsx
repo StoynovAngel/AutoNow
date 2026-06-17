@@ -62,15 +62,15 @@ describe('company Body', () => {
         });
     });
 
-    it('routes PROM bookings to the prom vehicles screen', () => {
-        mockRouteVehicleType = VehicleType.PROM;
+    it('routes CELEBRATION bookings to the celebration vehicles screen', () => {
+        mockRouteVehicleType = VehicleType.CELEBRATION;
         const { getByTestId } = renderWithProviders(<Body />);
 
         fireEvent.press(getByTestId('book-7'));
 
         expect(mockNavigate).toHaveBeenCalledWith('vehicleList', {
             companyId: 7,
-            vehicleType: VehicleType.PROM,
+            vehicleType: VehicleType.CELEBRATION,
         });
     });
 

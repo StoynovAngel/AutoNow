@@ -1,6 +1,6 @@
 import apiClient from '../apiClient';
 
-export const COMPANY_TYPES = ['TAXI', 'LOGISTICS', 'AMBULANCE', 'RENTAL', 'FUNERAL', 'PROM'] as const;
+export const COMPANY_TYPES = ['TAXI', 'LOGISTICS', 'AMBULANCE', 'RENTAL', 'FUNERAL', 'CELEBRATION'] as const;
 export type CompanyType = typeof COMPANY_TYPES[number];
 
 export interface CompanyPayload {

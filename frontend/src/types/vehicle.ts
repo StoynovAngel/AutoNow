@@ -4,7 +4,7 @@ export enum VehicleType {
     TAXI = 'TAXI',
     RENTAL = 'RENTAL',
     FUNERAL = 'FUNERAL',
-    PROM = 'PROM'
+    CELEBRATION = 'CELEBRATION'
 }
 
 export interface VehicleOption {
@@ -22,6 +22,8 @@ export interface PublicVehicle {
     licensePlate: string;
     imageUrl?: string;
     numberOfSeats?: number;
+    rentalPricePerDay?: number;
+    securityDepositAmount?: number;
     vehicleType: VehicleType;
     companyId?: number;
     driverPhoneNumber?: string;

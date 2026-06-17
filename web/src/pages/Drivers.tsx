@@ -41,7 +41,10 @@ const Drivers = () => {
     };
 
     const handleAdd = async (payload: DriverPayload) => {
-        await addDriver(payload);
+        const finalPayload: DriverPayload = isCompanyAdmin && companyId !== null
+            ? { ...payload, companyId }
+            : payload;
+        await addDriver(finalPayload);
         setShowForm(false);
         showSuccess(`${payload.firstName} ${payload.lastName} added successfully.`);
     };
@@ -183,13 +186,13 @@ const Drivers = () => {
 
                     {showForm && (
                         <div className="mb-6">
-                            <AddDriverForm onSubmit={handleAdd} onCancel={() => setShowForm(false)} />
+                            <AddDriverForm onSubmit={handleAdd} onCancel={() => setShowForm(false)} hideCompanyId={isCompanyAdmin} />
                         </div>
                     )}
 
                     {editingDriver && (
                         <div className="mb-6">
-                            <AddDriverForm initialData={editingDriver} onSubmit={handleUpdate} onCancel={() => setEditingDriver(null)} />
+                            <AddDriverForm initialData={editingDriver} onSubmit={handleUpdate} onCancel={() => setEditingDriver(null)} hideCompanyId={isCompanyAdmin} />
                         </div>
                     )}
 

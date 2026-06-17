@@ -25,6 +25,19 @@ const VehicleListBody = () => {
 
     const vehicleIcon = vehicleType === VehicleType.RENTAL ? 'car-rental' : 'directions-car';
 
+    const isRental = vehicleType === VehicleType.RENTAL;
+
+    const handleBook = (vehicle: PublicVehicle) => {
+        navigation.navigate('rentalBooking', {
+            vehicleId: vehicle.id,
+            vehicleBrand: vehicle.brand,
+            vehicleModel: vehicle.model,
+            vehiclePlate: vehicle.licensePlate,
+            vehicleImageUrl: vehicle.imageUrl,
+            companyId: companyId,
+        });
+    };
+
     const handleBack = () => navigation.goBack();
 
     const handleCall = async (phoneNumber?: string) => {
@@ -128,20 +141,33 @@ const VehicleListBody = () => {
                                         )}
                                     </View>
 
-                                    <Pressable
-                                        style={[
-                                            styles.callButton,
-                                            !vehicle.driverPhoneNumber && styles.callButtonDisabled,
-                                        ]}
-                                        onPress={() => handleCall(vehicle.driverPhoneNumber)}
-                                        disabled={!vehicle.driverPhoneNumber}
-                                        testID={`vehicle-call-${vehicle.id}`}
-                                        accessible={true}
-                                        accessibilityRole="button"
-                                        accessibilityLabel={t('vehicle-list-call-driver')}
-                                    >
-                                        <MaterialIcons name="phone" size={24} color="#FFFFFF" />
-                                    </Pressable>
+                                    {isRental ? (
+                                        <Pressable
+                                            style={styles.callButton}
+                                            onPress={() => handleBook(vehicle)}
+                                            testID={`vehicle-book-${vehicle.id}`}
+                                            accessible={true}
+                                            accessibilityRole="button"
+                                            accessibilityLabel={t('rental-confirm')}
+                                        >
+                                            <MaterialIcons name="event-available" size={24} color="#FFFFFF" />
+                                        </Pressable>
+                                    ) : (
+                                        <Pressable
+                                            style={[
+                                                styles.callButton,
+                                                !vehicle.driverPhoneNumber && styles.callButtonDisabled,
+                                            ]}
+                                            onPress={() => handleCall(vehicle.driverPhoneNumber)}
+                                            disabled={!vehicle.driverPhoneNumber}
+                                            testID={`vehicle-call-${vehicle.id}`}
+                                            accessible={true}
+                                            accessibilityRole="button"
+                                            accessibilityLabel={t('vehicle-list-call-driver')}
+                                        >
+                                            <MaterialIcons name="phone" size={24} color="#FFFFFF" />
+                                        </Pressable>
+                                    )}
                                 </View>
                             </View>
                         ))}
