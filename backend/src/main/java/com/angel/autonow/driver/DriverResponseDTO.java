@@ -1,6 +1,5 @@
 package com.angel.autonow.driver;
 
-import com.angel.autonow.expertise.ExpertiseType;
 import lombok.Builder;
 
 import java.util.Set;
@@ -11,7 +10,7 @@ public record DriverResponseDTO(
 		String firstName,
 		String lastName,
 		String phoneNumber,
-		Set<ExpertiseType> expertiseType,
+		Set<DriverExpertiseType> driverExpertiseType,
 		boolean available,
 		String imageUrl,
 		Long companyId,

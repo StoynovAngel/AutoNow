@@ -1,4 +1,4 @@
-package com.angel.autonow.driver;
+package com.angel.autonow.vehicle;
 
 import java.io.Serial;
 

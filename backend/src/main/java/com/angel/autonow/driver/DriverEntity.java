@@ -1,7 +1,6 @@
 package com.angel.autonow.driver;
 
 import com.angel.autonow.company.CompanyEntity;
-import com.angel.autonow.expertise.ExpertiseType;
 import com.angel.autonow.vehicle.VehicleEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -44,11 +43,11 @@ public class DriverEntity {
 	private String phoneNumber;
 
 	@NotEmpty(message = "At least one expertise type is required")
-	@ElementCollection(targetClass = ExpertiseType.class)
+	@ElementCollection(targetClass = DriverExpertiseType.class)
 	@Enumerated(EnumType.STRING)
 	@CollectionTable(name = "driver_expertise", joinColumns = @JoinColumn(name = "driver_id"))
 	@Column(name = "expertise_type", nullable = false)
-	private Set<ExpertiseType> expertiseType;
+	private Set<DriverExpertiseType> driverExpertiseType;
 
 	@Column(name = "available")
 	private boolean available;

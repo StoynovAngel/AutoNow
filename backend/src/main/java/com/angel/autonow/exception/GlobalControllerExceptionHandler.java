@@ -1,8 +1,8 @@
 package com.angel.autonow.exception;
 
-import com.angel.autonow.company.PricingAlreadyExistsException;
-import com.angel.autonow.company.PricingNotFoundException;
-import com.angel.autonow.driver.VehicleAlreadyAssignedException;
+import com.angel.autonow.pricing.PricingAlreadyExistsException;
+import com.angel.autonow.pricing.PricingNotFoundException;
+import com.angel.autonow.vehicle.VehicleAlreadyAssignedException;
 import com.angel.autonow.order.OrderConflictException;
 import com.angel.autonow.order.OrderForbiddenException;
 import com.angel.autonow.order.rental.RentalOrderConflictException;

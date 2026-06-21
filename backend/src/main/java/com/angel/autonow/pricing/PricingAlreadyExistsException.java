@@ -1,4 +1,4 @@
-package com.angel.autonow.company;
+package com.angel.autonow.pricing;
 
 public class PricingAlreadyExistsException extends RuntimeException {
 	public PricingAlreadyExistsException(Long companyId) {

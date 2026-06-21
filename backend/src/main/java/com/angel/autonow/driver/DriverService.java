@@ -3,6 +3,7 @@ package com.angel.autonow.driver;
 import com.angel.autonow.company.CompanyEntity;
 import com.angel.autonow.company.CompanyRepository;
 import com.angel.autonow.company.CompanyType;
+import com.angel.autonow.vehicle.VehicleAlreadyAssignedException;
 import com.angel.autonow.vehicle.VehicleEntity;
 import com.angel.autonow.vehicle.VehicleRepository;
 import com.angel.autonow.user.UserEntity;

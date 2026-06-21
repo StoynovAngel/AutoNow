@@ -1,6 +1,5 @@
 package com.angel.autonow.driver;
 
-import com.angel.autonow.expertise.ExpertiseType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
@@ -23,7 +22,7 @@ public record DriverRequestDTO(
 		String phoneNumber,
 
 		@NotEmpty(message = "At least one expertise type is required")
-		Set<ExpertiseType> expertiseType,
+		Set<DriverExpertiseType> driverExpertiseType,
 
 		boolean available,
 

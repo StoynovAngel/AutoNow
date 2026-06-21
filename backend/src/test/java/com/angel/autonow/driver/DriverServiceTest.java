@@ -3,10 +3,10 @@ package com.angel.autonow.driver;
 import com.angel.autonow.company.CompanyEntity;
 import com.angel.autonow.company.CompanyRepository;
 import com.angel.autonow.data.TestData;
-import com.angel.autonow.expertise.ExpertiseType;
 import com.angel.autonow.user.UserEntity;
 import com.angel.autonow.user.UserRepository;
 import com.angel.autonow.user.role.Role;
+import com.angel.autonow.vehicle.VehicleAlreadyAssignedException;
 import com.angel.autonow.vehicle.VehicleEntity;
 import com.angel.autonow.vehicle.VehicleRepository;
 import org.junit.jupiter.api.Test;
@@ -121,7 +121,7 @@ class DriverServiceTest {
 		DriverResponseDTO secondResponse = DriverResponseDTO.builder()
 				.id(2L).firstName("Jane").lastName("Smith")
 				.phoneNumber("+359888100201")
-				.expertiseType(Set.of(ExpertiseType.C)).available(true)
+				.driverExpertiseType(Set.of(DriverExpertiseType.C)).available(true)
 				.vehicleIds(emptySet())
 				.build();
 
@@ -198,7 +198,7 @@ class DriverServiceTest {
 				.firstName("Sarah")
 				.lastName("Williams")
 				.phoneNumber("+359888100201")
-				.expertiseType(Set.of(ExpertiseType.B))
+				.driverExpertiseType(Set.of(DriverExpertiseType.B))
 				.available(true)
 				.vehicleIds(emptySet())
 				.build();
@@ -238,7 +238,7 @@ class DriverServiceTest {
 				.firstName("Michael")
 				.lastName("Johnson")
 				.phoneNumber("+359888100200")
-				.expertiseType(Set.of(ExpertiseType.B))
+				.driverExpertiseType(Set.of(DriverExpertiseType.B))
 				.available(true)
 				.companyId(NON_EXISTENT_ID)
 				.build();
@@ -275,7 +275,7 @@ class DriverServiceTest {
 				.firstName("Michael")
 				.lastName("Johnson")
 				.phoneNumber("+359888100200")
-				.expertiseType(Set.of(ExpertiseType.B))
+				.driverExpertiseType(Set.of(DriverExpertiseType.B))
 				.available(true)
 				.companyId(20L)
 				.build();
@@ -314,7 +314,7 @@ class DriverServiceTest {
 				.firstName("Michael")
 				.lastName("Johnson")
 				.phoneNumber("+359888100200")
-				.expertiseType(Set.of(ExpertiseType.B))
+				.driverExpertiseType(Set.of(DriverExpertiseType.B))
 				.available(true)
 				.companyId(10L)
 				.build();
@@ -353,7 +353,7 @@ class DriverServiceTest {
 				.firstName("Michael")
 				.lastName("Johnson")
 				.phoneNumber("+359888100200")
-				.expertiseType(Set.of(ExpertiseType.B))
+				.driverExpertiseType(Set.of(DriverExpertiseType.B))
 				.available(true)
 				.companyId(null)
 				.build();

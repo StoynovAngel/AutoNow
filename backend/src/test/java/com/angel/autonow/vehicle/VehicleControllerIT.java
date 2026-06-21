@@ -6,7 +6,7 @@ import com.angel.autonow.company.CompanyType;
 import com.angel.autonow.data.TestData;
 import com.angel.autonow.driver.DriverEntity;
 import com.angel.autonow.driver.DriverRepository;
-import com.angel.autonow.expertise.ExpertiseType;
+import com.angel.autonow.driver.DriverExpertiseType;
 import tools.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -339,7 +339,7 @@ class VehicleControllerIT {
 		var driver = DriverEntity.builder()
 				.firstName("Ivan").lastName("Petrov")
 				.phoneNumber("+359888111222")
-				.expertiseType(java.util.Set.of(ExpertiseType.B))
+				.driverExpertiseType(java.util.Set.of(DriverExpertiseType.B))
 				.available(true).company(company)
 				.build();
 		driverRepository.save(driver);
