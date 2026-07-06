@@ -7,7 +7,7 @@ import com.angel.autonow.company.CompanyType;
 import com.angel.autonow.driver.DriverEntity;
 import com.angel.autonow.driver.DriverRequestDTO;
 import com.angel.autonow.driver.DriverResponseDTO;
-import com.angel.autonow.expertise.ExpertiseType;
+import com.angel.autonow.driver.DriverExpertiseType;
 import com.angel.autonow.order.OrderEntity;
 import com.angel.autonow.order.OrderRequestDTO;
 import com.angel.autonow.order.OrderResponseDTO;
@@ -198,7 +198,7 @@ public final class TestData {
 				.firstName("Michael")
 				.lastName("Johnson")
 				.phoneNumber("+359888100200")
-				.expertiseType(Set.of(ExpertiseType.B))
+				.driverExpertiseType(Set.of(DriverExpertiseType.B))
 				.available(true)
 				.build();
 	}
@@ -208,7 +208,7 @@ public final class TestData {
 				.firstName("Michael")
 				.lastName("Johnson")
 				.phoneNumber("+359888100200")
-				.expertiseType(Set.of(ExpertiseType.B))
+				.driverExpertiseType(Set.of(DriverExpertiseType.B))
 				.available(true)
 				.build();
 	}
@@ -219,7 +219,7 @@ public final class TestData {
 				.firstName("Michael")
 				.lastName("Johnson")
 				.phoneNumber("+359888100200")
-				.expertiseType(Set.of(ExpertiseType.B))
+				.driverExpertiseType(Set.of(DriverExpertiseType.B))
 				.available(true)
 				.vehicleIds(Collections.emptySet())
 				.build();

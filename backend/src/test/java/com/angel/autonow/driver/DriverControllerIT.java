@@ -4,7 +4,6 @@ import com.angel.autonow.company.CompanyEntity;
 import com.angel.autonow.company.CompanyRepository;
 import com.angel.autonow.company.CompanyType;
 import com.angel.autonow.data.TestData;
-import com.angel.autonow.expertise.ExpertiseType;
 import com.angel.autonow.user.UserEntity;
 import com.angel.autonow.user.UserRepository;
 import com.angel.autonow.user.role.Role;
@@ -170,7 +169,7 @@ class DriverControllerIT {
 				.firstName("Jane")
 				.lastName("Smith")
 				.phoneNumber("+359877200100")
-				.expertiseType(Set.of(ExpertiseType.C))
+				.driverExpertiseType(Set.of(DriverExpertiseType.C))
 				.available(false)
 				.build();
 

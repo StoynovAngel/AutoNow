@@ -1,5 +1,7 @@
 package com.angel.autonow.company;
 
+import com.angel.autonow.pricing.PricingAlreadyExistsException;
+import com.angel.autonow.pricing.PricingNotFoundException;
 import com.angel.autonow.pricing.PricingProperties;
 import com.angel.autonow.user.UserEntity;
 import com.angel.autonow.user.UserRepository;

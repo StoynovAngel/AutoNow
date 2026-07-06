@@ -1,6 +1,6 @@
-package com.angel.autonow.expertise;
+package com.angel.autonow.driver;
 
-public enum ExpertiseType {
+public enum DriverExpertiseType {
 	AM,
 	A1,
 	A2,

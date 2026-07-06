@@ -4,8 +4,8 @@ import com.angel.autonow.company.CompanyEntity;
 import com.angel.autonow.company.CompanyRepository;
 import com.angel.autonow.company.CompanyType;
 import com.angel.autonow.driver.DriverEntity;
+import com.angel.autonow.driver.DriverExpertiseType;
 import com.angel.autonow.driver.DriverRepository;
-import com.angel.autonow.expertise.ExpertiseType;
 import com.angel.autonow.user.UserEntity;
 import com.angel.autonow.user.UserRepository;
 import com.angel.autonow.vehicle.VehicleEntity;
@@ -124,17 +124,17 @@ public class DataSeeder implements ApplicationRunner {
 		saveDriverWithVehicle(DriverEntity.builder()
 				.firstName("Michael").lastName("Johnson")
 				.phoneNumber("+359888100100")
-				.expertiseType(Set.of(ExpertiseType.B)).available(true)
+				.driverExpertiseType(Set.of(DriverExpertiseType.B)).available(true)
 				.company(company).build(), v1);
 		saveDriverWithVehicle(DriverEntity.builder()
 				.firstName("Sarah").lastName("Williams")
 				.phoneNumber("+359888100101")
-				.expertiseType(Set.of(ExpertiseType.B)).available(true)
+				.driverExpertiseType(Set.of(DriverExpertiseType.B)).available(true)
 				.company(company).build(), v2);
 		saveDriverWithVehicle(DriverEntity.builder()
 				.firstName("Daniel").lastName("Taylor")
 				.phoneNumber("+359888100102")
-				.expertiseType(Set.of(ExpertiseType.B)).available(true)
+				.driverExpertiseType(Set.of(DriverExpertiseType.B)).available(true)
 				.company(company).build(), v3);
 	}
 
@@ -179,17 +179,17 @@ public class DataSeeder implements ApplicationRunner {
 		saveDriverWithVehicle(DriverEntity.builder()
 				.firstName("David").lastName("Brown")
 				.phoneNumber("+359888200200")
-				.expertiseType(Set.of(ExpertiseType.C, ExpertiseType.CE)).available(true)
+				.driverExpertiseType(Set.of(DriverExpertiseType.C, DriverExpertiseType.CE)).available(true)
 				.company(company).build(), v1);
 		saveDriverWithVehicle(DriverEntity.builder()
 				.firstName("Peter").lastName("Anderson")
 				.phoneNumber("+359888200201")
-				.expertiseType(Set.of(ExpertiseType.CE)).available(true)
+				.driverExpertiseType(Set.of(DriverExpertiseType.CE)).available(true)
 				.company(company).build(), v2);
 		saveDriverWithVehicle(DriverEntity.builder()
 				.firstName("Lyudmila").lastName("Koleva")
 				.phoneNumber("+359888200202")
-				.expertiseType(Set.of(ExpertiseType.C, ExpertiseType.CE)).available(true)
+				.driverExpertiseType(Set.of(DriverExpertiseType.C, DriverExpertiseType.CE)).available(true)
 				.company(company).build(), v3);
 	}
 
@@ -234,17 +234,17 @@ public class DataSeeder implements ApplicationRunner {
 		saveDriverWithVehicle(DriverEntity.builder()
 				.firstName("Emily").lastName("Davis")
 				.phoneNumber("+359888300300")
-				.expertiseType(Set.of(ExpertiseType.B, ExpertiseType.C1)).available(true)
+				.driverExpertiseType(Set.of(DriverExpertiseType.B, DriverExpertiseType.C1)).available(true)
 				.company(company).build(), v1);
 		saveDriverWithVehicle(DriverEntity.builder()
 				.firstName("Robert").lastName("Miller")
 				.phoneNumber("+359888300301")
-				.expertiseType(Set.of(ExpertiseType.C1)).available(true)
+				.driverExpertiseType(Set.of(DriverExpertiseType.C1)).available(true)
 				.company(company).build(), v2);
 		saveDriverWithVehicle(DriverEntity.builder()
 				.firstName("Stefan").lastName("Iliev")
 				.phoneNumber("+359888300302")
-				.expertiseType(Set.of(ExpertiseType.B, ExpertiseType.C1)).available(true)
+				.driverExpertiseType(Set.of(DriverExpertiseType.B, DriverExpertiseType.C1)).available(true)
 				.company(company).build(), v3);
 	}
 
@@ -331,17 +331,17 @@ public class DataSeeder implements ApplicationRunner {
 		saveDriverWithVehicle(DriverEntity.builder()
 				.firstName("George").lastName("Stoyanov")
 				.phoneNumber("+359888500500")
-				.expertiseType(Set.of(ExpertiseType.B)).available(true)
+				.driverExpertiseType(Set.of(DriverExpertiseType.B)).available(true)
 				.company(company).build(), v1);
 		saveDriverWithVehicle(DriverEntity.builder()
 				.firstName("Maria").lastName("Hristova")
 				.phoneNumber("+359888500501")
-				.expertiseType(Set.of(ExpertiseType.B)).available(true)
+				.driverExpertiseType(Set.of(DriverExpertiseType.B)).available(true)
 				.company(company).build(), v2);
 		saveDriverWithVehicle(DriverEntity.builder()
 				.firstName("Vasil").lastName("Marinov")
 				.phoneNumber("+359888500502")
-				.expertiseType(Set.of(ExpertiseType.B)).available(true)
+				.driverExpertiseType(Set.of(DriverExpertiseType.B)).available(true)
 				.company(company).build(), v3);
 	}
 
@@ -386,17 +386,17 @@ public class DataSeeder implements ApplicationRunner {
 		saveDriverWithVehicle(DriverEntity.builder()
 				.firstName("Nikolay").lastName("Georgiev")
 				.phoneNumber("+359888600600")
-				.expertiseType(Set.of(ExpertiseType.B, ExpertiseType.D1)).available(true)
+				.driverExpertiseType(Set.of(DriverExpertiseType.B, DriverExpertiseType.D1)).available(true)
 				.company(company).build(), v1);
 		saveDriverWithVehicle(DriverEntity.builder()
 				.firstName("Elena").lastName("Vasileva")
 				.phoneNumber("+359888600601")
-				.expertiseType(Set.of(ExpertiseType.D1)).available(true)
+				.driverExpertiseType(Set.of(DriverExpertiseType.D1)).available(true)
 				.company(company).build(), v2);
 		saveDriverWithVehicle(DriverEntity.builder()
 				.firstName("Boris").lastName("Tonev")
 				.phoneNumber("+359888600602")
-				.expertiseType(Set.of(ExpertiseType.B, ExpertiseType.D1)).available(true)
+				.driverExpertiseType(Set.of(DriverExpertiseType.B, DriverExpertiseType.D1)).available(true)
 				.company(company).build(), v3);
 	}
 }
