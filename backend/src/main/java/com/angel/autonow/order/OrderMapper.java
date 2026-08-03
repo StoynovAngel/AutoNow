@@ -31,7 +31,7 @@ public interface OrderMapper {
 	void updateBaseFields(OrderRequestDTO request, @MappingTarget OrderEntity entity);
 
 	@Named("driverToInfo")
-	default DriverInfoDTO driverToInfo(DriverEntity driver) {
+	default com.angel.autonow.order.DriverInfoDTO driverToInfo(DriverEntity driver) {
 		if (driver == null) {
 			return null;
 		}
@@ -45,7 +45,7 @@ public interface OrderMapper {
 	}
 
 	@Named("vehicleToInfo")
-	default VehicleInfoDTO vehicleToInfo(VehicleEntity vehicle) {
+	default com.angel.autonow.order.VehicleInfoDTO vehicleToInfo(VehicleEntity vehicle) {
 		if (vehicle == null) {
 			return null;
 		}

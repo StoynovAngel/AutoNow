@@ -9,15 +9,17 @@ const mockNavigate = jest.fn();
 const mockGoBack = jest.fn();
 const mockPopToTop = jest.fn();
 
+const mockRouteParams: { params: Record<string, unknown> } = {
+    params: {
+        companyId: 1,
+        vehicleType: 'TAXI',
+        preferences: {},
+    },
+};
+
 jest.mock('@react-navigation/native', () => ({
     useNavigation: () => ({ navigate: mockNavigate, goBack: mockGoBack, popToTop: mockPopToTop }),
-    useRoute: () => ({
-        params: {
-            companyId: 1,
-            vehicleType: 'TAXI',
-            preferences: {},
-        },
-    }),
+    useRoute: () => mockRouteParams,
 }));
 
 jest.mock('../../../services/mapboxService', () => ({
@@ -82,9 +84,90 @@ const selectBothAddresses = (getByTestId: ReturnType<typeof renderWithAuth>['get
     fireEvent.press(getByTestId('destination-search-select'));
 };
 
+describe('BookingMapBody — logistics estimate', () => {
+    beforeEach(() => {
+        jest.clearAllMocks();
+        mockRouteParams.params = {
+            companyId: 1,
+            vehicleType: 'LOGISTICS',
+            preferences: { companyAddress: '1 Depot St' },
+        };
+    });
+
+    afterAll(() => {
+        mockRouteParams.params = { companyId: 1, vehicleType: 'TAXI', preferences: {} };
+    });
+
+    it('fires estimate as soon as route is ready, without waiting for weight input', async () => {
+        const { searchAddress } = jest.requireMock('../../../services/mapboxService');
+        (searchAddress as jest.Mock).mockResolvedValue([pickup]);
+
+        mockGetRoute.mockResolvedValue({
+            distanceKm: 8.0,
+            durationMinutes: 20,
+            geometry: { type: 'LineString', coordinates: [] },
+        });
+        mockEstimate.mockResolvedValue({ estimatedPrice: 22.40, currency: 'EUR', distanceKm: 8.0 });
+
+        const { getByTestId } = renderWithAuth();
+
+        await act(async () => {
+            fireEvent.press(getByTestId('destination-search-select'));
+        });
+
+        await waitFor(() =>
+            expect(mockEstimate).toHaveBeenCalledWith({
+                vehicleType: 'LOGISTICS',
+                distanceKm: 8.0,
+            }),
+        );
+        await waitFor(() => {
+            expect(getByTestId('estimate-price').props.children.join('')).toContain('22.40');
+        });
+    });
+
+    it('re-runs estimate with weightKg when weight is entered', async () => {
+        const { searchAddress } = jest.requireMock('../../../services/mapboxService');
+        (searchAddress as jest.Mock).mockResolvedValue([pickup]);
+
+        mockGetRoute.mockResolvedValue({
+            distanceKm: 8.0,
+            durationMinutes: 20,
+            geometry: { type: 'LineString', coordinates: [] },
+        });
+        mockEstimate
+            .mockResolvedValueOnce({ estimatedPrice: 22.40, currency: 'EUR', distanceKm: 8.0 })
+            .mockResolvedValue({ estimatedPrice: 34.90, currency: 'EUR', distanceKm: 8.0 });
+
+        const { getByTestId } = renderWithAuth();
+
+        await act(async () => {
+            fireEvent.press(getByTestId('destination-search-select'));
+        });
+
+        await waitFor(() => expect(mockEstimate).toHaveBeenCalledTimes(1));
+
+        await act(async () => {
+            fireEvent.changeText(getByTestId('weight-input'), '50');
+        });
+
+        await waitFor(() =>
+            expect(mockEstimate).toHaveBeenCalledWith({
+                vehicleType: 'LOGISTICS',
+                distanceKm: 8.0,
+                weightKg: 50,
+            }),
+        );
+        await waitFor(() => {
+            expect(getByTestId('estimate-price').props.children.join('')).toContain('34.90');
+        });
+    });
+});
+
 describe('BookingMapBody — estimate display', () => {
     beforeEach(() => {
         jest.clearAllMocks();
+        mockRouteParams.params = { companyId: 1, vehicleType: 'TAXI', preferences: {} };
     });
 
     it('does not call estimate before pickup+destination are selected', () => {
