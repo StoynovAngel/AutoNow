@@ -41,6 +41,20 @@ describe('apiClient', () => {
         expect(captured[0].headers.Authorization).toBe('Bearer jwt-token');
     });
 
+    it('does not attach an Authorization header on auth endpoints even when a token is stored', async () => {
+        localStorage.setItem('accessToken', 'stale-token');
+
+        const captured: InternalAxiosRequestConfig[] = [];
+        apiClient.defaults.adapter = async (config) => {
+            captured.push(config);
+            return { data: {}, status: 200, statusText: 'OK', headers: {}, config };
+        };
+
+        await apiClient.post('/auth/login', {});
+
+        expect(captured[0].headers.Authorization).toBeUndefined();
+    });
+
     it('does not attach an Authorization header when no token is stored', async () => {
         const captured: InternalAxiosRequestConfig[] = [];
         apiClient.defaults.adapter = async (config) => {
