@@ -1,7 +1,6 @@
 package com.angel.autonow.vehicle;
 
 import com.angel.autonow.company.CompanyEntity;
-import com.angel.autonow.driver.DriverEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -67,8 +66,4 @@ public class VehicleEntity {
 	@ManyToOne
 	@JoinColumn(name = "company_id")
 	private CompanyEntity company;
-
-	@ManyToOne
-	@JoinColumn(name = "driver_id")
-	private DriverEntity driver;
 }

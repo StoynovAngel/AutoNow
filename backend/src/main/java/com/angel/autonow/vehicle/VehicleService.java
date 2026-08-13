@@ -102,8 +102,6 @@ public class VehicleService {
 	}
 
 	private PublicVehicleResponseDTO toPublicDto(VehicleEntity vehicle) {
-		String driverPhone = vehicle.getDriver() != null ? vehicle.getDriver().getPhoneNumber() : null;
-
 		return PublicVehicleResponseDTO.builder()
 				.id(vehicle.getId())
 				.brand(vehicle.getBrand())
@@ -115,7 +113,6 @@ public class VehicleService {
 				.securityDepositAmount(vehicle.getSecurityDepositAmount())
 				.vehicleType(vehicle.getVehicleType())
 				.companyId(vehicle.getCompany() != null ? vehicle.getCompany().getId() : null)
-				.driverPhoneNumber(driverPhone)
 				.build();
 	}
 

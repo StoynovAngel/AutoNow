@@ -13,8 +13,7 @@ public record PublicVehicleResponseDTO(
 		Double rentalPricePerDay,
 		Double securityDepositAmount,
 		VehicleType vehicleType,
-		Long companyId,
-		String driverPhoneNumber
+		Long companyId
 ) {
 
 }

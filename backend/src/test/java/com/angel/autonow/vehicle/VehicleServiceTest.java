@@ -3,7 +3,6 @@ package com.angel.autonow.vehicle;
 import com.angel.autonow.company.CompanyEntity;
 import com.angel.autonow.company.CompanyRepository;
 import com.angel.autonow.data.TestData;
-import com.angel.autonow.driver.DriverEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -168,15 +167,12 @@ class VehicleServiceTest {
 	}
 
 	@Test
-	void getPublicVehiclesByCompanyAndType_filtersByTypeAndIncludesDriverPhone() {
+	void getPublicVehiclesByCompanyAndType_filtersByType() {
 		CompanyEntity company = CompanyEntity.builder().id(10L).build();
-		DriverEntity driver = DriverEntity.builder()
-				.id(7L).firstName("Ivan").lastName("Petrov")
-				.phoneNumber("+359888111222").build();
 		VehicleEntity prom = VehicleEntity.builder()
 				.id(1L).brand("Mercedes").model("E-Class")
 				.licensePlate("CB1234AB").numberOfSeats(4)
-				.vehicleType(VehicleType.CELEBRATION).company(company).driver(driver).build();
+				.vehicleType(VehicleType.CELEBRATION).company(company).build();
 
 		when(vehicleRepository.findByCompanyIdAndVehicleType(10L, VehicleType.CELEBRATION))
 				.thenReturn(List.of(prom));
@@ -185,13 +181,12 @@ class VehicleServiceTest {
 
 		assertEquals(1, result.size());
 		assertEquals("Mercedes", result.get(0).brand());
-		assertEquals("+359888111222", result.get(0).driverPhoneNumber());
 		assertEquals(VehicleType.CELEBRATION, result.get(0).vehicleType());
 		assertEquals(10L, result.get(0).companyId());
 	}
 
 	@Test
-	void getPublicVehiclesByCompanyAndType_noDriverAssigned_returnsNullPhone() {
+	void getPublicVehiclesByCompanyAndType_returnsVehicleWithoutDriverInfo() {
 		VehicleEntity vehicle = VehicleEntity.builder()
 				.id(2L).brand("BMW").model("7")
 				.licensePlate("CB5555KM").numberOfSeats(4)
@@ -203,7 +198,7 @@ class VehicleServiceTest {
 		var result = vehicleService.getPublicVehiclesByCompanyAndType(10L, VehicleType.CELEBRATION);
 
 		assertEquals(1, result.size());
-		assertNull(result.get(0).driverPhoneNumber());
+		assertEquals("BMW", result.get(0).brand());
 	}
 
 	@Test

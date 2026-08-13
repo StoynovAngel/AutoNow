@@ -77,10 +77,7 @@ public class DataSeeder implements ApplicationRunner {
 	}
 
 	private DriverEntity saveDriverWithVehicle(DriverEntity driver, VehicleEntity vehicle) {
-		DriverEntity saved = driverRepository.save(driver);
-		vehicle.setDriver(saved);
-		vehicleRepository.save(vehicle);
-		return saved;
+		return driverRepository.save(driver);
 	}
 
 	private void seedTaxi(String password) {
