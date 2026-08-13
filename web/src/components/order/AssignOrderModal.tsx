@@ -19,15 +19,8 @@ const AssignOrderModal = ({ order, drivers, vehicles, onAssign, onClose }: Assig
     const [error, setError] = useState<string | null>(null);
 
     const eligibleDrivers = useMemo(() => {
-        const matchingVehicleIds = new Set(
-            vehicles.filter((v) => v.vehicleType === order.vehicleType).map((v) => v.id),
-        );
-        return drivers.filter(
-            (d) =>
-                d.available &&
-                d.vehicleIds.some((id) => matchingVehicleIds.has(id)),
-        );
-    }, [drivers, vehicles, order.vehicleType]);
+        return drivers.filter((d) => d.available);
+    }, [drivers]);
 
     const selectedDriver = useMemo(
         () => eligibleDrivers.find((d) => d.id === driverId) ?? null,
@@ -36,10 +29,7 @@ const AssignOrderModal = ({ order, drivers, vehicles, onAssign, onClose }: Assig
 
     const eligibleVehicles = useMemo(() => {
         if (!selectedDriver) return [];
-        const ids = new Set(selectedDriver.vehicleIds);
-        return vehicles.filter(
-            (v) => ids.has(v.id) && v.vehicleType === order.vehicleType,
-        );
+        return vehicles.filter((v) => v.vehicleType === order.vehicleType);
     }, [selectedDriver, vehicles, order.vehicleType]);
 
     const canSubmit = driverId !== null && vehicleId !== null && !submitting;

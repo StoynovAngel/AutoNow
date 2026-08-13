@@ -44,10 +44,6 @@ const DriverCard = ({ driver, index, onEdit, onDelete, onAssign }: DriverCardPro
                     <span className="text-xs text-gray-500 font-semibold block mb-0.5">PHONE</span>
                     <p className="text-xs font-bold truncate text-gray-900">{driver.phoneNumber}</p>
                 </div>
-                <div className="bg-gray-50 border border-gray-200 p-2 rounded-lg">
-                    <span className="text-xs text-gray-500 font-semibold block mb-0.5">VEHICLES</span>
-                    <p className="text-sm font-bold text-gray-900">{driver.vehicleIds.length}</p>
-                </div>
             </div>
 
             {driver.companyId && (
