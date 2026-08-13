@@ -11,7 +11,6 @@ const makeDriver = (overrides: Partial<Driver> = {}): Driver => ({
     expertiseType: ['B'],
     available: true,
     companyId: 1,
-    vehicleIds: [10, 11],
     ...overrides,
 });
 

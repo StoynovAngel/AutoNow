@@ -28,7 +28,6 @@ const driver = (overrides: Partial<Driver> = {}): Driver => ({
     expertiseType: ['TAXI'],
     available: true,
     companyId: 1,
-    vehicleIds: [10],
     ...overrides,
 });
 
@@ -46,16 +45,14 @@ const vehicle = (overrides: Partial<Vehicle> = {}): Vehicle => ({
 });
 
 describe('AssignOrderModal', () => {
-    it('renders only available drivers who have at least one vehicle matching the order vehicleType', () => {
+    it('renders only available drivers', () => {
         const drivers = [
-            driver({ id: 1, firstName: 'TaxiAvail', vehicleIds: [10], available: true }),
-            driver({ id: 2, firstName: 'TaxiOff', vehicleIds: [10], available: false }),
-            driver({ id: 3, firstName: 'AmbOnly', vehicleIds: [11], available: true }),
-            driver({ id: 4, firstName: 'NoVehicles', vehicleIds: [], available: true }),
+            driver({ id: 1, firstName: 'TaxiAvail', available: true }),
+            driver({ id: 2, firstName: 'TaxiOff', available: false }),
+            driver({ id: 3, firstName: 'AmbOnly', available: true }),
         ];
         const vehicles = [
             vehicle({ id: 10, vehicleType: 'TAXI' }),
-            vehicle({ id: 11, vehicleType: 'AMBULANCE' }),
         ];
 
         render(
@@ -72,13 +69,12 @@ describe('AssignOrderModal', () => {
         const optionTexts = Array.from(driverSelect.options).map((o) => o.textContent ?? '');
 
         expect(optionTexts.some((t) => t.includes('TaxiAvail'))).toBe(true);
+        expect(optionTexts.some((t) => t.includes('AmbOnly'))).toBe(true);
         expect(optionTexts.some((t) => t.includes('TaxiOff'))).toBe(false);
-        expect(optionTexts.some((t) => t.includes('AmbOnly'))).toBe(false);
-        expect(optionTexts.some((t) => t.includes('NoVehicles'))).toBe(false);
     });
 
-    it('lists only vehicles belonging to the selected driver and matching the order vehicleType', () => {
-        const drivers = [driver({ id: 1, vehicleIds: [10, 11] })];
+    it('lists only vehicles matching the order vehicleType', () => {
+        const drivers = [driver({ id: 1 })];
         const vehicles = [
             vehicle({ id: 10, vehicleType: 'TAXI', licensePlate: 'CA1111AB' }),
             vehicle({ id: 11, vehicleType: 'AMBULANCE', licensePlate: 'CA2222AB' }),
@@ -102,12 +98,12 @@ describe('AssignOrderModal', () => {
         const texts = Array.from(vehicleSelect.options).map((o) => o.textContent ?? '');
 
         expect(texts.some((t) => t.includes('CA1111AB'))).toBe(true);
+        expect(texts.some((t) => t.includes('CA3333AB'))).toBe(true);
         expect(texts.some((t) => t.includes('CA2222AB'))).toBe(false);
-        expect(texts.some((t) => t.includes('CA3333AB'))).toBe(false);
     });
 
     it('keeps the submit button disabled until a driver and vehicle are picked', () => {
-        const drivers = [driver({ id: 1, vehicleIds: [10] })];
+        const drivers = [driver({ id: 1 })];
         const vehicles = [vehicle({ id: 10 })];
 
         render(
@@ -131,7 +127,7 @@ describe('AssignOrderModal', () => {
     });
 
     it('calls onAssign with the chosen driverId and vehicleId, then closes', async () => {
-        const drivers = [driver({ id: 1, vehicleIds: [10] })];
+        const drivers = [driver({ id: 1 })];
         const vehicles = [vehicle({ id: 10 })];
         const onAssign = vi.fn().mockResolvedValue(undefined);
         const onClose = vi.fn();
@@ -155,7 +151,7 @@ describe('AssignOrderModal', () => {
     });
 
     it('shows an error alert and stays open when onAssign rejects', async () => {
-        const drivers = [driver({ id: 1, vehicleIds: [10] })];
+        const drivers = [driver({ id: 1 })];
         const vehicles = [vehicle({ id: 10 })];
         const onAssign = vi.fn().mockRejectedValue(new Error('boom'));
         const onClose = vi.fn();
@@ -181,7 +177,7 @@ describe('AssignOrderModal', () => {
     });
 
     it('shows the Reassign label and prefills driver/vehicle when the order already has them', () => {
-        const drivers = [driver({ id: 1, vehicleIds: [10] })];
+        const drivers = [driver({ id: 1 })];
         const vehicles = [vehicle({ id: 10 })];
 
         render(

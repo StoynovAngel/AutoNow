@@ -2,14 +2,11 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, waitFor, act } from '@testing-library/react';
 import { useDrivers } from '../useDrivers';
 import { driverService } from '../../services/driver/driverService';
-import { vehicleService } from '../../services/vehicle/vehicleService';
 import { ratingService } from '../../services/rating/ratingService';
 import type { Driver } from '../../components/company/DriverInfo';
-import type { Vehicle } from '../../components/company/VehicleInfo';
 import type { Rating } from '../../services/rating/ratingService';
 
 vi.mock('../../services/driver/driverService');
-vi.mock('../../services/vehicle/vehicleService');
 vi.mock('../../services/rating/ratingService');
 
 const driver = (id: number, overrides: Partial<Driver> = {}): Driver => ({
@@ -17,18 +14,11 @@ const driver = (id: number, overrides: Partial<Driver> = {}): Driver => ({
     firstName: 'Driver',
     lastName: String(id),
     phoneNumber: '555-0000',
-    licenseNumber: `LIC-${id}`,
-    expertiseType: 'TAXI',
+    expertiseType: ['TAXI'],
     available: true,
     companyId: 1,
-    vehicleIds: [],
     ...overrides,
 });
-
-const vehicle = (id: number): Vehicle => ({
-    id,
-    licensePlate: `PL-${id}`,
-} as Vehicle);
 
 const rating = (id: number, value = 5, comment?: string): Rating => ({
     id,
@@ -105,10 +95,10 @@ describe('useDrivers', () => {
         expect(result.current.driverVehicles).toEqual([]);
     });
 
-    it('selectDriver loads driver details and vehicles', async () => {
-        vi.mocked(driverService.getDriversByCompany).mockResolvedValue([driver(1, { vehicleIds: [100] })]);
-        vi.mocked(driverService.getDriverById).mockResolvedValue(driver(1, { vehicleIds: [100] }));
-        vi.mocked(vehicleService.getVehiclesByIds).mockResolvedValue([vehicle(100)]);
+    it('selectDriver loads driver details and ratings', async () => {
+        vi.mocked(driverService.getDriversByCompany).mockResolvedValue([driver(1)]);
+        vi.mocked(driverService.getDriverById).mockResolvedValue(driver(1));
+        vi.mocked(ratingService.getRatingsByDriverId).mockResolvedValue([rating(1)]);
 
         const { result } = renderHook(() => useDrivers(10));
         await waitFor(() => expect(result.current.drivers).toHaveLength(1));
@@ -118,24 +108,8 @@ describe('useDrivers', () => {
         });
 
         expect(driverService.getDriverById).toHaveBeenCalledWith('1');
-        expect(vehicleService.getVehiclesByIds).toHaveBeenCalledWith(['100']);
         expect(result.current.selectedDriverId).toBe(1);
         expect(result.current.selectedDriver?.id).toBe(1);
-        expect(result.current.driverVehicles).toEqual([vehicle(100)]);
-    });
-
-    it('selectDriver with no vehicleIds skips the vehicle service', async () => {
-        vi.mocked(driverService.getDriversByCompany).mockResolvedValue([driver(1)]);
-        vi.mocked(driverService.getDriverById).mockResolvedValue(driver(1, { vehicleIds: [] }));
-
-        const { result } = renderHook(() => useDrivers(10));
-        await waitFor(() => expect(result.current.drivers).toHaveLength(1));
-
-        await act(async () => {
-            await result.current.selectDriver(1);
-        });
-
-        expect(vehicleService.getVehiclesByIds).not.toHaveBeenCalled();
         expect(result.current.driverVehicles).toEqual([]);
     });
 
@@ -179,7 +153,7 @@ describe('useDrivers', () => {
 
     it('selectDriver loads driver ratings', async () => {
         vi.mocked(driverService.getDriversByCompany).mockResolvedValue([driver(1)]);
-        vi.mocked(driverService.getDriverById).mockResolvedValue(driver(1, { vehicleIds: [] }));
+        vi.mocked(driverService.getDriverById).mockResolvedValue(driver(1));
         vi.mocked(ratingService.getRatingsByDriverId).mockResolvedValue([rating(1, 5, 'great'), rating(2, 4)]);
 
         const { result } = renderHook(() => useDrivers(10));
@@ -196,7 +170,7 @@ describe('useDrivers', () => {
 
     it('selectDriver leaves ratings empty if rating fetch fails but keeps driver', async () => {
         vi.mocked(driverService.getDriversByCompany).mockResolvedValue([driver(1)]);
-        vi.mocked(driverService.getDriverById).mockResolvedValue(driver(1, { vehicleIds: [] }));
+        vi.mocked(driverService.getDriverById).mockResolvedValue(driver(1));
         vi.mocked(ratingService.getRatingsByDriverId).mockRejectedValue(new Error('rating fail'));
 
         const { result } = renderHook(() => useDrivers(10));
@@ -212,7 +186,7 @@ describe('useDrivers', () => {
 
     it('clears driverRatings when companyId becomes null', async () => {
         vi.mocked(driverService.getDriversByCompany).mockResolvedValue([driver(1)]);
-        vi.mocked(driverService.getDriverById).mockResolvedValue(driver(1, { vehicleIds: [] }));
+        vi.mocked(driverService.getDriverById).mockResolvedValue(driver(1));
         vi.mocked(ratingService.getRatingsByDriverId).mockResolvedValue([rating(1)]);
 
         const { result, rerender } = renderHook(({ id }: { id: number | null }) => useDrivers(id), {
