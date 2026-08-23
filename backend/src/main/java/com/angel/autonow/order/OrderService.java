@@ -37,11 +37,13 @@ public class OrderService {
 	private final PricingService pricingService;
 
 	@Transactional
-	public Optional<OrderResponseDTO> createOrder(OrderRequestDTO request) {
-		Optional<UserEntity> userOpt = userRepository.findById(request.userId());
+	public Optional<OrderResponseDTO> createOrder(OrderRequestDTO request, String callerEmail, boolean isAdmin) {
+		Long ownerId = resolveOwnerId(request, callerEmail, isAdmin);
+
+		Optional<UserEntity> userOpt = userRepository.findById(ownerId);
 		if (userOpt.isEmpty()) return Optional.empty();
 
-		if (orderRepository.existsByUserIdAndStatusIn(request.userId(), ACTIVE_STATUSES)) {
+		if (orderRepository.existsByUserIdAndStatusIn(ownerId, ACTIVE_STATUSES)) {
 			throw new OrderConflictException("User already has an active order");
 		}
 
@@ -71,6 +73,18 @@ public class OrderService {
 		}
 
 		return Optional.of(orderMapper.toDTO(orderRepository.save(order)));
+	}
+
+	private Long resolveOwnerId(OrderRequestDTO request, String callerEmail, boolean isAdmin) {
+		if (isAdmin) {
+			return request.userId();
+		}
+		UserEntity caller = userRepository.findByEmail(callerEmail)
+				.orElseThrow(() -> new OrderForbiddenException("Authenticated user not found"));
+		if (request.userId() != null && !request.userId().equals(caller.getId())) {
+			throw new OrderForbiddenException("Cannot create an order for another user");
+		}
+		return caller.getId();
 	}
 
 	public OrderEstimateResponseDTO estimate(OrderEstimateRequestDTO request) {
