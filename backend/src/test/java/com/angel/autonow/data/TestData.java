@@ -69,7 +69,7 @@ public final class TestData {
 	}
 
 	public static RequestPostProcessor guestJwt() {
-		return jwt().authorities(new SimpleGrantedAuthority(Role.GUEST.getAuthority()));
+		return jwt().authorities(new SimpleGrantedAuthority("ROLE_UNKNOWN"));
 	}
 
 	public static RequestPostProcessor companyAdminJwt() {

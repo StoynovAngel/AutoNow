@@ -34,13 +34,13 @@ public class VehicleController {
 	}
 
 	@GetMapping("/{id}")
-	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'DRIVER', 'GUEST', 'COMPANY_ADMIN')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'DRIVER', 'COMPANY_ADMIN')")
 	public VehicleResponseDTO getVehicleById(@PathVariable Long id) {
 		return vehicleService.getVehicleById(id).orElse(null);
 	}
 
 	@GetMapping
-	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN', 'CUSTOMER', 'DRIVER', 'GUEST')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN', 'CUSTOMER', 'DRIVER')")
 	public List<VehicleResponseDTO> getAllVehicles() {
 		return vehicleService.getAllVehicles();
 	}
@@ -60,7 +60,7 @@ public class VehicleController {
 	}
 
 	@GetMapping("/public/company/{companyId}")
-	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'DRIVER', 'GUEST')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'DRIVER')")
 	public List<PublicVehicleResponseDTO> getPublicVehiclesByCompanyId(
 			@PathVariable Long companyId,
 			@RequestParam(name = "vehicleType", required = false) VehicleType vehicleType) {
