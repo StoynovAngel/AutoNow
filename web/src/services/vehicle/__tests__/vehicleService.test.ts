@@ -14,6 +14,7 @@ vi.mock('../../apiClient', () => ({
 const payload: VehiclePayload = {
     brand: 'Toyota',
     model: 'Corolla',
+    licensePlate: 'CA1234CA',
     airConditioning: true,
     numberOfSeats: 4,
     trunkCapacity: 300,

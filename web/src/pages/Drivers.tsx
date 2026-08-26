@@ -68,14 +68,14 @@ const Drivers = () => {
         await assignVehicle(assigningDriver.id, vehicleId);
         // refresh the assigning driver state so the modal reflects the updated vehicleIds
         const updated = drivers.find(d => d.id === assigningDriver.id);
-        if (updated) setAssigningDriver({ ...updated, vehicleIds: [...updated.vehicleIds, vehicleId] });
+        if (updated) setAssigningDriver({ ...updated, vehicleIds: [...(updated.vehicleIds ?? []), vehicleId] });
     };
 
     const handleUnassign = async (vehicleId: number) => {
         if (!assigningDriver) return;
         await unassignVehicle(assigningDriver.id, vehicleId);
         const updated = drivers.find(d => d.id === assigningDriver.id);
-        if (updated) setAssigningDriver({ ...updated, vehicleIds: updated.vehicleIds.filter(id => id !== vehicleId) });
+        if (updated) setAssigningDriver({ ...updated, vehicleIds: (updated.vehicleIds ?? []).filter(id => id !== vehicleId) });
     };
 
     const filteredDrivers = drivers.filter(d => {
@@ -232,10 +232,10 @@ const Drivers = () => {
                 <AssignVehicleModal
                     driver={assigningDriver}
                     allVehicles={vehicles}
-                    takenVehicleIds={new Set(
+                    takenVehicleIds={new Set<number>(
                         drivers
                             .filter(d => d.id !== assigningDriver.id)
-                            .flatMap(d => d.vehicleIds)
+                            .flatMap(d => d.vehicleIds ?? [])
                     )}
                     onAssign={handleAssign}
                     onUnassign={handleUnassign}

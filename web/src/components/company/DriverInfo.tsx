@@ -7,6 +7,7 @@ export interface Driver {
     phoneNumber: string;
     expertiseType: string[];
     available: boolean;
+    vehicleIds?: number[];
     imageUrl?: string;
     companyId: number;
 }

@@ -1,6 +1,5 @@
 import { Badge, Button } from 'flowbite-react';
 import type { RentalOrder, RentalOrderStatus } from '../../services/rentalOrder/rentalOrderService';
-import { rentalStatusBadgeClass } from './RentalOrderSidebar';
 
 const badgeColor = (status: RentalOrderStatus): 'gray' | 'info' | 'purple' | 'success' | 'failure' => {
     switch (status) {

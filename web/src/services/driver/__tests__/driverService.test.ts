@@ -15,8 +15,7 @@ const payload: DriverPayload = {
     firstName: 'A',
     lastName: 'B',
     phoneNumber: '555',
-    licenseNumber: 'L1',
-    expertiseType: 'TAXI',
+    expertiseType: ['TAXI'],
     available: true,
     companyId: 1,
 };
