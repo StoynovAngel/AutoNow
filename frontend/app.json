@@ -34,7 +34,7 @@
       "favicon": "./assets/favicon.png"
     },
     "extra": {
-      "apiUrl": "http://192.168.1.11:8080/"
+      "apiUrl": "https://autonow-production-6155.up.railway.app/"
     },
     "plugins": [
       "@rnmapbox/maps"
