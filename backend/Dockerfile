@@ -1,6 +1,11 @@
-FROM eclipse-temurin:25.0.3_9-jdk
-
+FROM eclipse-temurin:21-jdk AS builder
 WORKDIR /app
-COPY target/autonow-*.jar app.jar
+COPY pom.xml .
+COPY src ./src
+RUN apt-get update -qq && apt-get install -y -qq maven && mvn -q -DskipTests package
 
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+FROM eclipse-temurin:21-jre
+WORKDIR /app
+COPY --from=builder /app/target/autonow-*.jar app.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]
