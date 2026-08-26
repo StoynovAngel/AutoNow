@@ -12,7 +12,7 @@ describe('apiClient', () => {
     });
 
     it('uses the configured base URL', () => {
-        expect(apiClient.defaults.baseURL).toBe('http://localhost:8080/api');
+        expect(apiClient.defaults.baseURL).toBe(import.meta.env.VITE_API_BASE_URL ?? '/api');
     });
 
     it('does not mutate axios.defaults.headers.common with Authorization', () => {
