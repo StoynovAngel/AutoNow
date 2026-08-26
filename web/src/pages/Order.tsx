@@ -12,7 +12,6 @@ import { useAllDrivers } from '../hooks/useAllDrivers';
 import { vehicleService } from '../services/vehicle/vehicleService';
 import type { Vehicle } from '../components/company/VehicleInfo';
 import { useAuth } from '../contexts/AuthContext';
-import type { RentalOrderStatus } from '../services/rentalOrder/rentalOrderService';
 import { rentalStatusBadgeClass } from '../components/rentalOrder/RentalOrderSidebar';
 
 const formatDate = (iso: string) =>
