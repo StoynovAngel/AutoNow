@@ -71,7 +71,7 @@ class OrderControllerIT {
 		var request = TestData.createOrderRequest(user.getId());
 
 		mockMvc.perform(post("/api/orders")
-						.with(TestData.customerJwt())
+						.with(TestData.customerJwt(user.getEmail()))
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(request)))
 				.andExpect(status().isCreated())
@@ -88,7 +88,7 @@ class OrderControllerIT {
 		var request = TestData.createOrderRequest(NON_EXISTENT_ID);
 
 		mockMvc.perform(post("/api/orders")
-						.with(TestData.customerJwt())
+						.with(TestData.adminJwt())
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(request)))
 				.andExpect(status().isBadRequest());
@@ -99,7 +99,7 @@ class OrderControllerIT {
 		var invalidRequest = OrderRequestDTO.builder().build();
 
 		mockMvc.perform(post("/api/orders")
-						.with(TestData.customerJwt())
+						.with(TestData.customerJwt(user.getEmail()))
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(invalidRequest)))
 				.andExpect(status().isBadRequest());
@@ -132,7 +132,7 @@ class OrderControllerIT {
 		orderRepository.save(order);
 
 		mockMvc.perform(get("/api/orders/{id}", order.getId())
-						.with(TestData.customerJwt()))
+						.with(TestData.customerJwt(user.getEmail())))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.pickupAddress").value("123 Main St"));
 	}
@@ -140,7 +140,7 @@ class OrderControllerIT {
 	@Test
 	void getOrderById_notFound_returnsNotFound() throws Exception {
 		mockMvc.perform(get("/api/orders/{id}", NON_EXISTENT_ID)
-						.with(TestData.customerJwt()))
+						.with(TestData.customerJwt(user.getEmail())))
 				.andExpect(status().isNotFound());
 	}
 
@@ -150,7 +150,7 @@ class OrderControllerIT {
 		orderRepository.save(order);
 
 		mockMvc.perform(get("/api/orders/user/{userId}", user.getId())
-						.with(TestData.customerJwt()))
+						.with(TestData.customerJwt(user.getEmail())))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.length()").value(1));
@@ -159,7 +159,7 @@ class OrderControllerIT {
 	@Test
 	void getOrdersByUserId_noOrders_returnsEmptyList() throws Exception {
 		mockMvc.perform(get("/api/orders/user/{userId}", user.getId())
-						.with(TestData.customerJwt()))
+						.with(TestData.customerJwt(user.getEmail())))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$").isArray())
 				.andExpect(jsonPath("$").isEmpty());
@@ -234,7 +234,7 @@ class OrderControllerIT {
 	@Test
 	void getAllOrders_asCustomer_returnsForbidden() throws Exception {
 		mockMvc.perform(get("/api/orders")
-						.with(TestData.customerJwt()))
+						.with(TestData.customerJwt(user.getEmail())))
 				.andExpect(status().isForbidden());
 	}
 
@@ -265,7 +265,7 @@ class OrderControllerIT {
 				.build();
 
 		mockMvc.perform(put("/api/orders/{id}", order.getId())
-						.with(TestData.customerJwt())
+						.with(TestData.customerJwt(user.getEmail()))
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(updateRequest)))
 				.andExpect(status().isOk())
@@ -295,7 +295,7 @@ class OrderControllerIT {
 				.build();
 
 		mockMvc.perform(put("/api/orders/{id}", order.getId())
-						.with(TestData.customerJwt())
+						.with(TestData.customerJwt(user.getEmail()))
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(updateRequest)))
 				.andExpect(status().isConflict());
@@ -306,7 +306,7 @@ class OrderControllerIT {
 		var updateRequest = TestData.createOrderRequest(user.getId());
 
 		mockMvc.perform(put("/api/orders/{id}", NON_EXISTENT_ID)
-						.with(TestData.customerJwt())
+						.with(TestData.customerJwt(user.getEmail()))
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(updateRequest)))
 				.andExpect(status().isBadRequest());
@@ -320,7 +320,7 @@ class OrderControllerIT {
 		var invalidRequest = OrderRequestDTO.builder().build();
 
 		mockMvc.perform(put("/api/orders/{id}", order.getId())
-						.with(TestData.customerJwt())
+						.with(TestData.customerJwt(user.getEmail()))
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(invalidRequest)))
 				.andExpect(status().isBadRequest());
@@ -364,7 +364,7 @@ class OrderControllerIT {
 
 	@Test
 	void deleteOrder_asCustomer_returnsForbidden() throws Exception {
-		mockMvc.perform(delete("/api/orders/{id}", 1L).with(TestData.customerJwt())).andExpect(status().isForbidden());
+		mockMvc.perform(delete("/api/orders/{id}", 1L).with(TestData.customerJwt(user.getEmail()))).andExpect(status().isForbidden());
 	}
 
 	@Test
@@ -478,7 +478,7 @@ class OrderControllerIT {
 		var request = OrderAssignmentRequestDTO.builder().driverId(1L).vehicleId(1L).build();
 
 		mockMvc.perform(patch("/api/orders/{id}/assign", 1L)
-						.with(TestData.customerJwt())
+						.with(TestData.customerJwt(user.getEmail()))
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(request)))
 				.andExpect(status().isForbidden());
@@ -503,7 +503,7 @@ class OrderControllerIT {
 		var request = TestData.createOrderRequest(user.getId());
 
 		mockMvc.perform(post("/api/orders")
-						.with(TestData.customerJwt())
+						.with(TestData.customerJwt(user.getEmail()))
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(request)))
 				.andExpect(status().isConflict());
@@ -577,7 +577,7 @@ class OrderControllerIT {
 	@Test
 	void adminCancelOrder_asCustomer_returnsForbidden() throws Exception {
 		mockMvc.perform(post("/api/orders/{id}/admin-cancel", 1L)
-						.with(TestData.customerJwt()))
+						.with(TestData.customerJwt(user.getEmail())))
 				.andExpect(status().isForbidden());
 	}
 
@@ -667,7 +667,7 @@ class OrderControllerIT {
 	@Test
 	void getOrdersByCompanyId_asCustomer_returnsForbidden() throws Exception {
 		mockMvc.perform(get("/api/orders/company/{companyId}", 1L)
-						.with(TestData.customerJwt()))
+						.with(TestData.customerJwt(user.getEmail())))
 				.andExpect(status().isForbidden());
 	}
 
@@ -727,7 +727,7 @@ class OrderControllerIT {
 				.build();
 
 		mockMvc.perform(post("/api/orders")
-						.with(TestData.customerJwt())
+						.with(TestData.customerJwt(user.getEmail()))
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(request)))
 				.andExpect(status().isCreated())
@@ -746,7 +746,7 @@ class OrderControllerIT {
 				.build();
 
 		mockMvc.perform(post("/api/orders")
-						.with(TestData.customerJwt())
+						.with(TestData.customerJwt(user.getEmail()))
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(request)))
 				.andExpect(status().isBadRequest());

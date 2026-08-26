@@ -7,8 +7,6 @@ import com.angel.autonow.expertise.ExpertiseType;
 import com.angel.autonow.user.UserEntity;
 import com.angel.autonow.user.UserRepository;
 import com.angel.autonow.user.role.Role;
-import com.angel.autonow.vehicle.VehicleEntity;
-import com.angel.autonow.vehicle.VehicleRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,11 +19,8 @@ import java.util.Optional;
 import java.util.Set;
 
 import static com.angel.autonow.data.TestData.NON_EXISTENT_ID;
-import static java.util.Collections.emptySet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.never;
@@ -48,9 +43,6 @@ class DriverServiceTest {
 
 	@Mock
 	private CompanyRepository companyRepository;
-
-	@Mock
-	private VehicleRepository vehicleRepository;
 
 	@InjectMocks
 	private DriverService driverService;
@@ -122,7 +114,6 @@ class DriverServiceTest {
 				.id(2L).firstName("Jane").lastName("Smith")
 				.phoneNumber("+359888100201")
 				.expertiseType(Set.of(ExpertiseType.C)).available(true)
-				.vehicleIds(emptySet())
 				.build();
 
 		when(driverRepository.findAll()).thenReturn(List.of(firstDriver, secondDriver));
@@ -192,15 +183,10 @@ class DriverServiceTest {
 		DriverEntity driver2 = DriverEntity.builder().id(2L).firstName("Sarah").build();
 
 		DriverResponseDTO response1 = TestData.createDriverResponse(1L);
-
 		DriverResponseDTO response2 = DriverResponseDTO.builder()
-				.id(2L)
-				.firstName("Sarah")
-				.lastName("Williams")
+				.id(2L).firstName("Sarah").lastName("Williams")
 				.phoneNumber("+359888100201")
-				.expertiseType(Set.of(ExpertiseType.B))
-				.available(true)
-				.vehicleIds(emptySet())
+				.expertiseType(Set.of(ExpertiseType.B)).available(true)
 				.build();
 
 		when(driverRepository.findByCompanyId(10L)).thenReturn(List.of(driver1, driver2));
@@ -256,29 +242,18 @@ class DriverServiceTest {
 	}
 
 	@Test
-	void updateDriver_companyChanged_clearsVehicles() {
+	void updateDriver_companyChanged_updatesCompany() {
 		CompanyEntity originalCompany = CompanyEntity.builder().id(10L).build();
 		CompanyEntity newCompany = CompanyEntity.builder().id(20L).build();
-		VehicleEntity vehicle = VehicleEntity.builder().id(100L).company(originalCompany).build();
-
-		Set<VehicleEntity> vehicles = new HashSet<>();
-		vehicles.add(vehicle);
 
 		DriverEntity existing = DriverEntity.builder()
-				.id(1L)
-				.firstName("Michael")
-				.company(originalCompany)
-				.vehicles(vehicles)
-				.build();
+				.id(1L).firstName("Michael").company(originalCompany).build();
 
 		DriverRequestDTO request = DriverRequestDTO.builder()
-				.firstName("Michael")
-				.lastName("Johnson")
+				.firstName("Michael").lastName("Johnson")
 				.phoneNumber("+359888100200")
 				.expertiseType(Set.of(ExpertiseType.B))
-				.available(true)
-				.companyId(20L)
-				.build();
+				.available(true).companyId(20L).build();
 
 		DriverResponseDTO response = TestData.createDriverResponse(1L);
 
@@ -291,196 +266,6 @@ class DriverServiceTest {
 		var result = driverService.updateDriver(1L, request, ADMIN_EMAIL);
 
 		assertTrue(result.isPresent());
-		assertTrue(existing.getVehicles().isEmpty());
 		assertEquals(newCompany, existing.getCompany());
-	}
-
-	@Test
-	void updateDriver_sameCompany_keepsVehicles() {
-		CompanyEntity company = CompanyEntity.builder().id(10L).build();
-		VehicleEntity vehicle = VehicleEntity.builder().id(100L).company(company).build();
-
-		Set<VehicleEntity> vehicles = new HashSet<>();
-		vehicles.add(vehicle);
-
-		DriverEntity existing = DriverEntity.builder()
-				.id(1L)
-				.firstName("Michael")
-				.company(company)
-				.vehicles(vehicles)
-				.build();
-
-		DriverRequestDTO request = DriverRequestDTO.builder()
-				.firstName("Michael")
-				.lastName("Johnson")
-				.phoneNumber("+359888100200")
-				.expertiseType(Set.of(ExpertiseType.B))
-				.available(true)
-				.companyId(10L)
-				.build();
-
-		DriverResponseDTO response = TestData.createDriverResponse(1L);
-
-		when(userRepository.findByEmail(ADMIN_EMAIL)).thenReturn(Optional.of(adminUser()));
-		when(driverRepository.findById(1L)).thenReturn(Optional.of(existing));
-		when(companyRepository.findById(10L)).thenReturn(Optional.of(company));
-		when(driverRepository.save(existing)).thenReturn(existing);
-		when(driverMapper.toDTO(existing)).thenReturn(response);
-
-		var result = driverService.updateDriver(1L, request, ADMIN_EMAIL);
-
-		assertTrue(result.isPresent());
-		assertEquals(1, existing.getVehicles().size());
-		assertTrue(existing.getVehicles().contains(vehicle));
-	}
-
-	@Test
-	void updateDriver_companyClearedToNull_clearsVehicles() {
-		CompanyEntity originalCompany = CompanyEntity.builder().id(10L).build();
-		VehicleEntity vehicle = VehicleEntity.builder().id(100L).company(originalCompany).build();
-
-		Set<VehicleEntity> vehicles = new HashSet<>();
-		vehicles.add(vehicle);
-
-		DriverEntity existing = DriverEntity.builder()
-				.id(1L)
-				.firstName("Michael")
-				.company(originalCompany)
-				.vehicles(vehicles)
-				.build();
-
-		DriverRequestDTO request = DriverRequestDTO.builder()
-				.firstName("Michael")
-				.lastName("Johnson")
-				.phoneNumber("+359888100200")
-				.expertiseType(Set.of(ExpertiseType.B))
-				.available(true)
-				.companyId(null)
-				.build();
-
-		DriverResponseDTO response = TestData.createDriverResponse(1L);
-
-		when(userRepository.findByEmail(ADMIN_EMAIL)).thenReturn(Optional.of(adminUser()));
-		when(driverRepository.findById(1L)).thenReturn(Optional.of(existing));
-		when(driverRepository.save(existing)).thenReturn(existing);
-		when(driverMapper.toDTO(existing)).thenReturn(response);
-
-		var result = driverService.updateDriver(1L, request, ADMIN_EMAIL);
-
-		assertTrue(result.isPresent());
-		assertTrue(existing.getVehicles().isEmpty());
-		assertNull(existing.getCompany());
-	}
-
-	@Test
-	void assignVehicle_differentCompanies_returnsEmpty() {
-		CompanyEntity companyA = CompanyEntity.builder().id(10L).build();
-		CompanyEntity companyB = CompanyEntity.builder().id(20L).build();
-
-		DriverEntity driver = DriverEntity.builder()
-				.id(1L)
-				.company(companyA)
-				.vehicles(new HashSet<>())
-				.build();
-		VehicleEntity vehicle = VehicleEntity.builder().id(100L).company(companyB).build();
-
-		when(driverRepository.findById(1L)).thenReturn(Optional.of(driver));
-		when(vehicleRepository.findById(100L)).thenReturn(Optional.of(vehicle));
-
-		var result = driverService.assignVehicle(1L, 100L);
-
-		assertTrue(result.isEmpty());
-		assertTrue(driver.getVehicles().isEmpty());
-		verify(driverRepository, never()).save(any());
-	}
-
-	@Test
-	void assignVehicle_driverHasNoCompany_returnsEmpty() {
-		CompanyEntity company = CompanyEntity.builder().id(10L).build();
-
-		DriverEntity driver = DriverEntity.builder()
-				.id(1L)
-				.company(null)
-				.vehicles(new HashSet<>())
-				.build();
-		VehicleEntity vehicle = VehicleEntity.builder().id(100L).company(company).build();
-
-		when(driverRepository.findById(1L)).thenReturn(Optional.of(driver));
-		when(vehicleRepository.findById(100L)).thenReturn(Optional.of(vehicle));
-
-		var result = driverService.assignVehicle(1L, 100L);
-
-		assertTrue(result.isEmpty());
-		verify(driverRepository, never()).save(any());
-	}
-
-	@Test
-	void assignVehicle_vehicleHasNoCompany_returnsEmpty() {
-		CompanyEntity company = CompanyEntity.builder().id(10L).build();
-
-		DriverEntity driver = DriverEntity.builder()
-				.id(1L)
-				.company(company)
-				.vehicles(new HashSet<>())
-				.build();
-		VehicleEntity vehicle = VehicleEntity.builder().id(100L).company(null).build();
-
-		when(driverRepository.findById(1L)).thenReturn(Optional.of(driver));
-		when(vehicleRepository.findById(100L)).thenReturn(Optional.of(vehicle));
-
-		var result = driverService.assignVehicle(1L, 100L);
-
-		assertTrue(result.isEmpty());
-		verify(driverRepository, never()).save(any());
-	}
-
-	@Test
-	void assignVehicle_sameCompany_succeeds() {
-		CompanyEntity company = CompanyEntity.builder().id(10L).build();
-
-		DriverEntity driver = DriverEntity.builder()
-				.id(1L)
-				.company(company)
-				.vehicles(new HashSet<>())
-				.build();
-		VehicleEntity vehicle = VehicleEntity.builder().id(100L).company(company).build();
-		DriverResponseDTO response = TestData.createDriverResponse(1L);
-
-		when(driverRepository.findById(1L)).thenReturn(Optional.of(driver));
-		when(vehicleRepository.findById(100L)).thenReturn(Optional.of(vehicle));
-		when(vehicleRepository.save(vehicle)).thenReturn(vehicle);
-		when(driverMapper.toDTO(driver)).thenReturn(response);
-
-		var result = driverService.assignVehicle(1L, 100L);
-
-		assertTrue(result.isPresent());
-		assertEquals(driver, vehicle.getDriver());
-		assertTrue(driver.getVehicles().contains(vehicle));
-	}
-
-	@Test
-	void assignVehicle_alreadyAssignedToAnotherDriver_throwsConflict() {
-		CompanyEntity company = CompanyEntity.builder().id(10L).build();
-
-		DriverEntity otherDriver = DriverEntity.builder().id(2L).company(company).build();
-		DriverEntity driver = DriverEntity.builder()
-				.id(1L)
-				.company(company)
-				.vehicles(new HashSet<>())
-				.build();
-		VehicleEntity vehicle = VehicleEntity.builder()
-				.id(100L)
-				.company(company)
-				.driver(otherDriver)
-				.build();
-
-		when(driverRepository.findById(1L)).thenReturn(Optional.of(driver));
-		when(vehicleRepository.findById(100L)).thenReturn(Optional.of(vehicle));
-
-		assertThrows(VehicleAlreadyAssignedException.class, () -> driverService.assignVehicle(1L, 100L));
-
-		assertEquals(otherDriver, vehicle.getDriver());
-		assertFalse(driver.getVehicles().contains(vehicle));
-		verify(vehicleRepository, never()).save(any(VehicleEntity.class));
 	}
 }

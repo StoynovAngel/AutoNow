@@ -9,7 +9,6 @@ export interface Driver {
     available: boolean;
     imageUrl?: string;
     companyId: number;
-    vehicleIds: number[];
 }
 
 interface DriverInfoProps {
@@ -61,19 +60,11 @@ const DriverInfo = ({driver}: DriverInfoProps) => {
                         <span className="truncate">{driver.phoneNumber}</span>
                     </p>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
-                    <div>
-                        <label className="block text-xs font-semibold text-gray-500 mb-1">Company</label>
-                        <p className="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
-                            #{driver.companyId}
-                        </p>
-                    </div>
-                    <div>
-                        <label className="block text-xs font-semibold text-gray-500 mb-1">Vehicles</label>
-                        <p className="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
-                            {driver.vehicleIds.length}
-                        </p>
-                    </div>
+                <div>
+                    <label className="block text-xs font-semibold text-gray-500 mb-1">Company</label>
+                    <p className="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
+                        #{driver.companyId}
+                    </p>
                 </div>
                 <div>
                     <label className="block text-xs font-semibold text-gray-500 mb-1">License Types</label>

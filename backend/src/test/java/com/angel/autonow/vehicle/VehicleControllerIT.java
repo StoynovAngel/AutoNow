@@ -4,9 +4,6 @@ import com.angel.autonow.company.CompanyEntity;
 import com.angel.autonow.company.CompanyRepository;
 import com.angel.autonow.company.CompanyType;
 import com.angel.autonow.data.TestData;
-import com.angel.autonow.driver.DriverEntity;
-import com.angel.autonow.driver.DriverRepository;
-import com.angel.autonow.expertise.ExpertiseType;
 import tools.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,9 +40,6 @@ class VehicleControllerIT {
 
 	@Autowired
 	private CompanyRepository companyRepository;
-
-	@Autowired
-	private DriverRepository driverRepository;
 
 	@Test
 	void createVehicle_asAdmin() throws Exception {
@@ -102,7 +96,7 @@ class VehicleControllerIT {
 		vehicleRepository.save(vehicle);
 
 		mockMvc.perform(get("/api/vehicles/{id}", vehicle.getId())
-						.with(TestData.guestJwt()))
+						.with(TestData.customerJwt()))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.brand").value("Toyota"));
 	}
@@ -110,7 +104,7 @@ class VehicleControllerIT {
 	@Test
 	void getVehicleById_notFound_returnsOkEmpty() throws Exception {
 		mockMvc.perform(get("/api/vehicles/{id}", NON_EXISTENT_ID)
-						.with(TestData.guestJwt()))
+						.with(TestData.customerJwt()))
 				.andExpect(status().isOk())
 				.andExpect(content().string(""));
 	}
@@ -121,7 +115,7 @@ class VehicleControllerIT {
 		vehicleRepository.save(vehicle);
 
 		mockMvc.perform(get("/api/vehicles")
-						.with(TestData.guestJwt()))
+						.with(TestData.customerJwt()))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.length()").value(1));
@@ -130,7 +124,7 @@ class VehicleControllerIT {
 	@Test
 	void getAllVehicles_noEntries_returnsEmptyList() throws Exception {
 		mockMvc.perform(get("/api/vehicles")
-						.with(TestData.guestJwt()))
+						.with(TestData.customerJwt()))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$").isArray())
 				.andExpect(jsonPath("$").isEmpty());
@@ -319,42 +313,29 @@ class VehicleControllerIT {
 	}
 
 	@Test
-	void getPublicVehiclesByCompanyId_asGuest_filtersByCelebrationAndIncludesDriverPhone() throws Exception {
+	void getPublicVehiclesByCompanyId_asGuest_filtersByCelebration() throws Exception {
 		var company = companyRepository.save(CompanyEntity.builder()
 				.name("Celebration Co").address("1 Ball St").phone("+359888500200")
 				.email("celebration@co.com").companyType(CompanyType.CELEBRATION).build());
 
-		var celebrationVehicle = VehicleEntity.builder()
+		vehicleRepository.save(VehicleEntity.builder()
 				.brand("Mercedes").model("E-Class")
 				.licensePlate("CB1234AA").airConditioning(true).numberOfSeats(4)
-				.trunkCapacity(450.0).vehicleType(VehicleType.CELEBRATION).company(company).build();
-		vehicleRepository.save(celebrationVehicle);
+				.trunkCapacity(450.0).vehicleType(VehicleType.CELEBRATION).company(company).build());
 
-		var taxiVehicle = VehicleEntity.builder()
+		vehicleRepository.save(VehicleEntity.builder()
 				.brand("Toyota").model("Camry")
 				.licensePlate("CB9999BB").airConditioning(true).numberOfSeats(5)
-				.trunkCapacity(450.0).vehicleType(VehicleType.TAXI).company(company).build();
-		vehicleRepository.save(taxiVehicle);
-
-		var driver = DriverEntity.builder()
-				.firstName("Ivan").lastName("Petrov")
-				.phoneNumber("+359888111222")
-				.expertiseType(java.util.Set.of(ExpertiseType.B))
-				.available(true).company(company)
-				.build();
-		driverRepository.save(driver);
-		celebrationVehicle.setDriver(driver);
-		vehicleRepository.save(celebrationVehicle);
+				.trunkCapacity(450.0).vehicleType(VehicleType.TAXI).company(company).build());
 
 		mockMvc.perform(get("/api/vehicles/public/company/{companyId}", company.getId())
 						.param("vehicleType", "CELEBRATION")
-						.with(TestData.guestJwt()))
+						.with(TestData.customerJwt()))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.length()").value(1))
 				.andExpect(jsonPath("$[0].brand").value("Mercedes"))
-				.andExpect(jsonPath("$[0].vehicleType").value("CELEBRATION"))
-				.andExpect(jsonPath("$[0].driverPhoneNumber").value("+359888111222"));
+				.andExpect(jsonPath("$[0].vehicleType").value("CELEBRATION"));
 	}
 
 	@Test
@@ -393,7 +374,7 @@ class VehicleControllerIT {
 		vehicleRepository.save(taxi);
 
 		mockMvc.perform(get("/api/vehicles/public/company/{companyId}", company.getId())
-						.with(TestData.guestJwt()))
+						.with(TestData.customerJwt()))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.length()").value(2));
 	}

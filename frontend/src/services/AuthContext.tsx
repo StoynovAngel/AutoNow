@@ -16,7 +16,12 @@ export const AuthProvider = ({children}: { children: ReactNode }) => {
                 if (token) {
                     try {
                         const decoded = authService.decodeToken(token);
-                        setUser(decoded);
+                        const isExpired = decoded.exp && decoded.exp * 1000 < Date.now();
+                        if (isExpired) {
+                            await authService.logout();
+                        } else {
+                            setUser(decoded);
+                        }
                     } catch (error) {
                         console.warn('Failed to decode token:', error);
                         await authService.logout();

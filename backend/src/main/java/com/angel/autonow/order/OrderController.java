@@ -27,8 +27,11 @@ public class OrderController {
 
 	@PostMapping
 	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
-	public ResponseEntity<OrderResponseDTO> createOrder(@Valid @RequestBody OrderRequestDTO request) {
-		return orderService.createOrder(request)
+	public ResponseEntity<OrderResponseDTO> createOrder(@Valid @RequestBody OrderRequestDTO request,
+			Authentication authentication) {
+		boolean isAdmin = authentication.getAuthorities().stream()
+				.anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()));
+		return orderService.createOrder(request, authentication.getName(), isAdmin)
 				.map(order -> ResponseEntity.status(HttpStatus.CREATED).body(order))
 				.orElse(ResponseEntity.badRequest().build());
 	}

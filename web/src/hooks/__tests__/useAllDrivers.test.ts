@@ -14,7 +14,6 @@ const driver = (id: number): Driver => ({
     expertiseType: ['B'],
     available: true,
     companyId: 1,
-    vehicleIds: [],
 });
 
 describe('useAllDrivers', () => {

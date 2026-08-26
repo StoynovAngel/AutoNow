@@ -34,6 +34,8 @@ import static org.mockito.Mockito.*;
 class OrderServiceTest {
 
 	private static final LocalDateTime NOW = LocalDateTime.now();
+	private static final String ADMIN_EMAIL = "admin@autonow.test";
+	private static final String CALLER_EMAIL = "customer@autonow.test";
 
 	@Mock
 	private OrderRepository orderRepository;
@@ -70,7 +72,7 @@ class OrderServiceTest {
 		when(orderRepository.save(any(OrderEntity.class))).thenReturn(saved);
 		when(orderMapper.toDTO(saved)).thenReturn(response);
 
-		var result = orderService.createOrder(request);
+		var result = orderService.createOrder(request, ADMIN_EMAIL, true);
 
 		assertTrue(result.isPresent());
 		assertEquals(1L, result.get().id());
@@ -79,12 +81,54 @@ class OrderServiceTest {
 	}
 
 	@Test
+	void createOrder_customer_usesAuthenticatedUser_whenUserIdMatchesOrNull() {
+		OrderRequestDTO request = TestData.createOrderRequest(1L);
+		UserEntity caller = UserEntity.builder().id(1L).email(CALLER_EMAIL).build();
+		OrderEntity saved = OrderEntity.builder().id(1L).user(caller).vehicleType(VehicleType.TAXI).status(OrderStatus.CREATED).createdAt(NOW).build();
+		OrderResponseDTO response = TestData.createOrderResponse(1L, 1L, OrderStatus.CREATED, NOW);
+
+		when(userRepository.findByEmail(CALLER_EMAIL)).thenReturn(Optional.of(caller));
+		when(userRepository.findById(1L)).thenReturn(Optional.of(caller));
+		when(orderRepository.save(any(OrderEntity.class))).thenReturn(saved);
+		when(orderMapper.toDTO(saved)).thenReturn(response);
+
+		var result = orderService.createOrder(request, CALLER_EMAIL, false);
+
+		assertTrue(result.isPresent());
+		assertEquals(1L, result.get().userId());
+		verify(orderRepository).save(any(OrderEntity.class));
+	}
+
+	@Test
+	void createOrder_customer_forAnotherUser_throwsForbidden() {
+		OrderRequestDTO request = TestData.createOrderRequest(999L);
+		UserEntity caller = UserEntity.builder().id(1L).email(CALLER_EMAIL).build();
+
+		when(userRepository.findByEmail(CALLER_EMAIL)).thenReturn(Optional.of(caller));
+
+		assertThrows(OrderForbiddenException.class,
+				() -> orderService.createOrder(request, CALLER_EMAIL, false));
+		verify(orderRepository, never()).save(any());
+	}
+
+	@Test
+	void createOrder_customer_unknownCaller_throwsForbidden() {
+		OrderRequestDTO request = TestData.createOrderRequest(1L);
+
+		when(userRepository.findByEmail(CALLER_EMAIL)).thenReturn(Optional.empty());
+
+		assertThrows(OrderForbiddenException.class,
+				() -> orderService.createOrder(request, CALLER_EMAIL, false));
+		verify(orderRepository, never()).save(any());
+	}
+
+	@Test
 	void createOrder_userNotFound_returnsEmpty() {
 		OrderRequestDTO request = TestData.createOrderRequest(NON_EXISTENT_ID);
 
 		when(userRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
 
-		var result = orderService.createOrder(request);
+		var result = orderService.createOrder(request, ADMIN_EMAIL, true);
 
 		assertTrue(result.isEmpty());
 		verify(orderRepository, never()).save(any());
@@ -115,7 +159,7 @@ class OrderServiceTest {
 		when(orderRepository.save(any(OrderEntity.class))).thenReturn(saved);
 		when(orderMapper.toDTO(saved)).thenReturn(response);
 
-		var result = orderService.createOrder(request);
+		var result = orderService.createOrder(request, ADMIN_EMAIL, true);
 
 		assertTrue(result.isPresent());
 		assertEquals(2L, result.get().driverId());
@@ -135,7 +179,7 @@ class OrderServiceTest {
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 		when(driverRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
 
-		var result = orderService.createOrder(request);
+		var result = orderService.createOrder(request, ADMIN_EMAIL, true);
 
 		assertTrue(result.isEmpty());
 		verify(orderRepository, never()).save(any());
@@ -154,7 +198,7 @@ class OrderServiceTest {
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 		when(vehicleRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
 
-		var result = orderService.createOrder(request);
+		var result = orderService.createOrder(request, ADMIN_EMAIL, true);
 
 		assertTrue(result.isEmpty());
 		verify(orderRepository, never()).save(any());
@@ -423,7 +467,7 @@ class OrderServiceTest {
 		when(orderRepository.save(any(OrderEntity.class))).thenReturn(saved);
 		when(orderMapper.toDTO(saved)).thenReturn(response);
 
-		orderService.createOrder(request);
+		orderService.createOrder(request, ADMIN_EMAIL, true);
 
 		verify(pricingService).calculatePrice(10.0, VehicleType.TAXI);
 	}
@@ -445,7 +489,7 @@ class OrderServiceTest {
 		when(orderRepository.save(any(OrderEntity.class))).thenReturn(saved);
 		when(orderMapper.toDTO(saved)).thenReturn(response);
 
-		orderService.createOrder(request);
+		orderService.createOrder(request, ADMIN_EMAIL, true);
 
 		verify(pricingService).calculateForLogistics(10.0, 50.0);
 	}
@@ -465,7 +509,7 @@ class OrderServiceTest {
 		when(orderRepository.save(any(OrderEntity.class))).thenReturn(saved);
 		when(orderMapper.toDTO(saved)).thenReturn(response);
 
-		orderService.createOrder(request);
+		orderService.createOrder(request, ADMIN_EMAIL, true);
 
 		verify(pricingService, never()).calculatePrice(anyDouble(), any());
 		verify(pricingService, never()).calculateForLogistics(anyDouble(), anyDouble());
@@ -646,7 +690,7 @@ class OrderServiceTest {
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 		when(orderRepository.existsByUserIdAndStatusIn(eq(1L), anySet())).thenReturn(true);
 
-		assertThrows(OrderConflictException.class, () -> orderService.createOrder(request));
+		assertThrows(OrderConflictException.class, () -> orderService.createOrder(request, ADMIN_EMAIL, true));
 		verify(orderRepository, never()).save(any());
 	}
 
@@ -792,7 +836,7 @@ class OrderServiceTest {
 		when(orderRepository.save(any(OrderEntity.class))).thenReturn(saved);
 		when(orderMapper.toDTO(saved)).thenReturn(response);
 
-		var result = orderService.createOrder(request);
+		var result = orderService.createOrder(request, ADMIN_EMAIL, true);
 
 		assertTrue(result.isPresent());
 		verify(companyRepository).findById(1L);
@@ -813,7 +857,7 @@ class OrderServiceTest {
 		when(companyRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
 		when(orderRepository.existsByUserIdAndStatusIn(anyLong(), anySet())).thenReturn(false);
 
-		var result = orderService.createOrder(request);
+		var result = orderService.createOrder(request, ADMIN_EMAIL, true);
 
 		assertTrue(result.isEmpty());
 		verify(orderRepository, never()).save(any());

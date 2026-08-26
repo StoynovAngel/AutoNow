@@ -113,7 +113,7 @@ const Order = () => {
                             )}
 
                             {/* Rental orders list */}
-                            <div className="bg-white rounded-xl shadow-md p-4 flex flex-col border border-gray-100">
+                            {isRentalCompany && <div className="bg-white rounded-xl shadow-md p-4 flex flex-col border border-gray-100">
                                 <div className="flex items-center justify-between mb-3">
                                     <h3 className="text-lg font-bold text-gray-800">Rentals</h3>
                                     <span className="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
@@ -156,7 +156,7 @@ const Order = () => {
                                         ))
                                     )}
                                 </div>
-                            </div>
+                            </div>}
                         </div>
 
                         {/* Detail panel — shows rental detail or regular order detail */}
