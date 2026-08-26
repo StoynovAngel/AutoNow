@@ -29,6 +29,7 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
@@ -208,7 +209,7 @@ public final class TestData {
 				.firstName("Michael")
 				.lastName("Johnson")
 				.phoneNumber("+359888100200")
-				.expertiseType(Set.of(ExpertiseType.B))
+				.expertiseType(new HashSet<>(Set.of(ExpertiseType.B)))
 				.available(true)
 				.build();
 	}

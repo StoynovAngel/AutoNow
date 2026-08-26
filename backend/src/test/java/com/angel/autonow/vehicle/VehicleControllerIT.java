@@ -96,7 +96,7 @@ class VehicleControllerIT {
 		vehicleRepository.save(vehicle);
 
 		mockMvc.perform(get("/api/vehicles/{id}", vehicle.getId())
-						.with(TestData.guestJwt()))
+						.with(TestData.customerJwt()))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.brand").value("Toyota"));
 	}
@@ -104,7 +104,7 @@ class VehicleControllerIT {
 	@Test
 	void getVehicleById_notFound_returnsOkEmpty() throws Exception {
 		mockMvc.perform(get("/api/vehicles/{id}", NON_EXISTENT_ID)
-						.with(TestData.guestJwt()))
+						.with(TestData.customerJwt()))
 				.andExpect(status().isOk())
 				.andExpect(content().string(""));
 	}
@@ -115,7 +115,7 @@ class VehicleControllerIT {
 		vehicleRepository.save(vehicle);
 
 		mockMvc.perform(get("/api/vehicles")
-						.with(TestData.guestJwt()))
+						.with(TestData.customerJwt()))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.length()").value(1));
@@ -124,7 +124,7 @@ class VehicleControllerIT {
 	@Test
 	void getAllVehicles_noEntries_returnsEmptyList() throws Exception {
 		mockMvc.perform(get("/api/vehicles")
-						.with(TestData.guestJwt()))
+						.with(TestData.customerJwt()))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$").isArray())
 				.andExpect(jsonPath("$").isEmpty());
@@ -330,7 +330,7 @@ class VehicleControllerIT {
 
 		mockMvc.perform(get("/api/vehicles/public/company/{companyId}", company.getId())
 						.param("vehicleType", "CELEBRATION")
-						.with(TestData.guestJwt()))
+						.with(TestData.customerJwt()))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.length()").value(1))
@@ -374,7 +374,7 @@ class VehicleControllerIT {
 		vehicleRepository.save(taxi);
 
 		mockMvc.perform(get("/api/vehicles/public/company/{companyId}", company.getId())
-						.with(TestData.guestJwt()))
+						.with(TestData.customerJwt()))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.length()").value(2));
 	}
