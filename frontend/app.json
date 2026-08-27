@@ -34,10 +34,14 @@
       "favicon": "./assets/favicon.png"
     },
     "extra": {
-      "apiUrl": "https://autonow-production-6155.up.railway.app/"
+      "apiUrl": "https://autonow-production-6155.up.railway.app/",
+      "eas": {
+        "projectId": "b948f5c2-899f-4e37-b209-606773961534"
+      }
     },
     "plugins": [
-      "@rnmapbox/maps"
+      "@rnmapbox/maps",
+      "./plugins/withMapboxToken.cjs"
     ]
   }
 }
