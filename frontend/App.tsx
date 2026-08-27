@@ -1,4 +1,3 @@
-import 'expo-dev-client';
 import {NavigationContainer} from '@react-navigation/native';
 import Navigation from './src/navigation/Navigation';
 import {I18nextProvider} from 'react-i18next';
