@@ -231,6 +231,11 @@ const Drivers = () => {
                     allVehicles={assigningDriver.companyId
                         ? vehicles.filter(v => v.companyId === assigningDriver.companyId)
                         : vehicles}
+                    takenVehicleNames={Object.fromEntries(
+                        drivers
+                            .filter(d => d.id !== assigningDriver.id && d.preferredVehicleId != null)
+                            .map(d => [d.preferredVehicleId as number, `${d.firstName} ${d.lastName}`])
+                    )}
                     onSetPreferred={handleSetPreferred}
                     onClearPreferred={handleClearPreferred}
                     onClose={() => setAssigningDriver(null)}

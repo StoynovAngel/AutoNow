@@ -6,12 +6,13 @@ import type { Driver } from '../company/DriverInfo';
 interface AssignVehicleModalProps {
     driver: Driver;
     allVehicles: Vehicle[];
+    takenVehicleNames?: Record<number, string>;
     onSetPreferred: (vehicleId: number) => Promise<void>;
     onClearPreferred: () => Promise<void>;
     onClose: () => void;
 }
 
-const AssignVehicleModal = ({ driver, allVehicles, onSetPreferred, onClearPreferred, onClose }: AssignVehicleModalProps) => {
+const AssignVehicleModal = ({ driver, allVehicles, takenVehicleNames = {}, onSetPreferred, onClearPreferred, onClose }: AssignVehicleModalProps) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -59,13 +60,16 @@ const AssignVehicleModal = ({ driver, allVehicles, onSetPreferred, onClearPrefer
                     <div className="space-y-2 max-h-80 overflow-y-auto">
                         {eligibleVehicles.map(vehicle => {
                             const isPreferred = driver.preferredVehicleId === vehicle.id;
+                            const takenBy = takenVehicleNames[vehicle.id];
                             return (
                                 <div
                                     key={vehicle.id}
                                     className={`flex items-center justify-between border rounded-lg px-3 py-2.5 ${
                                         isPreferred
                                             ? 'bg-blue-50 border-blue-300'
-                                            : 'bg-gray-50 border-gray-200'
+                                            : takenBy
+                                                ? 'bg-gray-100 border-gray-200 opacity-70'
+                                                : 'bg-gray-50 border-gray-200'
                                     }`}
                                 >
                                     <div className="flex items-center gap-3">
@@ -81,11 +85,16 @@ const AssignVehicleModal = ({ driver, allVehicles, onSetPreferred, onClearPrefer
                                                 Preferred
                                             </span>
                                         )}
+                                        {takenBy && !isPreferred && (
+                                            <span className="text-xs font-semibold text-orange-600 bg-orange-100 px-2 py-0.5 rounded-full">
+                                                {takenBy}
+                                            </span>
+                                        )}
                                     </div>
                                     <Button
                                         size="xs"
                                         color={isPreferred ? 'failure' : 'default'}
-                                        disabled={loading}
+                                        disabled={loading || (!!takenBy && !isPreferred)}
                                         aria-pressed={isPreferred}
                                         onClick={() => isPreferred ? handleClear() : handleSet(vehicle.id)}
                                     >
