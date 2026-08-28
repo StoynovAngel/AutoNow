@@ -1,5 +1,6 @@
 import {useState, useEffect} from 'react';
 import {driverService} from '../services/driver/driverService';
+import {vehicleService} from '../services/vehicle/vehicleService';
 import {ratingService} from '../services/rating/ratingService';
 import type {Driver} from '../components/company/DriverInfo';
 import type {Vehicle} from '../components/company/VehicleInfo';
@@ -47,9 +48,19 @@ export const useDrivers = (companyId?: number | null) => {
         setSelectedDriverId(driverId);
         if (driverId) {
             try {
-                const data = await driverService.getDriverById(String(driverId));
+                const data: Driver = await driverService.getDriverById(String(driverId));
                 setSelectedDriver(data);
-                setDriverVehicles([]);
+
+                if (data.preferredVehicleId) {
+                    try {
+                        const vehicle = await vehicleService.getVehicleById(String(data.preferredVehicleId));
+                        setDriverVehicles([vehicle]);
+                    } catch {
+                        setDriverVehicles([]);
+                    }
+                } else {
+                    setDriverVehicles([]);
+                }
 
                 try {
                     const ratings = await ratingService.getRatingsByDriverId(String(driverId));
