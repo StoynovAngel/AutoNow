@@ -16,12 +16,12 @@ describe('authService', () => {
         vi.resetAllMocks();
     });
 
-    it('login POSTs credentials to /auth/login and returns the token payload', async () => {
+    it('login POSTs credentials to /auth/web-login and returns the token payload', async () => {
         vi.mocked(apiClient.post).mockResolvedValue({ data: { token: 'jwt.value.sig' } });
 
         const result = await authService.login({ email: 'a@b.com', password: 'pw' });
 
-        expect(apiClient.post).toHaveBeenCalledWith('/auth/login', {
+        expect(apiClient.post).toHaveBeenCalledWith('/auth/web-login', {
             email: 'a@b.com',
             password: 'pw',
         });

@@ -35,12 +35,12 @@ describe('authService.register', () => {
 });
 
 describe('authService.login', () => {
-    it('posts to /auth/login and returns the token', async () => {
+    it('posts to /auth/web-login and returns the token', async () => {
         mockPost.mockResolvedValueOnce({ data: { token: 'jwt-login' } });
 
         const result = await authService.login({ email: 'user@example.com', password: 'Password1' });
 
-        expect(mockPost).toHaveBeenCalledWith('/auth/login', {
+        expect(mockPost).toHaveBeenCalledWith('/auth/web-login', {
             email: 'user@example.com',
             password: 'Password1',
         });
