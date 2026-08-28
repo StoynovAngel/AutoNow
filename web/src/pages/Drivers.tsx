@@ -228,7 +228,9 @@ const Drivers = () => {
             {assigningDriver && (
                 <AssignVehicleModal
                     driver={assigningDriver}
-                    allVehicles={vehicles}
+                    allVehicles={assigningDriver.companyId
+                        ? vehicles.filter(v => v.companyId === assigningDriver.companyId)
+                        : vehicles}
                     onSetPreferred={handleSetPreferred}
                     onClearPreferred={handleClearPreferred}
                     onClose={() => setAssigningDriver(null)}
