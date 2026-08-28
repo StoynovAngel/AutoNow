@@ -29,7 +29,7 @@ const Drivers = () => {
     const [deletingId, setDeletingId] = useState<number | null>(null);
     const [assigningDriver, setAssigningDriver] = useState<Driver | null>(null);
 
-    const { vehicles } = useVehicles(assigningDriver?.companyId ?? null);
+    const { vehicles } = useVehicles(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [filterType, setFilterType] = useState('');
     const [filterCompanyId, setFilterCompanyId] = useState<number | null>(null);
@@ -65,17 +65,14 @@ const Drivers = () => {
 
     const handleSetPreferred = async (vehicleId: number) => {
         if (!assigningDriver) return;
-        const updated = await setPreferredVehicle(assigningDriver.id, vehicleId);
-        const fresh = drivers.find(d => d.id === assigningDriver.id);
-        if (fresh) setAssigningDriver({ ...fresh, preferredVehicleId: vehicleId });
-        return updated;
+        await setPreferredVehicle(assigningDriver.id, vehicleId);
+        setAssigningDriver(prev => prev ? { ...prev, preferredVehicleId: vehicleId } : prev);
     };
 
     const handleClearPreferred = async () => {
         if (!assigningDriver) return;
         await clearPreferredVehicle(assigningDriver.id);
-        const fresh = drivers.find(d => d.id === assigningDriver.id);
-        if (fresh) setAssigningDriver({ ...fresh, preferredVehicleId: null });
+        setAssigningDriver(prev => prev ? { ...prev, preferredVehicleId: null } : prev);
     };
 
     const filteredDrivers = drivers.filter(d => {
