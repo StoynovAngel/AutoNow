@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Modal, ModalBody, ModalHeader } from 'flowbite-react';
 import type { CompanyPricing, PricingPayload } from '@/services/company/pricingService.ts';
 import type { CompanyType } from '@/services/company/companyService.ts';
@@ -28,6 +28,17 @@ const EditPricingModal = ({ show, pricing, companyType, onClose, onSubmit }: Edi
     });
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (!show) return;
+        const initial = {} as Record<PricingFieldKey, string>;
+        fields.forEach(f => {
+            const v = pricing?.[f.key];
+            initial[f.key] = v !== undefined && v !== null ? String(v) : '';
+        });
+        setForm(initial);
+        setError(null);
+    }, [show]);
 
     const set = (field: PricingFieldKey) => (e: React.ChangeEvent<HTMLInputElement>) =>
         setForm((prev) => ({ ...prev, [field]: e.target.value }));

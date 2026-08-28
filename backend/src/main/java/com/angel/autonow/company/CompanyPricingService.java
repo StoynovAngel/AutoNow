@@ -47,15 +47,20 @@ public class CompanyPricingService {
 
 	@Transactional
 	public Optional<CompanyPricingResponseDTO> updatePricing(Long companyId, CompanyPricingRequestDTO dto, String userEmail) {
-		if (!companyRepository.existsById(companyId)) return Optional.empty();
+		Optional<CompanyEntity> companyOpt = companyRepository.findById(companyId);
+		if (companyOpt.isEmpty()) return Optional.empty();
 
 		requireAuthorized(companyId, userEmail);
 
-		CompanyPricingEntity existing = pricingRepository.findByCompanyId(companyId)
-				.orElseThrow(() -> new PricingNotFoundException(companyId));
+		CompanyPricingEntity entity = pricingRepository.findByCompanyId(companyId)
+				.orElseGet(() -> {
+					CompanyPricingEntity fresh = pricingMapper.toEntity(dto);
+					fresh.setCompany(companyOpt.get());
+					return fresh;
+				});
 
-		pricingMapper.updateEntity(dto, existing);
-		return Optional.of(pricingMapper.toDTO(pricingRepository.save(existing)));
+		pricingMapper.updateEntity(dto, entity);
+		return Optional.of(pricingMapper.toDTO(pricingRepository.save(entity)));
 	}
 
 	private void requireAuthorized(Long companyId, String userEmail) {

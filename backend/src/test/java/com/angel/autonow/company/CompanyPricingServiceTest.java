@@ -175,7 +175,7 @@ class CompanyPricingServiceTest {
 		CompanyPricingRequestDTO request = CompanyPricingRequestDTO.builder().baseFare(4.00).build();
 		CompanyPricingResponseDTO dto = CompanyPricingResponseDTO.builder().id(7L).companyId(1L).baseFare(4.00).build();
 
-		when(companyRepository.existsById(1L)).thenReturn(true);
+		when(companyRepository.findById(1L)).thenReturn(Optional.of(company));
 		when(userRepository.findByEmail("admin@test.com")).thenReturn(Optional.of(admin));
 		when(pricingRepository.findByCompanyId(1L)).thenReturn(Optional.of(existing));
 		when(pricingRepository.save(existing)).thenReturn(existing);
@@ -186,25 +186,32 @@ class CompanyPricingServiceTest {
 	}
 
 	@Test
-	void updatePricing_noRow_throwsNotFound() {
+	void updatePricing_noRow_createsNew() {
+		CompanyEntity company = CompanyEntity.builder().id(1L).companyType(CompanyType.TAXI).build();
 		UserEntity admin = userWithRole("admin@test.com", Role.ADMIN);
+		CompanyPricingEntity freshEntity = CompanyPricingEntity.builder().company(company).baseFare(4.00).build();
+		CompanyPricingRequestDTO request = CompanyPricingRequestDTO.builder().baseFare(4.00).build();
+		CompanyPricingResponseDTO dto = CompanyPricingResponseDTO.builder().id(1L).companyId(1L).baseFare(4.00).build();
 
-		when(companyRepository.existsById(1L)).thenReturn(true);
+		when(companyRepository.findById(1L)).thenReturn(Optional.of(company));
 		when(userRepository.findByEmail("admin@test.com")).thenReturn(Optional.of(admin));
 		when(pricingRepository.findByCompanyId(1L)).thenReturn(Optional.empty());
+		when(pricingMapper.toEntity(request)).thenReturn(freshEntity);
+		when(pricingRepository.save(freshEntity)).thenReturn(freshEntity);
+		when(pricingMapper.toDTO(freshEntity)).thenReturn(dto);
 
-		assertThatThrownBy(() -> pricingService.updatePricing(1L, CompanyPricingRequestDTO.builder().build(), "admin@test.com"))
-				.isInstanceOf(PricingNotFoundException.class);
+		assertThat(pricingService.updatePricing(1L, request, "admin@test.com")).contains(dto);
 	}
 
 	@Test
 	void updatePricing_companyNotFound_returnsEmpty() {
-		when(companyRepository.existsById(99L)).thenReturn(false);
+		when(companyRepository.findById(99L)).thenReturn(Optional.empty());
 		assertThat(pricingService.updatePricing(99L, CompanyPricingRequestDTO.builder().build(), "admin@test.com")).isEmpty();
 	}
 
 	@Test
 	void updatePricing_nonOwner_throwsAuthorizationDenied() {
+		CompanyEntity company = CompanyEntity.builder().id(1L).companyType(CompanyType.TAXI).build();
 		CompanyEntity other = CompanyEntity.builder().id(2L).companyType(CompanyType.TAXI).build();
 		UserEntity nonOwner = UserEntity.builder()
 				.email("other@test.com")
@@ -212,7 +219,7 @@ class CompanyPricingServiceTest {
 				.company(other)
 				.build();
 
-		when(companyRepository.existsById(1L)).thenReturn(true);
+		when(companyRepository.findById(1L)).thenReturn(Optional.of(company));
 		when(userRepository.findByEmail("other@test.com")).thenReturn(Optional.of(nonOwner));
 
 		assertThatThrownBy(() -> pricingService.updatePricing(1L, CompanyPricingRequestDTO.builder().build(), "other@test.com"))
