@@ -223,17 +223,19 @@ class CompanyPricingControllerIT {
 	}
 
 	@Test
-	void updatePricing_noRow_returnsNotFound() throws Exception {
+	void updatePricing_noRow_createsNew() throws Exception {
 		CompanyEntity company = savedCompany(CompanyType.TAXI, "taxi9@co.com");
 		savedAdmin("admin@test.com");
 
-		var request = CompanyPricingRequestDTO.builder().baseFare(4.00).build();
+		var request = CompanyPricingRequestDTO.builder()
+				.baseFare(4.00).ratePerKm(1.50).nightMultiplier(1.20).nightStartHour(22).nightEndHour(6).build();
 
 		mockMvc.perform(put("/api/companies/{id}/pricing", company.getId())
 						.with(adminJwt("admin@test.com"))
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(request)))
-				.andExpect(status().isNotFound());
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.baseFare").value(4.00));
 	}
 
 	@Test
