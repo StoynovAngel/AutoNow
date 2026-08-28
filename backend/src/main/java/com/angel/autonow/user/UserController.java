@@ -26,4 +26,10 @@ public class UserController {
 		String token = userService.login(request);
 		return new JwtResponse(token);
 	}
+
+	@PostMapping("/web-login")
+	public JwtResponse webLogin(@Valid @RequestBody UserRequestDTO request) {
+		String token = userService.webLogin(request);
+		return new JwtResponse(token);
+	}
 }

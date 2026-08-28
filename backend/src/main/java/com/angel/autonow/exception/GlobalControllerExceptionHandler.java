@@ -10,6 +10,7 @@ import com.angel.autonow.order.rental.RentalOrderForbiddenException;
 import com.angel.autonow.rating.RatingConflictException;
 import com.angel.autonow.rating.RatingForbiddenException;
 import com.angel.autonow.user.UserException;
+import com.angel.autonow.user.WebAccessDeniedException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
@@ -80,6 +81,13 @@ public class GlobalControllerExceptionHandler {
 	public ProblemDetail handleUserException(UserException e) {
 		log.warn(e.getMessage(), HttpStatus.BAD_REQUEST, e);
 		return handle(e, HttpStatus.BAD_REQUEST);
+	}
+
+	@ResponseStatus(HttpStatus.FORBIDDEN)
+	@ExceptionHandler(WebAccessDeniedException.class)
+	public ProblemDetail handleWebAccessDeniedException(WebAccessDeniedException e) {
+		log.warn(e.getMessage(), HttpStatus.FORBIDDEN, e);
+		return handle(e, HttpStatus.FORBIDDEN);
 	}
 
 	@ResponseStatus(HttpStatus.CONFLICT)
