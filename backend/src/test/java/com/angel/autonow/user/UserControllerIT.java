@@ -117,4 +117,33 @@ class UserControllerIT {
 						.content(objectMapper.writeValueAsString(request)))
 				.andExpect(status().isBadRequest());
 	}
+
+	@Test
+	void webLogin_withCustomerRole_returnsForbidden() throws Exception {
+		var registerRequest = new UserRequestDTO("customer@example.com", "Password1");
+		mockMvc.perform(post("/api/auth/register")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(registerRequest)))
+				.andExpect(status().isOk());
+
+		mockMvc.perform(post("/api/auth/web-login")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(registerRequest)))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	void webLogin_wrongPassword_returnsBadRequest() throws Exception {
+		var registerRequest = new UserRequestDTO("customer2@example.com", "Password1");
+		mockMvc.perform(post("/api/auth/register")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(registerRequest)))
+				.andExpect(status().isOk());
+
+		var loginRequest = new UserRequestDTO("customer2@example.com", "WrongPass1");
+		mockMvc.perform(post("/api/auth/web-login")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(loginRequest)))
+				.andExpect(status().isBadRequest());
+	}
 }

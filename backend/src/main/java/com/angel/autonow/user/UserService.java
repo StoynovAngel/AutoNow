@@ -42,6 +42,27 @@ public class UserService {
 	}
 
 	public String login(UserRequestDTO request) {
+		UserEntity user = authenticate(request);
+		log.info("User logged in successfully [{}]", request.email());
+		return generateToken(user);
+	}
+
+	public String webLogin(UserRequestDTO request) {
+		UserEntity user = authenticate(request);
+
+		boolean hasWebAccess = user.getAuthorities().stream()
+				.anyMatch(a -> a.equals(Role.ADMIN.getAuthority()) || a.equals(Role.COMPANY_ADMIN.getAuthority()));
+
+		if (!hasWebAccess) {
+			log.warn("Web login denied: insufficient role [{}]", request.email());
+			throw new WebAccessDeniedException("Access denied: this panel is for administrators only.");
+		}
+
+		log.info("Web login successful [{}]", request.email());
+		return generateToken(user);
+	}
+
+	private UserEntity authenticate(UserRequestDTO request) {
 		String email = request.email();
 		String password = request.password();
 
@@ -55,11 +76,14 @@ public class UserService {
 			throw new UserException("Invalid credentials");
 		}
 
-		log.info("User logged in successfully [{}]", email);
+		return user;
+	}
+
+	private String generateToken(UserEntity user) {
 		Long companyId = user.getCompany() != null ? user.getCompany().getId() : null;
 		String companyType = user.getCompany() != null && user.getCompany().getCompanyType() != null
 				? user.getCompany().getCompanyType().name()
 				: null;
-		return jwtService.generateToken(user.getId(), email, user.getAuthorities(), companyId, companyType);
+		return jwtService.generateToken(user.getId(), user.getEmail(), user.getAuthorities(), companyId, companyType);
 	}
 }
