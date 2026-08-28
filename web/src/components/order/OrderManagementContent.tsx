@@ -3,12 +3,10 @@ import OrderInfo from './OrderInfo';
 import AssignOrderModal from './AssignOrderModal';
 import type {Order, OrderStatus} from './OrderInfo';
 import type {Driver} from '../company/DriverInfo';
-import type {Vehicle} from '../company/VehicleInfo';
 
 interface OrderManagementContentProps {
     selectedOrder: Order | null;
     drivers: Driver[];
-    vehicles: Vehicle[];
     onChangeStatus: (status: OrderStatus) => void;
     onAssign: (driverId: number, vehicleId: number) => Promise<void>;
 }
@@ -16,7 +14,6 @@ interface OrderManagementContentProps {
 const OrderManagementContent = ({
     selectedOrder,
     drivers,
-    vehicles,
     onChangeStatus,
     onAssign,
 }: OrderManagementContentProps) => {
@@ -33,7 +30,6 @@ const OrderManagementContent = ({
                 <AssignOrderModal
                     order={selectedOrder}
                     drivers={drivers}
-                    vehicles={vehicles}
                     onAssign={onAssign}
                     onClose={() => setAssignOpen(false)}
                 />

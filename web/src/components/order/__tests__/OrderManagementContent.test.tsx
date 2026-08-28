@@ -24,7 +24,6 @@ describe('OrderManagementContent', () => {
             <OrderManagementContent
                 selectedOrder={null}
                 drivers={[]}
-                vehicles={[]}
                 onChangeStatus={vi.fn()}
                 onAssign={vi.fn()}
             />,
@@ -38,7 +37,6 @@ describe('OrderManagementContent', () => {
             <OrderManagementContent
                 selectedOrder={order}
                 drivers={[]}
-                vehicles={[]}
                 onChangeStatus={onChangeStatus}
                 onAssign={vi.fn()}
             />,
@@ -55,7 +53,6 @@ describe('OrderManagementContent', () => {
             <OrderManagementContent
                 selectedOrder={order}
                 drivers={[]}
-                vehicles={[]}
                 onChangeStatus={vi.fn()}
                 onAssign={vi.fn()}
             />,

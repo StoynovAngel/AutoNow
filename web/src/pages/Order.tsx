@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Navigation from '../components/ui/Navigation.tsx';
 import PageStatus from '../components/ui/PageStatus.tsx';
 import OrderManagementSidebar from '../components/order/OrderManagementSidebar';
@@ -9,8 +9,6 @@ import RentalOrderInfo from '../components/rentalOrder/RentalOrderInfo';
 import { useOrders } from '../hooks/useOrders';
 import { useRentalOrders } from '../hooks/useRentalOrders';
 import { useAllDrivers } from '../hooks/useAllDrivers';
-import { vehicleService } from '../services/vehicle/vehicleService';
-import type { Vehicle } from '../components/company/VehicleInfo';
 import { useAuth } from '../contexts/AuthContext';
 import { rentalStatusBadgeClass } from '../components/rentalOrder/RentalOrderSidebar';
 
@@ -48,18 +46,6 @@ const Order = () => {
     } = useRentalOrders(companyId);
 
     const { drivers } = useAllDrivers(null, isCompanyAdmin ? companyId : null);
-    const [vehicles, setVehicles] = useState<Vehicle[]>([]);
-
-    useEffect(() => {
-        let cancelled = false;
-        const fetch = isCompanyAdmin
-            ? vehicleService.getMyVehicles()
-            : vehicleService.getAllVehicles();
-        fetch
-            .then(data => { if (!cancelled) setVehicles(data); })
-            .catch(() => { if (!cancelled) setVehicles([]); });
-        return () => { cancelled = true; };
-    }, [isCompanyAdmin]);
 
     const [statusFilter, setStatusFilter] = useState<StatusFilter>('ALL');
     const [vehicleTypeFilter, setVehicleTypeFilter] = useState<VehicleTypeFilter>('ALL');
@@ -168,7 +154,6 @@ const Order = () => {
                             <OrderManagementContent
                                 selectedOrder={selectedOrder}
                                 drivers={drivers}
-                                vehicles={vehicles}
                                 onChangeStatus={changeOrderStatus}
                                 onAssign={handleAssign}
                             />
