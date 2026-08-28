@@ -39,11 +39,18 @@ const Login = () => {
                 return;
             }
 
+            const authorities: string[] = Array.isArray(decodedToken.authorities) ? decodedToken.authorities : [];
+            const hasAccess = authorities.includes("ROLE_ADMIN") || authorities.includes("ROLE_COMPANY_ADMIN");
+            if (!hasAccess) {
+                setErrorMessage("Access denied: this panel is for administrators only.");
+                return;
+            }
+
             login(
                 {
                     id: decodedToken.sub,
                     email: formData.email,
-                    authorities: decodedToken.authorities,
+                    authorities,
                     companyId: decodedToken.companyId ?? null,
                     companyType: typeof decodedToken.companyType === 'string' ? decodedToken.companyType : null,
                 },

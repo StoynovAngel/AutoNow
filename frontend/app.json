@@ -16,7 +16,10 @@
       "supportsTablet": true,
       "requireFullScreen": false,
       "orientation": "portrait",
-      "bundleIdentifier": "com.autonow.app"
+      "bundleIdentifier": "com.autonow.app",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "package": "com.autonow.app",
