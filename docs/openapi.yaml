@@ -831,127 +831,6 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
-  '/api/drivers/{id}/vehicles/{vehicleId}':
-    put:
-      tags:
-        - driver-controller
-      operationId: assignVehicle
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int64
-        - name: vehicleId
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/DriverResponseDTO'
-        '400':
-          description: Bad Request
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetail'
-        '401':
-          description: Unauthorized
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetail'
-        '403':
-          description: Forbidden
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetail'
-        '404':
-          description: Not Found
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetail'
-        '409':
-          description: Conflict
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetail'
-        '500':
-          description: Internal Server Error
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetail'
-    delete:
-      tags:
-        - driver-controller
-      operationId: unassignVehicle
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int64
-        - name: vehicleId
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/DriverResponseDTO'
-        '400':
-          description: Bad Request
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetail'
-        '401':
-          description: Unauthorized
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetail'
-        '403':
-          description: Forbidden
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetail'
-        '404':
-          description: Not Found
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetail'
-        '409':
-          description: Conflict
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetail'
-        '500':
-          description: Internal Server Error
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetail'
   '/api/companies/{id}':
     get:
       tags:
@@ -2311,6 +2190,60 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/ChatbotResponseDTO'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: Internal Server Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+  /api/auth/web-login:
+    post:
+      tags:
+        - user-controller
+      operationId: webLogin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequestDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/JwtResponse'
         '400':
           description: Bad Request
           content:
@@ -3919,12 +3852,6 @@ components:
         companyId:
           type: integer
           format: int64
-        vehicleIds:
-          type: array
-          items:
-            type: integer
-            format: int64
-          uniqueItems: true
     CompanyRequestDTO:
       type: object
       properties:
@@ -4263,5 +4190,3 @@ components:
         companyId:
           type: integer
           format: int64
-        driverPhoneNumber:
-          type: string
