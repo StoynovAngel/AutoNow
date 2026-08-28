@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { renderHook, waitFor } from '@testing-library/react';
+import { renderHook, waitFor, act } from '@testing-library/react';
 import { useAllDrivers } from '../useAllDrivers';
 import { driverService } from '../../services/driver/driverService';
 import type { Driver } from '../../components/company/DriverInfo';
@@ -104,5 +104,39 @@ describe('useAllDrivers', () => {
         await waitFor(() => expect(result.current.loading).toBe(false));
 
         expect(result.current.error).toBe('Failed to load drivers.');
+    });
+
+    it('setPreferredVehicle updates driver in state', async () => {
+        const initial = driver(1);
+        vi.mocked(driverService.getAllDrivers).mockResolvedValue([initial]);
+        const updated = { ...initial, preferredVehicleId: 5 };
+        vi.mocked(driverService.setPreferredVehicle).mockResolvedValue(updated);
+
+        const { result } = renderHook(() => useAllDrivers());
+        await waitFor(() => expect(result.current.loading).toBe(false));
+
+        await act(async () => {
+            await result.current.setPreferredVehicle(1, 5);
+        });
+
+        expect(driverService.setPreferredVehicle).toHaveBeenCalledWith(1, 5);
+        expect(result.current.drivers[0].preferredVehicleId).toBe(5);
+    });
+
+    it('clearPreferredVehicle updates driver in state', async () => {
+        const initial = { ...driver(1), preferredVehicleId: 5 };
+        vi.mocked(driverService.getAllDrivers).mockResolvedValue([initial]);
+        const cleared = { ...initial, preferredVehicleId: null };
+        vi.mocked(driverService.clearPreferredVehicle).mockResolvedValue(cleared);
+
+        const { result } = renderHook(() => useAllDrivers());
+        await waitFor(() => expect(result.current.loading).toBe(false));
+
+        await act(async () => {
+            await result.current.clearPreferredVehicle(1);
+        });
+
+        expect(driverService.clearPreferredVehicle).toHaveBeenCalledWith(1);
+        expect(result.current.drivers[0].preferredVehicleId).toBeNull();
     });
 });

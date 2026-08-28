@@ -7,6 +7,8 @@ import com.angel.autonow.expertise.ExpertiseType;
 import com.angel.autonow.user.UserEntity;
 import com.angel.autonow.user.UserRepository;
 import com.angel.autonow.user.role.Role;
+import com.angel.autonow.vehicle.VehicleEntity;
+import com.angel.autonow.vehicle.VehicleRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,6 +23,7 @@ import java.util.Set;
 import static com.angel.autonow.data.TestData.NON_EXISTENT_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.never;
@@ -43,6 +46,9 @@ class DriverServiceTest {
 
 	@Mock
 	private CompanyRepository companyRepository;
+
+	@Mock
+	private VehicleRepository vehicleRepository;
 
 	@InjectMocks
 	private DriverService driverService;
@@ -267,5 +273,81 @@ class DriverServiceTest {
 
 		assertTrue(result.isPresent());
 		assertEquals(newCompany, existing.getCompany());
+	}
+
+	@Test
+	void setPreferredVehicle_returnsDriverWithVehicle() {
+		DriverEntity driver = DriverEntity.builder().id(1L).firstName("Michael").build();
+		VehicleEntity vehicle = VehicleEntity.builder().id(5L).build();
+		DriverResponseDTO response = DriverResponseDTO.builder()
+				.id(1L).firstName("Michael").lastName("Johnson")
+				.phoneNumber("+359888100200")
+				.expertiseType(Set.of(ExpertiseType.B)).available(true)
+				.preferredVehicleId(5L)
+				.build();
+
+		when(driverRepository.findById(1L)).thenReturn(Optional.of(driver));
+		when(vehicleRepository.findById(5L)).thenReturn(Optional.of(vehicle));
+		when(driverRepository.save(driver)).thenReturn(driver);
+		when(driverMapper.toDTO(driver)).thenReturn(response);
+
+		var result = driverService.setPreferredVehicle(1L, 5L);
+
+		assertTrue(result.isPresent());
+		assertEquals(5L, result.get().preferredVehicleId());
+		assertEquals(vehicle, driver.getPreferredVehicle());
+	}
+
+	@Test
+	void setPreferredVehicle_driverNotFound_returnsEmpty() {
+		when(driverRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
+
+		var result = driverService.setPreferredVehicle(NON_EXISTENT_ID, 5L);
+
+		assertTrue(result.isEmpty());
+		verify(driverRepository, never()).save(any());
+	}
+
+	@Test
+	void setPreferredVehicle_vehicleNotFound_returnsEmpty() {
+		DriverEntity driver = DriverEntity.builder().id(1L).build();
+
+		when(driverRepository.findById(1L)).thenReturn(Optional.of(driver));
+		when(vehicleRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
+
+		var result = driverService.setPreferredVehicle(1L, NON_EXISTENT_ID);
+
+		assertTrue(result.isEmpty());
+		verify(driverRepository, never()).save(any());
+	}
+
+	@Test
+	void clearPreferredVehicle_removesVehicle() {
+		VehicleEntity vehicle = VehicleEntity.builder().id(5L).build();
+		DriverEntity driver = DriverEntity.builder().id(1L).preferredVehicle(vehicle).build();
+		DriverResponseDTO response = DriverResponseDTO.builder()
+				.id(1L).firstName("Michael").lastName("Johnson")
+				.phoneNumber("+359888100200")
+				.expertiseType(Set.of(ExpertiseType.B)).available(true)
+				.build();
+
+		when(driverRepository.findById(1L)).thenReturn(Optional.of(driver));
+		when(driverRepository.save(driver)).thenReturn(driver);
+		when(driverMapper.toDTO(driver)).thenReturn(response);
+
+		var result = driverService.clearPreferredVehicle(1L);
+
+		assertTrue(result.isPresent());
+		assertNull(driver.getPreferredVehicle());
+	}
+
+	@Test
+	void clearPreferredVehicle_driverNotFound_returnsEmpty() {
+		when(driverRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
+
+		var result = driverService.clearPreferredVehicle(NON_EXISTENT_ID);
+
+		assertTrue(result.isEmpty());
+		verify(driverRepository, never()).save(any());
 	}
 }

@@ -6,55 +6,68 @@ import type { Driver } from '../company/DriverInfo';
 interface AssignVehicleModalProps {
     driver: Driver;
     allVehicles: Vehicle[];
-    takenVehicleIds?: Set<number>;
-    onAssign: (vehicleId: number) => Promise<void>;
-    onUnassign: (vehicleId: number) => Promise<void>;
+    onSetPreferred: (vehicleId: number) => Promise<void>;
+    onClearPreferred: () => Promise<void>;
     onClose: () => void;
 }
 
-const AssignVehicleModal = ({ driver, allVehicles, takenVehicleIds = new Set(), onAssign, onUnassign, onClose }: AssignVehicleModalProps) => {
-    const [loading, setLoading] = useState<number | null>(null);
+const AssignVehicleModal = ({ driver, allVehicles, onSetPreferred, onClearPreferred, onClose }: AssignVehicleModalProps) => {
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const assignedIds = new Set(driver.vehicleIds);
-
-    const handle = async (vehicleId: number, assigned: boolean) => {
-        setLoading(vehicleId);
+    const handleSet = async (vehicleId: number) => {
+        setLoading(true);
         setError(null);
         try {
-            if (assigned) {
-                await onUnassign(vehicleId);
-            } else {
-                await onAssign(vehicleId);
-            }
+            await onSetPreferred(vehicleId);
         } catch {
             setError('Operation failed. Please try again.');
         } finally {
-            setLoading(null);
+            setLoading(false);
         }
     };
+
+    const handleClear = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            await onClearPreferred();
+        } catch {
+            setError('Operation failed. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const eligibleVehicles = allVehicles.filter(v => v.vehicleType !== 'RENTAL');
 
     return (
         <Modal show onClose={onClose} size="lg" dismissible>
             <ModalHeader>
-                Assign Vehicles — {driver.firstName} {driver.lastName}
+                Preferred Vehicle - {driver.firstName} {driver.lastName}
             </ModalHeader>
             <ModalBody>
                 {error && (
-                    <Alert color="failure" aria-live="assertive" className="mb-3">
+                    <Alert color="failure" role="alert" aria-live="assertive" className="mb-3">
                         {error}
                     </Alert>
                 )}
 
-                {allVehicles.length === 0 ? (
+                {eligibleVehicles.length === 0 ? (
                     <p className="text-gray-500 text-sm text-center py-6">No vehicles available.</p>
                 ) : (
                     <div className="space-y-2 max-h-80 overflow-y-auto">
-                        {allVehicles.filter(v => v.vehicleType !== 'RENTAL' && (assignedIds.has(v.id) || !takenVehicleIds.has(v.id))).map(vehicle => {
-                            const assigned = assignedIds.has(vehicle.id);
-                            const isLoading = loading === vehicle.id;
+                        {eligibleVehicles.map(vehicle => {
+                            const isPreferred = driver.preferredVehicleId === vehicle.id;
                             return (
-                                <div key={vehicle.id} className="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-lg px-3 py-2.5">
+                                <div
+                                    key={vehicle.id}
+                                    className={`flex items-center justify-between border rounded-lg px-3 py-2.5 ${
+                                        isPreferred
+                                            ? 'bg-blue-50 border-blue-300'
+                                            : 'bg-gray-50 border-gray-200'
+                                    }`}
+                                >
                                     <div className="flex items-center gap-3">
                                         {vehicle.imageUrl && (
                                             <img src={vehicle.imageUrl} alt="" className="w-10 h-10 rounded-lg object-cover flex-shrink-0" />
@@ -63,14 +76,20 @@ const AssignVehicleModal = ({ driver, allVehicles, takenVehicleIds = new Set(), 
                                             <p className="text-sm font-semibold text-gray-900">{vehicle.brand} {vehicle.model}</p>
                                             <p className="text-xs text-gray-500">{vehicle.vehicleType} · {vehicle.numberOfSeats} seats</p>
                                         </div>
+                                        {isPreferred && (
+                                            <span className="text-xs font-semibold text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full">
+                                                Preferred
+                                            </span>
+                                        )}
                                     </div>
                                     <Button
                                         size="xs"
-                                        color={assigned ? 'failure' : 'default'}
-                                        disabled={isLoading}
-                                        onClick={() => handle(vehicle.id, assigned)}
+                                        color={isPreferred ? 'failure' : 'default'}
+                                        disabled={loading}
+                                        aria-pressed={isPreferred}
+                                        onClick={() => isPreferred ? handleClear() : handleSet(vehicle.id)}
                                     >
-                                        {isLoading ? '...' : assigned ? 'Unassign' : 'Assign'}
+                                        {isPreferred ? 'Remove' : 'Set preferred'}
                                     </Button>
                                 </div>
                             );

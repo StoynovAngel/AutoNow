@@ -6,6 +6,8 @@ import com.angel.autonow.company.CompanyType;
 import com.angel.autonow.user.UserEntity;
 import com.angel.autonow.user.UserRepository;
 import com.angel.autonow.user.role.Role;
+import com.angel.autonow.vehicle.VehicleEntity;
+import com.angel.autonow.vehicle.VehicleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +23,7 @@ public class DriverService {
 	private final DriverMapper driverMapper;
 	private final CompanyRepository companyRepository;
 	private final UserRepository userRepository;
+	private final VehicleRepository vehicleRepository;
 
 	public Optional<DriverResponseDTO> createDriver(DriverRequestDTO request, String userEmail) {
 		Optional<UserEntity> userOpt = userRepository.findByEmail(userEmail);
@@ -127,6 +130,35 @@ public class DriverService {
 
 		driverRepository.deleteById(id);
 		return true;
+	}
+
+	@Transactional
+	public Optional<DriverResponseDTO> setPreferredVehicle(Long driverId, Long vehicleId) {
+		Optional<DriverEntity> driverOpt = driverRepository.findById(driverId);
+		Optional<VehicleEntity> vehicleOpt = vehicleRepository.findById(vehicleId);
+
+		if (driverOpt.isEmpty()) {
+			return Optional.empty();
+		}
+		if (vehicleOpt.isEmpty()) {
+			return Optional.empty();
+		}
+
+		DriverEntity driver = driverOpt.get();
+		driver.setPreferredVehicle(vehicleOpt.get());
+		return Optional.of(driverMapper.toDTO(driverRepository.save(driver)));
+	}
+
+	@Transactional
+	public Optional<DriverResponseDTO> clearPreferredVehicle(Long driverId) {
+		Optional<DriverEntity> driverOpt = driverRepository.findById(driverId);
+		if (driverOpt.isEmpty()) {
+			return Optional.empty();
+		}
+
+		DriverEntity driver = driverOpt.get();
+		driver.setPreferredVehicle(null);
+		return Optional.of(driverMapper.toDTO(driverRepository.save(driver)));
 	}
 
 	private boolean canManageCompany(UserEntity user, Long companyId) {

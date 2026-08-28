@@ -22,7 +22,7 @@ const Drivers = () => {
     const companyId = isCompanyAdmin ? (user?.companyId ?? null) : null;
 
     const [filterCompanyType, setFilterCompanyType] = useState<string>('');
-    const { drivers, loading, error, addDriver, updateDriver, removeDriver, assignVehicle, unassignVehicle, refreshDrivers } = useAllDrivers(filterCompanyType || null, companyId);
+    const { drivers, loading, error, addDriver, updateDriver, removeDriver, setPreferredVehicle, clearPreferredVehicle, refreshDrivers } = useAllDrivers(filterCompanyType || null, companyId);
 
     const [showForm, setShowForm] = useState(false);
     const [editingDriver, setEditingDriver] = useState<Driver | null>(null);
@@ -63,19 +63,19 @@ const Drivers = () => {
         showSuccess('Driver deleted.');
     };
 
-    const handleAssign = async (vehicleId: number) => {
+    const handleSetPreferred = async (vehicleId: number) => {
         if (!assigningDriver) return;
-        await assignVehicle(assigningDriver.id, vehicleId);
-        // refresh the assigning driver state so the modal reflects the updated vehicleIds
-        const updated = drivers.find(d => d.id === assigningDriver.id);
-        if (updated) setAssigningDriver({ ...updated, vehicleIds: [...(updated.vehicleIds ?? []), vehicleId] });
+        const updated = await setPreferredVehicle(assigningDriver.id, vehicleId);
+        const fresh = drivers.find(d => d.id === assigningDriver.id);
+        if (fresh) setAssigningDriver({ ...fresh, preferredVehicleId: vehicleId });
+        return updated;
     };
 
-    const handleUnassign = async (vehicleId: number) => {
+    const handleClearPreferred = async () => {
         if (!assigningDriver) return;
-        await unassignVehicle(assigningDriver.id, vehicleId);
-        const updated = drivers.find(d => d.id === assigningDriver.id);
-        if (updated) setAssigningDriver({ ...updated, vehicleIds: (updated.vehicleIds ?? []).filter(id => id !== vehicleId) });
+        await clearPreferredVehicle(assigningDriver.id);
+        const fresh = drivers.find(d => d.id === assigningDriver.id);
+        if (fresh) setAssigningDriver({ ...fresh, preferredVehicleId: null });
     };
 
     const filteredDrivers = drivers.filter(d => {
@@ -232,13 +232,8 @@ const Drivers = () => {
                 <AssignVehicleModal
                     driver={assigningDriver}
                     allVehicles={vehicles}
-                    takenVehicleIds={new Set<number>(
-                        drivers
-                            .filter(d => d.id !== assigningDriver.id)
-                            .flatMap(d => d.vehicleIds ?? [])
-                    )}
-                    onAssign={handleAssign}
-                    onUnassign={handleUnassign}
+                    onSetPreferred={handleSetPreferred}
+                    onClearPreferred={handleClearPreferred}
                     onClose={() => setAssigningDriver(null)}
                 />
             )}

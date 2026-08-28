@@ -8,6 +8,7 @@ import com.angel.autonow.expertise.ExpertiseType;
 import com.angel.autonow.user.UserEntity;
 import com.angel.autonow.user.UserRepository;
 import com.angel.autonow.user.role.Role;
+import com.angel.autonow.vehicle.VehicleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +57,9 @@ class DriverControllerIT {
 
 	@Autowired
 	private CompanyRepository companyRepository;
+
+	@Autowired
+	private VehicleRepository vehicleRepository;
 
 	@BeforeEach
 	void setUp() {
@@ -296,5 +300,45 @@ class DriverControllerIT {
 						.with(TestData.companyAdminJwt()))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$").isArray());
+	}
+
+	@Test
+	void setPreferredVehicle_asAdmin_returnsDriverWithPreferredVehicle() throws Exception {
+		var driver = driverRepository.save(TestData.createDriverEntity());
+		var vehicle = vehicleRepository.save(TestData.createVehicleEntity());
+
+		mockMvc.perform(put("/api/drivers/{driverId}/vehicles/{vehicleId}", driver.getId(), vehicle.getId())
+						.with(TestData.adminJwt(ADMIN_EMAIL)))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.preferredVehicleId").value(vehicle.getId()));
+	}
+
+	@Test
+	void setPreferredVehicle_driverNotFound_returnsNotFound() throws Exception {
+		var vehicle = vehicleRepository.save(TestData.createVehicleEntity());
+
+		mockMvc.perform(put("/api/drivers/{driverId}/vehicles/{vehicleId}", NON_EXISTENT_ID, vehicle.getId())
+						.with(TestData.adminJwt(ADMIN_EMAIL)))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void clearPreferredVehicle_asAdmin_removesPreferredVehicle() throws Exception {
+		var vehicle = vehicleRepository.save(TestData.createVehicleEntity());
+		var driver = TestData.createDriverEntity();
+		driver.setPreferredVehicle(vehicle);
+		driverRepository.save(driver);
+
+		mockMvc.perform(delete("/api/drivers/{driverId}/vehicles", driver.getId())
+						.with(TestData.adminJwt(ADMIN_EMAIL)))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.preferredVehicleId").doesNotExist());
+	}
+
+	@Test
+	void setPreferredVehicle_asCustomer_returnsForbidden() throws Exception {
+		mockMvc.perform(put("/api/drivers/{driverId}/vehicles/{vehicleId}", 1L, 1L)
+						.with(TestData.customerJwt()))
+				.andExpect(status().isForbidden());
 	}
 }

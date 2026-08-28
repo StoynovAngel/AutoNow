@@ -45,13 +45,13 @@ export const driverService = {
         await apiClient.delete(`/drivers/${id}`);
     },
 
-    assignVehicle: async (driverId: number, vehicleId: number) => {
+    setPreferredVehicle: async (driverId: number, vehicleId: number) => {
         const { data } = await apiClient.put(`/drivers/${driverId}/vehicles/${vehicleId}`);
         return data;
     },
 
-    unassignVehicle: async (driverId: number, vehicleId: number) => {
-        const { data } = await apiClient.delete(`/drivers/${driverId}/vehicles/${vehicleId}`);
+    clearPreferredVehicle: async (driverId: number) => {
+        const { data } = await apiClient.delete(`/drivers/${driverId}/vehicles`);
         return data;
     },
 };

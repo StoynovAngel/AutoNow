@@ -45,15 +45,15 @@ export const useAllDrivers = (companyTypeFilter: string | null = null, companyId
         setDrivers(prev => prev.filter(d => d.id !== id));
     };
 
-    const assignVehicle = async (driverId: number, vehicleId: number) => {
-        const updated = await driverService.assignVehicle(driverId, vehicleId);
+    const setPreferredVehicle = async (driverId: number, vehicleId: number) => {
+        const updated = await driverService.setPreferredVehicle(driverId, vehicleId);
         setDrivers(prev => prev.map(d => d.id === driverId ? updated : d));
     };
 
-    const unassignVehicle = async (driverId: number, vehicleId: number) => {
-        const updated = await driverService.unassignVehicle(driverId, vehicleId);
+    const clearPreferredVehicle = async (driverId: number) => {
+        const updated = await driverService.clearPreferredVehicle(driverId);
         setDrivers(prev => prev.map(d => d.id === driverId ? updated : d));
     };
 
-    return { drivers, loading, error, addDriver, updateDriver, removeDriver, assignVehicle, unassignVehicle, refreshDrivers: fetchDrivers };
+    return { drivers, loading, error, addDriver, updateDriver, removeDriver, setPreferredVehicle, clearPreferredVehicle, refreshDrivers: fetchDrivers };
 };

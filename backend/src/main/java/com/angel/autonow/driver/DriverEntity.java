@@ -2,6 +2,7 @@ package com.angel.autonow.driver;
 
 import com.angel.autonow.company.CompanyEntity;
 import com.angel.autonow.expertise.ExpertiseType;
+import com.angel.autonow.vehicle.VehicleEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -12,7 +13,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -57,4 +57,8 @@ public class DriverEntity {
 	@ManyToOne
 	@JoinColumn(name = "company_id")
 	private CompanyEntity company;
+
+	@ManyToOne
+	@JoinColumn(name = "preferred_vehicle_id")
+	private VehicleEntity preferredVehicle;
 }

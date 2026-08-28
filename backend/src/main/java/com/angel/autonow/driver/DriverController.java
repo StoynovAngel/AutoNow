@@ -72,4 +72,20 @@ public class DriverController {
 				? ResponseEntity.noContent().build()
 				: ResponseEntity.badRequest().build();
 	}
+
+	@PutMapping("/{driverId}/vehicles/{vehicleId}")
+	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN')")
+	public ResponseEntity<DriverResponseDTO> setPreferredVehicle(@PathVariable Long driverId, @PathVariable Long vehicleId) {
+		return driverService.setPreferredVehicle(driverId, vehicleId)
+				.map(ResponseEntity::ok)
+				.orElse(ResponseEntity.notFound().build());
+	}
+
+	@DeleteMapping("/{driverId}/vehicles")
+	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN')")
+	public ResponseEntity<DriverResponseDTO> clearPreferredVehicle(@PathVariable Long driverId) {
+		return driverService.clearPreferredVehicle(driverId)
+				.map(ResponseEntity::ok)
+				.orElse(ResponseEntity.notFound().build());
+	}
 }
