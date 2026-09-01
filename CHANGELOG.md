@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.1.6](https://github.com/StoynovAngel/AutoNow/compare/v0.1.5...v0.1.6) (2026-08-28)
+
+
+### Features
+
+* add register company through admin ([#121](https://github.com/StoynovAngel/AutoNow/issues/121)) ([1afc97f](https://github.com/StoynovAngel/AutoNow/commit/1afc97fbc41cbccdaed77f5c3c23d23400930bd6))
+* Add rental func and delete old stuff ([#122](https://github.com/StoynovAngel/AutoNow/issues/122)) ([910c73c](https://github.com/StoynovAngel/AutoNow/commit/910c73ce066c4d743c738eab251cd410326750d7))
+
+
+### Bug Fixes
+
+* bind EAS build profiles to environments for Mapbox token injection ([bdbdbce](https://github.com/StoynovAngel/AutoNow/commit/bdbdbce68269bb5581e6efca90ce001ae2bc54a6))
+* Code base ([#148](https://github.com/StoynovAngel/AutoNow/issues/148)) ([890fbe6](https://github.com/StoynovAngel/AutoNow/commit/890fbe6621392451469ba5803be4868494141cd6))
+
 ## [0.1.5](https://github.com/StoynovAngel/AutoNow/compare/v0.1.4...v0.1.5) (2026-06-12)
 
 
