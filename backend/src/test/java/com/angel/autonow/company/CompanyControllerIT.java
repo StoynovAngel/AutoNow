@@ -587,6 +587,26 @@ class CompanyControllerIT {
 	}
 
 	@Test
+	void deleteCompany_cascadesAdminUsers() throws Exception {
+		var company = TestData.createCompanyEntity();
+		companyRepository.save(company);
+
+		var admin = UserEntity.builder()
+				.email("admin@fleet.com")
+				.password("encodedPassword")
+				.authorities(new HashSet<>(Set.of(Role.COMPANY_ADMIN.getAuthority())))
+				.company(company)
+				.build();
+		userRepository.save(admin);
+
+		mockMvc.perform(delete("/api/companies/{id}", company.getId()).with(TestData.adminJwt()))
+				.andExpect(status().isNoContent());
+
+		assertThat(companyRepository.existsById(company.getId())).isFalse();
+		assertThat(userRepository.findByEmail("admin@fleet.com")).isEmpty();
+	}
+
+	@Test
 	void deleteCompany_notFound_returnsBadRequest() throws Exception {
 		mockMvc.perform(delete("/api/companies/{id}", NON_EXISTENT_ID).with(TestData.adminJwt())).andExpect(status().isBadRequest());
 	}
