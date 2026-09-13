@@ -1,7 +1,6 @@
 import { useState, type FormEvent, type ChangeEvent } from 'react';
 import { Alert, Button, Label, Modal, ModalBody, ModalHeader, Select, Textarea, TextInput } from 'flowbite-react';
-import { authService } from '../../services/auth/authService';
-import { companyService, COMPANY_TYPES, type CompanyPayload, type CompanyType } from '../../services/company/companyService';
+import { companyService, COMPANY_TYPES, type CreateCompanyWithAdminPayload, type CompanyType } from '../../services/company/companyService';
 import { getErrorMessage } from '../../utils/errors';
 
 interface AddCompanyModalProps {
@@ -57,31 +56,22 @@ const AddCompanyModal = ({ show, onClose, onCreated }: AddCompanyModalProps) => 
         setSubmitting(true);
 
         try {
-            const { token: registerToken } = await authService.register({
-                email: fields.adminEmail,
-                password: fields.adminPassword,
-            });
-
-            localStorage.setItem('accessToken', registerToken);
-
-            const payload: CompanyPayload = {
+            const payload: CreateCompanyWithAdminPayload = {
                 name: fields.name.trim(),
                 address: fields.address.trim(),
                 phone: fields.phone.trim(),
                 email: fields.email.trim(),
                 companyType: fields.companyType,
                 description: fields.description.trim() || undefined,
+                adminEmail: fields.adminEmail.trim(),
+                adminPassword: fields.adminPassword,
             };
 
-            const created = await companyService.createCompany(payload);
-            await companyService.joinCompany(created.id);
-
-            localStorage.removeItem('accessToken');
+            await companyService.createCompanyWithAdmin(payload);
 
             setCredentials({ email: fields.adminEmail, password: fields.adminPassword });
             onCreated();
         } catch (err: unknown) {
-            localStorage.removeItem('accessToken');
             setError(getErrorMessage(err, 'Failed to create company. Please try again.'));
         } finally {
             setSubmitting(false);

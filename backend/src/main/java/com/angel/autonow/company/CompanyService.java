@@ -3,17 +3,20 @@ package com.angel.autonow.company;
 import com.angel.autonow.driver.DriverRepository;
 import com.angel.autonow.security.jwt.JwtService;
 import com.angel.autonow.user.UserEntity;
+import com.angel.autonow.user.UserException;
 import com.angel.autonow.user.UserRepository;
 import com.angel.autonow.user.role.Role;
 import com.angel.autonow.vehicle.VehicleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -25,12 +28,33 @@ public class CompanyService {
 	private final JwtService jwtService;
 	private final DriverRepository driverRepository;
 	private final VehicleRepository vehicleRepository;
+	private final PasswordEncoder passwordEncoder;
 
 	@Transactional
 	public CompanyResponseDTO createCompany(CompanyRequestDTO request) {
 		CompanyEntity company = companyMapper.toEntity(request);
 		CompanyEntity saved = companyRepository.save(company);
 		return companyMapper.toDTO(saved);
+	}
+
+	@Transactional
+	public CompanyResponseDTO createCompanyWithAdmin(CreateCompanyWithAdminRequestDTO request) {
+		if (userRepository.findByEmail(request.adminEmail()).isPresent()) {
+			throw new UserException("Account with this email already exists.");
+		}
+
+		CompanyEntity company = companyMapper.toEntity(request.toCompanyRequest());
+		CompanyEntity savedCompany = companyRepository.save(company);
+
+		UserEntity admin = UserEntity.builder()
+				.email(request.adminEmail())
+				.password(passwordEncoder.encode(request.adminPassword()))
+				.authorities(Set.of(Role.COMPANY_ADMIN.getAuthority()))
+				.company(savedCompany)
+				.build();
+		userRepository.save(admin);
+
+		return companyMapper.toDTO(savedCompany);
 	}
 
 	@Transactional

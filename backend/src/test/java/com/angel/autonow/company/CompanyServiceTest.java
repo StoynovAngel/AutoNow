@@ -4,14 +4,18 @@ import com.angel.autonow.data.TestData;
 import com.angel.autonow.driver.DriverRepository;
 import com.angel.autonow.security.jwt.JwtService;
 import com.angel.autonow.user.UserEntity;
+import com.angel.autonow.user.UserException;
 import com.angel.autonow.user.UserRepository;
 import com.angel.autonow.user.role.Role;
 import com.angel.autonow.vehicle.VehicleRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.HashSet;
 import java.util.List;
@@ -46,8 +50,14 @@ class CompanyServiceTest {
 	@Mock
 	private VehicleRepository vehicleRepository;
 
+	@Mock
+	private PasswordEncoder passwordEncoder;
+
 	@InjectMocks
 	private CompanyService companyService;
+
+	@Captor
+	private ArgumentCaptor<UserEntity> userCaptor;
 
 	@Test
 	void createCompany_returnCompanyResponse() {
@@ -64,6 +74,44 @@ class CompanyServiceTest {
 
 		assertEquals(1L, result.id());
 		assertEquals("Test Fleet Co", result.name());
+	}
+
+	@Test
+	void createCompanyWithAdmin_createsCompanyAndAdmin() {
+		CreateCompanyWithAdminRequestDTO request = TestData.createCompanyWithAdminRequest();
+		CompanyEntity entity = CompanyEntity.builder().name("Test Fleet Co").build();
+		CompanyEntity saved = CompanyEntity.builder().id(1L).name("Test Fleet Co").build();
+		CompanyResponseDTO response = TestData.createCompanyResponse(1L);
+
+		when(userRepository.findByEmail("newadmin@fleet.com")).thenReturn(Optional.empty());
+		when(companyMapper.toEntity(any(CompanyRequestDTO.class))).thenReturn(entity);
+		when(companyRepository.save(entity)).thenReturn(saved);
+		when(passwordEncoder.encode("Password1")).thenReturn("encoded");
+		when(companyMapper.toDTO(saved)).thenReturn(response);
+
+		var result = companyService.createCompanyWithAdmin(request);
+
+		assertEquals(1L, result.id());
+
+		verify(userRepository).save(userCaptor.capture());
+		UserEntity admin = userCaptor.getValue();
+		assertEquals("newadmin@fleet.com", admin.getEmail());
+		assertEquals("encoded", admin.getPassword());
+		assertEquals(saved, admin.getCompany());
+		assertTrue(admin.getAuthorities().contains(Role.COMPANY_ADMIN.getAuthority()));
+	}
+
+	@Test
+	void createCompanyWithAdmin_duplicateEmail_throwsAndSavesNothing() {
+		CreateCompanyWithAdminRequestDTO request = TestData.createCompanyWithAdminRequest();
+
+		when(userRepository.findByEmail("newadmin@fleet.com"))
+				.thenReturn(Optional.of(UserEntity.builder().build()));
+
+		assertThrows(UserException.class,
+				() -> companyService.createCompanyWithAdmin(request));
+		verify(companyRepository, never()).save(any());
+		verify(userRepository, never()).save(any());
 	}
 
 	@Test
