@@ -32,6 +32,12 @@ public class CompanyController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(companyService.createCompany(request));
 	}
 
+	@PostMapping("/with-admin")
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<CompanyResponseDTO> createCompanyWithAdmin(@Valid @RequestBody CreateCompanyWithAdminRequestDTO request) {
+		return ResponseEntity.status(HttpStatus.CREATED).body(companyService.createCompanyWithAdmin(request));
+	}
+
 	@PostMapping("/{id}/join")
 	@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'COMPANY_ADMIN')")
 	public ResponseEntity<JwtResponse> joinCompany(@PathVariable Long id, Authentication authentication) {

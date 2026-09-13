@@ -16,6 +16,11 @@ export interface JoinCompanyResponse {
     token: string;
 }
 
+export interface CreateCompanyWithAdminPayload extends CompanyPayload {
+    adminEmail: string;
+    adminPassword: string;
+}
+
 export const companyService = {
     getAllCompanies: async () => {
         const {data} = await apiClient.get('/companies');
@@ -34,6 +39,11 @@ export const companyService = {
 
     createCompany: async (companyData: CompanyPayload) => {
         const {data} = await apiClient.post('/companies', companyData);
+        return data;
+    },
+
+    createCompanyWithAdmin: async (payload: CreateCompanyWithAdminPayload) => {
+        const {data} = await apiClient.post('/companies/with-admin', payload);
         return data;
     },
 
