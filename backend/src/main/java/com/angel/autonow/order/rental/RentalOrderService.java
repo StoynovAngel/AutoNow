@@ -182,8 +182,8 @@ public class RentalOrderService {
 	}
 
 	private void validateDates(java.time.LocalDateTime start, java.time.LocalDateTime end) {
-		if (start != null && end != null && !end.isAfter(start)) {
-			throw new RentalOrderConflictException("Rental end date must be after start date");
+		if (start != null && end != null && end.toLocalDate().isBefore(start.toLocalDate())) {
+			throw new RentalOrderConflictException("Rental end date must not be before start date");
 		}
 	}
 
