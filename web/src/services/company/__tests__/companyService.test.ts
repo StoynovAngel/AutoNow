@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { companyService, type CompanyPayload } from '../companyService';
+import { companyService, type CompanyPayload, type CreateCompanyWithAdminPayload } from '../companyService';
 import apiClient from '../../apiClient';
 
 vi.mock('../../apiClient', () => ({
@@ -48,6 +48,20 @@ describe('companyService', () => {
         await companyService.createCompany(payload);
 
         expect(apiClient.post).toHaveBeenCalledWith('/companies', payload);
+    });
+
+    it('createCompanyWithAdmin POSTs to /companies/with-admin with payload', async () => {
+        const adminPayload: CreateCompanyWithAdminPayload = {
+            ...payload,
+            adminEmail: 'admin@b.com',
+            adminPassword: 'Password1',
+        };
+        vi.mocked(apiClient.post).mockResolvedValue({ data: { id: 1, ...payload } });
+
+        const result = await companyService.createCompanyWithAdmin(adminPayload);
+
+        expect(apiClient.post).toHaveBeenCalledWith('/companies/with-admin', adminPayload);
+        expect(result).toEqual({ id: 1, ...payload });
     });
 
     it('updateCompany PUTs to /companies/{id} with payload', async () => {

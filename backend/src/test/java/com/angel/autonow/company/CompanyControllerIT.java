@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static com.angel.autonow.data.TestData.NON_EXISTENT_ID;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -148,6 +149,87 @@ class CompanyControllerIT {
 		var request = TestData.createCompanyRequest();
 
 		mockMvc.perform(post("/api/companies")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(request)))
+				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	void createCompanyWithAdmin_asAdmin_createsCompanyAndAdminUser() throws Exception {
+		var request = TestData.createCompanyWithAdminRequest();
+
+		mockMvc.perform(post("/api/companies/with-admin")
+						.with(TestData.adminJwt())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(request)))
+				.andExpect(status().isCreated())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.id").exists())
+				.andExpect(jsonPath("$.name").value("Test Fleet Co"));
+
+		var created = userRepository.findByEmail("newadmin@fleet.com");
+		org.assertj.core.api.Assertions.assertThat(created).isPresent();
+		org.assertj.core.api.Assertions.assertThat(created.get().getAuthorities())
+				.contains(Role.COMPANY_ADMIN.getAuthority());
+		org.assertj.core.api.Assertions.assertThat(created.get().getCompany()).isNotNull();
+	}
+
+	@Test
+	void createCompanyWithAdmin_duplicateAdminEmail_returnsBadRequest() throws Exception {
+		var existing = UserEntity.builder()
+				.email("newadmin@fleet.com")
+				.password("encodedPassword")
+				.authorities(new HashSet<>(Set.of(Role.CUSTOMER.getAuthority())))
+				.build();
+		userRepository.save(existing);
+
+		var request = TestData.createCompanyWithAdminRequest();
+
+		mockMvc.perform(post("/api/companies/with-admin")
+						.with(TestData.adminJwt())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(request)))
+				.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void createCompanyWithAdmin_invalidInput_returnsBadRequest() throws Exception {
+		var invalidRequest = CreateCompanyWithAdminRequestDTO.builder().build();
+
+		mockMvc.perform(post("/api/companies/with-admin")
+						.with(TestData.adminJwt())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(invalidRequest)))
+				.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void createCompanyWithAdmin_asCustomer_returnsForbidden() throws Exception {
+		var request = TestData.createCompanyWithAdminRequest();
+
+		mockMvc.perform(post("/api/companies/with-admin")
+						.with(TestData.customerJwt())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(request)))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	void createCompanyWithAdmin_asCompanyAdmin_returnsForbidden() throws Exception {
+		var request = TestData.createCompanyWithAdminRequest();
+
+		mockMvc.perform(post("/api/companies/with-admin")
+						.with(TestData.companyAdminJwt())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(request)))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	void createCompanyWithAdmin_withoutAuth_returnsUnauthorized() throws Exception {
+		var request = TestData.createCompanyWithAdminRequest();
+
+		mockMvc.perform(post("/api/companies/with-admin")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(request)))
 				.andExpect(status().isUnauthorized());

@@ -5,6 +5,7 @@ import com.angel.autonow.company.CompanyRequestDTO;
 import com.angel.autonow.company.CompanyResponseDTO;
 import com.angel.autonow.company.CompanyType;
 import com.angel.autonow.company.CompanyUpdateRequestDTO;
+import com.angel.autonow.company.CreateCompanyWithAdminRequestDTO;
 import com.angel.autonow.driver.DriverEntity;
 import com.angel.autonow.driver.DriverRequestDTO;
 import com.angel.autonow.driver.DriverResponseDTO;
@@ -287,6 +288,18 @@ public final class TestData {
 				.phone("+359888300100")
 				.email("test@fleet.com")
 				.companyType(CompanyType.TAXI)
+				.build();
+	}
+
+	public static CreateCompanyWithAdminRequestDTO createCompanyWithAdminRequest() {
+		return CreateCompanyWithAdminRequestDTO.builder()
+				.name("Test Fleet Co")
+				.address("123 Test St")
+				.phone("+359888300100")
+				.email("test@fleet.com")
+				.companyType(CompanyType.TAXI)
+				.adminEmail("newadmin@fleet.com")
+				.adminPassword("Password1")
 				.build();
 	}
 
