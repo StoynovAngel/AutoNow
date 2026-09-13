@@ -28,7 +28,9 @@ export const useCompanyPricing = (companyId: number | null, companyType: Company
     }, [companyId, companyType]);
 
     const savePricing = async (id: number, payload: PricingPayload): Promise<void> => {
-        const saved = await pricingService.updatePricing(id, payload);
+        const saved = pricing?.id
+            ? await pricingService.updatePricing(id, payload)
+            : await pricingService.createPricing(id, payload);
         setPricing(saved);
     };
 
