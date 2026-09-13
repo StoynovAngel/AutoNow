@@ -3,6 +3,7 @@ package com.angel.autonow.vehicle;
 import com.angel.autonow.company.CompanyEntity;
 import com.angel.autonow.company.CompanyRepository;
 import com.angel.autonow.data.TestData;
+import com.angel.autonow.driver.DriverRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -33,6 +34,9 @@ class VehicleServiceTest {
 
 	@Mock
 	private com.angel.autonow.order.OrderRepository orderRepository;
+
+	@Mock
+	private DriverRepository driverRepository;
 
 	@InjectMocks
 	private VehicleService vehicleService;

@@ -19,6 +19,7 @@ const EditCompanyModal = ({ show, company, onClose, onSubmit }: EditCompanyModal
                     initialData={company}
                     submitLabel="Save Changes"
                     submittingLabel="Saving..."
+                    isEdit
                     onSubmit={async (payload) => {
                         await onSubmit(payload);
                         onClose();

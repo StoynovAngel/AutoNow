@@ -72,7 +72,7 @@ public class CompanyController {
 
 	@PutMapping("/{id}")
 	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN')")
-	public ResponseEntity<CompanyResponseDTO> updateCompany(@PathVariable Long id, @Valid @RequestBody CompanyRequestDTO request, Authentication authentication) {
+	public ResponseEntity<CompanyResponseDTO> updateCompany(@PathVariable Long id, @Valid @RequestBody CompanyUpdateRequestDTO request, Authentication authentication) {
 		return companyService.updateCompany(id, request, authentication.getName())
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.badRequest().build());
