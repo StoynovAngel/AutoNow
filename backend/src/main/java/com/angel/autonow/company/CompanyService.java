@@ -81,7 +81,7 @@ public class CompanyService {
 	}
 
 	@Transactional
-	public Optional<CompanyResponseDTO> updateCompany(Long id, CompanyRequestDTO request, String userEmail) {
+	public Optional<CompanyResponseDTO> updateCompany(Long id, CompanyUpdateRequestDTO request, String userEmail) {
 		UserEntity user = userRepository.findByEmail(userEmail)
 				.orElseThrow(() -> new UsernameNotFoundException("User not found"));
 

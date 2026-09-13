@@ -196,7 +196,7 @@ class CompanyServiceTest {
 
 	@Test
 	void updateCompany_asAdmin_returnUpdatedResponse() {
-		CompanyRequestDTO request = TestData.createCompanyRequest();
+		CompanyUpdateRequestDTO request = TestData.createCompanyUpdateRequest();
 		CompanyEntity existing = CompanyEntity.builder().id(1L).name("Old Name").build();
 		CompanyEntity saved = CompanyEntity.builder().id(1L).name("Test Fleet Co").build();
 		CompanyResponseDTO response = TestData.createCompanyResponse(1L);
@@ -220,7 +220,7 @@ class CompanyServiceTest {
 
 	@Test
 	void updateCompany_asOwner_returnUpdatedResponse() {
-		CompanyRequestDTO request = TestData.createCompanyRequest();
+		CompanyUpdateRequestDTO request = TestData.createCompanyUpdateRequest();
 		CompanyEntity existing = CompanyEntity.builder().id(1L).name("Old Name").build();
 		CompanyEntity saved = CompanyEntity.builder().id(1L).name("Test Fleet Co").build();
 		CompanyResponseDTO response = TestData.createCompanyResponse(1L);
@@ -243,7 +243,7 @@ class CompanyServiceTest {
 
 	@Test
 	void updateCompany_notOwner_throwsAuthorizationDenied() {
-		CompanyRequestDTO request = TestData.createCompanyRequest();
+		CompanyUpdateRequestDTO request = TestData.createCompanyUpdateRequest();
 		CompanyEntity otherCompany = CompanyEntity.builder().id(2L).build();
 		UserEntity user = UserEntity.builder()
 				.id(3L)
@@ -261,7 +261,7 @@ class CompanyServiceTest {
 
 	@Test
 	void updateCompany_notFound_returnsEmpty() {
-		CompanyRequestDTO request = TestData.createCompanyRequest();
+		CompanyUpdateRequestDTO request = TestData.createCompanyUpdateRequest();
 		UserEntity admin = UserEntity.builder()
 				.id(1L)
 				.email("admin@test.com")
@@ -278,7 +278,7 @@ class CompanyServiceTest {
 
 	@Test
 	void updateCompany_userNotFound_throwsUsernameNotFound() {
-		CompanyRequestDTO request = TestData.createCompanyRequest();
+		CompanyUpdateRequestDTO request = TestData.createCompanyUpdateRequest();
 
 		when(userRepository.findByEmail("unknown@test.com")).thenReturn(Optional.empty());
 

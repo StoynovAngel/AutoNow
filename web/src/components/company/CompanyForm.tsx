@@ -13,6 +13,7 @@ interface CompanyFormProps {
     submittingLabel: string;
     onSubmit: (payload: CompanyPayload) => Promise<void>;
     onCancel: () => void;
+    isEdit?: boolean;
 }
 
 interface FormFields {
@@ -36,7 +37,7 @@ const buildInitialFields = (initialData?: Company): FormFields => ({
 const formatTypeLabel = (type: CompanyType): string =>
     type.charAt(0) + type.slice(1).toLowerCase();
 
-const CompanyForm = ({ initialData, submitLabel, submittingLabel, onSubmit, onCancel }: CompanyFormProps) => {
+const CompanyForm = ({ initialData, submitLabel, submittingLabel, onSubmit, onCancel, isEdit = false }: CompanyFormProps) => {
     const [fields, setFields] = useState<FormFields>(() => buildInitialFields(initialData));
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -135,6 +136,7 @@ const CompanyForm = ({ initialData, submitLabel, submittingLabel, onSubmit, onCa
                     />
                 </div>
 
+                {!isEdit && (
                 <div>
                     <Label htmlFor="company-type" className="mb-1 block">
                         Company Type <span className="text-red-500">*</span>
@@ -152,6 +154,7 @@ const CompanyForm = ({ initialData, submitLabel, submittingLabel, onSubmit, onCa
                         ))}
                     </Select>
                 </div>
+                )}
 
                 <div className="col-span-2">
                     <Label htmlFor="company-description" className="mb-1 block">

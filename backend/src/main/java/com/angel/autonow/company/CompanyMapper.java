@@ -17,5 +17,6 @@ public interface CompanyMapper {
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "createdAt", ignore = true)
 	@Mapping(target = "updatedAt", ignore = true)
-	void updateEntity(CompanyRequestDTO request, @MappingTarget CompanyEntity entity);
+	@Mapping(target = "companyType", ignore = true)
+	void updateEntity(CompanyUpdateRequestDTO request, @MappingTarget CompanyEntity entity);
 }

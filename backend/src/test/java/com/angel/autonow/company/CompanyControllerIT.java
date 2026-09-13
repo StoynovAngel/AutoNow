@@ -385,12 +385,11 @@ class CompanyControllerIT {
 				.build();
 		userRepository.save(admin);
 
-		var updateRequest = CompanyRequestDTO.builder()
+		var updateRequest = CompanyUpdateRequestDTO.builder()
 				.name("Updated Fleet")
 				.address("456 New St")
 				.phone("+359888400101")
 				.email("updated@fleet.com")
-				.companyType(CompanyType.LOGISTICS)
 				.build();
 
 		mockMvc.perform(put("/api/companies/{id}", company.getId())
@@ -400,7 +399,7 @@ class CompanyControllerIT {
 						.content(objectMapper.writeValueAsString(updateRequest)))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.name").value("Updated Fleet"))
-				.andExpect(jsonPath("$.companyType").value("LOGISTICS"));
+				.andExpect(jsonPath("$.companyType").value("TAXI"));
 	}
 
 	@Test
@@ -416,7 +415,7 @@ class CompanyControllerIT {
 				.build();
 		userRepository.save(owner);
 
-		var updateRequest = TestData.createCompanyRequest();
+		var updateRequest = TestData.createCompanyUpdateRequest();
 
 		mockMvc.perform(put("/api/companies/{id}", company.getId())
 						.with(jwt().jwt(j -> j.subject("owner@test.com"))
@@ -448,7 +447,7 @@ class CompanyControllerIT {
 				.build();
 		userRepository.save(nonOwner);
 
-		var updateRequest = TestData.createCompanyRequest();
+		var updateRequest = TestData.createCompanyUpdateRequest();
 
 		mockMvc.perform(put("/api/companies/{id}", company.getId())
 						.with(jwt().jwt(j -> j.subject("nonowner@test.com"))
