@@ -338,13 +338,13 @@ class CompanyServiceTest {
 	@Test
 	void deleteCompany_returnTrue() {
 		when(companyRepository.existsById(1L)).thenReturn(true);
-		when(userRepository.existsByCompanyId(1L)).thenReturn(false);
 		when(driverRepository.existsByCompanyId(1L)).thenReturn(false);
 		when(vehicleRepository.existsByCompanyId(1L)).thenReturn(false);
 
 		var result = companyService.deleteCompany(1L);
 
 		assertTrue(result);
+		verify(userRepository).deleteByCompanyId(1L);
 		verify(companyRepository).deleteById(1L);
 	}
 
@@ -361,11 +361,12 @@ class CompanyServiceTest {
 	@Test
 	void deleteCompany_hasDependents_returnFalse() {
 		when(companyRepository.existsById(1L)).thenReturn(true);
-		when(userRepository.existsByCompanyId(1L)).thenReturn(true);
+		when(driverRepository.existsByCompanyId(1L)).thenReturn(true);
 
 		var result = companyService.deleteCompany(1L);
 
 		assertFalse(result);
+		verify(userRepository, never()).deleteByCompanyId(any());
 		verify(companyRepository, never()).deleteById(any());
 	}
 

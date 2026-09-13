@@ -121,19 +121,20 @@ public class CompanyService {
 		});
 	}
 
+	@Transactional
 	public boolean deleteCompany(Long id) {
 		if (!companyRepository.existsById(id)) {
 			return false;
 		}
 
-		boolean hasDependents = userRepository.existsByCompanyId(id)
-				|| driverRepository.existsByCompanyId(id)
+		boolean hasDependents = driverRepository.existsByCompanyId(id)
 				|| vehicleRepository.existsByCompanyId(id);
 
 		if (hasDependents) {
 			return false;
 		}
 
+		userRepository.deleteByCompanyId(id);
 		companyRepository.deleteById(id);
 
 		return true;
