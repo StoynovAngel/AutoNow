@@ -59,15 +59,15 @@ jest.mock('@expo/vector-icons', () => {
 jest.mock('@rnmapbox/maps', () => {
     const React = require('react');
     const { View } = require('react-native');
-    const Pass = ({ children }) => React.createElement(View, null, children);
+    const Pass = ({ children, testID }) => React.createElement(View, { testID }, children);
     return {
         __esModule: true,
         default: { setAccessToken: jest.fn() },
         setAccessToken: jest.fn(),
         MapView: Pass,
-        Camera: Pass,
+        Camera: ({ testID }) => React.createElement(View, { testID }),
         ShapeSource: Pass,
-        LineLayer: Pass,
+        LineLayer: ({ testID }) => React.createElement(View, { testID }),
         MarkerView: Pass,
         PointAnnotation: Pass,
     };
