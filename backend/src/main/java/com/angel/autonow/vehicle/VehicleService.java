@@ -2,6 +2,7 @@ package com.angel.autonow.vehicle;
 
 import com.angel.autonow.company.CompanyEntity;
 import com.angel.autonow.company.CompanyRepository;
+import com.angel.autonow.driver.DriverRepository;
 import com.angel.autonow.order.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -20,6 +21,7 @@ public class VehicleService {
 	private final VehicleMapper vehicleMapper;
 	private final CompanyRepository companyRepository;
 	private final OrderRepository orderRepository;
+	private final DriverRepository driverRepository;
 
 	public Optional<VehicleResponseDTO> createVehicle(VehicleRequestDTO request) {
 		VehicleEntity vehicle = vehicleMapper.toEntity(request);
@@ -102,6 +104,9 @@ public class VehicleService {
 	}
 
 	private PublicVehicleResponseDTO toPublicDto(VehicleEntity vehicle) {
+		String driverPhone = driverRepository.findByPreferredVehicleId(vehicle.getId())
+				.map(d -> d.getPhoneNumber())
+				.orElse(null);
 		return PublicVehicleResponseDTO.builder()
 				.id(vehicle.getId())
 				.brand(vehicle.getBrand())
@@ -113,6 +118,7 @@ public class VehicleService {
 				.securityDepositAmount(vehicle.getSecurityDepositAmount())
 				.vehicleType(vehicle.getVehicleType())
 				.companyId(vehicle.getCompany() != null ? vehicle.getCompany().getId() : null)
+				.driverPhoneNumber(driverPhone)
 				.build();
 	}
 
