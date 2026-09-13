@@ -77,6 +77,7 @@ public class DataSeeder implements ApplicationRunner {
 	}
 
 	private DriverEntity saveDriverWithVehicle(DriverEntity driver, VehicleEntity vehicle) {
+		driver.setPreferredVehicle(vehicle);
 		return driverRepository.save(driver);
 	}
 
