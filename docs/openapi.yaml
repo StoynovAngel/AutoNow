@@ -4211,6 +4211,9 @@ components:
           format: double
           maximum: 5000
           minimum: 0.1
+        companyId:
+          type: integer
+          format: int64
       required:
         - distanceKm
         - vehicleType
