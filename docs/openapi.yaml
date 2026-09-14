@@ -3569,6 +3569,7 @@ components:
         licensePlate:
           type: string
           minLength: 1
+          pattern: '^[A-Z]{1,2}[0-9]{4}[A-Z]{2}$'
         imageUrl:
           type: string
         airConditioning:
