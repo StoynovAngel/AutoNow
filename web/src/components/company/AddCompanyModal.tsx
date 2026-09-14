@@ -170,6 +170,7 @@ const AddCompanyModal = ({ show, onClose, onCreated }: AddCompanyModalProps) => 
                                     onChange={handleChange}
                                     placeholder="+359888123456"
                                     pattern="^\+?[0-9]{10,15}$"
+                                    maxLength={16}
                                     required
                                 />
                             </div>

@@ -126,7 +126,7 @@ const AddDriverForm = ({ onSubmit, onCancel, initialData, hideCompanyId = false 
                     <Label htmlFor="phoneNumber" className="mb-1 block">
                         Phone Number <span className="text-red-500">*</span>
                     </Label>
-                    <TextInput id="phoneNumber" type="text" value={fields.phoneNumber} onChange={e => set('phoneNumber', e.target.value)} placeholder="e.g. +359888123456" required />
+                    <TextInput id="phoneNumber" type="tel" maxLength={16} pattern="^\+?[0-9]{10,15}$" title="10 to 15 digits, optional leading +" value={fields.phoneNumber} onChange={e => set('phoneNumber', e.target.value)} placeholder="e.g. +359888123456" required />
                 </div>
                 <div className="col-span-3">
                     <span className="block text-sm font-medium text-gray-700 mb-1">

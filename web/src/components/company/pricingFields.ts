@@ -8,27 +8,29 @@ export interface PricingFieldDef {
     label: string;
     required: boolean;
     step?: string;
+    min?: number;
+    max?: number;
 }
 
 const TAXI_FIELDS: PricingFieldDef[] = [
-    { key: 'baseFare', label: 'Base Fare (€)', required: true },
-    { key: 'ratePerKm', label: 'Rate / km (€)', required: true },
-    { key: 'nightMultiplier', label: 'Night Multiplier', required: true },
-    { key: 'nightStartHour', label: 'Night Start Hour', required: true, step: '1' },
-    { key: 'nightEndHour', label: 'Night End Hour', required: true, step: '1' },
+    { key: 'baseFare', label: 'Base Fare (€)', required: true, min: 0 },
+    { key: 'ratePerKm', label: 'Rate / km (€)', required: true, min: 0 },
+    { key: 'nightMultiplier', label: 'Night Multiplier', required: true, min: 1 },
+    { key: 'nightStartHour', label: 'Night Start Hour', required: true, step: '1', min: 0, max: 23 },
+    { key: 'nightEndHour', label: 'Night End Hour', required: true, step: '1', min: 0, max: 23 },
 ];
 
 const AMBULANCE_FIELDS: PricingFieldDef[] = [
-    { key: 'ambulanceBaseFare', label: 'Base Fare (€)', required: true },
-    { key: 'ratePerKm', label: 'Rate / km (€)', required: true },
-    { key: 'nightMultiplier', label: 'Night Multiplier', required: true },
-    { key: 'nightStartHour', label: 'Night Start Hour', required: true, step: '1' },
-    { key: 'nightEndHour', label: 'Night End Hour', required: true, step: '1' },
+    { key: 'ambulanceBaseFare', label: 'Base Fare (€)', required: true, min: 0 },
+    { key: 'ratePerKm', label: 'Rate / km (€)', required: true, min: 0 },
+    { key: 'nightMultiplier', label: 'Night Multiplier', required: true, min: 1 },
+    { key: 'nightStartHour', label: 'Night Start Hour', required: true, step: '1', min: 0, max: 23 },
+    { key: 'nightEndHour', label: 'Night End Hour', required: true, step: '1', min: 0, max: 23 },
 ];
 
 const LOGISTICS_FIELDS: PricingFieldDef[] = [
-    { key: 'logisticsBaseFare', label: 'Base Fare (€)', required: true },
-    { key: 'logisticsRatePerKg', label: 'Rate / kg (€)', required: false },
+    { key: 'logisticsBaseFare', label: 'Base Fare (€)', required: true, min: 0 },
+    { key: 'logisticsRatePerKg', label: 'Rate / kg (€)', required: false, min: 0 },
 ];
 
 export const fieldsForType = (companyType: CompanyType): PricingFieldDef[] => {

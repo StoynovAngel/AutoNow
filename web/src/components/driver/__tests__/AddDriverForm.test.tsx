@@ -19,3 +19,14 @@ describe('AddDriverForm — hideCompanyId prop', () => {
         expect(screen.queryByLabelText(/company id/i)).not.toBeInTheDocument();
     });
 });
+
+describe('AddDriverForm — phone validation guards', () => {
+    it('constrains the phone input with pattern, maxLength and tel type', () => {
+        render(<AddDriverForm onSubmit={noop} onCancel={noop} />);
+        const phone = screen.getByLabelText(/phone number/i) as HTMLInputElement;
+        expect(phone.getAttribute('pattern')).toBe('^\\+?[0-9]{10,15}$');
+        expect(phone.getAttribute('maxLength')).toBe('16');
+        expect(phone.type).toBe('tel');
+        expect(phone.required).toBe(true);
+    });
+});

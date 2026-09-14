@@ -156,5 +156,7 @@
   "chatbot-send": "Send",
   "chatbot-typing": "Assistant is typing…",
   "chatbot-error": "Sorry, something went wrong. Please try again.",
-  "chatbot-go-to": "Open {{service}}"
+  "chatbot-go-to": "Open {{service}}",
+  "validation-email-invalid": "Enter a valid email address",
+  "validation-password-too-short": "Password must be at least 8 characters"
 }

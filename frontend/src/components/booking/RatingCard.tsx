@@ -58,6 +58,7 @@ const RatingCard = ({
                 placeholder={t('rating-comment-placeholder')}
                 placeholderTextColor={theme.colors.textSecondary}
                 multiline
+                maxLength={1000}
                 testID="rating-comment"
             />
             {error && (

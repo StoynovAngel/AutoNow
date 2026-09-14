@@ -25,6 +25,7 @@ const WeightInput = ({ value, onChange, error }: WeightInputProps) => {
                     placeholder={t('booking-logistics-weight-placeholder')}
                     placeholderTextColor={theme.colors.textSecondary}
                     keyboardType="numeric"
+                    maxLength={7}
                     accessibilityLabel={t('booking-logistics-weight-placeholder')}
                     testID="weight-input"
                 />
