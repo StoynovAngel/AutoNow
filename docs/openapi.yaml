@@ -3569,6 +3569,7 @@ components:
         licensePlate:
           type: string
           minLength: 1
+          pattern: '^[A-Z]{1,2}[0-9]{4}[A-Z]{2}$'
         imageUrl:
           type: string
         airConditioning:
@@ -3576,9 +3577,12 @@ components:
         numberOfSeats:
           type: integer
           format: int32
+          maximum: 9
+          minimum: 1
         trunkCapacity:
           type: number
           format: double
+          maximum: 5000
         rentalPricePerDay:
           type: number
           format: double
