@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.1.6](https://github.com/StoynovAngel/AutoNow/compare/v0.1.5...v0.1.6) (2026-09-14)
+
+
+### Features
+
+* Add additional validation ([#203](https://github.com/StoynovAngel/AutoNow/issues/203)) ([2a98402](https://github.com/StoynovAngel/AutoNow/commit/2a98402082f4a2936bcfb86a226735f390713f64))
+* add register company through admin ([#121](https://github.com/StoynovAngel/AutoNow/issues/121)) ([1afc97f](https://github.com/StoynovAngel/AutoNow/commit/1afc97fbc41cbccdaed77f5c3c23d23400930bd6))
+* Add rental func and delete old stuff ([#122](https://github.com/StoynovAngel/AutoNow/issues/122)) ([910c73c](https://github.com/StoynovAngel/AutoNow/commit/910c73ce066c4d743c738eab251cd410326750d7))
+* Create company updated ([#197](https://github.com/StoynovAngel/AutoNow/issues/197)) ([31f5a3b](https://github.com/StoynovAngel/AutoNow/commit/31f5a3b58e155b83c24119d1a0f14ac72ae10809))
+* Update company ([#195](https://github.com/StoynovAngel/AutoNow/issues/195)) ([82151b2](https://github.com/StoynovAngel/AutoNow/commit/82151b26f4ad0546cefffa696d89ebe753984022))
+
+
+### Bug Fixes
+
+* bind EAS build profiles to environments for Mapbox token injection ([bdbdbce](https://github.com/StoynovAngel/AutoNow/commit/bdbdbce68269bb5581e6efca90ce001ae2bc54a6))
+* Code base ([#148](https://github.com/StoynovAngel/AutoNow/issues/148)) ([890fbe6](https://github.com/StoynovAngel/AutoNow/commit/890fbe6621392451469ba5803be4868494141cd6))
+* tax ([#201](https://github.com/StoynovAngel/AutoNow/issues/201)) ([320b665](https://github.com/StoynovAngel/AutoNow/commit/320b66594a969d016cbf63ba282eaff2b9a7bfb6))
+
 ## [0.1.5](https://github.com/StoynovAngel/AutoNow/compare/v0.1.4...v0.1.5) (2026-06-12)
 
 
