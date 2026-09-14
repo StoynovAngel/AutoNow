@@ -108,7 +108,7 @@ const RentalBookingBody = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const dateError = endDate.toDateString() < startDate.toDateString() ? t('rental-date-error') : null;
+    const dateError = endDate < startDate ? t('rental-date-error') : null;
 
     const formatDate = (d: Date) =>
         d.toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' });
