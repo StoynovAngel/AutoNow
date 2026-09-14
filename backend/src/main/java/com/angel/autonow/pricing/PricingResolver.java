@@ -3,11 +3,15 @@ package com.angel.autonow.pricing;
 import com.angel.autonow.company.CompanyPricingEntity;
 import com.angel.autonow.company.CompanyPricingRepository;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 public class PricingResolver {
+
+	private static final Logger log = LoggerFactory.getLogger(PricingResolver.class);
 
 	private final PricingProperties defaults;
 	private final CompanyPricingRepository companyPricingRepository;
@@ -15,7 +19,11 @@ public class PricingResolver {
 	public ResolvedPricing resolve(Long companyId) {
 		CompanyPricingEntity company = companyId == null ? null
 				: companyPricingRepository.findByCompanyId(companyId).orElse(null);
-		return overlay(company);
+		log.info("Pricing resolve: companyId={}, companyPricingFound={}", companyId, company != null);
+		ResolvedPricing resolved = overlay(company);
+		log.info("Pricing resolved: baseFare={}, ratePerKm={}, nightMultiplier={}, logisticsBaseFare={}",
+				resolved.baseFare(), resolved.ratePerKm(), resolved.nightMultiplier(), resolved.logisticsBaseFare());
+		return resolved;
 	}
 
 	public ResolvedPricing overlay(CompanyPricingEntity company) {
