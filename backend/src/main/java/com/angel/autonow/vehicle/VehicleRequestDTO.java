@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import lombok.Builder;
 import org.hibernate.validator.constraints.URL;
@@ -19,6 +20,7 @@ public record VehicleRequestDTO(
 		String model,
 
 		@NotBlank(message = "License plate is required")
+		@Pattern(regexp = "^[A-Z]{1,2}[0-9]{4}[A-Z]{2}$", message = "License plate must be valid (e.g. CB1234AB)")
 		String licensePlate,
 
 		@URL(message = "Image URL must be valid")

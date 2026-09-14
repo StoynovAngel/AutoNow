@@ -24,8 +24,11 @@ const VehicleBasicFields = ({ licensePlate, brand, model, vehicleType, lockedTyp
                 id="licensePlate"
                 type="text"
                 value={licensePlate}
-                onChange={(e) => onLicensePlateChange(e.target.value)}
+                onChange={(e) => onLicensePlateChange(e.target.value.toUpperCase())}
                 placeholder="e.g. CB1234AB"
+                pattern="^[A-Z]{1,2}[0-9]{4}[A-Z]{2}$"
+                maxLength={8}
+                title="1-2 letters, 4 digits, 2 letters (e.g. CB1234AB)"
                 required
             />
         </div>

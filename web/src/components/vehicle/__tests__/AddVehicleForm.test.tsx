@@ -150,4 +150,20 @@ describe('AddVehicleForm', () => {
         render(<AddVehicleForm onSubmit={onSubmit} onCancel={onCancel} hideCompanyId />);
         expect(screen.queryByLabelText(/company id/i)).not.toBeInTheDocument();
     });
+
+    it('constrains the license plate with pattern and maxLength', () => {
+        render(<AddVehicleForm onSubmit={onSubmit} onCancel={onCancel} />);
+        const plate = screen.getByLabelText(/license plate/i) as HTMLInputElement;
+        expect(plate.getAttribute('pattern')).toBe('^[A-Z]{1,2}[0-9]{4}[A-Z]{2}$');
+        expect(plate.getAttribute('maxLength')).toBe('8');
+        expect(plate.required).toBe(true);
+    });
+
+    it('uppercases license plate input', async () => {
+        const user = userEvent.setup();
+        render(<AddVehicleForm onSubmit={onSubmit} onCancel={onCancel} />);
+        const plate = screen.getByLabelText(/license plate/i) as HTMLInputElement;
+        await user.type(plate, 'cb1234ab');
+        expect(plate.value).toBe('CB1234AB');
+    });
 });

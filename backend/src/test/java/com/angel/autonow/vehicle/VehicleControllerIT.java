@@ -81,6 +81,25 @@ class VehicleControllerIT {
 	}
 
 	@Test
+	void createVehicle_invalidLicensePlate_returnsBadRequest() throws Exception {
+		var request = VehicleRequestDTO.builder()
+				.brand("Toyota")
+				.model("Camry")
+				.licensePlate("PA4362222KX")
+				.airConditioning(true)
+				.numberOfSeats(5)
+				.trunkCapacity(450.0)
+				.vehicleType(VehicleType.TAXI)
+				.build();
+
+		mockMvc.perform(post("/api/vehicles")
+						.with(TestData.adminJwt())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(request)))
+				.andExpect(status().isBadRequest());
+	}
+
+	@Test
 	void createVehicle_withoutAuth_returnsUnauthorized() throws Exception {
 		var request = TestData.createVehicleRequest();
 
