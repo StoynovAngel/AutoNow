@@ -93,13 +93,14 @@ const BookingMapBody = () => {
         estimateOrder({
             vehicleType,
             distanceKm: routeResult.distanceKm,
+            companyId,
             ...(isLogistics ? { weightKg } : {}),
         })
             .then((e) => { if (!cancelled) setEstimate(e); })
             .catch(() => { if (!cancelled) setEstimate(undefined); })
             .finally(() => { if (!cancelled) setEstimateLoading(false); });
         return () => { cancelled = true; };
-    }, [routeResult, vehicleType, weightKg, isLogistics]);
+    }, [routeResult, vehicleType, weightKg, isLogistics, companyId]);
 
     const handleConfirm = async () => {
         if (!auth?.user) { Alert.alert(t('booking-must-login')); return; }

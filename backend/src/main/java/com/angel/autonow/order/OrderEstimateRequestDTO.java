@@ -19,6 +19,8 @@ public record OrderEstimateRequestDTO(
 
 		@DecimalMin(value = "0.1", message = "Weight must be at least 0.1 kg")
 		@DecimalMax(value = "5000.0", message = "Weight cannot exceed 5000 kg")
-		Double weightKg
+		Double weightKg,
+
+		Long companyId
 ) {
 }

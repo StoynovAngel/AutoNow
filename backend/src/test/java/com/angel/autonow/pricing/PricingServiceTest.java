@@ -1,5 +1,6 @@
 package com.angel.autonow.pricing;
 
+import com.angel.autonow.company.CompanyPricingRepository;
 import com.angel.autonow.order.OrderEstimateRequestDTO;
 import com.angel.autonow.order.OrderEstimateResponseDTO;
 import com.angel.autonow.vehicle.VehicleType;
@@ -12,6 +13,7 @@ import java.time.ZoneId;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
 
 class PricingServiceTest {
 
@@ -34,7 +36,7 @@ class PricingServiceTest {
 
 	private PricingService serviceAt(int hour) {
 		Instant instant = LocalDateTime.of(2026, 6, 4, hour, 0).atZone(SOFIA).toInstant();
-		return new PricingService(PROPERTIES, Clock.fixed(instant, SOFIA));
+		return new PricingService(PROPERTIES, mock(CompanyPricingRepository.class), Clock.fixed(instant, SOFIA));
 	}
 
 	@Test
