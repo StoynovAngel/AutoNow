@@ -3576,9 +3576,12 @@ components:
         numberOfSeats:
           type: integer
           format: int32
+          maximum: 9
+          minimum: 1
         trunkCapacity:
           type: number
           format: double
+          maximum: 5000
         rentalPricePerDay:
           type: number
           format: double
