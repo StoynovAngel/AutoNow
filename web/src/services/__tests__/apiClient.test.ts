@@ -103,6 +103,50 @@ describe('apiClient', () => {
         });
     });
 
+    it('rewrites the error message from ProblemDetail field errors', async () => {
+        apiClient.defaults.adapter = async (config) => {
+            const error = new Error('Request failed with status code 400') as Error & {
+                response?: unknown;
+                config?: unknown;
+            };
+            error.response = {
+                status: 400,
+                data: { detail: 'One or more fields have validation errors', errors: { phoneNumber: 'Phone number must be valid' } },
+                statusText: 'Bad Request',
+                headers: {},
+                config,
+            };
+            error.config = config;
+            throw error;
+        };
+
+        await expect(apiClient.post('/drivers', {})).rejects.toMatchObject({
+            message: 'Phone number must be valid',
+        });
+    });
+
+    it('falls back to ProblemDetail detail when no field errors are present', async () => {
+        apiClient.defaults.adapter = async (config) => {
+            const error = new Error('Request failed with status code 409') as Error & {
+                response?: unknown;
+                config?: unknown;
+            };
+            error.response = {
+                status: 409,
+                data: { detail: 'Vehicle already assigned' },
+                statusText: 'Conflict',
+                headers: {},
+                config,
+            };
+            error.config = config;
+            throw error;
+        };
+
+        await expect(apiClient.post('/drivers', {})).rejects.toMatchObject({
+            message: 'Vehicle already assigned',
+        });
+    });
+
     it('does not redirect or clear storage on a 401 from an auth endpoint', async () => {
         localStorage.setItem('accessToken', 'stale-token');
         localStorage.setItem('userInfo', '{"name":"x"}');

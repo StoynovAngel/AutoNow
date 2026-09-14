@@ -25,6 +25,23 @@ apiClient.interceptors.request.use(
     }
 );
 
+const extractErrorMessage = (data: unknown): string | null => {
+    if (!data || typeof data !== "object") {
+        return null;
+    }
+    const problem = data as { errors?: Record<string, string>; detail?: string };
+    if (problem.errors && typeof problem.errors === "object") {
+        const messages = Object.values(problem.errors).filter(Boolean);
+        if (messages.length > 0) {
+            return messages.join("\n");
+        }
+    }
+    if (typeof problem.detail === "string" && problem.detail.trim()) {
+        return problem.detail;
+    }
+    return null;
+};
+
 apiClient.interceptors.response.use(
     (response) => response,
     (error) => {
@@ -37,6 +54,12 @@ apiClient.interceptors.response.use(
                 window.location.href = "/login";
             }
         }
+
+        const message = extractErrorMessage(error.response?.data);
+        if (message) {
+            error.message = message;
+        }
+
         return Promise.reject(error);
     }
 );

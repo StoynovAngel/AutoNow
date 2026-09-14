@@ -118,6 +118,7 @@ const CompanyForm = ({ initialData, submitLabel, submittingLabel, onSubmit, onCa
                         onChange={(e) => set('phone', e.target.value)}
                         placeholder="+359888123456"
                         pattern="^\+?[0-9]{10,15}$"
+                        maxLength={16}
                         required
                     />
                 </div>

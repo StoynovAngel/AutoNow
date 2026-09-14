@@ -156,5 +156,7 @@
   "chatbot-send": "Изпрати",
   "chatbot-typing": "Помощникът пише…",
   "chatbot-error": "Възникна грешка. Моля, опитайте отново.",
-  "chatbot-go-to": "Отвори {{service}}"
+  "chatbot-go-to": "Отвори {{service}}",
+  "validation-email-invalid": "Въведете валиден имейл адрес",
+  "validation-password-too-short": "Паролата трябва да е поне 8 символа"
 }

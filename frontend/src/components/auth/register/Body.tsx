@@ -12,6 +12,9 @@ import {parseApiError} from "../../../utils/errorParser";
 
 const loginBackground = require("../../../assets/images/background.jpg");
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const MIN_PASSWORD_LENGTH = 8;
+
 const Body = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -24,12 +27,18 @@ const Body = () => {
     const {register} = useAuth();
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
+    const emailValid = EMAIL_REGEX.test(email.trim());
+    const passwordValid = password.length >= MIN_PASSWORD_LENGTH;
+    const emailError = email.length > 0 && !emailValid ? t('validation-email-invalid') : '';
+    const passwordError = password.length > 0 && !passwordValid ? t('validation-password-too-short') : '';
+    const canSubmit = emailValid && passwordValid && !loading;
+
     const handleRegister = async () => {
         setApiError('');
 
         setLoading(true);
         try {
-            await register(email, password);
+            await register(email.trim(), password);
         } catch (err: unknown) {
             setApiError(parseApiError(err));
         } finally {
@@ -61,24 +70,31 @@ const Body = () => {
                                 onChangeText={setEmail}
                                 keyboardType="email-address"
                                 autoCapitalize="none"
+                                autoComplete="email"
+                                maxLength={254}
+                                error={Boolean(emailError)}
                                 style={styles.input}
                                 mode="outlined"
                                 outlineColor="transparent"
                                 activeOutlineColor={theme.colors.primary}
                                 theme={{ colors: { onSurfaceVariant: '#1A1A1A', onSurface: '#1A1A1A' } }}
                             />
+                            {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
 
                             <TextInput
                                 label={t('password')}
                                 value={password}
                                 onChangeText={setPassword}
                                 secureTextEntry
+                                maxLength={64}
+                                error={Boolean(passwordError)}
                                 style={styles.input}
                                 mode="outlined"
                                 outlineColor="transparent"
                                 activeOutlineColor={theme.colors.primary}
                                 theme={{ colors: { onSurfaceVariant: '#1A1A1A', onSurface: '#1A1A1A' } }}
                             />
+                            {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
                         </View>
 
                         <Button
@@ -87,7 +103,7 @@ const Body = () => {
                             style={styles.registerButton}
                             textColor="#FFFFFF"
                             loading={loading}
-                            disabled={loading}
+                            disabled={!canSubmit}
                             labelStyle={{fontSize: 16, fontWeight: '600'}}
                         >
                             {loading ? 'Registering...' : t('register-button')}

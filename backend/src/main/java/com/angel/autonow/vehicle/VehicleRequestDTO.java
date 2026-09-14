@@ -1,5 +1,8 @@
 package com.angel.autonow.vehicle;
 
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -23,10 +26,12 @@ public record VehicleRequestDTO(
 
 		boolean airConditioning,
 
-		@Positive(message = "Number of seats must be positive")
+		@Min(value = 1, message = "Number of seats must be at least 1")
+		@Max(value = 9, message = "Number of seats cannot exceed 9")
 		Integer numberOfSeats,
 
 		@Positive(message = "Trunk capacity must be positive")
+		@DecimalMax(value = "5000.0", message = "Trunk capacity cannot exceed 5000 L")
 		Double trunkCapacity,
 
 		@Positive(message = "Rental price per day must be positive")

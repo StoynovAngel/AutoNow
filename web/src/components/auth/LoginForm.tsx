@@ -36,6 +36,7 @@ const LoginForm = ({formData, errorMessage, onSubmit, onChange}: LoginFormProps)
                     name="email"
                     value={formData.email}
                     onChange={onChange}
+                    required
                     aria-invalid={Boolean(errorMessage)}
                     aria-describedby={errorMessage ? "login-error" : undefined}
                 />
@@ -50,6 +51,7 @@ const LoginForm = ({formData, errorMessage, onSubmit, onChange}: LoginFormProps)
                     name="password"
                     value={formData.password}
                     onChange={onChange}
+                    required
                     aria-invalid={Boolean(errorMessage)}
                     aria-describedby={errorMessage ? "login-error" : undefined}
                 />

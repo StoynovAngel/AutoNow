@@ -12,6 +12,8 @@ import {parseApiError} from "../../../utils/errorParser";
 
 const loginBackground = require("../../../assets/images/background.jpg");
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 const Body = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -24,12 +26,16 @@ const Body = () => {
     const {login} = useAuth();
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
+    const emailValid = EMAIL_REGEX.test(email.trim());
+    const emailError = email.length > 0 && !emailValid ? t('validation-email-invalid') : '';
+    const canSubmit = emailValid && password.length > 0 && !loading;
+
     const handleLogin = async () => {
         setApiError('');
 
         setLoading(true);
         try {
-            await login(email, password);
+            await login(email.trim(), password);
         } catch (err: unknown) {
             setApiError(parseApiError(err));
         } finally {
@@ -61,17 +67,22 @@ const Body = () => {
                                 onChangeText={setEmail}
                                 keyboardType="email-address"
                                 autoCapitalize="none"
+                                autoComplete="email"
+                                maxLength={254}
+                                error={Boolean(emailError)}
                                 style={styles.input}
                                 mode="outlined"
                                 outlineColor="transparent"
                                 activeOutlineColor={theme.colors.primary}
                                 theme={{ colors: { onSurfaceVariant: '#1A1A1A', onSurface: '#1A1A1A' } }}
                             />
+                            {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
                             <TextInput
                                 label={t('password')}
                                 value={password}
                                 onChangeText={setPassword}
                                 secureTextEntry
+                                maxLength={64}
                                 style={styles.input}
                                 mode="outlined"
                                 outlineColor="transparent"
@@ -86,7 +97,7 @@ const Body = () => {
                             style={styles.loginButton}
                             textColor="#FFFFFF"
                             loading={loading}
-                            disabled={loading}
+                            disabled={!canSubmit}
                             labelStyle={{fontSize: 16, fontWeight: '600'}}
                         >
                             {loading ? 'Logging in...' : t('login-button')}
