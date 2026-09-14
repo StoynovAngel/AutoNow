@@ -1,5 +1,6 @@
 package com.angel.autonow.pricing;
 
+import com.angel.autonow.company.CompanyPricingEntity;
 import com.angel.autonow.company.CompanyPricingRepository;
 import com.angel.autonow.order.OrderEstimateRequestDTO;
 import com.angel.autonow.order.OrderEstimateResponseDTO;
@@ -10,10 +11,12 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class PricingServiceTest {
 
@@ -36,7 +39,8 @@ class PricingServiceTest {
 
 	private PricingService serviceAt(int hour) {
 		Instant instant = LocalDateTime.of(2026, 6, 4, hour, 0).atZone(SOFIA).toInstant();
-		return new PricingService(PROPERTIES, mock(CompanyPricingRepository.class), Clock.fixed(instant, SOFIA));
+		PricingResolver resolver = new PricingResolver(PROPERTIES, mock(CompanyPricingRepository.class));
+		return new PricingService(PROPERTIES, resolver, Clock.fixed(instant, SOFIA));
 	}
 
 	@Test
@@ -166,6 +170,31 @@ class PricingServiceTest {
 		IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
 				() -> service.calculatePrice(10.0, VehicleType.LOGISTICS));
 		assertEquals(true, ex.getMessage().contains("LOGISTICS"));
+	}
+
+	@Test
+	void estimate_withCompanyId_usesCompanyPricing() {
+		Instant instant = LocalDateTime.of(2026, 6, 4, 14, 0).atZone(SOFIA).toInstant();
+		CompanyPricingRepository repository = mock(CompanyPricingRepository.class);
+		CompanyPricingEntity company = CompanyPricingEntity.builder()
+				.baseFare(9.0)
+				.ratePerKm(3.0)
+				.build();
+		when(repository.findByCompanyId(1L)).thenReturn(Optional.of(company));
+
+		PricingResolver resolver = new PricingResolver(PROPERTIES, repository);
+		PricingService service = new PricingService(PROPERTIES, resolver, Clock.fixed(instant, SOFIA));
+
+		OrderEstimateRequestDTO request = OrderEstimateRequestDTO.builder()
+				.vehicleType(VehicleType.TAXI)
+				.distanceKm(10.0)
+				.companyId(1L)
+				.build();
+
+		OrderEstimateResponseDTO result = service.estimate(request);
+
+		// company baseFare=9.0, ratePerKm=3.0, day time so no night multiplier
+		assertEquals(round(9.0 + 10.0 * 3.0), result.estimatedPrice(), 0.001);
 	}
 
 	private static double round(double value) {

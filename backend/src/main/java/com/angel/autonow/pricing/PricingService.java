@@ -1,7 +1,5 @@
 package com.angel.autonow.pricing;
 
-import com.angel.autonow.company.CompanyPricingEntity;
-import com.angel.autonow.company.CompanyPricingRepository;
 import com.angel.autonow.order.OrderEstimateRequestDTO;
 import com.angel.autonow.order.OrderEstimateResponseDTO;
 import com.angel.autonow.vehicle.VehicleType;
@@ -18,22 +16,22 @@ import java.time.ZoneId;
 public class PricingService {
 
 	private final PricingProperties pricingProperties;
-	private final CompanyPricingRepository companyPricingRepository;
+	private final PricingResolver pricingResolver;
 	private final Clock zonedClock;
 
 	@Autowired
-	public PricingService(PricingProperties pricingProperties, CompanyPricingRepository companyPricingRepository) {
-		this(pricingProperties, companyPricingRepository, Clock.systemDefaultZone());
+	public PricingService(PricingProperties pricingProperties, PricingResolver pricingResolver) {
+		this(pricingProperties, pricingResolver, Clock.systemDefaultZone());
 	}
 
-	PricingService(PricingProperties pricingProperties, CompanyPricingRepository companyPricingRepository, Clock clock) {
+	PricingService(PricingProperties pricingProperties, PricingResolver pricingResolver, Clock clock) {
 		this.pricingProperties = pricingProperties;
-		this.companyPricingRepository = companyPricingRepository;
+		this.pricingResolver = pricingResolver;
 		this.zonedClock = clock.withZone(ZoneId.of(pricingProperties.timezone()));
 	}
 
 	public OrderEstimateResponseDTO estimate(OrderEstimateRequestDTO request) {
-		ResolvedPricing pricing = resolvePricing(request.companyId());
+		ResolvedPricing pricing = pricingResolver.resolve(request.companyId());
 		double price = request.vehicleType() == VehicleType.LOGISTICS
 				? calculateForLogistics(request.distanceKm(), request.weightKg(), pricing)
 				: calculatePrice(request.distanceKm(), request.vehicleType(), pricing);
@@ -46,7 +44,7 @@ public class PricingService {
 	}
 
 	public double calculatePrice(double distanceKm, VehicleType vehicleType) {
-		return calculatePrice(distanceKm, vehicleType, resolvePricing(null));
+		return calculatePrice(distanceKm, vehicleType, pricingResolver.resolve(null));
 	}
 
 	private double calculatePrice(double distanceKm, VehicleType vehicleType, ResolvedPricing pricing) {
@@ -74,12 +72,6 @@ public class PricingService {
 		return pricing.ratePerKm() * timeMultiplier;
 	}
 
-	private ResolvedPricing resolvePricing(Long companyId) {
-		CompanyPricingEntity company = companyId == null ? null
-				: companyPricingRepository.findByCompanyId(companyId).orElse(null);
-		return ResolvedPricing.of(pricingProperties, company);
-	}
-
 	public double calculateForRental(long rentalDays) {
 		if (rentalDays <= 0) {
 			throw new IllegalArgumentException("rentalDays must be positive: " + rentalDays);
@@ -105,7 +97,7 @@ public class PricingService {
 	}
 
 	public double calculateForLogistics(double distanceKm, Double weightKg) {
-		return calculateForLogistics(distanceKm, weightKg, resolvePricing(null));
+		return calculateForLogistics(distanceKm, weightKg, pricingResolver.resolve(null));
 	}
 
 	private double calculateForLogistics(double distanceKm, Double weightKg, ResolvedPricing pricing) {
