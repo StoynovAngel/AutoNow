@@ -119,6 +119,7 @@ describe('BookingMapBody — logistics estimate', () => {
             expect(mockEstimate).toHaveBeenCalledWith({
                 vehicleType: 'LOGISTICS',
                 distanceKm: 8.0,
+                companyId: 1,
             }),
         );
         await waitFor(() => {
@@ -156,6 +157,7 @@ describe('BookingMapBody — logistics estimate', () => {
                 vehicleType: 'LOGISTICS',
                 distanceKm: 8.0,
                 weightKg: 50,
+                companyId: 1,
             }),
         );
         await waitFor(() => {
@@ -192,6 +194,7 @@ describe('BookingMapBody — estimate display', () => {
             expect(mockEstimate).toHaveBeenCalledWith({
                 vehicleType: 'TAXI',
                 distanceKm: 5.2,
+                companyId: 1,
             }),
         );
         await waitFor(() => {

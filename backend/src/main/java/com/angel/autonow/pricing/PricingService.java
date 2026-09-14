@@ -16,22 +16,25 @@ import java.time.ZoneId;
 public class PricingService {
 
 	private final PricingProperties pricingProperties;
+	private final PricingResolver pricingResolver;
 	private final Clock zonedClock;
 
 	@Autowired
-	public PricingService(PricingProperties pricingProperties) {
-		this(pricingProperties, Clock.systemDefaultZone());
+	public PricingService(PricingProperties pricingProperties, PricingResolver pricingResolver) {
+		this(pricingProperties, pricingResolver, Clock.systemDefaultZone());
 	}
 
-	PricingService(PricingProperties pricingProperties, Clock clock) {
+	PricingService(PricingProperties pricingProperties, PricingResolver pricingResolver, Clock clock) {
 		this.pricingProperties = pricingProperties;
+		this.pricingResolver = pricingResolver;
 		this.zonedClock = clock.withZone(ZoneId.of(pricingProperties.timezone()));
 	}
 
 	public OrderEstimateResponseDTO estimate(OrderEstimateRequestDTO request) {
+		ResolvedPricing pricing = pricingResolver.resolve(request.companyId());
 		double price = request.vehicleType() == VehicleType.LOGISTICS
-				? calculateForLogistics(request.distanceKm(), request.weightKg())
-				: calculatePrice(request.distanceKm(), request.vehicleType());
+				? calculateForLogistics(request.distanceKm(), request.weightKg(), pricing)
+				: calculatePrice(request.distanceKm(), request.vehicleType(), pricing);
 
 		return OrderEstimateResponseDTO.builder()
 				.estimatedPrice(round(price))
@@ -41,28 +44,32 @@ public class PricingService {
 	}
 
 	public double calculatePrice(double distanceKm, VehicleType vehicleType) {
+		return calculatePrice(distanceKm, vehicleType, pricingResolver.resolve(null));
+	}
+
+	private double calculatePrice(double distanceKm, VehicleType vehicleType, ResolvedPricing pricing) {
 		if (distanceKm < 0) {
 			throw new IllegalArgumentException("distanceKm must not be negative: " + distanceKm);
 		}
 
 		return switch (vehicleType) {
-			case TAXI -> calculateForTaxi(distanceKm);
-			case AMBULANCE -> calculateForAmbulance(distanceKm);
+			case TAXI -> calculateForTaxi(distanceKm, pricing);
+			case AMBULANCE -> calculateForAmbulance(distanceKm, pricing);
 			default -> throw new IllegalArgumentException("Unsupported vehicle type for calculatePrice: " + vehicleType);
 		};
 	}
 
-	private double calculateForTaxi(double distanceKm) {
-		return pricingProperties.baseFare() + distanceKm * effectiveRatePerKm();
+	private double calculateForTaxi(double distanceKm, ResolvedPricing pricing) {
+		return pricing.baseFare() + distanceKm * effectiveRatePerKm(pricing);
 	}
 
-	private double calculateForAmbulance(double distanceKm) {
-		return pricingProperties.ambulanceBaseFare() + distanceKm * 2 * effectiveRatePerKm();
+	private double calculateForAmbulance(double distanceKm, ResolvedPricing pricing) {
+		return pricing.ambulanceBaseFare() + distanceKm * 2 * effectiveRatePerKm(pricing);
 	}
 
-	private double effectiveRatePerKm() {
-		double timeMultiplier = isNight() ? pricingProperties.nightMultiplier() : 1.0;
-		return pricingProperties.ratePerKm() * timeMultiplier;
+	private double effectiveRatePerKm(ResolvedPricing pricing) {
+		double timeMultiplier = isNight(pricing) ? pricing.nightMultiplier() : 1.0;
+		return pricing.ratePerKm() * timeMultiplier;
 	}
 
 	public double calculateForRental(long rentalDays) {
@@ -90,21 +97,25 @@ public class PricingService {
 	}
 
 	public double calculateForLogistics(double distanceKm, Double weightKg) {
+		return calculateForLogistics(distanceKm, weightKg, pricingResolver.resolve(null));
+	}
+
+	private double calculateForLogistics(double distanceKm, Double weightKg, ResolvedPricing pricing) {
 		if (distanceKm < 0) {
 			throw new IllegalArgumentException("distanceKm must not be negative: " + distanceKm);
 		}
 
-		double base = pricingProperties.logisticsBaseFare();
-		double distanceCost = distanceKm * pricingProperties.ratePerKm();
-		double weightCost = weightKg != null ? weightKg * pricingProperties.logisticsRatePerKg() : 0.0;
+		double base = pricing.logisticsBaseFare();
+		double distanceCost = distanceKm * pricing.ratePerKm();
+		double weightCost = weightKg != null ? weightKg * pricing.logisticsRatePerKg() : 0.0;
 
 		return base + distanceCost + weightCost;
 	}
 
-	private boolean isNight() {
+	private boolean isNight(ResolvedPricing pricing) {
 		int hour = LocalTime.now(zonedClock).getHour();
-		int start = pricingProperties.nightStartHour();
-		int end = pricingProperties.nightEndHour();
+		int start = pricing.nightStartHour();
+		int end = pricing.nightEndHour();
 
 		// Night window may wrap past midnight. Two cases:
 		//   start=22, end=6  → night is [22..23] ∪ [0..5]; 23h=night, 5h=night, 6h=day, 21h=day

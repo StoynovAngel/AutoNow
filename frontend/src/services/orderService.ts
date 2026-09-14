@@ -67,6 +67,7 @@ export interface OrderEstimateRequest {
     vehicleType: VehicleType;
     distanceKm: number;
     weightKg?: number;
+    companyId?: number;
 }
 
 export interface OrderEstimateResponse {
