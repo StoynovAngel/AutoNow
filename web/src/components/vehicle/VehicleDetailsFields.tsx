@@ -42,6 +42,7 @@ const VehicleDetailsFields = ({
                 id="numberOfSeats"
                 type="number"
                 min={1}
+                max={9}
                 value={numberOfSeats}
                 onChange={(e) => onNumberOfSeatsChange(e.target.value)}
                 placeholder="e.g. 5"
@@ -56,6 +57,7 @@ const VehicleDetailsFields = ({
                 id="trunkCapacity"
                 type="number"
                 min={0.1}
+                max={5000}
                 step={0.1}
                 value={trunkCapacity}
                 onChange={(e) => onTrunkCapacityChange(e.target.value)}
