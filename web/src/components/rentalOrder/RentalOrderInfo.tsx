@@ -32,7 +32,7 @@ const ACTIONS: { status: RentalOrderStatus; label: string; color: 'blue' | 'purp
 const ALLOWED_TRANSITIONS: Record<RentalOrderStatus, RentalOrderStatus[]> = {
     CREATED:     ['ACCEPTED', 'CANCELED'],
     ACCEPTED:    ['IN_PROGRESS', 'CANCELED'],
-    IN_PROGRESS: ['COMPLETED', 'CANCELED'],
+    IN_PROGRESS: ['COMPLETED'],
     COMPLETED:   [],
     CANCELED:    [],
 };
