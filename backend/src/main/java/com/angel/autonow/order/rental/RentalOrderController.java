@@ -97,7 +97,7 @@ public class RentalOrderController {
 	}
 
 	@PostMapping("/{id}/admin-cancel")
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'COMPANY_ADMIN')")
 	public ResponseEntity<RentalOrderResponseDTO> adminCancelRentalOrder(@PathVariable Long id) {
 		return rentalOrderService.adminCancelRentalOrder(id)
 				.map(ResponseEntity::ok)
