@@ -128,6 +128,11 @@ public class VehicleService {
 			return false;
 		}
 		orderRepository.detachVehicleFromOrders(id);
+		driverRepository.findByPreferredVehicleId(id)
+				.ifPresent(driver -> {
+					driver.setPreferredVehicle(null);
+					driverRepository.save(driver);
+				});
 		vehicleRepository.deleteById(id);
 		return true;
 	}

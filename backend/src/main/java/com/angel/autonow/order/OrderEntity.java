@@ -37,6 +37,7 @@ public class OrderEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "driver_id")
+	@org.hibernate.annotations.OnDelete(action = org.hibernate.annotations.OnDeleteAction.SET_NULL)
 	private DriverEntity driver;
 
 	@ManyToOne
