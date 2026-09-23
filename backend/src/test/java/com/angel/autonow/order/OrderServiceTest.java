@@ -68,6 +68,8 @@ class OrderServiceTest {
 		OrderResponseDTO response = TestData.createOrderResponse(1L, 1L, OrderStatus.CREATED, NOW);
 
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+		when(pricingService.estimate(any(OrderEstimateRequestDTO.class)))
+				.thenReturn(OrderEstimateResponseDTO.builder().estimatedPrice(14.50).build());
 		when(orderRepository.save(any(OrderEntity.class))).thenReturn(saved);
 		when(orderMapper.toDTO(saved)).thenReturn(response);
 
@@ -88,6 +90,8 @@ class OrderServiceTest {
 
 		when(userRepository.findByEmail(CALLER_EMAIL)).thenReturn(Optional.of(caller));
 		when(userRepository.findById(1L)).thenReturn(Optional.of(caller));
+		when(pricingService.estimate(any(OrderEstimateRequestDTO.class)))
+				.thenReturn(OrderEstimateResponseDTO.builder().estimatedPrice(14.50).build());
 		when(orderRepository.save(any(OrderEntity.class))).thenReturn(saved);
 		when(orderMapper.toDTO(saved)).thenReturn(response);
 
@@ -155,6 +159,8 @@ class OrderServiceTest {
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 		when(driverRepository.findById(2L)).thenReturn(Optional.of(driver));
 		when(vehicleRepository.findById(3L)).thenReturn(Optional.of(vehicle));
+		when(pricingService.estimate(any(OrderEstimateRequestDTO.class)))
+				.thenReturn(OrderEstimateResponseDTO.builder().estimatedPrice(15.50).build());
 		when(orderRepository.save(any(OrderEntity.class))).thenReturn(saved);
 		when(orderMapper.toDTO(saved)).thenReturn(response);
 
