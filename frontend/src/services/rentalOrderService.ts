@@ -58,13 +58,3 @@ export const estimateRentalOrder = async (payload: RentalEstimateRequest): Promi
     const response = await customAPI.post<RentalEstimateResponse>('api/rental-orders/estimate', payload);
     return response.data;
 };
-
-export const getRentalOrderById = async (id: number): Promise<RentalOrderResponse> => {
-    const response = await customAPI.get<RentalOrderResponse>(`api/rental-orders/${id}`);
-    return response.data;
-};
-
-export const cancelRentalOrder = async (id: number): Promise<RentalOrderResponse> => {
-    const response = await customAPI.post<RentalOrderResponse>(`api/rental-orders/${id}/cancel`);
-    return response.data;
-};

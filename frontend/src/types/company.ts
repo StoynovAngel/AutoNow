@@ -13,26 +13,3 @@ export interface Company {
     isActive?: boolean;
     distance?: number;
 }
-
-export interface CompanyListResponse {
-    companies: Company[];
-    totalCount: number;
-}
-
-export interface CreateCompanyDTO {
-    name: string;
-    description?: string;
-    phone?: string;
-    email?: string;
-    address?: string;
-    companyType: VehicleType;
-}
-
-export interface UpdateCompanyDTO {
-    name?: string;
-    description?: string;
-    phone?: string;
-    email?: string;
-    address?: string;
-    companyType?: VehicleType;
-}
