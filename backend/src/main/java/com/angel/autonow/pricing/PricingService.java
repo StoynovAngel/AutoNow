@@ -32,9 +32,13 @@ public class PricingService {
 
 	public OrderEstimateResponseDTO estimate(OrderEstimateRequestDTO request) {
 		ResolvedPricing pricing = pricingResolver.resolve(request.companyId());
-		double price = request.vehicleType() == VehicleType.LOGISTICS
-				? calculateForLogistics(request.distanceKm(), request.weightKg(), pricing)
-				: calculatePrice(request.distanceKm(), request.vehicleType(), pricing);
+
+		double price = switch (request.vehicleType()) {
+			case TAXI -> calculateForTaxi(request.distanceKm(), pricing);
+			case AMBULANCE -> calculateForAmbulance(request.distanceKm(), pricing);
+			case LOGISTICS -> calculateForLogistics(request.distanceKm(), request.weightKg(), pricing);
+			default -> throw new IllegalArgumentException("Unsupported vehicle type for estimate: " + request.vehicleType());
+		};
 
 		return OrderEstimateResponseDTO.builder()
 				.estimatedPrice(round(price))

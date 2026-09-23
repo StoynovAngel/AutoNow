@@ -243,10 +243,13 @@ public class OrderService {
 	}
 
 	private double calculatePrice(OrderRequestDTO request) {
-		if (request.vehicleType() == VehicleType.LOGISTICS) {
-			return pricingService.calculateForLogistics(request.distanceKm(), request.weightKg());
-		}
-		return pricingService.calculatePrice(request.distanceKm(), request.vehicleType());
+		return pricingService.estimate(OrderEstimateRequestDTO.builder()
+				.vehicleType(request.vehicleType())
+				.distanceKm(request.distanceKm())
+				.weightKg(request.weightKg())
+				.companyId(request.companyId())
+				.build()
+		).estimatedPrice();
 	}
 
 	private void validateAssignment(OrderEntity order, DriverEntity driver, VehicleEntity vehicle) {
