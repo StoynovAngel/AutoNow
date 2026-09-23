@@ -2,7 +2,6 @@ package com.angel.autonow.pricing;
 
 import com.angel.autonow.order.OrderEstimateRequestDTO;
 import com.angel.autonow.order.OrderEstimateResponseDTO;
-import com.angel.autonow.vehicle.VehicleType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,42 +46,6 @@ public class PricingService {
 				.build();
 	}
 
-	public double calculatePrice(double distanceKm, VehicleType vehicleType) {
-		return calculatePrice(distanceKm, vehicleType, pricingResolver.resolve(null));
-	}
-
-	private double calculatePrice(double distanceKm, VehicleType vehicleType, ResolvedPricing pricing) {
-		if (distanceKm < 0) {
-			throw new IllegalArgumentException("distanceKm must not be negative: " + distanceKm);
-		}
-
-		return switch (vehicleType) {
-			case TAXI -> calculateForTaxi(distanceKm, pricing);
-			case AMBULANCE -> calculateForAmbulance(distanceKm, pricing);
-			default -> throw new IllegalArgumentException("Unsupported vehicle type for calculatePrice: " + vehicleType);
-		};
-	}
-
-	private double calculateForTaxi(double distanceKm, ResolvedPricing pricing) {
-		return pricing.baseFare() + distanceKm * effectiveRatePerKm(pricing);
-	}
-
-	private double calculateForAmbulance(double distanceKm, ResolvedPricing pricing) {
-		return pricing.ambulanceBaseFare() + distanceKm * 2 * effectiveRatePerKm(pricing);
-	}
-
-	private double effectiveRatePerKm(ResolvedPricing pricing) {
-		double timeMultiplier = isNight(pricing) ? pricing.nightMultiplier() : 1.0;
-		return pricing.ratePerKm() * timeMultiplier;
-	}
-
-	public double calculateForRental(long rentalDays) {
-		if (rentalDays <= 0) {
-			throw new IllegalArgumentException("rentalDays must be positive: " + rentalDays);
-		}
-		return round(rentalDays * pricingProperties.rentalRatePerDay());
-	}
-
 	public RentalEstimate estimateRental(Double vehicleRentalPricePerDay, Double securityDepositAmount, long days) {
 		if (days <= 0) {
 			throw new IllegalArgumentException("days must be positive: " + days);
@@ -100,8 +63,17 @@ public class PricingService {
 		return new RentalEstimate(total, deposit, pricingProperties.currency(), days, pricePerDay);
 	}
 
-	public double calculateForLogistics(double distanceKm, Double weightKg) {
-		return calculateForLogistics(distanceKm, weightKg, pricingResolver.resolve(null));
+	private double calculateForTaxi(double distanceKm, ResolvedPricing pricing) {
+		return pricing.baseFare() + distanceKm * effectiveRatePerKm(pricing);
+	}
+
+	private double calculateForAmbulance(double distanceKm, ResolvedPricing pricing) {
+		return pricing.ambulanceBaseFare() + distanceKm * 2 * effectiveRatePerKm(pricing);
+	}
+
+	private double effectiveRatePerKm(ResolvedPricing pricing) {
+		double timeMultiplier = isNight(pricing) ? pricing.nightMultiplier() : 1.0;
+		return pricing.ratePerKm() * timeMultiplier;
 	}
 
 	private double calculateForLogistics(double distanceKm, Double weightKg, ResolvedPricing pricing) {

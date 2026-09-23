@@ -44,46 +44,58 @@ class PricingServiceTest {
 	}
 
 	@Test
-	void calculatePrice_dayTime() {
+	void estimate_taxi_dayTime() {
 		PricingService service = serviceAt(14);
-		double price = service.calculatePrice(10.0, VehicleType.TAXI);
-		assertEquals(2.50 + 10.0 * 1.20, price, 0.001);
+		OrderEstimateRequestDTO request = OrderEstimateRequestDTO.builder()
+				.vehicleType(VehicleType.TAXI)
+				.distanceKm(10.0)
+				.build();
+		OrderEstimateResponseDTO result = service.estimate(request);
+		assertEquals(round(2.50 + 10.0 * 1.20), result.estimatedPrice(), 0.001);
 	}
 
 	@Test
-	void calculatePrice_negativeDistance_throwsIllegalArgument() {
-		PricingService service = serviceAt(14);
-		IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-				() -> service.calculatePrice(-1.0, VehicleType.TAXI));
-		assertEquals(true, ex.getMessage().contains("-1.0"));
-	}
-
-	@Test
-	void calculatePrice_atNight_appliesNightMultiplier() {
+	void estimate_taxi_atNight_appliesNightMultiplier() {
 		PricingService service = serviceAt(23);
-		double price = service.calculatePrice(10.0, VehicleType.TAXI);
-		assertEquals(2.50 + 10.0 * 1.20 * 1.20, price, 0.001);
+		OrderEstimateRequestDTO request = OrderEstimateRequestDTO.builder()
+				.vehicleType(VehicleType.TAXI)
+				.distanceKm(10.0)
+				.build();
+		OrderEstimateResponseDTO result = service.estimate(request);
+		assertEquals(round(2.50 + 10.0 * 1.20 * 1.20), result.estimatedPrice(), 0.001);
 	}
 
 	@Test
-	void calculatePrice_atNightStartBoundary_isNight() {
+	void estimate_taxi_atNightStartBoundary_isNight() {
 		PricingService service = serviceAt(22);
-		double price = service.calculatePrice(10.0, VehicleType.TAXI);
-		assertEquals(2.50 + 10.0 * 1.20 * 1.20, price, 0.001);
+		OrderEstimateRequestDTO request = OrderEstimateRequestDTO.builder()
+				.vehicleType(VehicleType.TAXI)
+				.distanceKm(10.0)
+				.build();
+		OrderEstimateResponseDTO result = service.estimate(request);
+		assertEquals(round(2.50 + 10.0 * 1.20 * 1.20), result.estimatedPrice(), 0.001);
 	}
 
 	@Test
-	void calculatePrice_atNightEndBoundary_isDay() {
+	void estimate_taxi_atNightEndBoundary_isDay() {
 		PricingService service = serviceAt(6);
-		double price = service.calculatePrice(10.0, VehicleType.TAXI);
-		assertEquals(2.50 + 10.0 * 1.20, price, 0.001);
+		OrderEstimateRequestDTO request = OrderEstimateRequestDTO.builder()
+				.vehicleType(VehicleType.TAXI)
+				.distanceKm(10.0)
+				.build();
+		OrderEstimateResponseDTO result = service.estimate(request);
+		assertEquals(round(2.50 + 10.0 * 1.20), result.estimatedPrice(), 0.001);
 	}
 
 	@Test
-	void calculatePrice_pastMidnight_isNight() {
+	void estimate_taxi_pastMidnight_isNight() {
 		PricingService service = serviceAt(3);
-		double price = service.calculatePrice(10.0, VehicleType.TAXI);
-		assertEquals(2.50 + 10.0 * 1.20 * 1.20, price, 0.001);
+		OrderEstimateRequestDTO request = OrderEstimateRequestDTO.builder()
+				.vehicleType(VehicleType.TAXI)
+				.distanceKm(10.0)
+				.build();
+		OrderEstimateResponseDTO result = service.estimate(request);
+		assertEquals(round(2.50 + 10.0 * 1.20 * 1.20), result.estimatedPrice(), 0.001);
 	}
 
 	@Test
@@ -102,36 +114,7 @@ class PricingServiceTest {
 	}
 
 	@Test
-	void calculateForLogistics_withWeight() {
-		PricingService service = serviceAt(14);
-		double price = service.calculateForLogistics(10.0, 100.0);
-		// base=5.00 + distance=10*1.20 + weight=100*0.05
-		assertEquals(5.00 + 10.0 * 1.20 + 100.0 * 0.05, price, 0.001);
-	}
-
-	@Test
-	void calculateForLogistics_noWeight_omitsWeightCost() {
-		PricingService service = serviceAt(14);
-		double price = service.calculateForLogistics(10.0, null);
-		assertEquals(5.00 + 10.0 * 1.20, price, 0.001);
-	}
-
-	@Test
-	void calculateForLogistics_zeroDistance_chargesBaseAndWeightOnly() {
-		PricingService service = serviceAt(14);
-		double price = service.calculateForLogistics(0.0, 50.0);
-		assertEquals(5.00 + 50.0 * 0.05, price, 0.001);
-	}
-
-	@Test
-	void calculateForLogistics_negativeDistance_throwsIllegalArgument() {
-		PricingService service = serviceAt(14);
-		assertThrows(IllegalArgumentException.class,
-				() -> service.calculateForLogistics(-1.0, 10.0));
-	}
-
-	@Test
-	void estimate_logistics_routesToLogisticsCalculation() {
+	void estimate_logistics_withWeight() {
 		PricingService service = serviceAt(14);
 		OrderEstimateRequestDTO request = OrderEstimateRequestDTO.builder()
 				.vehicleType(VehicleType.LOGISTICS)
@@ -140,6 +123,39 @@ class PricingServiceTest {
 				.build();
 		OrderEstimateResponseDTO result = service.estimate(request);
 		assertEquals(round(5.00 + 10.0 * 1.20 + 100.0 * 0.05), result.estimatedPrice(), 0.001);
+	}
+
+	@Test
+	void estimate_logistics_noWeight_omitsWeightCost() {
+		PricingService service = serviceAt(14);
+		OrderEstimateRequestDTO request = OrderEstimateRequestDTO.builder()
+				.vehicleType(VehicleType.LOGISTICS)
+				.distanceKm(10.0)
+				.build();
+		OrderEstimateResponseDTO result = service.estimate(request);
+		assertEquals(round(5.00 + 10.0 * 1.20), result.estimatedPrice(), 0.001);
+	}
+
+	@Test
+	void estimate_logistics_zeroDistance_chargesBaseAndWeightOnly() {
+		PricingService service = serviceAt(14);
+		OrderEstimateRequestDTO request = OrderEstimateRequestDTO.builder()
+				.vehicleType(VehicleType.LOGISTICS)
+				.distanceKm(0.0)
+				.weightKg(50.0)
+				.build();
+		OrderEstimateResponseDTO result = service.estimate(request);
+		assertEquals(round(5.00 + 50.0 * 0.05), result.estimatedPrice(), 0.001);
+	}
+
+	@Test
+	void estimate_logistics_negativeDistance_throwsIllegalArgument() {
+		PricingService service = serviceAt(14);
+		assertThrows(IllegalArgumentException.class, () -> service.estimate(
+				OrderEstimateRequestDTO.builder()
+						.vehicleType(VehicleType.LOGISTICS)
+						.distanceKm(-1.0)
+						.build()));
 	}
 
 	@Test
@@ -165,11 +181,14 @@ class PricingServiceTest {
 	}
 
 	@Test
-	void calculatePrice_logisticsVehicleType_throwsIllegalArgument() {
+	void estimate_unsupportedVehicleType_throwsIllegalArgument() {
 		PricingService service = serviceAt(14);
 		IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-				() -> service.calculatePrice(10.0, VehicleType.LOGISTICS));
-		assertEquals(true, ex.getMessage().contains("LOGISTICS"));
+				() -> service.estimate(OrderEstimateRequestDTO.builder()
+						.vehicleType(VehicleType.RENTAL)
+						.distanceKm(10.0)
+						.build()));
+		assertEquals(true, ex.getMessage().contains("RENTAL"));
 	}
 
 	@Test
