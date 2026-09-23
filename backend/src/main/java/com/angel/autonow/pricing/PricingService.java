@@ -14,6 +14,8 @@ import java.time.ZoneId;
 @Service
 public class PricingService {
 
+	private static final double AMBULANCE_RATE_MULTIPLIER = 2.0;
+
 	private final PricingProperties pricingProperties;
 	private final PricingResolver pricingResolver;
 	private final Clock zonedClock;
@@ -30,6 +32,10 @@ public class PricingService {
 	}
 
 	public OrderEstimateResponseDTO estimate(OrderEstimateRequestDTO request) {
+		if (request.distanceKm() < 0) {
+			throw new IllegalArgumentException("distanceKm must not be negative: " + request.distanceKm());
+		}
+
 		ResolvedPricing pricing = pricingResolver.resolve(request.companyId());
 
 		double price = switch (request.vehicleType()) {
@@ -46,29 +52,12 @@ public class PricingService {
 				.build();
 	}
 
-	public RentalEstimate estimateRental(Double vehicleRentalPricePerDay, Double securityDepositAmount, long days) {
-		if (days <= 0) {
-			throw new IllegalArgumentException("days must be positive: " + days);
-		}
-
-		Double fallback = pricingProperties.rentalRatePerDay();
-		if (vehicleRentalPricePerDay == null && fallback == null) {
-			throw new IllegalArgumentException("No rental price configured for this vehicle");
-		}
-
-		double pricePerDay = vehicleRentalPricePerDay != null ? vehicleRentalPricePerDay : fallback;
-		double total = round(days * pricePerDay);
-		double deposit = securityDepositAmount != null ? round(securityDepositAmount) : 0.0;
-
-		return new RentalEstimate(total, deposit, pricingProperties.currency(), days, pricePerDay);
-	}
-
 	private double calculateForTaxi(double distanceKm, ResolvedPricing pricing) {
 		return pricing.baseFare() + distanceKm * effectiveRatePerKm(pricing);
 	}
 
 	private double calculateForAmbulance(double distanceKm, ResolvedPricing pricing) {
-		return pricing.ambulanceBaseFare() + distanceKm * 2 * effectiveRatePerKm(pricing);
+		return pricing.ambulanceBaseFare() + distanceKm * AMBULANCE_RATE_MULTIPLIER * effectiveRatePerKm(pricing);
 	}
 
 	private double effectiveRatePerKm(ResolvedPricing pricing) {
@@ -77,12 +66,8 @@ public class PricingService {
 	}
 
 	private double calculateForLogistics(double distanceKm, Double weightKg, ResolvedPricing pricing) {
-		if (distanceKm < 0) {
-			throw new IllegalArgumentException("distanceKm must not be negative: " + distanceKm);
-		}
-
 		double base = pricing.logisticsBaseFare();
-		double distanceCost = distanceKm * pricing.ratePerKm();
+		double distanceCost = distanceKm * effectiveRatePerKm(pricing);
 		double weightCost = weightKg != null ? weightKg * pricing.logisticsRatePerKg() : 0.0;
 
 		return base + distanceCost + weightCost;

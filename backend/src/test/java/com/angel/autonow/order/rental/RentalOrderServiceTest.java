@@ -2,8 +2,8 @@ package com.angel.autonow.order.rental;
 
 import com.angel.autonow.company.CompanyEntity;
 import com.angel.autonow.company.CompanyRepository;
-import com.angel.autonow.pricing.PricingService;
 import com.angel.autonow.pricing.RentalEstimate;
+import com.angel.autonow.pricing.RentalPricingService;
 import com.angel.autonow.user.UserEntity;
 import com.angel.autonow.user.UserRepository;
 import com.angel.autonow.vehicle.VehicleEntity;
@@ -41,7 +41,7 @@ class RentalOrderServiceTest {
 	@Mock private UserRepository userRepository;
 	@Mock private VehicleRepository vehicleRepository;
 	@Mock private CompanyRepository companyRepository;
-	@Mock private PricingService pricingService;
+	@Mock private RentalPricingService rentalPricingService;
 
 	@InjectMocks
 	private RentalOrderService rentalOrderService;
@@ -71,7 +71,7 @@ class RentalOrderServiceTest {
 
 		when(userRepository.findByEmail("user@example.com")).thenReturn(Optional.of(user));
 		when(rentalOrderRepository.existsByUserIdAndStatusIn(eq(1L), anySet())).thenReturn(false);
-		when(pricingService.estimateRental(isNull(), isNull(), anyLong()))
+		when(rentalPricingService.estimateRental(isNull(), isNull(), anyLong()))
 				.thenReturn(new RentalEstimate(135.0, 0.0, "EUR", 3, 45.0));
 		when(rentalOrderRepository.save(any())).thenReturn(saved);
 		when(rentalOrderMapper.toDTO(saved)).thenReturn(response);
@@ -126,7 +126,7 @@ class RentalOrderServiceTest {
 		when(userRepository.findByEmail("user@example.com")).thenReturn(Optional.of(user));
 		when(rentalOrderRepository.existsByUserIdAndStatusIn(eq(1L), anySet())).thenReturn(false);
 		when(vehicleRepository.findById(2L)).thenReturn(Optional.of(vehicle));
-		when(pricingService.estimateRental(isNull(), isNull(), anyLong()))
+		when(rentalPricingService.estimateRental(isNull(), isNull(), anyLong()))
 				.thenReturn(new RentalEstimate(135.0, 0.0, "EUR", 3, 45.0));
 		when(rentalOrderRepository.save(any())).thenReturn(saved);
 		when(rentalOrderMapper.toDTO(saved)).thenReturn(response);
@@ -134,7 +134,7 @@ class RentalOrderServiceTest {
 		var result = rentalOrderService.createRentalOrder(request, "user@example.com");
 
 		assertTrue(result.isPresent());
-		verify(pricingService).estimateRental(isNull(), isNull(), anyLong());
+		verify(rentalPricingService).estimateRental(isNull(), isNull(), anyLong());
 	}
 
 	@Test
@@ -335,7 +335,7 @@ class RentalOrderServiceTest {
 				.build();
 
 		when(vehicleRepository.findById(3L)).thenReturn(Optional.of(vehicle));
-		when(pricingService.estimateRental(60.0, 300.0, 3L))
+		when(rentalPricingService.estimateRental(60.0, 300.0, 3L))
 				.thenReturn(new RentalEstimate(180.0, 300.0, "EUR", 3, 60.0));
 
 		var result = rentalOrderService.estimate(request);
