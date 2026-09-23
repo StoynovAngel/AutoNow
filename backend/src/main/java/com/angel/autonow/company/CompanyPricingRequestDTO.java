@@ -11,7 +11,6 @@ import lombok.Builder;
 public record CompanyPricingRequestDTO(
 		@Positive Double baseFare,
 		@Positive Double ratePerKm,
-		@Positive Double premiumMultiplier,
 		@Positive Double nightMultiplier,
 		@Min(0) @Max(23) Integer nightStartHour,
 		@Min(0) @Max(23) Integer nightEndHour,

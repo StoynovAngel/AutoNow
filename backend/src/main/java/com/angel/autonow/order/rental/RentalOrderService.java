@@ -2,8 +2,8 @@ package com.angel.autonow.order.rental;
 
 import com.angel.autonow.company.CompanyEntity;
 import com.angel.autonow.company.CompanyRepository;
-import com.angel.autonow.pricing.PricingService;
 import com.angel.autonow.pricing.RentalEstimate;
+import com.angel.autonow.pricing.RentalPricingService;
 import com.angel.autonow.user.UserEntity;
 import com.angel.autonow.user.UserRepository;
 import com.angel.autonow.vehicle.VehicleEntity;
@@ -30,7 +30,7 @@ public class RentalOrderService {
 	private final UserRepository userRepository;
 	private final VehicleRepository vehicleRepository;
 	private final CompanyRepository companyRepository;
-	private final PricingService pricingService;
+	private final RentalPricingService rentalPricingService;
 
 	@Transactional
 	public Optional<RentalOrderResponseDTO> createRentalOrder(RentalOrderRequestDTO request, String callerEmail) {
@@ -207,7 +207,7 @@ public class RentalOrderService {
 		Double pricePerDay = vehicle != null ? vehicle.getRentalPricePerDay() : null;
 		Double depositAmount = vehicle != null ? vehicle.getSecurityDepositAmount() : null;
 
-		return pricingService.estimateRental(pricePerDay, depositAmount, days);
+		return rentalPricingService.estimateRental(pricePerDay, depositAmount, days);
 	}
 
 	private RentalOrderResponseDTO transitionToCanceled(RentalOrderEntity order) {

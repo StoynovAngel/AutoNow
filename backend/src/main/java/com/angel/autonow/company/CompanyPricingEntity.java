@@ -32,9 +32,6 @@ public class CompanyPricingEntity {
 	@Column(name = "rate_per_km")
 	private Double ratePerKm;
 
-	@Column(name = "premium_multiplier")
-	private Double premiumMultiplier;
-
 	@Column(name = "night_multiplier")
 	private Double nightMultiplier;
 

@@ -24,7 +24,6 @@ import java.util.Optional;
 import static com.angel.autonow.data.TestData.NON_EXISTENT_ID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.ArgumentMatchers.eq;
@@ -69,6 +68,8 @@ class OrderServiceTest {
 		OrderResponseDTO response = TestData.createOrderResponse(1L, 1L, OrderStatus.CREATED, NOW);
 
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+		when(pricingService.estimate(any(OrderEstimateRequestDTO.class)))
+				.thenReturn(OrderEstimateResponseDTO.builder().estimatedPrice(14.50).build());
 		when(orderRepository.save(any(OrderEntity.class))).thenReturn(saved);
 		when(orderMapper.toDTO(saved)).thenReturn(response);
 
@@ -89,6 +90,8 @@ class OrderServiceTest {
 
 		when(userRepository.findByEmail(CALLER_EMAIL)).thenReturn(Optional.of(caller));
 		when(userRepository.findById(1L)).thenReturn(Optional.of(caller));
+		when(pricingService.estimate(any(OrderEstimateRequestDTO.class)))
+				.thenReturn(OrderEstimateResponseDTO.builder().estimatedPrice(14.50).build());
 		when(orderRepository.save(any(OrderEntity.class))).thenReturn(saved);
 		when(orderMapper.toDTO(saved)).thenReturn(response);
 
@@ -156,6 +159,8 @@ class OrderServiceTest {
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 		when(driverRepository.findById(2L)).thenReturn(Optional.of(driver));
 		when(vehicleRepository.findById(3L)).thenReturn(Optional.of(vehicle));
+		when(pricingService.estimate(any(OrderEstimateRequestDTO.class)))
+				.thenReturn(OrderEstimateResponseDTO.builder().estimatedPrice(15.50).build());
 		when(orderRepository.save(any(OrderEntity.class))).thenReturn(saved);
 		when(orderMapper.toDTO(saved)).thenReturn(response);
 
@@ -463,13 +468,14 @@ class OrderServiceTest {
 		OrderResponseDTO response = TestData.createOrderResponse(1L, 1L, OrderStatus.CREATED, NOW);
 
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-		when(pricingService.calculatePrice(10.0, VehicleType.TAXI)).thenReturn(14.50);
+		when(pricingService.estimate(any(OrderEstimateRequestDTO.class)))
+				.thenReturn(OrderEstimateResponseDTO.builder().estimatedPrice(14.50).distanceKm(10.0).build());
 		when(orderRepository.save(any(OrderEntity.class))).thenReturn(saved);
 		when(orderMapper.toDTO(saved)).thenReturn(response);
 
 		orderService.createOrder(request, ADMIN_EMAIL, true);
 
-		verify(pricingService).calculatePrice(10.0, VehicleType.TAXI);
+		verify(pricingService).estimate(any(OrderEstimateRequestDTO.class));
 	}
 
 	@Test
@@ -485,13 +491,14 @@ class OrderServiceTest {
 		OrderResponseDTO response = TestData.createOrderResponse(1L, 1L, OrderStatus.CREATED, NOW);
 
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-		when(pricingService.calculateForLogistics(10.0, 50.0)).thenReturn(12.00);
+		when(pricingService.estimate(any(OrderEstimateRequestDTO.class)))
+				.thenReturn(OrderEstimateResponseDTO.builder().estimatedPrice(12.00).distanceKm(10.0).build());
 		when(orderRepository.save(any(OrderEntity.class))).thenReturn(saved);
 		when(orderMapper.toDTO(saved)).thenReturn(response);
 
 		orderService.createOrder(request, ADMIN_EMAIL, true);
 
-		verify(pricingService).calculateForLogistics(10.0, 50.0);
+		verify(pricingService).estimate(any(OrderEstimateRequestDTO.class));
 	}
 
 	@Test
@@ -511,8 +518,7 @@ class OrderServiceTest {
 
 		orderService.createOrder(request, ADMIN_EMAIL, true);
 
-		verify(pricingService, never()).calculatePrice(anyDouble(), any());
-		verify(pricingService, never()).calculateForLogistics(anyDouble(), anyDouble());
+		verify(pricingService, never()).estimate(any(OrderEstimateRequestDTO.class));
 	}
 
 	@Test
