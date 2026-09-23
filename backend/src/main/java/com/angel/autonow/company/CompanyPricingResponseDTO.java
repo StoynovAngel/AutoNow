@@ -10,7 +10,6 @@ public record CompanyPricingResponseDTO(
 		Long companyId,
 		Double baseFare,
 		Double ratePerKm,
-		Double premiumMultiplier,
 		Double nightMultiplier,
 		Integer nightStartHour,
 		Integer nightEndHour,

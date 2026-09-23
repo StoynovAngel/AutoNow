@@ -26,7 +26,6 @@ class PricingServiceTest {
 			2.50,
 			60.00,
 			1.20,
-			1.60,
 			1.20,
 			22,
 			6,

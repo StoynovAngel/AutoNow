@@ -61,7 +61,6 @@ class CompanyPricingServiceTest {
 		assertThat(result).isPresent();
 		assertThat(result.get().baseFare()).isEqualTo(2.50);
 		assertThat(result.get().nightStartHour()).isEqualTo(22);
-		assertThat(result.get().premiumMultiplier()).isNull();
 		assertThat(result.get().ambulanceBaseFare()).isNull();
 	}
 
@@ -82,7 +81,6 @@ class CompanyPricingServiceTest {
 		assertThat(result.get().ambulanceBaseFare()).isEqualTo(60.00);
 		assertThat(result.get().ratePerKm()).isEqualTo(1.20);
 		assertThat(result.get().nightStartHour()).isEqualTo(22);
-		assertThat(result.get().premiumMultiplier()).isNull();
 		assertThat(result.get().baseFare()).isNull();
 	}
 

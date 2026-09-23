@@ -17,7 +17,6 @@ class PricingResolverTest {
 			2.50,   // baseFare
 			60.00,  // ambulanceBaseFare
 			1.20,   // ratePerKm
-			1.60,   // premiumMultiplier
 			1.20,   // nightMultiplier
 			22,     // nightStartHour
 			6,      // nightEndHour
