@@ -4095,9 +4095,6 @@ components:
         ratePerKm:
           type: number
           format: double
-        premiumMultiplier:
-          type: number
-          format: double
         nightMultiplier:
           type: number
           format: double
@@ -4133,9 +4130,6 @@ components:
           type: number
           format: double
         ratePerKm:
-          type: number
-          format: double
-        premiumMultiplier:
           type: number
           format: double
         nightMultiplier:
