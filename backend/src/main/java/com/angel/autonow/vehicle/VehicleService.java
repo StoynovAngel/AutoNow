@@ -24,6 +24,10 @@ public class VehicleService {
 	private final DriverRepository driverRepository;
 
 	public Optional<VehicleResponseDTO> createVehicle(VehicleRequestDTO request) {
+		if (vehicleRepository.existsByLicensePlate(request.licensePlate())) {
+			throw new VehicleConflictException("A vehicle with license plate " + request.licensePlate() + " already exists");
+		}
+
 		VehicleEntity vehicle = vehicleMapper.toEntity(request);
 
 		if (request.companyId() != null) {
@@ -55,6 +59,10 @@ public class VehicleService {
 
 		if (existing.isEmpty()) {
 			return Optional.empty();
+		}
+
+		if (vehicleRepository.existsByLicensePlateAndIdNot(request.licensePlate(), id)) {
+			throw new VehicleConflictException("A vehicle with license plate " + request.licensePlate() + " already exists");
 		}
 
 		CompanyEntity company = null;

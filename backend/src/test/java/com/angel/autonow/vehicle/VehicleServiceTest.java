@@ -61,6 +61,16 @@ class VehicleServiceTest {
 	}
 
 	@Test
+	void createVehicle_duplicateLicensePlate_throwsConflict() {
+		VehicleRequestDTO request = TestData.createVehicleRequest();
+
+		when(vehicleRepository.existsByLicensePlate(request.licensePlate())).thenReturn(true);
+
+		assertThrows(VehicleConflictException.class, () -> vehicleService.createVehicle(request));
+		verify(vehicleRepository, never()).save(any());
+	}
+
+	@Test
 	void getVehicleById_returnVehicleResponse() {
 		VehicleEntity entity = VehicleEntity.builder().id(1L).brand("Toyota").build();
 		VehicleResponseDTO response = TestData.createVehicleResponse(1L);
@@ -139,6 +149,18 @@ class VehicleServiceTest {
 		var result = vehicleService.updateVehicle(NON_EXISTENT_ID, request);
 
 		assertTrue(result.isEmpty());
+		verify(vehicleRepository, never()).save(any());
+	}
+
+	@Test
+	void updateVehicle_duplicateLicensePlate_throwsConflict() {
+		VehicleRequestDTO request = TestData.createVehicleRequest();
+		VehicleEntity existing = VehicleEntity.builder().id(1L).brand("Toyota").build();
+
+		when(vehicleRepository.findById(1L)).thenReturn(Optional.of(existing));
+		when(vehicleRepository.existsByLicensePlateAndIdNot(request.licensePlate(), 1L)).thenReturn(true);
+
+		assertThrows(VehicleConflictException.class, () -> vehicleService.updateVehicle(1L, request));
 		verify(vehicleRepository, never()).save(any());
 	}
 
